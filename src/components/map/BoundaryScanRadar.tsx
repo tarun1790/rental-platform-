@@ -51,7 +51,7 @@ export const BoundaryScanRadar: React.FC<BoundaryScanRadarProps> = ({
   const { nearbyPointsOfInterest, propertyTaxes, policeCorridor, climateTelemetry, geotechnical, roomsBreakdown, specs, financials, forestResources, propertyAddress, timezone, heatWaves, airport } = activeProperty;
 
   return (
-    <div className="absolute top-16 left-4 right-4 sm:right-auto sm:w-[500px] max-h-[82vh] z-30 bg-white border-2 border-red-500 rounded-3xl shadow-2xl shadow-red-500/10 overflow-hidden flex flex-col text-slate-900 select-none animate-in fade-in slide-in-from-top-4">
+    <div className="absolute top-4 sm:top-16 left-3 right-3 sm:right-auto sm:left-4 sm:w-[490px] max-h-[78vh] sm:max-h-[82vh] z-30 bg-white border-2 border-red-500 rounded-3xl shadow-2xl shadow-red-500/10 overflow-hidden flex flex-col text-slate-900 select-none animate-in fade-in slide-in-from-top-4">
       
       {/* 1. TOP HEADER (WHITE & RED) */}
       <div className="p-4 bg-red-600 text-white flex items-center justify-between">
