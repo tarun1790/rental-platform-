@@ -23,6 +23,7 @@ import {
 import { FilterState, ListingStatus, PropertyType } from '../../types/property';
 import { SupportedLanguageCode } from '../../types/intelligence';
 import { SUPPORTED_LANGUAGES } from '../../lib/speech-translation';
+import { TiledHomeIcon } from '../common/TiledHomeIcon';
 
 interface HeaderProps {
   filters: FilterState;
@@ -78,13 +79,13 @@ export const Header: React.FC<HeaderProps> = ({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 gap-3">
           
-          {/* 1. BRAND LOGO (RED & WHITE) */}
+          {/* 1. BRAND LOGO (WHITE & RED TILED HOME) */}
           <div 
             onClick={onScrollToTop}
-            className="flex items-center gap-2 cursor-pointer shrink-0 group"
+            className="flex items-center gap-2.5 cursor-pointer shrink-0 group"
           >
-            <div className="w-9 h-9 rounded-xl bg-red-600 group-hover:bg-red-700 flex items-center justify-center text-white shadow-md shadow-red-500/20 transition-all">
-              <Home className="w-4 h-4 text-white" />
+            <div className="w-10 h-10 rounded-2xl bg-white border-2 border-red-500 group-hover:border-red-600 flex items-center justify-center shadow-md shadow-red-500/10 transition-all p-1 group-hover:scale-105">
+              <TiledHomeIcon size={30} />
             </div>
             <span className="text-xl font-black tracking-widest text-red-600 font-sans hidden sm:inline">
               HOME
