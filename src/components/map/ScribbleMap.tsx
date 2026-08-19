@@ -21,7 +21,11 @@ import {
   Sliders,
   Activity,
   Layers2,
-  TreePine
+  TreePine,
+  Flame,
+  Radio,
+  SlidersHorizontal,
+  ChevronDown
 } from 'lucide-react';
 import { ShikaakPropertyListing, GeoCoordinate } from '../../types/property';
 import { SpectralBandType } from '../../types/intelligence';
@@ -65,39 +69,44 @@ export const ScribbleMap: React.FC<ScribbleMapProps> = ({
 
   // Tile Provider State (Default: Real Google Earth Satellite Hybrid)
   const [tileProvider, setTileProvider] = useState<RealEarthTileProvider>('GOOGLE_EARTH_HYBRID');
+  const [isLayerDropdownOpen, setIsLayerDropdownOpen] = useState(false);
 
   // Multispectral Earth Engine Layer State
   const [activeSpectralLayer, setActiveSpectralLayer] = useState<SpectralBandType>('TRUE_COLOR_RGB');
   const [spectralOpacity, setSpectralOpacity] = useState<number>(0.7);
   const [showEarthEngineModal, setShowEarthEngineModal] = useState<boolean>(false);
 
-  // Boundary Radar HUD State
-  const [showBoundaryRadar, setShowBoundaryRadar] = useState<boolean>(true);
+  // Boundary Radar HUD State (Default: Closed so map starts clean and uncluttered)
+  const [showBoundaryRadar, setShowBoundaryRadar] = useState<boolean>(false);
 
   // 24-Hour Sun Angle
   const [sunHour, setSunHour] = useState<number>(14);
   const [showSunSimulator, setShowSunSimulator] = useState(false);
 
   // Real Tile URLs for Live Streaming
-  const TILE_CONFIGS: Record<RealEarthTileProvider, { url: string; maxZoom: number; attribution: string }> = {
+  const TILE_CONFIGS: Record<RealEarthTileProvider, { url: string; maxZoom: number; label: string; attribution: string }> = {
     GOOGLE_EARTH_HYBRID: {
       url: 'https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}',
       maxZoom: 20,
-      attribution: 'Imagery © Google Earth, Maxar Technologies',
+      label: 'Google Earth Hybrid',
+      attribution: 'Imagery © Google Earth, Maxar',
     },
     GOOGLE_EARTH_SATELLITE: {
       url: 'https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
       maxZoom: 20,
-      attribution: 'Imagery © Google Earth Satellite',
+      label: 'Google Satellite',
+      attribution: 'Imagery © Google Earth',
     },
     ESRI_SATELLITE: {
       url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
       maxZoom: 19,
-      attribution: 'Tiles © Esri, Earthstar Geographics',
+      label: 'Esri Satellite',
+      attribution: 'Tiles © Esri, Earthstar',
     },
     OSM_STREETS: {
       url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       maxZoom: 19,
+      label: 'Clean Streets',
       attribution: '© OpenStreetMap contributors',
     },
   };
@@ -116,26 +125,33 @@ export const ScribbleMap: React.FC<ScribbleMapProps> = ({
 
     if (mapInstanceRef.current) return;
 
-    // Center on Chicago Core (Lincoln Park / Gold Coast / West Loop / Loop)
+    // Center on Chicago / US Core
     const map = L.map(mapContainerRef.current, {
       center: [41.898, -87.645],
       zoom: 13,
       zoomControl: false,
       attributionControl: false,
+      fadeAnimation: true,
+      zoomAnimation: true,
     });
 
-    mapInstanceRef.current = map;
-
-    // Add Live Real Satellite Tile Layer
-    const config = TILE_CONFIGS[tileProvider];
-    tileLayerRef.current = L.tileLayer(config.url, {
-      maxZoom: config.maxZoom,
-      subdomains: ['a', 'b', 'c', 'd'],
+    // Add Real Google Earth Satellite Hybrid Tile Layer
+    const tileLayer = L.tileLayer(TILE_CONFIGS[tileProvider].url, {
+      maxZoom: TILE_CONFIGS[tileProvider].maxZoom,
+      subdomains: ['a', 'b', 'c'],
     }).addTo(map);
 
-    // Create Marker and Polygon Layer Groups
-    markersLayerRef.current = L.layerGroup().addTo(map);
-    polygonLayerRef.current = L.layerGroup().addTo(map);
+    tileLayerRef.current = tileLayer;
+
+    // Marker Layer Group
+    const markersLayer = L.layerGroup().addTo(map);
+    markersLayerRef.current = markersLayer;
+
+    // Polygon Layer Group
+    const polygonLayer = L.layerGroup().addTo(map);
+    polygonLayerRef.current = polygonLayer;
+
+    mapInstanceRef.current = map;
 
     return () => {
       map.remove();
@@ -143,20 +159,21 @@ export const ScribbleMap: React.FC<ScribbleMapProps> = ({
     };
   }, []);
 
-  // 2. Update Tile Provider when changed
+  // 2. Handle Tile Provider Switching
   useEffect(() => {
     if (!mapInstanceRef.current || !tileLayerRef.current) return;
     const L = require('leaflet');
-    const config = TILE_CONFIGS[tileProvider];
+    tileLayerRef.current.remove();
 
-    mapInstanceRef.current.removeLayer(tileLayerRef.current);
-    tileLayerRef.current = L.tileLayer(config.url, {
-      maxZoom: config.maxZoom,
-      subdomains: ['a', 'b', 'c', 'd'],
+    const newLayer = L.tileLayer(TILE_CONFIGS[tileProvider].url, {
+      maxZoom: TILE_CONFIGS[tileProvider].maxZoom,
+      subdomains: ['a', 'b', 'c'],
     }).addTo(mapInstanceRef.current);
+
+    tileLayerRef.current = newLayer;
   }, [tileProvider]);
 
-  // 3. Render Real Interactive Leaflet Markers (RED & WHITE CUSTOM PINS)
+  // 3. Render Sleek, Modern Price Pins (Zillow-Style Pure White & Red)
   useEffect(() => {
     if (!mapInstanceRef.current || !markersLayerRef.current) return;
     const L = require('leaflet');
@@ -167,35 +184,38 @@ export const ScribbleMap: React.FC<ScribbleMapProps> = ({
       const isSelected = selectedListing?.id === listing.id;
       const { latitude, longitude } = listing.propertyAddress.location;
 
-      const priceK = (listing.financials.inputs.purchasePrice / 1000).toFixed(0);
+      const priceVal = listing.financials.inputs.purchasePrice;
+      const priceFormatted = priceVal >= 1000000 
+        ? `$${(priceVal / 1000000).toFixed(2).replace('.00', '')}M` 
+        : `$${Math.round(priceVal / 1000)}K`;
+
       const score = listing.financials.outputs.passFlowScore.toFixed(1);
 
-      // Custom Red & White Pin Badge (NO BLACK)
+      // Sleek, Minimalist White & Red Price Pill
       const customHtml = `
         <div class="cursor-pointer group flex flex-col items-center select-none" style="transform: translate(-50%, -100%);">
-          <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl text-xs font-black tracking-tight shadow-xl border-2 transition-all ${
+          <div class="flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-black tracking-tight shadow-md border transition-all duration-200 ${
             isSelected
-              ? 'bg-red-700 text-white border-white scale-110 ring-4 ring-red-500/50'
-              : 'bg-red-600 text-white border-white hover:bg-red-700 hover:scale-105'
+              ? 'bg-red-600 text-white border-white scale-110 shadow-lg shadow-red-600/40 ring-2 ring-red-400 z-50'
+              : 'bg-white text-red-700 border-red-500 hover:bg-red-600 hover:text-white hover:border-white hover:scale-105'
           }">
-            <span class="font-mono">$${priceK}K</span>
-            <span class="text-[10px] bg-white text-red-700 font-mono px-1.5 py-0.2 rounded font-black">Score ${score}</span>
+            <span class="font-mono font-bold">${priceFormatted}</span>
+            <span class="text-[9px] ${isSelected ? 'bg-white text-red-700' : 'bg-red-50 text-red-600 group-hover:bg-white group-hover:text-red-700'} font-mono px-1 rounded font-black">${score}</span>
           </div>
-          <div class="w-0.5 h-3 bg-red-600"></div>
-          <div class="w-2.5 h-1.5 rounded-full bg-red-600/80 blur-[1px]"></div>
+          <div class="w-0.5 h-1.5 ${isSelected ? 'bg-red-600' : 'bg-red-500'}"></div>
         </div>
       `;
 
       const icon = L.divIcon({
         className: 'custom-property-pin',
         html: customHtml,
-        iconSize: [90, 42],
-        iconAnchor: [45, 42],
+        iconSize: [80, 32],
+        iconAnchor: [40, 32],
       });
 
-      const marker = L.marker([latitude, longitude], { icon });
+      const marker = L.marker([latitude, longitude], { icon, zIndexOffset: isSelected ? 1000 : 10 });
 
-      // Click to select
+      // Click to select property
       marker.on('click', () => {
         onSelectListing(listing);
         setShowBoundaryRadar(true);
@@ -205,14 +225,14 @@ export const ScribbleMap: React.FC<ScribbleMapProps> = ({
     });
   }, [listings, selectedListing]);
 
-  // 4. Fly to selected listing
+  // 4. Fly to selected listing smoothly
   useEffect(() => {
     if (selectedListing && mapInstanceRef.current) {
       const { latitude, longitude } = selectedListing.propertyAddress.location;
       mapInstanceRef.current.flyTo([latitude, longitude], 15, {
-        duration: 1.2,
+        duration: 0.8,
+        easeLinearity: 0.25,
       });
-      setShowBoundaryRadar(true);
     }
   }, [selectedListing]);
 
@@ -227,10 +247,10 @@ export const ScribbleMap: React.FC<ScribbleMapProps> = ({
       const latLngs = scribblePolygon.map((p) => [p.latitude, p.longitude]);
       const polygon = L.polygon(latLngs, {
         color: '#DC2626',
-        weight: 3,
-        dashArray: '6, 6',
+        weight: 2.5,
+        dashArray: '5, 5',
         fillColor: '#DC2626',
-        fillOpacity: 0.25,
+        fillOpacity: 0.2,
       });
       layer.addLayer(polygon);
       setShowBoundaryRadar(true);
@@ -253,13 +273,13 @@ export const ScribbleMap: React.FC<ScribbleMapProps> = ({
       ctx.beginPath();
       ctx.moveTo(x, y);
       ctx.strokeStyle = '#DC2626';
-      ctx.lineWidth = 3.5;
+      ctx.lineWidth = 3;
       ctx.lineCap = 'round';
     }
   };
 
   const handleCanvasMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (!isScribbleActive || !isDrawingRef.current || !canvasRef.current) return;
+    if (!isDrawingRef.current || !isScribbleActive || !canvasRef.current) return;
     const rect = canvasRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
@@ -274,54 +294,38 @@ export const ScribbleMap: React.FC<ScribbleMapProps> = ({
   };
 
   const handleCanvasMouseUp = () => {
-    if (!isScribbleActive || !isDrawingRef.current || !canvasRef.current || !mapInstanceRef.current) return;
+    if (!isDrawingRef.current || !isScribbleActive || !mapInstanceRef.current || !canvasRef.current) return;
     isDrawingRef.current = false;
 
     const points = drawnPointsRef.current;
-    if (points.length < 3) {
-      onClearScribble();
-      return;
-    }
+    if (points.length < 5) return;
+
+    // Convert pixel coordinates to real GPS GeoCoordinates
+    const geoPolygon: GeoCoordinate[] = points.map((p) => {
+      const latLng = mapInstanceRef.current.containerPointToLatLng([p.x, p.y]);
+      return { latitude: latLng.lat, longitude: latLng.lng };
+    });
 
     const ctx = canvasRef.current.getContext('2d');
     if (ctx) {
       ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
     }
 
-    // Convert screen pixel points to GPS Coordinates
-    const map = mapInstanceRef.current;
-    const geoPolygon: GeoCoordinate[] = points.map((p) => {
-      const latLng = map.containerPointToLatLng([p.x, p.y]);
-      return { latitude: latLng.lat, longitude: latLng.lng };
-    });
-
     onScribbleComplete(geoPolygon);
     setShowBoundaryRadar(true);
   };
 
-  // Sync canvas size with container
-  useEffect(() => {
-    const updateSize = () => {
-      if (mapContainerRef.current && canvasRef.current) {
-        canvasRef.current.width = mapContainerRef.current.clientWidth;
-        canvasRef.current.height = mapContainerRef.current.clientHeight;
-      }
-    };
-    updateSize();
-    window.addEventListener('resize', updateSize);
-    return () => window.removeEventListener('resize', updateSize);
-  }, []);
-
   return (
-    <div className="relative w-full h-full bg-slate-100 overflow-hidden select-none">
+    <div className="relative w-full h-full min-h-full overflow-hidden select-none bg-slate-100">
       
-      {/* REAL LEAFLET LIVE MAP CONTAINER */}
+      {/* 1. REAL LEAFLET SATELLITE MAP CONTAINER */}
       <div 
         ref={mapContainerRef} 
-        className="w-full h-full z-0 relative"
+        className="w-full h-full z-0" 
+        style={{ minHeight: '100%' }}
       />
 
-      {/* Freehand Scribble Drawing Canvas (Over Map) */}
+      {/* 2. FREEHAND DRAWING CANVAS OVERLAY */}
       <canvas
         ref={canvasRef}
         onMouseDown={handleCanvasMouseDown}
@@ -333,78 +337,114 @@ export const ScribbleMap: React.FC<ScribbleMapProps> = ({
         style={{ width: '100%', height: '100%' }}
       />
 
-      {/* TOP FLOATING REAL MAP PROVIDER & EARTH CONTROLS (STRICTLY WHITE & RED) */}
-      <div className="absolute top-4 left-4 z-30 flex flex-wrap items-center gap-2">
+      {/* 3. CLEAN FLOATING TOP-LEFT MAP CONTROL BAR (PURE WHITE & RED) */}
+      <div className="absolute top-3 left-3 z-30 flex flex-wrap items-center gap-2">
         
-        {/* Real Live Map Provider Switcher (White & Red) */}
-        <div className="flex items-center bg-white p-1 rounded-2xl border-2 border-red-200 shadow-xl">
+        {/* Compact Layer Switcher Dropdown */}
+        <div className="relative">
           <button
-            onClick={() => setTileProvider('GOOGLE_EARTH_HYBRID')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl transition-all ${
-              tileProvider === 'GOOGLE_EARTH_HYBRID'
-                ? 'bg-red-600 text-white shadow-md shadow-red-500/20'
-                : 'text-slate-700 hover:text-red-600 hover:bg-red-50'
-            }`}
+            onClick={() => setIsLayerDropdownOpen(!isLayerDropdownOpen)}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-white text-slate-800 text-xs font-bold rounded-xl border border-red-200 shadow-md hover:border-red-400 transition-all"
           >
-            <Globe className="w-3.5 h-3.5" />
-            <span>Google Earth Hybrid</span>
+            <Globe className="w-3.5 h-3.5 text-red-600" />
+            <span>{TILE_CONFIGS[tileProvider].label}</span>
+            <ChevronDown className="w-3 h-3 text-red-500" />
+          </button>
+
+          {isLayerDropdownOpen && (
+            <div className="absolute left-0 mt-1.5 w-48 bg-white border border-red-200 rounded-2xl shadow-xl p-1.5 z-50 animate-in fade-in space-y-1">
+              {(Object.keys(TILE_CONFIGS) as RealEarthTileProvider[]).map((providerKey) => (
+                <button
+                  key={providerKey}
+                  onClick={() => {
+                    setTileProvider(providerKey);
+                    setIsLayerDropdownOpen(false);
+                  }}
+                  className={`w-full text-left px-3 py-1.5 text-xs rounded-xl font-bold flex items-center justify-between ${
+                    tileProvider === providerKey ? 'bg-red-50 text-red-600' : 'text-slate-700 hover:bg-red-50/60'
+                  }`}
+                >
+                  <span>{TILE_CONFIGS[providerKey].label}</span>
+                  {tileProvider === providerKey && <span className="w-1.5 h-1.5 rounded-full bg-red-600"></span>}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Quick Market Jumper (Chicago / Colorado) */}
+        <div className="hidden sm:flex items-center bg-white p-0.5 rounded-xl border border-red-200 shadow-md text-xs font-bold">
+          <button
+            onClick={() => {
+              if (mapInstanceRef.current) {
+                mapInstanceRef.current.flyTo([41.898, -87.645], 13, { duration: 1 });
+              }
+            }}
+            className="px-2.5 py-1 text-slate-700 hover:text-red-600 rounded-lg hover:bg-red-50 transition-all"
+          >
+            Chicago (CST)
           </button>
           <button
-            onClick={() => setTileProvider('ESRI_SATELLITE')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl transition-all ${
-              tileProvider === 'ESRI_SATELLITE'
-                ? 'bg-red-600 text-white shadow-md shadow-red-500/20'
-                : 'text-slate-700 hover:text-red-600 hover:bg-red-50'
-            }`}
+            onClick={() => {
+              if (mapInstanceRef.current) {
+                mapInstanceRef.current.flyTo([39.7185, -104.9572], 12, { duration: 1.2 });
+              }
+            }}
+            className="px-2.5 py-1 text-slate-700 hover:text-red-600 rounded-lg hover:bg-red-50 transition-all"
           >
-            <Layers2 className="w-3.5 h-3.5" />
-            <span>Esri Satellite</span>
-          </button>
-          <button
-            onClick={() => setTileProvider('OSM_STREETS')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl transition-all ${
-              tileProvider === 'OSM_STREETS'
-                ? 'bg-red-600 text-white shadow-md shadow-red-500/20'
-                : 'text-slate-700 hover:text-red-600 hover:bg-red-50'
-            }`}
-          >
-            <Layers className="w-3.5 h-3.5" />
-            <span>Streets</span>
+            Colorado (MST)
           </button>
         </div>
 
-        {/* Earth Engine Multispectral Hub Button (White & Red) */}
+        {/* Proximity Radar Toggle Button */}
         <button
-          onClick={() => setShowEarthEngineModal(!showEarthEngineModal)}
-          className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-2xl text-xs font-bold border-2 shadow-xl transition-all ${
-            showEarthEngineModal || activeSpectralLayer !== 'TRUE_COLOR_RGB'
-              ? 'bg-red-600 text-white border-red-600 shadow-red-500/30 animate-pulse'
+          onClick={() => setShowBoundaryRadar(!showBoundaryRadar)}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border shadow-md transition-all ${
+            showBoundaryRadar
+              ? 'bg-red-600 text-white border-red-600 shadow-red-500/20'
               : 'bg-white text-slate-800 border-red-200 hover:border-red-400 hover:bg-red-50'
           }`}
+          title="Toggle Geospatial Proximity Radar HUD"
         >
-          <Activity className="w-3.5 h-3.5 text-red-600" />
-          <span>
-            {activeSpectralLayer === 'TRUE_COLOR_RGB'
-              ? 'Earth Engine Spectrum'
-              : activeSpectralLayer.replace(/_/g, ' ')}
-          </span>
+          <Compass className="w-3.5 h-3.5" />
+          <span>Radar HUD</span>
         </button>
 
-        {/* Sun & Shadow Simulator Toggle */}
+        {/* Earth Engine Multispectral Button */}
         <button
-          onClick={() => setShowSunSimulator(!showSunSimulator)}
-          className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-2xl text-xs font-bold border-2 shadow-xl transition-all ${
-            showSunSimulator
-              ? 'bg-red-600 text-white border-red-600 font-black'
+          onClick={() => setShowEarthEngineModal(!showEarthEngineModal)}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border shadow-md transition-all ${
+            showEarthEngineModal || activeSpectralLayer !== 'TRUE_COLOR_RGB'
+              ? 'bg-red-600 text-white border-red-600 shadow-red-500/20'
               : 'bg-white text-slate-800 border-red-200 hover:border-red-400 hover:bg-red-50'
           }`}
         >
-          <Sun className="w-3.5 h-3.5 text-red-500" />
-          <span>24h Sun Angle</span>
+          <Activity className="w-3.5 h-3.5" />
+          <span className="hidden sm:inline">Earth Engine</span>
         </button>
       </div>
 
-      {/* FLOATING EARTH ENGINE SPECTRAL SELECTOR MODAL */}
+      {/* 4. TOP-RIGHT COMPACT ZOOM CONTROLS */}
+      <div className="absolute top-3 right-3 z-30 flex flex-col items-center gap-1.5">
+        <div className="flex flex-col bg-white border border-red-200 rounded-xl shadow-md overflow-hidden">
+          <button
+            onClick={() => mapInstanceRef.current?.zoomIn()}
+            className="p-2 text-slate-700 hover:text-red-600 hover:bg-red-50 border-b border-red-100 transition-colors"
+            title="Zoom In"
+          >
+            <ZoomIn className="w-3.5 h-3.5" />
+          </button>
+          <button
+            onClick={() => mapInstanceRef.current?.zoomOut()}
+            className="p-2 text-slate-700 hover:text-red-600 hover:bg-red-50 transition-colors"
+            title="Zoom Out"
+          >
+            <ZoomOut className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      </div>
+
+      {/* 5. FLOATING EARTH ENGINE SPECTRAL SELECTOR MODAL */}
       <EarthEngineLayerSelector
         isOpen={showEarthEngineModal}
         onClose={() => setShowEarthEngineModal(false)}
@@ -417,70 +457,7 @@ export const ScribbleMap: React.FC<ScribbleMapProps> = ({
         onOpacityChange={setSpectralOpacity}
       />
 
-      {/* RIGHT FLOATING ZOOM & CENTER CONTROLS (WHITE & RED) */}
-      <div className="absolute top-4 right-4 z-30 flex flex-col items-center gap-2">
-        {/* Reset Center Compass */}
-        <button
-          onClick={() => {
-            if (mapInstanceRef.current) {
-              mapInstanceRef.current.flyTo([41.898, -87.645], 13, { duration: 1 });
-            }
-          }}
-          className="w-10 h-10 rounded-2xl bg-white border-2 border-red-200 text-red-600 flex items-center justify-center shadow-xl hover:border-red-500 hover:bg-red-50 transition-all hover:scale-105"
-          title="Reset View to Chicago Core"
-        >
-          <Compass className="w-5 h-5 text-red-600" />
-        </button>
-
-        {/* Zoom In & Out */}
-        <div className="flex flex-col bg-white border-2 border-red-200 rounded-2xl shadow-xl overflow-hidden">
-          <button
-            onClick={() => mapInstanceRef.current?.zoomIn()}
-            className="p-2.5 text-slate-700 hover:text-red-600 hover:bg-red-50 border-b border-red-100 transition-colors"
-            title="Zoom In"
-          >
-            <ZoomIn className="w-4 h-4" />
-          </button>
-          <button
-            onClick={() => mapInstanceRef.current?.zoomOut()}
-            className="p-2.5 text-slate-700 hover:text-red-600 hover:bg-red-50 transition-colors"
-            title="Zoom Out"
-          >
-            <ZoomOut className="w-4 h-4" />
-          </button>
-        </div>
-      </div>
-
-      {/* EXPANDED SUN SIMULATOR SLIDER (WHITE & RED) */}
-      {showSunSimulator && (
-        <div className="absolute top-16 left-4 z-30 bg-white border-2 border-red-300 p-4 rounded-3xl shadow-2xl w-72 space-y-2 text-slate-900">
-          <div className="flex items-center justify-between text-xs">
-            <span className="font-bold flex items-center gap-1.5 text-red-600">
-              <Sun className="w-4 h-4 text-red-500" />
-              <span>Solar Daylight Simulator</span>
-            </span>
-            <span className="font-mono font-bold text-red-600">
-              {sunHour % 12 === 0 ? 12 : sunHour % 12}:00 {sunHour >= 12 ? 'PM' : 'AM'}
-            </span>
-          </div>
-          <input
-            type="range"
-            min="6"
-            max="20"
-            step="1"
-            value={sunHour}
-            onChange={(e) => setSunHour(Number(e.target.value))}
-            className="w-full accent-red-600 cursor-pointer"
-          />
-          <div className="flex justify-between text-[10px] text-slate-500 font-mono">
-            <span>6 AM (Sunrise)</span>
-            <span>1 PM (Peak)</span>
-            <span>8 PM (Sunset)</span>
-          </div>
-        </div>
-      )}
-
-      {/* BOUNDARY SCAN PROXIMITY & INTELLIGENCE RADAR HUD */}
+      {/* 6. BOUNDARY SCAN PROXIMITY & INTELLIGENCE RADAR HUD (ONLY WHEN TOGGLED) */}
       {showBoundaryRadar && (selectedListing || scribblePolygon) && (
         <BoundaryScanRadar
           enclosedListings={listings}
@@ -491,18 +468,9 @@ export const ScribbleMap: React.FC<ScribbleMapProps> = ({
         />
       )}
 
-      {/* BOTTOM TELEMETRY BAR (WHITE & RED) */}
-      <div className="absolute bottom-3 inset-x-3 z-30 flex items-center justify-between pointer-events-none text-[11px] font-mono text-slate-700 bg-white/95 border-2 border-red-200 px-4 py-2.5 rounded-2xl shadow-lg backdrop-blur-md">
-        <div className="flex items-center gap-4">
-          <span className="flex items-center gap-1.5 text-red-600 font-black">
-            <Globe className="w-3.5 h-3.5 text-red-600" />
-            <span>Google Earth Hybrid Tile Engine • Chicago Extent</span>
-          </span>
-          <span className="hidden sm:inline text-slate-600">Provider: {tileProvider}</span>
-        </div>
-        <div className="text-slate-500 text-[10px]">
-          {TILE_CONFIGS[tileProvider].attribution}
-        </div>
+      {/* 7. CLEAN SUBTLE BOTTOM ATTRIBUTION BADGE */}
+      <div className="absolute bottom-2 right-2 z-20 pointer-events-none text-[10px] font-mono text-slate-600 bg-white/90 border border-red-200 px-2.5 py-1 rounded-lg shadow-sm backdrop-blur-sm">
+        {TILE_CONFIGS[tileProvider].attribution}
       </div>
     </div>
   );
