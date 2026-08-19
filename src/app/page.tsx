@@ -274,24 +274,8 @@ export default function Home() {
               {/* INDEPENDENT SCROLLABLE RECTANGULAR HOUSE CONTAINER */}
               <div 
                 ref={listingsScrollRef}
-                className="p-3 sm:p-5 space-y-4 flex-1 overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-red-200 hover:scrollbar-thumb-red-400"
+                className="p-4 sm:p-6 space-y-5 flex-1 overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-slate-200 hover:scrollbar-thumb-red-300"
               >
-                
-                {/* Feature Introduction Banner (WHITE & RED) */}
-                <div className="p-4 sm:p-5 rounded-3xl bg-red-50/70 border-2 border-red-200 text-slate-900 shadow-sm">
-                  <div className="flex items-center gap-2 mb-1">
-                    <Sparkles className="w-4 h-4 text-red-600" />
-                    <span className="text-xs font-black uppercase tracking-wider text-red-600">
-                      Geospatial Proximity Radar & Real Satellite Tiles
-                    </span>
-                  </div>
-                  <h2 className="text-sm sm:text-base font-black tracking-tight text-slate-900">
-                    US & Colorado Multi-Region Telemetry
-                  </h2>
-                  <p className="text-xs text-slate-600 mt-1 leading-relaxed">
-                    Featuring <strong>exact kilometer distances</strong> to airports (DEN, ASE, ORD), schools, malls, and <strong>forest resources</strong>, <strong>NOAA heat waves</strong>, <strong>time zones</strong>, <strong>CPD/DPD police corridors</strong>, <strong>subsurface soil mechanics</strong>, and <strong>institutional ROI underwriting</strong>.
-                  </p>
-                </div>
 
                 {/* Property Cards Feed */}
                 {filteredListings.length > 0 ? (
