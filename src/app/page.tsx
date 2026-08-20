@@ -102,7 +102,11 @@ export default function Home() {
   };
 
   const handleOpenProperty = (listing: ShikaakPropertyListing) => {
-    router.push(`/property/${listing.id}`);
+    if (typeof window !== 'undefined' && window.location.pathname.startsWith('/rental-platform-')) {
+      window.location.href = `/rental-platform-/property/${listing.id}/`;
+    } else {
+      router.push(`/property/${listing.id}/`);
+    }
   };
 
   const handleSelectPropertyFromMap = (listing: ShikaakPropertyListing) => {

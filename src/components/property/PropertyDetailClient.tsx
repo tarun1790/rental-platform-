@@ -92,6 +92,14 @@ export const PropertyDetailClient: React.FC<PropertyDetailClientProps> = ({ prop
     setApplicationSubmitted(true);
   };
 
+  const handleBackToHome = () => {
+    if (typeof window !== 'undefined' && window.location.pathname.startsWith('/rental-platform-')) {
+      window.location.href = '/rental-platform-/';
+    } else {
+      router.push('/');
+    }
+  };
+
   return (
     <div className="min-h-screen w-full bg-slate-50/50 text-slate-900 flex flex-col">
       
@@ -99,13 +107,13 @@ export const PropertyDetailClient: React.FC<PropertyDetailClientProps> = ({ prop
       <header className="sticky top-0 z-40 w-full bg-white/95 backdrop-blur-md border-b border-red-100">
         <div className="w-full px-4 sm:px-8 lg:px-12 h-16 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Link
-              href="/"
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-red-500 hover:bg-red-600 text-white text-xs font-bold uppercase tracking-wider transition-all"
+            <button
+              onClick={handleBackToHome}
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-red-500 hover:bg-red-600 text-white text-xs font-bold uppercase tracking-wider transition-all cursor-pointer"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>Back to Map & Listings</span>
-            </Link>
+            </button>
 
             <div className="hidden sm:flex items-center gap-2 border-l border-slate-200 pl-4">
               <span className="font-bold text-sm text-red-500">House Intelligence</span>
