@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'HOME • Real Estate & Institutional Intelligence',
+  title: 'House Intelligence • Real Estate & Institutional Telemetry',
   description:
     'Next-generation real estate intelligence with freehand scribble mapping, subsurface soil mechanics, 20-year safety benchmarks, ranked amenities, CAD blueprints, and an institutional ROI Pass/Flow engine.',
 };

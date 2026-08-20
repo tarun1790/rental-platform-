@@ -87,8 +87,8 @@ export const Header: React.FC<HeaderProps> = ({
             <div className="w-10 h-10 rounded-2xl bg-white border-2 border-red-500 group-hover:border-red-600 flex items-center justify-center shadow-md shadow-red-500/10 transition-all p-1 group-hover:scale-105">
               <TiledHomeIcon size={30} />
             </div>
-            <span className="text-xl font-black tracking-widest text-red-600 font-sans hidden sm:inline">
-              HOME
+            <span className="text-base sm:text-lg font-black tracking-wider text-red-600 font-sans hidden sm:inline">
+              HOUSE INTELLIGENCE
             </span>
           </div>
 
