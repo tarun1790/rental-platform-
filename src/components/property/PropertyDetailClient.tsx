@@ -382,14 +382,14 @@ export const PropertyDetailClient: React.FC<PropertyDetailClientProps> = ({ prop
             <div>
               <span className="text-[10px] font-bold text-slate-500 uppercase block">Tested Bedrock Depth</span>
               <span className="text-xl font-black text-slate-900 font-mono">
-                {geotechnical.depthToBedrockFt} ft
+                {geotechnical.bedrockDepthFeet} ft
               </span>
               <p className="text-xs text-slate-500 mt-0.5">Solid limestone & granite strata</p>
             </div>
             <div>
               <span className="text-[10px] font-bold text-slate-500 uppercase block">Water Table Elevation</span>
               <span className="text-xl font-black text-slate-900 font-mono">
-                {geotechnical.waterTableDepthFt} ft
+                {geotechnical.waterTableDepthFeet} ft
               </span>
               <p className="text-xs text-slate-500 mt-0.5">Dry basement foundation clearance</p>
             </div>
@@ -415,7 +415,7 @@ export const PropertyDetailClient: React.FC<PropertyDetailClientProps> = ({ prop
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="p-4 rounded-2xl bg-red-50/50 border border-red-200">
-              <span className="text-[10px] font-bold text-red-600 uppercase block">Annual Heat Wave Days (>95°F)</span>
+              <span className="text-[10px] font-bold text-red-600 uppercase block">Annual Heat Wave Days (&gt;95°F)</span>
               <span className="text-xl font-black text-slate-900">{heatWaves?.annualHeatWaveDaysCount || 12} Days/yr</span>
               <p className="text-[11px] text-slate-500 mt-1">Peak Heat Index: {heatWaves?.peakSummerHeatIndexF || 98}°F</p>
             </div>
