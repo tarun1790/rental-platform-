@@ -223,6 +223,49 @@ export const ScribbleMap: React.FC<ScribbleMapProps> = ({
 
       layer.addLayer(marker);
     });
+
+    // 3.B Render Surrounding School & Mall POI Pins Around Selected Home
+    if (selectedListing && selectedListing.nearbyPointsOfInterest) {
+      const homeLat = selectedListing.propertyAddress.location.latitude;
+      const homeLng = selectedListing.propertyAddress.location.longitude;
+
+      selectedListing.nearbyPointsOfInterest.forEach((poi, index) => {
+        // Compute realistic offset coordinates around home based on POI distance
+        const angle = (index * (360 / selectedListing.nearbyPointsOfInterest.length) + 45) * (Math.PI / 180);
+        const latOffset = (poi.distanceKm * 0.009) * Math.cos(angle);
+        const lngOffset = (poi.distanceKm * 0.012) * Math.sin(angle);
+        const poiLat = homeLat + latOffset;
+        const poiLng = homeLng + lngOffset;
+
+        const isSchool = poi.type === 'SCHOOL' || poi.categoryLabel.toLowerCase().includes('school');
+        const isMall = poi.type === 'MALL' || poi.categoryLabel.toLowerCase().includes('mall') || poi.categoryLabel.toLowerCase().includes('retail');
+        const iconSymbol = isSchool ? '🎓' : isMall ? '🛍️' : poi.type === 'HOSPITAL' ? '🏥' : '🚆';
+        const badgeBg = isSchool ? 'bg-emerald-600 text-white' : isMall ? 'bg-amber-500 text-white' : 'bg-slate-800 text-white';
+
+        const poiHtml = `
+          <div class="cursor-pointer group flex flex-col items-center select-none" style="transform: translate(-50%, -100%);">
+            <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-white text-slate-900 border border-slate-300 shadow-lg backdrop-blur-md">
+              <span>${iconSymbol}</span>
+              <span class="font-bold truncate max-w-[130px]">${poi.name}</span>
+              <span class="text-[10px] ${badgeBg} font-mono px-1.5 py-0.2 rounded-full font-bold">
+                ${isSchool ? `★${poi.ratingScore}/10` : isMall ? `★${poi.ratingScore}` : `${poi.distanceKm}km`}
+              </span>
+            </div>
+            <div class="w-0.5 h-2 bg-slate-400"></div>
+          </div>
+        `;
+
+        const poiIcon = L.divIcon({
+          className: 'custom-poi-pin',
+          html: poiHtml,
+          iconSize: [160, 32],
+          iconAnchor: [80, 32],
+        });
+
+        const poiMarker = L.marker([poiLat, poiLng], { icon: poiIcon, zIndexOffset: 800 });
+        layer.addLayer(poiMarker);
+      });
+    }
   }, [listings, selectedListing]);
 
   // 4. Fly to selected listing smoothly

@@ -230,13 +230,13 @@ export const HouseRoiCalculatorModal: React.FC<HouseRoiCalculatorModalProps> = (
               <div>
                 <div className="flex justify-between text-xs font-bold mb-1 text-slate-800">
                   <span>Mortgage Interest Rate (%)</span>
-                  <span className="font-mono text-slate-700">{inputs.mortgageInterestRatePercent.toFixed(2)}%</span>
+                  <span className="font-mono text-slate-700">{inputs.interestRatePercent.toFixed(2)}%</span>
                 </div>
                 <input
                   type="number"
                   step="0.1"
-                  value={inputs.mortgageInterestRatePercent}
-                  onChange={(e) => setInputs({ ...inputs, mortgageInterestRatePercent: Number(e.target.value) || 0 })}
+                  value={inputs.interestRatePercent}
+                  onChange={(e) => setInputs({ ...inputs, interestRatePercent: Number(e.target.value) || 0 })}
                   className="w-full p-2.5 text-xs bg-white border border-slate-300 rounded-xl font-mono focus:border-red-400 focus:outline-none"
                 />
               </div>
