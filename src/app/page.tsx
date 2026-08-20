@@ -12,6 +12,7 @@ import { CHICAGO_LISTINGS } from '../data/chicago-listings';
 import { ShikaakPropertyListing, FilterState, GeoCoordinate } from '../types/property';
 import { SupportedLanguageCode } from '../types/intelligence';
 import { isPointInsidePolygon } from '../lib/geo-utils';
+import { formatCurrency, formatPercent } from '../lib/roi-engine';
 import { 
   Sparkles, 
   ArrowUpDown, 
@@ -25,7 +26,15 @@ import {
   ChevronDown,
   SlidersHorizontal,
   Map as MapIcon,
-  List
+  List,
+  ChevronRight,
+  Plane,
+  TreePine,
+  Flame,
+  Bed,
+  Bath,
+  Square,
+  ArrowDown
 } from 'lucide-react';
 
 export default function Home() {
@@ -77,8 +86,26 @@ export default function Home() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleScrollToHouses = () => {
+    const el = document.getElementById('houses-section');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   const handleOpenProperty = (listing: ShikaakPropertyListing) => {
     router.push(`/property/${listing.id}`);
+  };
+
+  const handleSelectPropertyFromMap = (listing: ShikaakPropertyListing) => {
+    setSelectedListing(listing);
+    // Smoothly scroll down to that selected house card below the map
+    setTimeout(() => {
+      const cardEl = document.getElementById(`house-${listing.id}`);
+      if (cardEl) {
+        cardEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }, 150);
   };
 
   // Filter and Sort Listings
@@ -225,15 +252,22 @@ export default function Home() {
           <ScribbleMap
             listings={filteredListings}
             selectedListing={selectedListing}
-            onSelectListing={(listing) => {
-              setSelectedListing(listing);
-            }}
+            onSelectListing={handleSelectPropertyFromMap}
             isScribbleActive={isScribbleActive}
             onScribbleComplete={handleScribbleComplete}
             scribblePolygon={scribblePolygon}
             onClearScribble={handleClearScribble}
             onOpenFullDetail={handleOpenProperty}
           />
+
+          {/* Quick Glide Down Button */}
+          <button
+            onClick={handleScrollToHouses}
+            className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 px-4 py-2 bg-white/95 text-red-600 border-2 border-red-500 rounded-full shadow-xl backdrop-blur-md text-xs font-black uppercase tracking-wider hover:bg-red-600 hover:text-white transition-all group"
+          >
+            <span>View {filteredListings.length} Houses Below</span>
+            <ArrowDown className="w-3.5 h-3.5 group-hover:translate-y-0.5 transition-transform" />
+          </button>
         </section>
 
         {/* ============================================================ */}
@@ -245,8 +279,81 @@ export default function Home() {
           className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8"
         >
           
-          {/* Feed Title & Quick Controls Bar */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-5">
+          {/* 1. SELECTED HOUSE SPOTLIGHT (APPEARS DIRECTLY BELOW THE MAP WHEN A PIN IS CLICKED) */}
+          {selectedListing && (
+            <div className="p-5 sm:p-7 rounded-3xl bg-red-50/60 border-2 border-red-400 shadow-lg shadow-red-500/10 flex flex-col md:flex-row items-center gap-6 animate-in fade-in slide-in-from-top-4">
+              <div className="w-full md:w-72 h-48 rounded-2xl overflow-hidden shrink-0 border-2 border-red-200 shadow-md">
+                <img
+                  src={selectedListing.media.featuredImage}
+                  alt={selectedListing.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+
+              <div className="flex-1 min-w-0 space-y-3">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="px-3 py-1 bg-red-600 text-white rounded-full text-xs font-black font-mono">
+                    Pass/Flow {selectedListing.financials.outputs.passFlowScore.toFixed(1)} / 5.0
+                  </span>
+                  <span className="px-3 py-1 bg-white text-slate-900 rounded-full text-xs font-bold border border-red-200">
+                    {selectedListing.propertyAddress.city}, {selectedListing.propertyAddress.state} ({selectedListing.timezone?.timeZoneCode || 'CST'})
+                  </span>
+                  <span className="text-xs font-mono font-bold text-red-700">
+                    Selected on Map
+                  </span>
+                </div>
+
+                <div>
+                  <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                    {selectedListing.title}
+                  </h3>
+                  <p className="text-xs text-slate-600 font-medium">
+                    {selectedListing.propertyAddress.street}, {selectedListing.propertyAddress.neighborhood}
+                  </p>
+                </div>
+
+                <div className="flex flex-wrap items-baseline gap-4">
+                  <span className="text-2xl font-black text-red-600 font-mono">
+                    {formatCurrency(selectedListing.financials.inputs.purchasePrice)}
+                  </span>
+                  <span className="text-sm font-bold text-slate-500 font-mono">
+                    {formatCurrency(selectedListing.financials.inputs.monthlyGrossRent)}/mo rent
+                  </span>
+                  <span className="text-xs font-bold text-slate-700">
+                    {selectedListing.specs.beds} Beds • {selectedListing.specs.baths} Baths • {selectedListing.specs.finishedSqFt.toLocaleString()} sq ft
+                  </span>
+                </div>
+
+                {/* Telemetry Chips for Selected House */}
+                <div className="flex flex-wrap items-center gap-2 pt-1 text-xs">
+                  <span className="px-3 py-1 rounded-xl bg-white border border-red-200 text-red-700 font-bold">
+                    ✈️ {selectedListing.airport?.primaryAirportIATA || 'ORD'} ({selectedListing.airport?.distanceToAirportKm || 24} km)
+                  </span>
+                  <span className="px-3 py-1 rounded-xl bg-white border border-slate-200 text-slate-700 font-bold">
+                    🌲 {selectedListing.forestResources?.forestCanopyCoveragePercent || 34}% Canopy
+                  </span>
+                  <span className="px-3 py-1 rounded-xl bg-white border border-slate-200 text-slate-700 font-bold">
+                    💰 Taxes: {formatCurrency(selectedListing.propertyTaxes.annualAmountUSD)}/yr
+                  </span>
+                  <span className="px-3 py-1 rounded-xl bg-white border border-slate-200 text-slate-700 font-bold">
+                    🧱 Soil: {selectedListing.geotechnical.bearingCapacityPSF.toLocaleString()} PSF
+                  </span>
+                </div>
+              </div>
+
+              <div className="shrink-0 flex flex-col gap-2 w-full md:w-auto">
+                <button
+                  onClick={() => handleOpenProperty(selectedListing)}
+                  className="px-6 py-3.5 bg-red-600 hover:bg-red-700 text-white rounded-2xl text-xs font-black uppercase tracking-wider shadow-md shadow-red-500/25 transition-all text-center"
+                >
+                  Open Full Intelligence →
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* 2. Feed Title & Quick Controls Bar */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-5 pt-4">
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <span className="w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse"></span>
@@ -263,7 +370,7 @@ export default function Home() {
                 {filteredListings.length} Luxury Residences Available
               </h2>
               <p className="text-xs sm:text-sm text-slate-500 mt-1">
-                Explore tested soil mechanics, airport proximity (km), NOAA heat waves, tree canopy %, and institutional Pass/Flow ROI underwriting.
+                Every residence features complete soil mechanics, airport proximity (km), NOAA heat waves, tree canopy %, and institutional Pass/Flow ROI underwriting.
               </p>
             </div>
 
@@ -284,7 +391,7 @@ export default function Home() {
             </div>
           </div>
 
-          {/* 3-COLUMN SPACIOUS HOUSE DETAILS GRID (PURE WHITE & RED) */}
+          {/* 3. 3-COLUMN SPACIOUS HOUSE DETAILS GRID (PURE WHITE & RED) */}
           {filteredListings.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
               {filteredListings.map((listing) => (
