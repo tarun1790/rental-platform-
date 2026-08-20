@@ -231,7 +231,7 @@ export const PropertyDetailClient: React.FC<PropertyDetailClientProps> = ({ prop
             Real-time algorithmic underwriting calculating Net Operating Income (NOI), Cap Rate, Cash-on-Cash Return, and Debt Service Coverage Ratio (DSCR).
           </p>
 
-          <RoiCalculatorWidget listing={listing} />
+          <RoiCalculatorWidget initialInputs={financials.inputs} />
         </section>
 
 
