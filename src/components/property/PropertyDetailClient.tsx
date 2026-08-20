@@ -255,7 +255,12 @@ export const PropertyDetailClient: React.FC<PropertyDetailClientProps> = ({ prop
             Machine-learned predictive curves trained on 140,000+ regional MLS records projecting 5-year compounding capital appreciation and cash flows.
           </p>
 
-          <VertexPredictivePanel listing={listing} />
+          <VertexPredictivePanel
+            propertyId={listing.id}
+            purchasePrice={inputs.purchasePrice}
+            monthlyRent={inputs.monthlyGrossRent}
+            neighborhood={propertyAddress.neighborhood}
+          />
         </section>
 
 
@@ -538,7 +543,10 @@ export const PropertyDetailClient: React.FC<PropertyDetailClientProps> = ({ prop
             Interactive CAD blueprint layout showing room dimensions, architectural boundaries, and customizable furniture layouts.
           </p>
 
-          <BlueprintFurnitureStaging listing={listing} />
+          <BlueprintFurnitureStaging
+            blueprint={blueprint}
+            totalSqFt={specs.finishedSqFt}
+          />
         </section>
 
 
@@ -636,7 +644,10 @@ export const PropertyDetailClient: React.FC<PropertyDetailClientProps> = ({ prop
       <GeminiVisionInspector
         isOpen={isGeminiModalOpen}
         onClose={() => setIsGeminiModalOpen(false)}
-        listing={listing}
+        propertyId={listing.id}
+        propertyTitle={listing.title}
+        propertyAddress={`${propertyAddress.street}, ${propertyAddress.city}`}
+        imageUrl={media.featuredImage}
       />
     </div>
   );
