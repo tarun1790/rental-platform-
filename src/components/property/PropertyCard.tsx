@@ -32,7 +32,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
   onSelect,
   onOpenDetail,
 }) => {
-  const { specs, geotechnical, financials, propertyAddress, media, propertyTaxes, roomsBreakdown, forestResources, timezone, airport, heatWaves, safety, climateTelemetry } = listing;
+  const { specs, geotechnical, financials, propertyAddress, media, propertyTaxes, roomsBreakdown, forestResources, timezone, airport, heatWaves, policeCorridor, climateTelemetry } = listing;
   const { inputs, outputs } = financials;
 
   return (
@@ -150,7 +150,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
           </div>
           <div className="flex items-center gap-1">
             <ShieldCheck className="w-3 h-3 text-emerald-600" />
-            <span>Police: <strong className="font-mono text-slate-900">{safety.emergencyResponseMinutes} min</strong> response</span>
+            <span>Police: <strong className="font-mono text-slate-900">{policeCorridor.dispatchAvgMinutes} min</strong> response</span>
           </div>
         </div>
 
