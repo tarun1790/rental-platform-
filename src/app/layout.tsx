@@ -19,9 +19,9 @@ export default function RootLayout({
         <meta httpEquiv="Pragma" content="no-cache" />
         <meta httpEquiv="Expires" content="0" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
-        <link rel="icon" type="image/svg+xml" href="/rental-platform-/favicon.svg" />
-        <link rel="shortcut icon" href="/rental-platform-/favicon.svg" />
-        <link rel="apple-touch-icon" href="/rental-platform-/favicon.svg" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <link rel="shortcut icon" href="/favicon.svg" />
+        <link rel="apple-touch-icon" href="/favicon.svg" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
@@ -35,7 +35,7 @@ export default function RootLayout({
           crossOrigin=""
         />
       </head>
-      <body className="min-h-screen bg-slate-50 text-slate-900 antialiased selection:bg-red-500 selection:text-white">
+      <body className="min-h-screen w-full bg-slate-50 text-slate-900 antialiased selection:bg-red-500 selection:text-white">
         {children}
       </body>
     </html>
