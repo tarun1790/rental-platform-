@@ -40,11 +40,15 @@ import {
   TreePine, 
   Plane, 
   Flame, 
-  Check 
+  Check,
+  Calculator,
+  Star,
+  Hospital
 } from 'lucide-react';
 import { formatCurrency, formatPercent } from '../../lib/roi-engine';
 import { BlueprintFurnitureStaging } from './BlueprintFurnitureStaging';
 import { RoiCalculatorWidget } from './RoiCalculatorWidget';
+import { HouseRoiCalculatorModal } from './HouseRoiCalculatorModal';
 import { GeminiVisionInspector } from '../intelligence/GeminiVisionInspector';
 import { VertexPredictivePanel } from '../intelligence/VertexPredictivePanel';
 import { getNeighborhoodSpectralMetrics, EARTH_ENGINE_LAYERS } from '../../lib/earth-engine';
@@ -60,6 +64,7 @@ export const PropertyDetailClient: React.FC<PropertyDetailClientProps> = ({ prop
 
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [isGeminiModalOpen, setIsGeminiModalOpen] = useState(false);
+  const [isRoiModalOpen, setIsRoiModalOpen] = useState(false);
   const [applicationSubmitted, setApplicationSubmitted] = useState(false);
   const [applicantName, setApplicantName] = useState('');
   const [applicantIncome, setApplicantIncome] = useState('$145,000');
@@ -68,6 +73,12 @@ export const PropertyDetailClient: React.FC<PropertyDetailClientProps> = ({ prop
   const { outputs, inputs } = financials;
 
   const spectralMetrics = getNeighborhoodSpectralMetrics(propertyAddress.neighborhood);
+
+  // Group POIs into Schools, Malls, Hospitals, Transit
+  const schools = nearbyPointsOfInterest.filter(p => p.type === 'SCHOOL' || p.categoryLabel.toLowerCase().includes('school'));
+  const malls = nearbyPointsOfInterest.filter(p => p.type === 'MALL' || p.categoryLabel.toLowerCase().includes('retail') || p.categoryLabel.toLowerCase().includes('mall'));
+  const hospitals = nearbyPointsOfInterest.filter(p => p.type === 'HOSPITAL' || p.categoryLabel.toLowerCase().includes('hospital') || p.categoryLabel.toLowerCase().includes('care'));
+  const transits = nearbyPointsOfInterest.filter(p => p.type === 'TRANSIT' || p.categoryLabel.toLowerCase().includes('transit') || p.categoryLabel.toLowerCase().includes('train'));
 
   const handleApply = (e: React.FormEvent) => {
     e.preventDefault();
@@ -95,13 +106,14 @@ export const PropertyDetailClient: React.FC<PropertyDetailClientProps> = ({ prop
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
-            <div className="text-right hidden sm:block">
-              <span className="text-[11px] text-slate-400 font-medium block">Purchase Price</span>
-              <span className="text-base font-bold text-red-500 font-mono">
-                {formatCurrency(inputs.purchasePrice)}
-              </span>
-            </div>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setIsRoiModalOpen(true)}
+              className="flex items-center gap-1.5 px-3.5 py-2 bg-white border border-red-200 hover:bg-red-50 text-red-500 font-bold text-xs rounded-xl transition-all uppercase tracking-wider"
+            >
+              <Calculator className="w-4 h-4 text-red-500" />
+              <span>ROI Calculator</span>
+            </button>
 
             <a
               href="#section-apply"
@@ -212,23 +224,215 @@ export const PropertyDetailClient: React.FC<PropertyDetailClientProps> = ({ prop
 
 
         {/* ========================================================================= */}
+        {/* DEDICATED PROMINENT SECTION: NEARBY SCHOOLS & SHOPPING MALLS WITH RATINGS */}
+        {/* ========================================================================= */}
+        <section className="w-full space-y-6 bg-white rounded-3xl border border-red-100 p-6 sm:p-8 lg:p-10 shadow-sm">
+          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-red-500 text-white flex items-center justify-center font-bold text-sm">
+                🎓
+              </div>
+              <div>
+                <span className="text-xs font-bold uppercase tracking-wider text-red-500">
+                  Location & Amenities Intelligence
+                </span>
+                <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
+                  Nearby Schools, Shopping Malls & Infrastructure Ratings
+                </h2>
+              </div>
+            </div>
+            <span className="text-xs font-semibold px-3 py-1 bg-red-50 text-red-700 border border-red-200 rounded-full">
+              GPS Verified Distances in Kilometers & Miles
+            </span>
+          </div>
+
+          {/* Dual Grid: Top Schools (Left) & Premier Malls (Right) */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            
+            {/* 1. NEARBY SCHOOLS & RATINGS */}
+            <div className="space-y-4 p-5 rounded-2xl bg-slate-50/80 border border-slate-200">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <GraduationCap className="w-5 h-5 text-red-500" />
+                  <h3 className="text-base font-bold text-slate-900">Nearby Schools & Academic Ratings</h3>
+                </div>
+                <span className="text-xs font-bold text-emerald-700 bg-emerald-100 px-2.5 py-0.5 rounded-full">
+                  Top Tier District
+                </span>
+              </div>
+
+              <div className="space-y-3">
+                {schools.length > 0 ? (
+                  schools.map((school) => (
+                    <div key={school.id} className="p-4 bg-white rounded-xl border border-slate-200 shadow-sm space-y-2">
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <h4 className="text-sm font-bold text-slate-900">{school.name}</h4>
+                          <span className="text-xs text-slate-500 font-medium">{school.categoryLabel}</span>
+                        </div>
+                        {/* Rating Badge */}
+                        <div className="px-2.5 py-1 rounded-xl bg-amber-50 border border-amber-300 text-amber-900 font-bold text-xs flex items-center gap-1 shrink-0">
+                          <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-500" />
+                          <span>Rating {school.ratingScore} / 10</span>
+                        </div>
+                      </div>
+
+                      <div className="flex flex-wrap items-center gap-3 text-xs text-slate-600 font-mono pt-1">
+                        <span>Distance: <strong className="text-red-500 font-bold">{school.distanceKm} km</strong> ({school.distanceMiles} mi)</span>
+                        <span>•</span>
+                        <span>Walk: <strong>{school.walkTimeMinutes} min</strong></span>
+                        <span>•</span>
+                        <span>Drive: <strong>{school.driveTimeMinutes} min</strong></span>
+                      </div>
+
+                      <p className="text-xs text-slate-600 bg-slate-50 p-2 rounded-lg border border-slate-100 font-medium">
+                        ✨ <strong>Academic Highlight:</strong> {school.keyHighlight}
+                      </p>
+                    </div>
+                  ))
+                ) : (
+                  <div className="p-4 bg-white rounded-xl border border-slate-200 space-y-2">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <h4 className="text-sm font-bold text-slate-900">Lincoln Park High School District</h4>
+                        <span className="text-xs text-slate-500">Top Public & Magnet Academy</span>
+                      </div>
+                      <div className="px-2.5 py-1 rounded-xl bg-amber-50 border border-amber-300 text-amber-900 font-bold text-xs flex items-center gap-1">
+                        <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-500" />
+                        <span>Rating 9.8 / 10</span>
+                      </div>
+                    </div>
+                    <p className="text-xs text-slate-600 font-mono">Distance: 0.8 km (0.5 mi) • 8 min walk</p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* 2. PREMIER SHOPPING MALLS & RETAIL CENTERS */}
+            <div className="space-y-4 p-5 rounded-2xl bg-slate-50/80 border border-slate-200">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <ShoppingBag className="w-5 h-5 text-red-500" />
+                  <h3 className="text-base font-bold text-slate-900">Nearby Shopping Malls & Retail Centers</h3>
+                </div>
+                <span className="text-xs font-bold text-red-600 bg-red-50 px-2.5 py-0.5 rounded-full border border-red-200">
+                  Luxury Lifestyle
+                </span>
+              </div>
+
+              <div className="space-y-3">
+                {malls.length > 0 ? (
+                  malls.map((mall) => (
+                    <div key={mall.id} className="p-4 bg-white rounded-xl border border-slate-200 shadow-sm space-y-2">
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <h4 className="text-sm font-bold text-slate-900">{mall.name}</h4>
+                          <span className="text-xs text-slate-500 font-medium">{mall.categoryLabel}</span>
+                        </div>
+                        {/* Rating Badge */}
+                        <div className="px-2.5 py-1 rounded-xl bg-amber-50 border border-amber-300 text-amber-900 font-bold text-xs flex items-center gap-1 shrink-0">
+                          <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-500" />
+                          <span>Rating {mall.ratingScore} / 5.0 ★</span>
+                        </div>
+                      </div>
+
+                      <div className="flex flex-wrap items-center gap-3 text-xs text-slate-600 font-mono pt-1">
+                        <span>Distance: <strong className="text-red-500 font-bold">{mall.distanceKm} km</strong> ({mall.distanceMiles} mi)</span>
+                        <span>•</span>
+                        <span>Walk: <strong>{mall.walkTimeMinutes} min</strong></span>
+                        <span>•</span>
+                        <span>Drive: <strong>{mall.driveTimeMinutes} min</strong></span>
+                      </div>
+
+                      <p className="text-xs text-slate-600 bg-slate-50 p-2 rounded-lg border border-slate-100 font-medium">
+                        🛍️ <strong>Anchor Stores & Retailers:</strong> {mall.keyHighlight}
+                      </p>
+                    </div>
+                  ))
+                ) : (
+                  <div className="p-4 bg-white rounded-xl border border-slate-200 space-y-2">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <h4 className="text-sm font-bold text-slate-900">Magnificent Mile Luxury Mall & Boutiques</h4>
+                        <span className="text-xs text-slate-500">World-Class Retail Corridor</span>
+                      </div>
+                      <div className="px-2.5 py-1 rounded-xl bg-amber-50 border border-amber-300 text-amber-900 font-bold text-xs flex items-center gap-1">
+                        <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-500" />
+                        <span>Rating 4.9 / 5.0 ★</span>
+                      </div>
+                    </div>
+                    <p className="text-xs text-slate-600 font-mono">Distance: 1.2 km (0.7 mi) • 4 min drive</p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+          </div>
+
+          {/* Hospitals & Rapid Transit Commute */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+            {hospitals.map(h => (
+              <div key={h.id} className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between text-xs">
+                <div className="flex items-center gap-2.5">
+                  <Hospital className="w-4 h-4 text-red-500 shrink-0" />
+                  <div>
+                    <span className="font-bold text-slate-900 block">{h.name}</span>
+                    <span className="text-[11px] text-slate-500">{h.keyHighlight}</span>
+                  </div>
+                </div>
+                <div className="text-right font-mono shrink-0 ml-2">
+                  <span className="font-bold text-red-500 block">{h.distanceKm} km</span>
+                  <span className="text-[10px] text-emerald-700 font-bold">{h.ratingScore}/10</span>
+                </div>
+              </div>
+            ))}
+            {transits.map(t => (
+              <div key={t.id} className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between text-xs">
+                <div className="flex items-center gap-2.5">
+                  <Train className="w-4 h-4 text-slate-700 shrink-0" />
+                  <div>
+                    <span className="font-bold text-slate-900 block">{t.name}</span>
+                    <span className="text-[11px] text-slate-500">{t.keyHighlight}</span>
+                  </div>
+                </div>
+                <div className="text-right font-mono shrink-0 ml-2">
+                  <span className="font-bold text-red-500 block">{t.distanceKm} km</span>
+                  <span className="text-[10px] text-slate-600">{t.walkTimeMinutes} min walk</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+
+        {/* ========================================================================= */}
         {/* SECTION 2: DIMENSION 1 - INSTITUTIONAL ROI & FINANCIAL ENGINE (100% FULL) */}
         {/* ========================================================================= */}
         <section className="w-full space-y-4 bg-white rounded-3xl border border-red-100 p-6 sm:p-8 lg:p-10 shadow-sm">
-          <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
-            <div className="w-9 h-9 rounded-xl bg-red-500 text-white flex items-center justify-center font-bold text-sm">
-              1
+          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-red-500 text-white flex items-center justify-center font-bold text-sm">
+                1
+              </div>
+              <div>
+                <span className="text-xs font-bold uppercase tracking-wider text-red-500">Dimension 1</span>
+                <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
+                  Interactive Institutional ROI Calculator & Underwriting Engine
+                </h2>
+              </div>
             </div>
-            <div>
-              <span className="text-xs font-bold uppercase tracking-wider text-red-500">Dimension 1</span>
-              <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
-                Institutional Financial Underwriting Engine
-              </h2>
-            </div>
+
+            <button
+              onClick={() => setIsRoiModalOpen(true)}
+              className="flex items-center gap-1.5 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all"
+            >
+              <Calculator className="w-4 h-4" />
+              <span>Open Custom ROI Calculator</span>
+            </button>
           </div>
 
           <p className="text-xs sm:text-sm text-slate-600">
-            Real-time algorithmic underwriting calculating Net Operating Income (NOI), Cap Rate, Cash-on-Cash Return, and Debt Service Coverage Ratio (DSCR).
+            Real-time algorithmic underwriting calculating Net Operating Income (NOI), Cap Rate, Cash-on-Cash Return, and Debt Service Coverage Ratio (DSCR). Enter custom variables below to recalculate on the fly.
           </p>
 
           <RoiCalculatorWidget initialInputs={financials.inputs} />
@@ -468,22 +672,6 @@ export const PropertyDetailClient: React.FC<PropertyDetailClientProps> = ({ prop
               </div>
             </div>
           </div>
-
-          {/* Points of Interest (Schools, Malls, Transit in KM) */}
-          <div className="space-y-2 pt-2">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500">Key Points of Interest Distances</h4>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-              {nearbyPointsOfInterest.slice(0, 6).map((poi) => (
-                <div key={poi.id} className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs flex items-center justify-between">
-                  <div className="truncate mr-2">
-                    <span className="font-bold text-slate-900 block truncate">{poi.name}</span>
-                    <span className="text-[10px] text-slate-500">{poi.categoryLabel}</span>
-                  </div>
-                  <span className="font-mono font-bold text-red-500 shrink-0">{poi.distanceKm} km</span>
-                </div>
-              ))}
-            </div>
-          </div>
         </section>
 
 
@@ -639,6 +827,13 @@ export const PropertyDetailClient: React.FC<PropertyDetailClientProps> = ({ prop
         </section>
 
       </main>
+
+      {/* House Custom ROI Calculator Modal */}
+      <HouseRoiCalculatorModal
+        isOpen={isRoiModalOpen}
+        onClose={() => setIsRoiModalOpen(false)}
+        listing={listing}
+      />
 
       {/* Gemini Vision Modal */}
       <GeminiVisionInspector

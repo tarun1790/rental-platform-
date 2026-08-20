@@ -14,7 +14,11 @@ import {
   Building,
   Sparkles,
   Layers,
-  Sun
+  Sun,
+  GraduationCap,
+  ShoppingBag,
+  Star,
+  Calculator
 } from 'lucide-react';
 import { ShikaakPropertyListing } from '../../types/property';
 import { formatCurrency, formatPercent } from '../../lib/roi-engine';
@@ -24,6 +28,7 @@ interface PropertyCardProps {
   isSelected?: boolean;
   onSelect?: (listing: ShikaakPropertyListing) => void;
   onOpenDetail?: (listing: ShikaakPropertyListing) => void;
+  onOpenRoiCalculator?: (listing: ShikaakPropertyListing) => void;
 }
 
 export const PropertyCard: React.FC<PropertyCardProps> = ({
@@ -31,9 +36,13 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
   isSelected = false,
   onSelect,
   onOpenDetail,
+  onOpenRoiCalculator,
 }) => {
-  const { specs, geotechnical, financials, propertyAddress, media, propertyTaxes, roomsBreakdown, forestResources, timezone, airport, heatWaves, policeCorridor, climateTelemetry } = listing;
+  const { specs, geotechnical, financials, propertyAddress, media, propertyTaxes, roomsBreakdown, forestResources, timezone, airport, heatWaves, policeCorridor, climateTelemetry, nearbyPointsOfInterest } = listing;
   const { inputs, outputs } = financials;
+
+  const topSchool = nearbyPointsOfInterest.find(p => p.type === 'SCHOOL' || p.categoryLabel.toLowerCase().includes('school')) || nearbyPointsOfInterest[0];
+  const topMall = nearbyPointsOfInterest.find(p => p.type === 'MALL' || p.categoryLabel.toLowerCase().includes('mall') || p.categoryLabel.toLowerCase().includes('retail')) || nearbyPointsOfInterest[1];
 
   return (
     <div
@@ -119,7 +128,36 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
           </div>
         </div>
 
-        {/* Telemetry Chips (Airports in km • Heat Waves • Forest Canopy • Taxes) */}
+        {/* NEARBY SCHOOLS & MALLS WITH RATINGS (PROMINENT HIGHLIGHT) */}
+        <div className="space-y-1.5 pt-1 border-t border-slate-100">
+          {topSchool && (
+            <div className="flex items-center justify-between text-[11px] bg-slate-50 p-2 rounded-xl border border-slate-200">
+              <div className="flex items-center gap-1.5 truncate mr-2">
+                <GraduationCap className="w-3.5 h-3.5 text-red-500 shrink-0" />
+                <span className="font-semibold text-slate-800 truncate">{topSchool.name}</span>
+                <span className="text-slate-400 font-mono">({topSchool.distanceKm} km)</span>
+              </div>
+              <span className="px-2 py-0.5 rounded-lg bg-amber-50 text-amber-900 border border-amber-200 font-bold font-mono text-[10px] shrink-0">
+                ★ {topSchool.ratingScore}/10
+              </span>
+            </div>
+          )}
+
+          {topMall && (
+            <div className="flex items-center justify-between text-[11px] bg-slate-50 p-2 rounded-xl border border-slate-200">
+              <div className="flex items-center gap-1.5 truncate mr-2">
+                <ShoppingBag className="w-3.5 h-3.5 text-red-500 shrink-0" />
+                <span className="font-semibold text-slate-800 truncate">{topMall.name}</span>
+                <span className="text-slate-400 font-mono">({topMall.distanceKm} km)</span>
+              </div>
+              <span className="px-2 py-0.5 rounded-lg bg-amber-50 text-amber-900 border border-amber-200 font-bold font-mono text-[10px] shrink-0">
+                ★ {topMall.ratingScore} / 5.0
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* Telemetry Chips (Airports in km • Taxes) */}
         <div className="grid grid-cols-2 gap-2 text-[11px] pt-1">
           <div className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-slate-50 text-slate-700 font-medium border border-slate-200 truncate">
             <Plane className="w-3 h-3 text-slate-400 shrink-0" />
@@ -127,37 +165,22 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
           </div>
 
           <div className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-slate-50 text-slate-700 font-medium border border-slate-200 truncate">
-            <TreePine className="w-3 h-3 text-slate-400 shrink-0" />
-            <span className="truncate">{forestResources?.forestCanopyCoveragePercent || 34}% Canopy</span>
-          </div>
-
-          <div className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-slate-50 text-slate-700 font-medium border border-slate-200 truncate">
-            <Flame className="w-3 h-3 text-slate-400 shrink-0" />
-            <span className="truncate">{heatWaves?.annualHeatWaveDaysCount || 12} Heat Days/yr</span>
-          </div>
-
-          <div className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-slate-50 text-slate-700 font-medium border border-slate-200 truncate">
             <span>Taxes: <strong className="font-mono text-slate-800">{formatCurrency(propertyTaxes.annualAmountUSD)}/yr</strong></span>
           </div>
         </div>
 
-        {/* Subsurface Soil & Public Safety Row */}
-        <div className="flex items-center justify-between text-[11px] pt-1 text-slate-600 border-t border-slate-100">
-          <div className="flex items-center gap-1">
-            <Layers className="w-3 h-3 text-slate-400" />
-            <span>Soil: <strong className="font-mono text-slate-800">{geotechnical.bearingCapacityPSF.toLocaleString()} PSF</strong></span>
-          </div>
-          <div className="flex items-center gap-1">
-            <ShieldCheck className="w-3 h-3 text-slate-400" />
-            <span>Police: <strong className="font-mono text-slate-800">{policeCorridor.dispatchAvgMinutes} min</strong></span>
-          </div>
-        </div>
-
-        {/* Action Row: Net Flow & Inspect CTA */}
-        <div className="pt-2 flex items-center justify-between border-t border-slate-100">
-          <span className="text-xs text-slate-500 font-medium">
-            Net Flow: <strong className="text-red-500 font-mono">+{formatCurrency(outputs.monthlyNetCashFlow)}/mo</strong>
-          </span>
+        {/* Action Row: Custom ROI Calculator & Inspect CTA */}
+        <div className="pt-2 flex items-center justify-between border-t border-slate-100 gap-2">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onOpenRoiCalculator?.(listing);
+            }}
+            className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-red-50 text-slate-700 hover:text-red-600 text-xs font-bold transition-all border border-slate-200"
+          >
+            <Calculator className="w-3.5 h-3.5 text-red-500" />
+            <span>ROI Calculator</span>
+          </button>
 
           <button
             onClick={(e) => {

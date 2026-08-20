@@ -6,6 +6,7 @@ import { HeroSection } from '../components/home/HeroSection';
 import { Header } from '../components/layout/Header';
 import { PropertyCard } from '../components/property/PropertyCard';
 import { PropertyDetailModal } from '../components/property/PropertyDetailModal';
+import { HouseRoiCalculatorModal } from '../components/property/HouseRoiCalculatorModal';
 import { ScribbleMap } from '../components/map/ScribbleMap';
 import { VoiceAssistantModal } from '../components/intelligence/VoiceAssistantModal';
 import { CHICAGO_LISTINGS } from '../data/chicago-listings';
@@ -34,7 +35,11 @@ import {
   Bed,
   Bath,
   Square,
-  ArrowDown
+  ArrowDown,
+  Calculator,
+  GraduationCap,
+  ShoppingBag,
+  Star
 } from 'lucide-react';
 
 export default function Home() {
@@ -44,6 +49,9 @@ export default function Home() {
   const [allListings] = useState<ShikaakPropertyListing[]>(CHICAGO_LISTINGS);
   const [selectedListing, setSelectedListing] = useState<ShikaakPropertyListing | null>(CHICAGO_LISTINGS[0]);
   const [modalListing, setModalListing] = useState<ShikaakPropertyListing | null>(null);
+
+  // Custom ROI Calculator Modal State for any house
+  const [roiModalListing, setRoiModalListing] = useState<ShikaakPropertyListing | null>(null);
 
   // Intelligence & Voice Assistant
   const [isVoiceAssistantOpen, setIsVoiceAssistantOpen] = useState(false);
@@ -210,7 +218,7 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-slate-50/50 text-slate-900">
+    <div className="flex flex-col min-h-screen w-full bg-slate-50/50 text-slate-900">
       
       {/* 1. Dark Aesthetic Hero Section */}
       <HeroSection
@@ -222,7 +230,7 @@ export default function Home() {
       <div 
         ref={dashboardRef} 
         id="dashboard-section" 
-        className="flex flex-col min-h-screen bg-white"
+        className="flex flex-col min-h-screen w-full bg-white"
       >
         
         {/* Top Header & Filter Controls */}
@@ -281,8 +289,8 @@ export default function Home() {
           
           {/* 1. SELECTED HOUSE SPOTLIGHT (APPEARS DIRECTLY BELOW THE MAP WHEN A PIN IS CLICKED) */}
           {selectedListing && (
-            <div className="w-full p-5 sm:p-6 rounded-3xl bg-slate-50 border border-red-200 shadow-sm flex flex-col md:flex-row items-center gap-6">
-              <div className="w-full md:w-72 h-44 rounded-2xl overflow-hidden shrink-0 border border-slate-200">
+            <div className="w-full p-5 sm:p-6 rounded-3xl bg-slate-50 border border-red-200 shadow-sm flex flex-col lg:flex-row items-center gap-6">
+              <div className="w-full lg:w-80 h-48 rounded-2xl overflow-hidden shrink-0 border border-slate-200">
                 <img
                   src={selectedListing.media.featuredImage}
                   alt={selectedListing.title}
@@ -324,27 +332,39 @@ export default function Home() {
                   </span>
                 </div>
 
-                {/* Telemetry Chips for Selected House */}
-                <div className="flex flex-wrap items-center gap-2 pt-1 text-xs">
-                  <span className="px-2.5 py-1 rounded-xl bg-white border border-slate-200 text-slate-700 font-medium">
-                    ✈️ {selectedListing.airport?.primaryAirportIATA || 'ORD'} ({selectedListing.airport?.distanceToAirportKm || 24} km)
-                  </span>
-                  <span className="px-2.5 py-1 rounded-xl bg-white border border-slate-200 text-slate-700 font-medium">
-                    🌲 {selectedListing.forestResources?.forestCanopyCoveragePercent || 34}% Canopy
-                  </span>
-                  <span className="px-2.5 py-1 rounded-xl bg-white border border-slate-200 text-slate-700 font-medium">
-                    💰 Taxes: {formatCurrency(selectedListing.propertyTaxes.annualAmountUSD)}/yr
-                  </span>
-                  <span className="px-2.5 py-1 rounded-xl bg-white border border-slate-200 text-slate-700 font-medium">
-                    🧱 Soil: {selectedListing.geotechnical.bearingCapacityPSF.toLocaleString()} PSF
-                  </span>
+                {/* SCHOOLS & MALLS HIGHLIGHT CHIPS IN SPOTLIGHT */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                  {selectedListing.nearbyPointsOfInterest.slice(0, 2).map((poi) => (
+                    <div key={poi.id} className="flex items-center justify-between p-2 rounded-xl bg-white border border-slate-200 text-xs">
+                      <div className="flex items-center gap-1.5 truncate mr-2">
+                        {poi.type === 'SCHOOL' ? (
+                          <GraduationCap className="w-3.5 h-3.5 text-red-500 shrink-0" />
+                        ) : (
+                          <ShoppingBag className="w-3.5 h-3.5 text-red-500 shrink-0" />
+                        )}
+                        <span className="font-bold text-slate-800 truncate">{poi.name}</span>
+                        <span className="text-slate-400 font-mono">({poi.distanceKm} km)</span>
+                      </div>
+                      <span className="px-2 py-0.5 rounded-lg bg-amber-50 text-amber-900 border border-amber-200 font-bold font-mono text-[10px] shrink-0">
+                        ★ {poi.ratingScore} {poi.type === 'SCHOOL' ? '/10' : '/5.0'}
+                      </span>
+                    </div>
+                  ))}
                 </div>
               </div>
 
-              <div className="shrink-0 flex flex-col gap-2 w-full md:w-auto">
+              <div className="shrink-0 flex flex-col sm:flex-row lg:flex-col gap-2.5 w-full lg:w-auto">
+                <button
+                  onClick={() => setRoiModalListing(selectedListing)}
+                  className="px-5 py-2.5 bg-white border border-red-200 hover:bg-red-50 text-red-500 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-1.5"
+                >
+                  <Calculator className="w-4 h-4 text-red-500" />
+                  <span>ROI Calculator</span>
+                </button>
+
                 <button
                   onClick={() => handleOpenProperty(selectedListing)}
-                  className="px-5 py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all text-center"
+                  className="px-5 py-2.5 bg-red-500 hover:bg-red-600 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all text-center"
                 >
                   Open Full Intelligence →
                 </button>
@@ -369,7 +389,7 @@ export default function Home() {
                 {filteredListings.length} Luxury Residences Available
               </h2>
               <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
-                Every residence features complete soil mechanics, airport proximity (km), NOAA heat waves, tree canopy %, and institutional Pass/Flow ROI underwriting.
+                Every residence features complete nearby school ratings (GreatSchools), shopping malls (★ ratings), soil mechanics, airport proximity (km), and interactive custom ROI underwriting.
               </p>
             </div>
 
@@ -400,6 +420,7 @@ export default function Home() {
                   isSelected={selectedListing?.id === listing.id}
                   onSelect={(item) => setSelectedListing(item)}
                   onOpenDetail={(item) => handleOpenProperty(item)}
+                  onOpenRoiCalculator={(item) => setRoiModalListing(item)}
                 />
               ))}
             </div>
@@ -422,6 +443,15 @@ export default function Home() {
           )}
         </section>
       </div>
+
+      {/* Interactive Custom ROI Calculator Modal for Any House */}
+      {roiModalListing && (
+        <HouseRoiCalculatorModal
+          isOpen={!!roiModalListing}
+          onClose={() => setRoiModalListing(null)}
+          listing={roiModalListing}
+        />
+      )}
 
       {/* Voice Assistant Modal */}
       <VoiceAssistantModal
