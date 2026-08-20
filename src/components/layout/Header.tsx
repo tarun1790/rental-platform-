@@ -84,10 +84,10 @@ export const Header: React.FC<HeaderProps> = ({
             onClick={onScrollToTop}
             className="flex items-center gap-2.5 cursor-pointer shrink-0 group"
           >
-            <div className="w-10 h-10 rounded-2xl bg-white border-2 border-red-500 group-hover:border-red-600 flex items-center justify-center shadow-md shadow-red-500/10 transition-all p-1 group-hover:scale-105">
+            <div className="w-10 h-10 rounded-2xl bg-white border border-slate-200 group-hover:border-red-400 flex items-center justify-center transition-all p-1">
               <TiledHomeIcon size={30} />
             </div>
-            <span className="text-base sm:text-lg font-black tracking-wider text-red-600 font-sans hidden sm:inline">
+            <span className="text-base sm:text-lg font-bold tracking-wide text-red-500 font-sans hidden sm:inline">
               HOUSE INTELLIGENCE
             </span>
           </div>
@@ -314,12 +314,12 @@ export const Header: React.FC<HeaderProps> = ({
           {/* 8. DRAW / SCRIBBLE BOUNDARY BUTTON (RED & WHITE) */}
           <button
             onClick={onToggleScribble}
-            className={`flex items-center gap-1.5 px-3.5 py-2 text-xs font-black uppercase tracking-wider rounded-xl transition-all ${
+            className={`flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold uppercase tracking-wider rounded-xl transition-all ${
               isScribbleActive
-                ? 'bg-red-700 text-white shadow-lg ring-2 ring-red-400 animate-pulse'
+                ? 'bg-red-600 text-white'
                 : hasScribbleBoundary
-                ? 'bg-red-100 text-red-700 border border-red-300'
-                : 'bg-red-600 text-white hover:bg-red-700 shadow-md shadow-red-500/20'
+                ? 'bg-red-50 text-red-600 border border-red-200'
+                : 'bg-red-500 text-white hover:bg-red-600'
             }`}
             title="Draw freehand boundary on map to scan houses"
           >

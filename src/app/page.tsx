@@ -210,9 +210,9 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-white text-slate-900 selection:bg-red-500 selection:text-white">
+    <div className="flex flex-col min-h-screen bg-slate-50/50 text-slate-900">
       
-      {/* 1. Dark Aesthetic Hero Section (Full Screen 100vh Black Luxury House with ONLY HOME Text) */}
+      {/* 1. Dark Aesthetic Hero Section */}
       <HeroSection
         onExploreClick={handleScrollToDashboard}
         totalListingsCount={allListings.length}
@@ -225,7 +225,7 @@ export default function Home() {
         className="flex flex-col min-h-screen bg-white"
       >
         
-        {/* Top Header & Filter Controls (Strictly White & Red) */}
+        {/* Top Header & Filter Controls */}
         <Header
           filters={filters}
           onFilterChange={setFilters}
@@ -248,7 +248,7 @@ export default function Home() {
         {/* ============================================================ */}
         {/* SECTION UP: FULL-WIDTH INTERACTIVE SATELLITE MAP ON TOP     */}
         {/* ============================================================ */}
-        <section className="w-full h-[48vh] sm:h-[55vh] lg:h-[58vh] relative bg-slate-100 border-b border-red-100 shadow-sm z-10">
+        <section className="w-full h-[48vh] sm:h-[55vh] lg:h-[58vh] relative bg-slate-100 border-b border-slate-200 z-10">
           <ScribbleMap
             listings={filteredListings}
             selectedListing={selectedListing}
@@ -263,10 +263,10 @@ export default function Home() {
           {/* Quick Glide Down Button */}
           <button
             onClick={handleScrollToHouses}
-            className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 px-4 py-2 bg-white/95 text-red-600 border-2 border-red-500 rounded-full shadow-xl backdrop-blur-md text-xs font-black uppercase tracking-wider hover:bg-red-600 hover:text-white transition-all group"
+            className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 px-4 py-2 bg-white/95 text-red-500 border border-slate-300 rounded-full shadow-sm text-xs font-bold uppercase tracking-wider hover:bg-red-500 hover:text-white transition-all"
           >
             <span>View {filteredListings.length} Houses Below</span>
-            <ArrowDown className="w-3.5 h-3.5 group-hover:translate-y-0.5 transition-transform" />
+            <ArrowDown className="w-3.5 h-3.5" />
           </button>
         </section>
 
@@ -276,13 +276,13 @@ export default function Home() {
         <section 
           ref={housesSectionRef}
           id="houses-section"
-          className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8"
+          className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-8"
         >
           
           {/* 1. SELECTED HOUSE SPOTLIGHT (APPEARS DIRECTLY BELOW THE MAP WHEN A PIN IS CLICKED) */}
           {selectedListing && (
-            <div className="p-5 sm:p-7 rounded-3xl bg-red-50/60 border-2 border-red-400 shadow-lg shadow-red-500/10 flex flex-col md:flex-row items-center gap-6 animate-in fade-in slide-in-from-top-4">
-              <div className="w-full md:w-72 h-48 rounded-2xl overflow-hidden shrink-0 border-2 border-red-200 shadow-md">
+            <div className="p-5 sm:p-6 rounded-3xl bg-slate-50 border border-red-200 shadow-sm flex flex-col md:flex-row items-center gap-6">
+              <div className="w-full md:w-72 h-44 rounded-2xl overflow-hidden shrink-0 border border-slate-200">
                 <img
                   src={selectedListing.media.featuredImage}
                   alt={selectedListing.title}
@@ -290,52 +290,52 @@ export default function Home() {
                 />
               </div>
 
-              <div className="flex-1 min-w-0 space-y-3">
+              <div className="flex-1 min-w-0 space-y-2.5">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="px-3 py-1 bg-red-600 text-white rounded-full text-xs font-black font-mono">
+                  <span className="px-3 py-0.5 bg-red-500 text-white rounded-full text-xs font-bold font-mono">
                     Pass/Flow {selectedListing.financials.outputs.passFlowScore.toFixed(1)} / 5.0
                   </span>
-                  <span className="px-3 py-1 bg-white text-slate-900 rounded-full text-xs font-bold border border-red-200">
+                  <span className="px-3 py-0.5 bg-white text-slate-700 rounded-full text-xs font-medium border border-slate-200">
                     {selectedListing.propertyAddress.city}, {selectedListing.propertyAddress.state} ({selectedListing.timezone?.timeZoneCode || 'CST'})
                   </span>
-                  <span className="text-xs font-mono font-bold text-red-700">
+                  <span className="text-xs font-medium text-slate-500">
                     Selected on Map
                   </span>
                 </div>
 
                 <div>
-                  <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                  <h3 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
                     {selectedListing.title}
                   </h3>
-                  <p className="text-xs text-slate-600 font-medium">
+                  <p className="text-xs text-slate-500 font-normal">
                     {selectedListing.propertyAddress.street}, {selectedListing.propertyAddress.neighborhood}
                   </p>
                 </div>
 
-                <div className="flex flex-wrap items-baseline gap-4">
-                  <span className="text-2xl font-black text-red-600 font-mono">
+                <div className="flex flex-wrap items-baseline gap-3">
+                  <span className="text-2xl font-bold text-red-500 font-mono">
                     {formatCurrency(selectedListing.financials.inputs.purchasePrice)}
                   </span>
-                  <span className="text-sm font-bold text-slate-500 font-mono">
+                  <span className="text-xs font-medium text-slate-400 font-mono">
                     {formatCurrency(selectedListing.financials.inputs.monthlyGrossRent)}/mo rent
                   </span>
-                  <span className="text-xs font-bold text-slate-700">
-                    {selectedListing.specs.beds} Beds • {selectedListing.specs.baths} Baths • {selectedListing.specs.finishedSqFt.toLocaleString()} sq ft
+                  <span className="text-xs font-medium text-slate-600">
+                    • {selectedListing.specs.beds} Beds • {selectedListing.specs.baths} Baths • {selectedListing.specs.finishedSqFt.toLocaleString()} sq ft
                   </span>
                 </div>
 
                 {/* Telemetry Chips for Selected House */}
                 <div className="flex flex-wrap items-center gap-2 pt-1 text-xs">
-                  <span className="px-3 py-1 rounded-xl bg-white border border-red-200 text-red-700 font-bold">
+                  <span className="px-2.5 py-1 rounded-xl bg-white border border-slate-200 text-slate-700 font-medium">
                     ✈️ {selectedListing.airport?.primaryAirportIATA || 'ORD'} ({selectedListing.airport?.distanceToAirportKm || 24} km)
                   </span>
-                  <span className="px-3 py-1 rounded-xl bg-white border border-slate-200 text-slate-700 font-bold">
+                  <span className="px-2.5 py-1 rounded-xl bg-white border border-slate-200 text-slate-700 font-medium">
                     🌲 {selectedListing.forestResources?.forestCanopyCoveragePercent || 34}% Canopy
                   </span>
-                  <span className="px-3 py-1 rounded-xl bg-white border border-slate-200 text-slate-700 font-bold">
+                  <span className="px-2.5 py-1 rounded-xl bg-white border border-slate-200 text-slate-700 font-medium">
                     💰 Taxes: {formatCurrency(selectedListing.propertyTaxes.annualAmountUSD)}/yr
                   </span>
-                  <span className="px-3 py-1 rounded-xl bg-white border border-slate-200 text-slate-700 font-bold">
+                  <span className="px-2.5 py-1 rounded-xl bg-white border border-slate-200 text-slate-700 font-medium">
                     🧱 Soil: {selectedListing.geotechnical.bearingCapacityPSF.toLocaleString()} PSF
                   </span>
                 </div>
@@ -344,7 +344,7 @@ export default function Home() {
               <div className="shrink-0 flex flex-col gap-2 w-full md:w-auto">
                 <button
                   onClick={() => handleOpenProperty(selectedListing)}
-                  className="px-6 py-3.5 bg-red-600 hover:bg-red-700 text-white rounded-2xl text-xs font-black uppercase tracking-wider shadow-md shadow-red-500/25 transition-all text-center"
+                  className="px-5 py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all text-center"
                 >
                   Open Full Intelligence →
                 </button>
@@ -353,34 +353,33 @@ export default function Home() {
           )}
 
           {/* 2. Feed Title & Quick Controls Bar */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-5 pt-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4 pt-2">
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <span className="w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse"></span>
-                <span className="text-xs font-black uppercase tracking-wider text-red-600">
+                <span className="text-xs font-bold uppercase tracking-wider text-red-500">
                   Verified Real Estate Telemetry
                 </span>
                 {scribblePolygon && (
-                  <span className="px-2.5 py-0.5 text-[10px] font-bold bg-red-100 text-red-800 border border-red-300 rounded-full">
+                  <span className="px-2.5 py-0.5 text-[10px] font-medium bg-red-50 text-red-700 border border-red-200 rounded-full">
                     Boundary Scan Active
                   </span>
                 )}
               </div>
-              <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900">
+              <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">
                 {filteredListings.length} Luxury Residences Available
               </h2>
-              <p className="text-xs sm:text-sm text-slate-500 mt-1">
+              <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
                 Every residence features complete soil mechanics, airport proximity (km), NOAA heat waves, tree canopy %, and institutional Pass/Flow ROI underwriting.
               </p>
             </div>
 
             {/* Sort Dropdown */}
             <div className="flex items-center gap-3 shrink-0">
-              <span className="text-xs font-bold text-slate-500 hidden sm:inline">Sort By:</span>
+              <span className="text-xs font-medium text-slate-500 hidden sm:inline">Sort By:</span>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as any)}
-                className="text-xs font-bold bg-white border border-red-200 rounded-2xl px-3.5 py-2.5 text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-500 shadow-sm cursor-pointer hover:border-red-400 transition-all"
+                className="text-xs font-medium bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-800 focus:outline-none focus:border-red-400 shadow-sm cursor-pointer transition-all"
               >
                 <option value="SCORE_DESC">Pass/Flow Score (High to Low)</option>
                 <option value="PRICE_ASC">Price: Low to High</option>
@@ -391,9 +390,9 @@ export default function Home() {
             </div>
           </div>
 
-          {/* 3. 3-COLUMN SPACIOUS HOUSE DETAILS GRID (PURE WHITE & RED) */}
+          {/* 3. 3-COLUMN SPACIOUS HOUSE DETAILS GRID */}
           {filteredListings.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredListings.map((listing) => (
                 <PropertyCard
                   key={listing.id}
@@ -405,17 +404,17 @@ export default function Home() {
               ))}
             </div>
           ) : (
-            <div className="py-20 text-center bg-slate-50/60 rounded-3xl border-2 border-red-200 space-y-4 max-w-2xl mx-auto">
-              <Compass className="w-12 h-12 text-red-400 mx-auto" />
-              <h3 className="text-xl font-bold text-slate-800">
+            <div className="py-16 text-center bg-slate-50 rounded-3xl border border-slate-200 space-y-4 max-w-2xl mx-auto">
+              <Compass className="w-10 h-10 text-slate-400 mx-auto" />
+              <h3 className="text-lg font-bold text-slate-800">
                 No properties match your current boundary or filter criteria
               </h3>
-              <p className="text-xs sm:text-sm text-slate-500 max-w-md mx-auto">
+              <p className="text-xs text-slate-500 max-w-md mx-auto">
                 Try clearing the drawn polygon boundary on the map above or resetting your price and bedroom filters.
               </p>
               <button
                 onClick={handleClearScribble}
-                className="px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-2xl shadow-lg shadow-red-500/20 transition-all"
+                className="px-5 py-2.5 bg-red-500 hover:bg-red-600 text-white text-xs font-bold rounded-xl transition-all"
               >
                 Clear Boundary & Show All Homes
               </button>
