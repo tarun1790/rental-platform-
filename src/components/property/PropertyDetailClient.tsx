@@ -158,7 +158,7 @@ export const PropertyDetailClient: React.FC<PropertyDetailClientProps> = ({ prop
           {/* Featured Large Image View */}
           <div className="relative aspect-[16/9] w-full rounded-2xl overflow-hidden bg-slate-100 border border-slate-200 shadow-md">
             <img
-              src={media.galleryImages[selectedImageIndex] || media.featuredImage}
+              src={media.gallery?.[selectedImageIndex] || media.featuredImage}
               alt={listing.title}
               className="w-full h-full object-cover"
             />
@@ -174,7 +174,7 @@ export const PropertyDetailClient: React.FC<PropertyDetailClientProps> = ({ prop
 
           {/* Thumbnail Gallery */}
           <div className="grid grid-cols-4 sm:grid-cols-6 gap-3">
-            {media.galleryImages.map((img, idx) => (
+            {(media.gallery || [media.featuredImage]).map((img, idx) => (
               <button
                 key={idx}
                 onClick={() => setSelectedImageIndex(idx)}
