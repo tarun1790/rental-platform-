@@ -136,17 +136,17 @@ export const HouseRoiCalculatorModal: React.FC<HouseRoiCalculatorModalProps> = (
               </div>
               <div className="bg-white/80 p-2.5 rounded-xl border border-slate-200">
                 <span className="text-[10px] font-bold text-slate-500 uppercase block">Cash on Cash</span>
-                <span className={`text-base font-bold font-mono ${outputs.cashOnCashPercent >= 0 ? 'text-emerald-700' : 'text-rose-600'}`}>
-                  {formatPercent(outputs.cashOnCashPercent)}
+                <span className={`text-base font-bold font-mono ${outputs.cashOnCashReturnPercent >= 0 ? 'text-emerald-700' : 'text-rose-600'}`}>
+                  {formatPercent(outputs.cashOnCashReturnPercent)}
                 </span>
               </div>
               <div className="bg-white/80 p-2.5 rounded-xl border border-slate-200">
                 <span className="text-[10px] font-bold text-slate-500 uppercase block">DSCR Ratio</span>
-                <span className="text-base font-bold font-mono text-slate-900">{outputs.dscrRatio.toFixed(2)}x</span>
+                <span className="text-base font-bold font-mono text-slate-900">{outputs.debtServiceCoverageRatio.toFixed(2)}x</span>
               </div>
               <div className="bg-white/80 p-2.5 rounded-xl border border-slate-200">
                 <span className="text-[10px] font-bold text-slate-500 uppercase block">Annual NOI</span>
-                <span className="text-base font-bold font-mono text-slate-900">{formatCurrency(outputs.annualNetOperatingIncome)}</span>
+                <span className="text-base font-bold font-mono text-slate-900">{formatCurrency(outputs.netOperatingIncomeAnnual)}</span>
               </div>
             </div>
           </div>
@@ -242,7 +242,7 @@ export const HouseRoiCalculatorModal: React.FC<HouseRoiCalculatorModalProps> = (
               </div>
             </div>
 
-            {/* Column 2: Operating Expenses & Reserves Inputs */}
+            {/* Column 2: Operating Expenses & Taxes Inputs */}
             <div className="space-y-4 p-5 rounded-2xl bg-slate-50 border border-slate-200">
               <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
                 <Percent className="w-4 h-4 text-red-500" />
@@ -333,11 +333,11 @@ export const HouseRoiCalculatorModal: React.FC<HouseRoiCalculatorModalProps> = (
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 font-mono">
               <div>
                 <span className="text-[10px] text-slate-500 block">Gross Rent</span>
-                <span className="text-emerald-700 font-bold">+{formatCurrency(outputs.monthlyGrossRent)}</span>
+                <span className="text-emerald-700 font-bold">+{formatCurrency(outputs.grossAnnualRevenue / 12)}</span>
               </div>
               <div>
                 <span className="text-[10px] text-slate-500 block">Mortgage (P&I)</span>
-                <span className="text-slate-800 font-bold">-{formatCurrency(outputs.monthlyMortgagePrincipalAndInterest)}</span>
+                <span className="text-slate-800 font-bold">-{formatCurrency(outputs.monthlyDebtService)}</span>
               </div>
               <div>
                 <span className="text-[10px] text-slate-500 block">Operating Costs</span>
@@ -357,7 +357,7 @@ export const HouseRoiCalculatorModal: React.FC<HouseRoiCalculatorModalProps> = (
         {/* Modal Footer */}
         <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between shrink-0">
           <span className="text-xs text-slate-500 font-medium">
-            Computed under institutional real estate underwriting guidelines.
+            Computed in real-time under institutional real estate underwriting standards.
           </span>
           <button
             onClick={onClose}
