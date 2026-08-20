@@ -43,7 +43,14 @@ import {
   Check,
   Calculator,
   Star,
-  Hospital
+  Hospital,
+  PartyPopper,
+  Music,
+  Lightbulb,
+  Zap,
+  Car,
+  Users,
+  Navigation
 } from 'lucide-react';
 import { formatCurrency, formatPercent } from '../../lib/roi-engine';
 import { BlueprintFurnitureStaging } from './BlueprintFurnitureStaging';
@@ -52,6 +59,7 @@ import { HouseRoiCalculatorModal } from './HouseRoiCalculatorModal';
 import { GeminiVisionInspector } from '../intelligence/GeminiVisionInspector';
 import { VertexPredictivePanel } from '../intelligence/VertexPredictivePanel';
 import { getNeighborhoodSpectralMetrics, EARTH_ENGINE_LAYERS } from '../../lib/earth-engine';
+import { getRankedSchoolsForProperty, getRankedMallsForProperty, getEventsAndLifestyleForProperty } from '../../lib/neighborhood-intelligence';
 
 interface PropertyDetailClientProps {
   propertyId: string;
@@ -74,11 +82,10 @@ export const PropertyDetailClient: React.FC<PropertyDetailClientProps> = ({ prop
 
   const spectralMetrics = getNeighborhoodSpectralMetrics(propertyAddress.neighborhood);
 
-  // Group POIs into Schools, Malls, Hospitals, Transit
-  const schools = nearbyPointsOfInterest.filter(p => p.type === 'SCHOOL' || p.categoryLabel.toLowerCase().includes('school'));
-  const malls = nearbyPointsOfInterest.filter(p => p.type === 'MALL' || p.categoryLabel.toLowerCase().includes('retail') || p.categoryLabel.toLowerCase().includes('mall'));
-  const hospitals = nearbyPointsOfInterest.filter(p => p.type === 'HOSPITAL' || p.categoryLabel.toLowerCase().includes('hospital') || p.categoryLabel.toLowerCase().includes('care'));
-  const transits = nearbyPointsOfInterest.filter(p => p.type === 'TRANSIT' || p.categoryLabel.toLowerCase().includes('transit') || p.categoryLabel.toLowerCase().includes('train'));
+  // 5 Ranked Schools (#1 to #5 by Distance) & 5 Ranked Malls (#1 to #5 by Distance)
+  const rankedSchools = getRankedSchoolsForProperty(propertyAddress.neighborhood);
+  const rankedMalls = getRankedMallsForProperty(propertyAddress.neighborhood);
+  const lifestyleData = getEventsAndLifestyleForProperty(propertyAddress.neighborhood);
 
   const handleApply = (e: React.FormEvent) => {
     e.preventDefault();
@@ -224,7 +231,7 @@ export const PropertyDetailClient: React.FC<PropertyDetailClientProps> = ({ prop
 
 
         {/* ========================================================================= */}
-        {/* DEDICATED PROMINENT SECTION: NEARBY SCHOOLS & SHOPPING MALLS WITH RATINGS */}
+        {/* SECTION: 5 SCHOOLS (RANKED #1 TO #5 BY DISTANCE)                          */}
         {/* ========================================================================= */}
         <section className="w-full space-y-6 bg-white rounded-3xl border border-red-100 p-6 sm:p-8 lg:p-10 shadow-sm">
           <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-4">
@@ -234,170 +241,52 @@ export const PropertyDetailClient: React.FC<PropertyDetailClientProps> = ({ prop
               </div>
               <div>
                 <span className="text-xs font-bold uppercase tracking-wider text-red-500">
-                  Location & Amenities Intelligence
+                  Education & Academic District
                 </span>
                 <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
-                  Nearby Schools, Shopping Malls & Infrastructure Ratings
+                  5 Nearby Schools (Ranked #1 to #5 by Proximity to Home)
                 </h2>
               </div>
             </div>
-            <span className="text-xs font-semibold px-3 py-1 bg-red-50 text-red-700 border border-red-200 rounded-full">
-              GPS Verified Distances in Kilometers & Miles
+            <span className="text-xs font-bold px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full">
+              Verified GreatSchools Academic Ratings
             </span>
           </div>
 
-          {/* Dual Grid: Top Schools (Left) & Premier Malls (Right) */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            
-            {/* 1. NEARBY SCHOOLS & RATINGS */}
-            <div className="space-y-4 p-5 rounded-2xl bg-slate-50/80 border border-slate-200">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <GraduationCap className="w-5 h-5 text-red-500" />
-                  <h3 className="text-base font-bold text-slate-900">Nearby Schools & Academic Ratings</h3>
-                </div>
-                <span className="text-xs font-bold text-emerald-700 bg-emerald-100 px-2.5 py-0.5 rounded-full">
-                  Top Tier District
-                </span>
-              </div>
-
-              <div className="space-y-3">
-                {schools.length > 0 ? (
-                  schools.map((school) => (
-                    <div key={school.id} className="p-4 bg-white rounded-xl border border-slate-200 shadow-sm space-y-2">
-                      <div className="flex items-start justify-between gap-3">
-                        <div>
-                          <h4 className="text-sm font-bold text-slate-900">{school.name}</h4>
-                          <span className="text-xs text-slate-500 font-medium">{school.categoryLabel}</span>
-                        </div>
-                        {/* Rating Badge */}
-                        <div className="px-2.5 py-1 rounded-xl bg-amber-50 border border-amber-300 text-amber-900 font-bold text-xs flex items-center gap-1 shrink-0">
-                          <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-500" />
-                          <span>Rating {school.ratingScore} / 10</span>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-wrap items-center gap-3 text-xs text-slate-600 font-mono pt-1">
-                        <span>Distance: <strong className="text-red-500 font-bold">{school.distanceKm} km</strong> ({school.distanceMiles} mi)</span>
-                        <span>•</span>
-                        <span>Walk: <strong>{school.walkTimeMinutes} min</strong></span>
-                        <span>•</span>
-                        <span>Drive: <strong>{school.driveTimeMinutes} min</strong></span>
-                      </div>
-
-                      <p className="text-xs text-slate-600 bg-slate-50 p-2 rounded-lg border border-slate-100 font-medium">
-                        ✨ <strong>Academic Highlight:</strong> {school.keyHighlight}
-                      </p>
-                    </div>
-                  ))
-                ) : (
-                  <div className="p-4 bg-white rounded-xl border border-slate-200 space-y-2">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <h4 className="text-sm font-bold text-slate-900">Lincoln Park High School District</h4>
-                        <span className="text-xs text-slate-500">Top Public & Magnet Academy</span>
-                      </div>
-                      <div className="px-2.5 py-1 rounded-xl bg-amber-50 border border-amber-300 text-amber-900 font-bold text-xs flex items-center gap-1">
-                        <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-500" />
-                        <span>Rating 9.8 / 10</span>
-                      </div>
-                    </div>
-                    <p className="text-xs text-slate-600 font-mono">Distance: 0.8 km (0.5 mi) • 8 min walk</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+            {rankedSchools.map((school, idx) => (
+              <div key={school.id} className="p-4 bg-slate-50/80 rounded-2xl border border-slate-200 flex flex-col justify-between space-y-3">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="px-2 py-0.5 bg-red-500 text-white text-[10px] font-bold uppercase rounded-md">
+                      #{idx + 1} {idx === 0 ? 'Closest' : ''}
+                    </span>
+                    <span className="px-2 py-0.5 bg-amber-50 text-amber-900 border border-amber-300 rounded-lg text-xs font-bold flex items-center gap-1">
+                      <Star className="w-3 h-3 fill-amber-400 text-amber-500" />
+                      <span>{school.ratingScore} / 10</span>
+                    </span>
                   </div>
-                )}
-              </div>
-            </div>
 
-            {/* 2. PREMIER SHOPPING MALLS & RETAIL CENTERS */}
-            <div className="space-y-4 p-5 rounded-2xl bg-slate-50/80 border border-slate-200">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <ShoppingBag className="w-5 h-5 text-red-500" />
-                  <h3 className="text-base font-bold text-slate-900">Nearby Shopping Malls & Retail Centers</h3>
+                  <h3 className="text-sm font-bold text-slate-900 leading-snug">
+                    {school.name}
+                  </h3>
+                  <p className="text-[11px] text-slate-500 font-medium">
+                    {school.categoryLabel}
+                  </p>
                 </div>
-                <span className="text-xs font-bold text-red-600 bg-red-50 px-2.5 py-0.5 rounded-full border border-red-200">
-                  Luxury Lifestyle
-                </span>
-              </div>
 
-              <div className="space-y-3">
-                {malls.length > 0 ? (
-                  malls.map((mall) => (
-                    <div key={mall.id} className="p-4 bg-white rounded-xl border border-slate-200 shadow-sm space-y-2">
-                      <div className="flex items-start justify-between gap-3">
-                        <div>
-                          <h4 className="text-sm font-bold text-slate-900">{mall.name}</h4>
-                          <span className="text-xs text-slate-500 font-medium">{mall.categoryLabel}</span>
-                        </div>
-                        {/* Rating Badge */}
-                        <div className="px-2.5 py-1 rounded-xl bg-amber-50 border border-amber-300 text-amber-900 font-bold text-xs flex items-center gap-1 shrink-0">
-                          <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-500" />
-                          <span>Rating {mall.ratingScore} / 5.0 ★</span>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-wrap items-center gap-3 text-xs text-slate-600 font-mono pt-1">
-                        <span>Distance: <strong className="text-red-500 font-bold">{mall.distanceKm} km</strong> ({mall.distanceMiles} mi)</span>
-                        <span>•</span>
-                        <span>Walk: <strong>{mall.walkTimeMinutes} min</strong></span>
-                        <span>•</span>
-                        <span>Drive: <strong>{mall.driveTimeMinutes} min</strong></span>
-                      </div>
-
-                      <p className="text-xs text-slate-600 bg-slate-50 p-2 rounded-lg border border-slate-100 font-medium">
-                        🛍️ <strong>Anchor Stores & Retailers:</strong> {mall.keyHighlight}
-                      </p>
-                    </div>
-                  ))
-                ) : (
-                  <div className="p-4 bg-white rounded-xl border border-slate-200 space-y-2">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <h4 className="text-sm font-bold text-slate-900">Magnificent Mile Luxury Mall & Boutiques</h4>
-                        <span className="text-xs text-slate-500">World-Class Retail Corridor</span>
-                      </div>
-                      <div className="px-2.5 py-1 rounded-xl bg-amber-50 border border-amber-300 text-amber-900 font-bold text-xs flex items-center gap-1">
-                        <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-500" />
-                        <span>Rating 4.9 / 5.0 ★</span>
-                      </div>
-                    </div>
-                    <p className="text-xs text-slate-600 font-mono">Distance: 1.2 km (0.7 mi) • 4 min drive</p>
+                <div className="space-y-2 pt-2 border-t border-slate-200">
+                  <div className="flex items-center justify-between text-xs font-mono text-slate-700">
+                    <span>Distance: <strong className="text-red-500">{school.distanceKm} km</strong></span>
+                    <span>({school.distanceMiles} mi)</span>
                   </div>
-                )}
-              </div>
-            </div>
-
-          </div>
-
-          {/* Hospitals & Rapid Transit Commute */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-            {hospitals.map(h => (
-              <div key={h.id} className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between text-xs">
-                <div className="flex items-center gap-2.5">
-                  <Hospital className="w-4 h-4 text-red-500 shrink-0" />
-                  <div>
-                    <span className="font-bold text-slate-900 block">{h.name}</span>
-                    <span className="text-[11px] text-slate-500">{h.keyHighlight}</span>
+                  <div className="flex items-center justify-between text-[11px] text-slate-500 font-mono">
+                    <span>🚶 {school.walkTimeMinutes} min walk</span>
+                    <span>🚗 {school.driveTimeMinutes} min drive</span>
                   </div>
-                </div>
-                <div className="text-right font-mono shrink-0 ml-2">
-                  <span className="font-bold text-red-500 block">{h.distanceKm} km</span>
-                  <span className="text-[10px] text-emerald-700 font-bold">{h.ratingScore}/10</span>
-                </div>
-              </div>
-            ))}
-            {transits.map(t => (
-              <div key={t.id} className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between text-xs">
-                <div className="flex items-center gap-2.5">
-                  <Train className="w-4 h-4 text-slate-700 shrink-0" />
-                  <div>
-                    <span className="font-bold text-slate-900 block">{t.name}</span>
-                    <span className="text-[11px] text-slate-500">{t.keyHighlight}</span>
-                  </div>
-                </div>
-                <div className="text-right font-mono shrink-0 ml-2">
-                  <span className="font-bold text-red-500 block">{t.distanceKm} km</span>
-                  <span className="text-[10px] text-slate-600">{t.walkTimeMinutes} min walk</span>
+                  <p className="text-[11px] text-slate-600 bg-white p-2 rounded-xl border border-slate-100">
+                    ✨ {school.keyHighlight}
+                  </p>
                 </div>
               </div>
             ))}
@@ -406,7 +295,219 @@ export const PropertyDetailClient: React.FC<PropertyDetailClientProps> = ({ prop
 
 
         {/* ========================================================================= */}
-        {/* SECTION 2: DIMENSION 1 - INSTITUTIONAL ROI & FINANCIAL ENGINE (100% FULL) */}
+        {/* SECTION: 5 SHOPPING MALLS (RANKED #1 TO #5 BY DISTANCE)                   */}
+        {/* ========================================================================= */}
+        <section className="w-full space-y-6 bg-white rounded-3xl border border-red-100 p-6 sm:p-8 lg:p-10 shadow-sm">
+          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-red-500 text-white flex items-center justify-center font-bold text-sm">
+                🛍️
+              </div>
+              <div>
+                <span className="text-xs font-bold uppercase tracking-wider text-red-500">
+                  Retail & Lifestyle Centers
+                </span>
+                <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
+                  5 Nearby Shopping Malls (Ranked #1 to #5 by Proximity to Home)
+                </h2>
+              </div>
+            </div>
+            <span className="text-xs font-bold px-3 py-1 bg-amber-100 text-amber-900 rounded-full">
+              Customer & Retail Review Ratings
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+            {rankedMalls.map((mall, idx) => (
+              <div key={mall.id} className="p-4 bg-slate-50/80 rounded-2xl border border-slate-200 flex flex-col justify-between space-y-3">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="px-2 py-0.5 bg-red-500 text-white text-[10px] font-bold uppercase rounded-md">
+                      #{idx + 1} {idx === 0 ? 'Closest' : ''}
+                    </span>
+                    <span className="px-2 py-0.5 bg-amber-50 text-amber-900 border border-amber-300 rounded-lg text-xs font-bold flex items-center gap-1">
+                      <Star className="w-3 h-3 fill-amber-400 text-amber-500" />
+                      <span>{mall.ratingScore} / 5.0 ★</span>
+                    </span>
+                  </div>
+
+                  <h3 className="text-sm font-bold text-slate-900 leading-snug">
+                    {mall.name}
+                  </h3>
+                  <p className="text-[11px] text-slate-500 font-medium">
+                    {mall.categoryLabel}
+                  </p>
+                </div>
+
+                <div className="space-y-2 pt-2 border-t border-slate-200">
+                  <div className="flex items-center justify-between text-xs font-mono text-slate-700">
+                    <span>Distance: <strong className="text-red-500">{mall.distanceKm} km</strong></span>
+                    <span>({mall.distanceMiles} mi)</span>
+                  </div>
+                  <div className="flex items-center justify-between text-[11px] text-slate-500 font-mono">
+                    <span>🚶 {mall.walkTimeMinutes} min walk</span>
+                    <span>🚗 {mall.driveTimeMinutes} min drive</span>
+                  </div>
+                  <p className="text-[11px] text-slate-600 bg-white p-2 rounded-xl border border-slate-100">
+                    🛍️ {mall.keyHighlight}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+
+        {/* ========================================================================= */}
+        {/* SECTION: COMMUNITY, EVENTS, PARTIES & NIGHTLIFE                           */}
+        {/* ========================================================================= */}
+        <section className="w-full space-y-6 bg-white rounded-3xl border border-red-100 p-6 sm:p-8 lg:p-10 shadow-sm">
+          <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
+            <div className="w-9 h-9 rounded-xl bg-red-500 text-white flex items-center justify-center font-bold text-sm">
+              🎉
+            </div>
+            <div>
+              <span className="text-xs font-bold uppercase tracking-wider text-red-500">
+                Community & Social Lifestyle
+              </span>
+              <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
+                Local Events, Annual Festivals, Parties & Nightlife Lounges
+              </h2>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            
+            {/* Annual Festivals & Community Events */}
+            <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-4">
+              <div className="flex items-center gap-2">
+                <Calendar className="w-4 h-4 text-red-500" />
+                <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">Annual Festivals & Street Galas</h3>
+              </div>
+
+              <div className="space-y-3">
+                {lifestyleData.events.map((evt, i) => (
+                  <div key={i} className="p-3.5 bg-white rounded-xl border border-slate-200 space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-xs font-bold text-slate-900">{evt.name}</h4>
+                      <span className="text-[10px] font-bold text-red-500 font-mono">{evt.distanceKm} km away</span>
+                    </div>
+                    <span className="text-[10px] font-bold px-2 py-0.5 bg-red-50 text-red-700 rounded-md inline-block">
+                      {evt.seasonOrFrequency} • {evt.estimatedAttendees.toLocaleString()} Attendees
+                    </span>
+                    <p className="text-xs text-slate-600">{evt.description}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Nightlife, Parties & Social Clubs */}
+            <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-4">
+              <div className="flex items-center gap-2">
+                <Music className="w-4 h-4 text-red-500" />
+                <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">Parties, Rooftop Lounges & Nightlife</h3>
+              </div>
+
+              <div className="space-y-3">
+                {lifestyleData.nightlife.map((lounge, i) => (
+                  <div key={i} className="p-3.5 bg-white rounded-xl border border-slate-200 space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-xs font-bold text-slate-900">{lounge.name}</h4>
+                      <span className="text-[10px] font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
+                        ★ {lounge.ratingScore} / 5.0
+                      </span>
+                    </div>
+                    <span className="text-[10px] text-slate-500 font-medium block">
+                      {lounge.category} • {lounge.distanceKm} km from home
+                    </span>
+                    <p className="text-xs text-slate-700 font-medium">✨ {lounge.dressCodeOrVibe}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+
+        {/* ========================================================================= */}
+        {/* SECTION: ROADS, STREET LIGHTING, COMMUNITY & FOREST RESERVES              */}
+        {/* ========================================================================= */}
+        <section className="w-full space-y-6 bg-white rounded-3xl border border-red-100 p-6 sm:p-8 lg:p-10 shadow-sm">
+          <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
+            <div className="w-9 h-9 rounded-xl bg-red-500 text-white flex items-center justify-center font-bold text-sm">
+              🏙️
+            </div>
+            <div>
+              <span className="text-xs font-bold uppercase tracking-wider text-red-500">
+                Civic Infrastructure & Demographics
+              </span>
+              <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
+                Roads, Street Lights, Forest Reserves, Community & Taxes
+              </h2>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            
+            {/* Roads & Highways */}
+            <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+              <div className="flex items-center gap-2">
+                <Car className="w-4 h-4 text-red-500" />
+                <span className="text-xs font-bold text-slate-800 uppercase">Roads & Highways</span>
+              </div>
+              <h4 className="text-sm font-bold text-slate-900">{lifestyleData.roads.primaryHighway}</h4>
+              <p className="text-xs text-slate-600 font-mono">Distance: <strong>{lifestyleData.roads.distanceToHighwayKm} km</strong> ({lifestyleData.roads.driveTimeToHighwayMinutes} min)</p>
+              <p className="text-xs text-slate-600 font-mono">Pavement Index (PCI): <strong>{lifestyleData.roads.pavementConditionIndexPCI} / 100</strong></p>
+              <span className="text-[11px] text-emerald-700 font-bold block">⚡ {lifestyleData.roads.evChargingStallsNearbyCount} EV Superchargers Nearby</span>
+            </div>
+
+            {/* Street Lights & Smart City Grid */}
+            <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+              <div className="flex items-center gap-2">
+                <Lightbulb className="w-4 h-4 text-red-500" />
+                <span className="text-xs font-bold text-slate-800 uppercase">Street Lights & Grid</span>
+              </div>
+              <h4 className="text-sm font-bold text-slate-900">{lifestyleData.lighting.fixtureType}</h4>
+              <p className="text-xs text-slate-600 font-mono">Night Illumination: <strong>{lifestyleData.lighting.nightLuminanceLux} Lux</strong></p>
+              <p className="text-xs text-slate-600 font-mono">Lighting Safety Coverage: <strong>{lifestyleData.lighting.streetLightingCoveragePercent}%</strong></p>
+              <span className="text-[11px] text-red-500 font-bold block">🌐 {lifestyleData.lighting.fiberBroadbandSpeedGbps} Gbps Fiber • Underground Cabling</span>
+            </div>
+
+            {/* Community & Demographics */}
+            <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+              <div className="flex items-center gap-2">
+                <Users className="w-4 h-4 text-red-500" />
+                <span className="text-xs font-bold text-slate-800 uppercase">Community Profile</span>
+              </div>
+              <h4 className="text-sm font-bold text-slate-900">{lifestyleData.community.neighborhoodAssociation}</h4>
+              <p className="text-xs text-slate-600 font-mono">Median Income: <strong>{formatCurrency(lifestyleData.community.medianHouseholdIncomeUSD)}/yr</strong></p>
+              <p className="text-xs text-slate-600 font-mono">Higher Education: <strong>{lifestyleData.community.higherEducationPercent}%</strong></p>
+              <div className="flex items-center gap-2 text-[11px] font-bold text-slate-700 pt-1">
+                <span>Walk: {lifestyleData.community.walkScore}</span>
+                <span>• Transit: {lifestyleData.community.transitScore}</span>
+                <span>• Bike: {lifestyleData.community.bikeScore}</span>
+              </div>
+            </div>
+
+            {/* Forest Reserves & Tree Canopy */}
+            <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+              <div className="flex items-center gap-2">
+                <TreePine className="w-4 h-4 text-red-500" />
+                <span className="text-xs font-bold text-slate-800 uppercase">Forest Reserves</span>
+              </div>
+              <h4 className="text-sm font-bold text-slate-900">{forestResources?.nearestParkOrForestName || 'Urban Forest & Conservatory'}</h4>
+              <p className="text-xs text-slate-600 font-mono">Distance: <strong>{forestResources?.distanceToForestKm || 0.3} km</strong></p>
+              <p className="text-xs text-slate-600 font-mono">Canopy Coverage: <strong>{forestResources?.forestCanopyCoveragePercent || 34}%</strong></p>
+              <span className="text-[11px] text-emerald-700 font-bold block">{forestResources?.carbonSequestrationRating || 'Grade A+ Carbon Sequestration'}</span>
+            </div>
+
+          </div>
+        </section>
+
+
+        {/* ========================================================================= */}
+        {/* SECTION: DIMENSION 1 - INSTITUTIONAL ROI & FINANCIAL ENGINE (100% FULL)   */}
         {/* ========================================================================= */}
         <section className="w-full space-y-4 bg-white rounded-3xl border border-red-100 p-6 sm:p-8 lg:p-10 shadow-sm">
           <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-4">
@@ -440,7 +541,7 @@ export const PropertyDetailClient: React.FC<PropertyDetailClientProps> = ({ prop
 
 
         {/* ========================================================================= */}
-        {/* SECTION 3: DIMENSION 2 - VERTEX AI 5-YEAR PREDICTIVE FORECASTING (100%)   */}
+        {/* SECTION: DIMENSION 2 - VERTEX AI 5-YEAR PREDICTIVE FORECASTING            */}
         {/* ========================================================================= */}
         <section className="w-full space-y-4 bg-white rounded-3xl border border-red-100 p-6 sm:p-8 lg:p-10 shadow-sm">
           <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
@@ -469,7 +570,7 @@ export const PropertyDetailClient: React.FC<PropertyDetailClientProps> = ({ prop
 
 
         {/* ========================================================================= */}
-        {/* SECTION 4: DIMENSION 3 - GEMINI MULTIMODAL VISION INSPECTION (100%)       */}
+        {/* SECTION: DIMENSION 3 - GEMINI MULTIMODAL VISION INSPECTION                */}
         {/* ========================================================================= */}
         <section className="w-full space-y-4 bg-white rounded-3xl border border-red-100 p-6 sm:p-8 lg:p-10 shadow-sm">
           <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
@@ -519,7 +620,7 @@ export const PropertyDetailClient: React.FC<PropertyDetailClientProps> = ({ prop
 
 
         {/* ========================================================================= */}
-        {/* SECTION 5: DIMENSION 4 - GOOGLE EARTH ENGINE & MULTISPECTRAL (100%)       */}
+        {/* SECTION: DIMENSION 4 - GOOGLE EARTH ENGINE & MULTISPECTRAL                */}
         {/* ========================================================================= */}
         <section className="w-full space-y-4 bg-white rounded-3xl border border-red-100 p-6 sm:p-8 lg:p-10 shadow-sm">
           <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
@@ -560,7 +661,7 @@ export const PropertyDetailClient: React.FC<PropertyDetailClientProps> = ({ prop
 
 
         {/* ========================================================================= */}
-        {/* SECTION 6: DIMENSION 5 - SUBSURFACE GEOTECHNICAL MECHANICS (100%)         */}
+        {/* SECTION: DIMENSION 5 - SUBSURFACE GEOTECHNICAL MECHANICS                  */}
         {/* ========================================================================= */}
         <section className="w-full space-y-4 bg-white rounded-3xl border border-red-100 p-6 sm:p-8 lg:p-10 shadow-sm">
           <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
@@ -602,7 +703,7 @@ export const PropertyDetailClient: React.FC<PropertyDetailClientProps> = ({ prop
 
 
         {/* ========================================================================= */}
-        {/* SECTION 7: DIMENSION 6 - ENVIRONMENTAL & HEAT WAVE TELEMETRY (100%)       */}
+        {/* SECTION: DIMENSION 6 - PUBLIC SAFETY & PROPERTY TAXES                     */}
         {/* ========================================================================= */}
         <section className="w-full space-y-4 bg-white rounded-3xl border border-red-100 p-6 sm:p-8 lg:p-10 shadow-sm">
           <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
@@ -611,80 +712,6 @@ export const PropertyDetailClient: React.FC<PropertyDetailClientProps> = ({ prop
             </div>
             <div>
               <span className="text-xs font-bold uppercase tracking-wider text-red-500">Dimension 6</span>
-              <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
-                Environmental & NOAA Heat Wave Telemetry
-              </h2>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200">
-              <span className="text-[10px] font-bold text-red-500 uppercase block">Annual Heat Wave Days (&gt;95°F)</span>
-              <span className="text-xl font-bold text-slate-900">{heatWaves?.annualHeatWaveDaysCount || 12} Days/yr</span>
-              <p className="text-[11px] text-slate-500 mt-1">Peak Heat Index: {heatWaves?.peakSummerHeatIndexF || 98}°F</p>
-            </div>
-            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200">
-              <span className="text-[10px] font-bold text-red-500 uppercase block">Forest Canopy Shade Cooling</span>
-              <span className="text-xl font-bold text-slate-900">{forestResources?.forestCanopyCoveragePercent || 34}% Canopy</span>
-              <p className="text-[11px] text-slate-500 mt-1">Shade cooling effect: -{heatWaves?.shadeCanopyCoolingEffectF || 4.2}°F</p>
-            </div>
-            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200">
-              <span className="text-[10px] font-bold text-red-500 uppercase block">Air Quality Index</span>
-              <span className="text-xl font-bold text-slate-900">AQI {climateTelemetry.airQualityIndexAQI}</span>
-              <p className="text-[11px] text-slate-500 mt-1">{climateTelemetry.airQualityVerdict}</p>
-            </div>
-          </div>
-        </section>
-
-
-        {/* ========================================================================= */}
-        {/* SECTION 8: DIMENSION 7 - AVIATION & EXACT KILOMETER PROXIMITIES (100%)    */}
-        {/* ========================================================================= */}
-        <section className="w-full space-y-4 bg-white rounded-3xl border border-red-100 p-6 sm:p-8 lg:p-10 shadow-sm">
-          <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
-            <div className="w-9 h-9 rounded-xl bg-red-500 text-white flex items-center justify-center font-bold text-sm">
-              7
-            </div>
-            <div>
-              <span className="text-xs font-bold uppercase tracking-wider text-red-500">Dimension 7</span>
-              <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
-                Aviation Gateways & Proximity in Kilometers (km)
-              </h2>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200">
-              <span className="text-[10px] font-bold text-red-500 uppercase block">Primary Airport Hub</span>
-              <h4 className="text-lg font-bold text-slate-900">{airport?.primaryAirportName || "Chicago O'Hare International"} ({airport?.primaryAirportIATA || 'ORD'})</h4>
-              <div className="flex items-center gap-4 mt-2 text-xs font-mono">
-                <span>Distance: <strong className="text-red-500">{airport?.distanceToAirportKm || 23.8} km</strong></span>
-                <span>Drive Time: <strong>{airport?.driveTimeToAirportMinutes || 28} min</strong></span>
-              </div>
-            </div>
-
-            <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200">
-              <span className="text-[10px] font-bold text-red-500 uppercase block">Time Zone Standard</span>
-              <h4 className="text-lg font-bold text-slate-900">{timezone?.timeZoneName || 'Central Standard Time'} ({timezone?.timeZoneCode || 'CST'})</h4>
-              <div className="flex items-center gap-4 mt-2 text-xs font-mono">
-                <span>UTC Offset: <strong>{timezone?.utcOffset || 'UTC-6'}</strong></span>
-                <span>Daylight Saving: <strong>Active</strong></span>
-              </div>
-            </div>
-          </div>
-        </section>
-
-
-        {/* ========================================================================= */}
-        {/* SECTION 9: DIMENSION 8 - PUBLIC SAFETY & 20-YEAR POLICE CORRIDORS (100%)  */}
-        {/* ========================================================================= */}
-        <section className="w-full space-y-4 bg-white rounded-3xl border border-red-100 p-6 sm:p-8 lg:p-10 shadow-sm">
-          <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
-            <div className="w-9 h-9 rounded-xl bg-red-500 text-white flex items-center justify-center font-bold text-sm">
-              8
-            </div>
-            <div>
-              <span className="text-xs font-bold uppercase tracking-wider text-red-500">Dimension 8</span>
               <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
                 Public Safety, 20-Year Police Corridors & Property Taxes
               </h2>
@@ -712,15 +739,15 @@ export const PropertyDetailClient: React.FC<PropertyDetailClientProps> = ({ prop
 
 
         {/* ========================================================================= */}
-        {/* SECTION 10: DIMENSION 9 - 2D ARCHITECTURAL CAD BLUEPRINTS (100%)          */}
+        {/* SECTION: DIMENSION 7 - 2D ARCHITECTURAL CAD BLUEPRINTS                    */}
         {/* ========================================================================= */}
         <section className="w-full space-y-4 bg-white rounded-3xl border border-red-100 p-6 sm:p-8 lg:p-10 shadow-sm">
           <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
             <div className="w-9 h-9 rounded-xl bg-red-500 text-white flex items-center justify-center font-bold text-sm">
-              9
+              7
             </div>
             <div>
-              <span className="text-xs font-bold uppercase tracking-wider text-red-500">Dimension 9</span>
+              <span className="text-xs font-bold uppercase tracking-wider text-red-500">Dimension 7</span>
               <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
                 2D Architectural CAD Blueprint & Interactive Room Staging
               </h2>
@@ -739,7 +766,7 @@ export const PropertyDetailClient: React.FC<PropertyDetailClientProps> = ({ prop
 
 
         {/* ========================================================================= */}
-        {/* SECTION 11: INSTANT DIGITAL LEASE APPLICATION (100%)                      */}
+        {/* SECTION: INSTANT DIGITAL LEASE APPLICATION                                */}
         {/* ========================================================================= */}
         <section id="section-apply" className="w-full space-y-6 bg-white rounded-3xl border border-red-200 p-6 sm:p-8 lg:p-10 shadow-sm">
           <div className="flex items-center justify-between border-b border-slate-100 pb-4">

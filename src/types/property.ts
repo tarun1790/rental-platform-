@@ -128,6 +128,53 @@ export interface HeatWaveTelemetry {
   historicalHeatWaveTrend: string;
 }
 
+export interface CommunityTelemetry {
+  medianHouseholdIncomeUSD: number;
+  higherEducationPercent: number; // e.g. 86% Master's/Bachelor's
+  neighborhoodAssociation: string;
+  walkScore: number;
+  transitScore: number;
+  bikeScore: number;
+}
+
+export interface SmartCityLightingTelemetry {
+  streetLightingCoveragePercent: number;
+  fixtureType: string; // e.g. "Smart Adaptive Warm LED (3000K)"
+  nightLuminanceLux: number; // e.g. 45 Lux
+  fiberBroadbandSpeedGbps: number; // e.g. 10 Gbps symmetrical
+  undergroundPowerGrid: boolean;
+}
+
+export interface RoadTransitTelemetry {
+  primaryHighway: string; // e.g. "I-90 / I-94 Kennedy Expressway"
+  distanceToHighwayKm: number;
+  driveTimeToHighwayMinutes: number;
+  rushHourCBDCommuteMinutes: number;
+  pavementConditionIndexPCI: number; // e.g. 94 / 100
+  evChargingStallsNearbyCount: number;
+}
+
+export interface LocalEventItem {
+  name: string;
+  seasonOrFrequency: string; // e.g. "Annual Summer Festival"
+  distanceKm: number;
+  estimatedAttendees: number;
+  description: string;
+}
+
+export interface NightlifePartyItem {
+  name: string;
+  category: string; // e.g. "Rooftop Cocktail Lounge & Social Club"
+  distanceKm: number;
+  ratingScore: number;
+  dressCodeOrVibe: string;
+}
+
+export interface EventsAndLifestyleTelemetry {
+  annualEvents: LocalEventItem[];
+  nightlifeAndLounges: NightlifePartyItem[];
+}
+
 export interface AirportTelemetry {
   primaryAirportName: string;
   primaryAirportIATA: string;
@@ -288,6 +335,10 @@ export interface ShikaakPropertyListing {
   timezone?: TimezoneTelemetry;
   heatWaves?: HeatWaveTelemetry;
   airport?: AirportTelemetry;
+  community?: CommunityTelemetry;
+  smartLighting?: SmartCityLightingTelemetry;
+  roadTransit?: RoadTransitTelemetry;
+  lifestyle?: EventsAndLifestyleTelemetry;
   geotechnical: GeotechnicalTelemetry;
   safety: SafetyTelemetry;
   amenities: RankedAmenity[];
