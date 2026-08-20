@@ -249,26 +249,26 @@ export const HouseRoiCalculatorModal: React.FC<HouseRoiCalculatorModalProps> = (
                 <span>2. Operating Expenses & Taxes</span>
               </h3>
 
-              {/* Annual Property Taxes */}
+              {/* Monthly Property Taxes */}
               <div>
-                <label className="text-xs font-bold text-slate-800 block mb-1">Annual Property Taxes ($/year)</label>
+                <label className="text-xs font-bold text-slate-800 block mb-1">Monthly Property Taxes ($/mo)</label>
                 <input
                   type="number"
-                  step="100"
-                  value={inputs.propertyTaxAnnualUSD}
-                  onChange={(e) => setInputs({ ...inputs, propertyTaxAnnualUSD: Number(e.target.value) || 0 })}
+                  step="25"
+                  value={inputs.monthlyPropertyTax || Math.round((listing.propertyTaxes.annualAmountUSD || 12000) / 12)}
+                  onChange={(e) => setInputs({ ...inputs, monthlyPropertyTax: Number(e.target.value) || 0 })}
                   className="w-full p-2.5 text-xs bg-white border border-slate-300 rounded-xl font-mono focus:border-red-400 focus:outline-none"
                 />
               </div>
 
-              {/* Homeowners Insurance */}
+              {/* Monthly Insurance */}
               <div>
-                <label className="text-xs font-bold text-slate-800 block mb-1">Homeowners Insurance ($/month)</label>
+                <label className="text-xs font-bold text-slate-800 block mb-1">Homeowners Insurance ($/mo)</label>
                 <input
                   type="number"
                   step="10"
-                  value={inputs.insuranceMonthlyUSD}
-                  onChange={(e) => setInputs({ ...inputs, insuranceMonthlyUSD: Number(e.target.value) || 0 })}
+                  value={inputs.monthlyInsurance || 185}
+                  onChange={(e) => setInputs({ ...inputs, monthlyInsurance: Number(e.target.value) || 0 })}
                   className="w-full p-2.5 text-xs bg-white border border-slate-300 rounded-xl font-mono focus:border-red-400 focus:outline-none"
                 />
               </div>
@@ -277,15 +277,15 @@ export const HouseRoiCalculatorModal: React.FC<HouseRoiCalculatorModalProps> = (
               <div>
                 <div className="flex justify-between text-xs font-bold mb-1 text-slate-800">
                   <span>Property Management Fee (%)</span>
-                  <span className="font-mono text-slate-700">{inputs.managementFeePercent}%</span>
+                  <span className="font-mono text-slate-700">{inputs.propertyManagementPercent}%</span>
                 </div>
                 <input
                   type="range"
                   min="0"
                   max="15"
                   step="1"
-                  value={inputs.managementFeePercent}
-                  onChange={(e) => setInputs({ ...inputs, managementFeePercent: Number(e.target.value) })}
+                  value={inputs.propertyManagementPercent}
+                  onChange={(e) => setInputs({ ...inputs, propertyManagementPercent: Number(e.target.value) })}
                   className="w-full accent-red-500"
                 />
               </div>
@@ -294,15 +294,15 @@ export const HouseRoiCalculatorModal: React.FC<HouseRoiCalculatorModalProps> = (
               <div>
                 <div className="flex justify-between text-xs font-bold mb-1 text-slate-800">
                   <span>Maintenance & CapEx Reserve (%)</span>
-                  <span className="font-mono text-slate-700">{inputs.capexAndMaintenancePercent}%</span>
+                  <span className="font-mono text-slate-700">{inputs.maintenanceAndCapExPercent ?? 5}%</span>
                 </div>
                 <input
                   type="range"
                   min="0"
                   max="15"
                   step="1"
-                  value={inputs.capexAndMaintenancePercent}
-                  onChange={(e) => setInputs({ ...inputs, capexAndMaintenancePercent: Number(e.target.value) })}
+                  value={inputs.maintenanceAndCapExPercent ?? 5}
+                  onChange={(e) => setInputs({ ...inputs, maintenanceAndCapExPercent: Number(e.target.value) })}
                   className="w-full accent-red-500"
                 />
               </div>
