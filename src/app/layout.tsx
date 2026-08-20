@@ -13,8 +13,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="scroll-smooth">
+    <html lang="en" className="scroll-smooth w-full">
       <head>
+        <meta httpEquiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+        <meta httpEquiv="Pragma" content="no-cache" />
+        <meta httpEquiv="Expires" content="0" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
         <link rel="icon" type="image/svg+xml" href="/rental-platform-/favicon.svg" />
         <link rel="shortcut icon" href="/rental-platform-/favicon.svg" />
         <link rel="apple-touch-icon" href="/rental-platform-/favicon.svg" />

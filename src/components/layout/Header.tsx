@@ -76,7 +76,7 @@ export const Header: React.FC<HeaderProps> = ({
     <header className="sticky top-0 z-40 bg-white border-b-2 border-red-100 shadow-sm select-none">
       
       {/* 9-ITEM CLEAN HORIZONTAL FILTER BAR (STRICTLY WHITE & RED) */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="w-full px-4 sm:px-8 lg:px-12">
         <div className="flex items-center justify-between h-16 gap-3">
           
           {/* 1. BRAND LOGO (WHITE & RED TILED HOME) */}

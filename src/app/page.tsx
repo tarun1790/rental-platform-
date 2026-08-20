@@ -276,12 +276,12 @@ export default function Home() {
         <section 
           ref={housesSectionRef}
           id="houses-section"
-          className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-8"
+          className="w-full px-4 sm:px-8 lg:px-12 py-8 sm:py-10 space-y-8"
         >
           
           {/* 1. SELECTED HOUSE SPOTLIGHT (APPEARS DIRECTLY BELOW THE MAP WHEN A PIN IS CLICKED) */}
           {selectedListing && (
-            <div className="p-5 sm:p-6 rounded-3xl bg-slate-50 border border-red-200 shadow-sm flex flex-col md:flex-row items-center gap-6">
+            <div className="w-full p-5 sm:p-6 rounded-3xl bg-slate-50 border border-red-200 shadow-sm flex flex-col md:flex-row items-center gap-6">
               <div className="w-full md:w-72 h-44 rounded-2xl overflow-hidden shrink-0 border border-slate-200">
                 <img
                   src={selectedListing.media.featuredImage}
@@ -390,9 +390,9 @@ export default function Home() {
             </div>
           </div>
 
-          {/* 3. 3-COLUMN SPACIOUS HOUSE DETAILS GRID */}
+          {/* 3. FULL-WIDTH RESPONSIVE HOUSE DETAILS GRID */}
           {filteredListings.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {filteredListings.map((listing) => (
                 <PropertyCard
                   key={listing.id}

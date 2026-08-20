@@ -27,20 +27,20 @@ import {
   GraduationCap, 
   CheckCircle2, 
   Building, 
-  FileText,
-  PhoneCall,
-  Share2,
-  Calendar,
-  Globe,
-  Scan,
-  Activity,
-  Database,
-  DollarSign,
-  Train,
-  TreePine,
-  Plane,
-  Flame,
-  Check
+  FileText, 
+  PhoneCall, 
+  Share2, 
+  Calendar, 
+  Globe, 
+  Scan, 
+  Activity, 
+  Database, 
+  DollarSign, 
+  Train, 
+  TreePine, 
+  Plane, 
+  Flame, 
+  Check 
 } from 'lucide-react';
 import { formatCurrency, formatPercent } from '../../lib/roi-engine';
 import { BlueprintFurnitureStaging } from './BlueprintFurnitureStaging';
@@ -75,11 +75,11 @@ export const PropertyDetailClient: React.FC<PropertyDetailClientProps> = ({ prop
   };
 
   return (
-    <div className="min-h-screen bg-slate-50/50 text-slate-900 flex flex-col">
+    <div className="min-h-screen w-full bg-slate-50/50 text-slate-900 flex flex-col">
       
-      {/* Top Sticky Header (House Intelligence) */}
-      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-red-100">
-        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      {/* Top Sticky Header (Full 100% Width Edge-to-Edge) */}
+      <header className="sticky top-0 z-40 w-full bg-white/95 backdrop-blur-md border-b border-red-100">
+        <div className="w-full px-4 sm:px-8 lg:px-12 h-16 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link
               href="/"
@@ -113,13 +113,13 @@ export const PropertyDetailClient: React.FC<PropertyDetailClientProps> = ({ prop
         </div>
       </header>
 
-      {/* Main Container Fitting Full Webpage Width Properly */}
-      <main className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-8 flex-1">
+      {/* Main Container Fitting 100% Full Page Width (Zero Side Gaps) */}
+      <main className="w-full px-4 sm:px-8 lg:px-12 py-6 sm:py-8 space-y-8 flex-1">
         
         {/* ========================================================================= */}
-        {/* SECTION 1: HOUSE OVERVIEW & PHOTO GALLERY (FULL WIDTH)                    */}
+        {/* SECTION 1: HOUSE OVERVIEW & PHOTO GALLERY (FULL WIDTH 100%)               */}
         {/* ========================================================================= */}
-        <section className="space-y-6 bg-white rounded-3xl border border-red-100 p-6 sm:p-8 shadow-sm">
+        <section className="w-full space-y-6 bg-white rounded-3xl border border-red-100 p-6 sm:p-8 lg:p-10 shadow-sm">
           {/* Header Specs */}
           <div className="flex flex-wrap items-start justify-between gap-4 border-b border-slate-100 pb-5">
             <div className="space-y-1.5">
@@ -155,8 +155,8 @@ export const PropertyDetailClient: React.FC<PropertyDetailClientProps> = ({ prop
             </div>
           </div>
 
-          {/* Featured Large Image View */}
-          <div className="relative aspect-[21/9] sm:aspect-[2/1] w-full rounded-2xl overflow-hidden bg-slate-100 border border-slate-200">
+          {/* Featured Full-Width Image View */}
+          <div className="relative aspect-[21/9] sm:aspect-[2.4/1] w-full rounded-2xl overflow-hidden bg-slate-100 border border-slate-200">
             <img
               src={media.gallery?.[selectedImageIndex] || media.featuredImage}
               alt={listing.title}
@@ -172,8 +172,8 @@ export const PropertyDetailClient: React.FC<PropertyDetailClientProps> = ({ prop
             </div>
           </div>
 
-          {/* Thumbnail Gallery */}
-          <div className="grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-8 gap-3">
+          {/* Thumbnail Gallery (Spans Full Width) */}
+          <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-3">
             {(media.gallery || [media.featuredImage]).map((img, idx) => (
               <button
                 key={idx}
@@ -189,7 +189,7 @@ export const PropertyDetailClient: React.FC<PropertyDetailClientProps> = ({ prop
             ))}
           </div>
 
-          {/* 1-Line Key Specs Bar */}
+          {/* Key Specs Bar */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-200 text-center">
             <div>
               <span className="text-[11px] font-bold text-slate-400 uppercase block">Bedrooms</span>
@@ -212,9 +212,9 @@ export const PropertyDetailClient: React.FC<PropertyDetailClientProps> = ({ prop
 
 
         {/* ========================================================================= */}
-        {/* SECTION 2: DIMENSION 1 - INSTITUTIONAL ROI & FINANCIAL ENGINE             */}
+        {/* SECTION 2: DIMENSION 1 - INSTITUTIONAL ROI & FINANCIAL ENGINE (100% FULL) */}
         {/* ========================================================================= */}
-        <section className="space-y-4 bg-white rounded-3xl border border-red-100 p-6 sm:p-8 shadow-sm">
+        <section className="w-full space-y-4 bg-white rounded-3xl border border-red-100 p-6 sm:p-8 lg:p-10 shadow-sm">
           <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
             <div className="w-9 h-9 rounded-xl bg-red-500 text-white flex items-center justify-center font-bold text-sm">
               1
@@ -236,9 +236,9 @@ export const PropertyDetailClient: React.FC<PropertyDetailClientProps> = ({ prop
 
 
         {/* ========================================================================= */}
-        {/* SECTION 3: DIMENSION 2 - VERTEX AI 5-YEAR PREDICTIVE FORECASTING           */}
+        {/* SECTION 3: DIMENSION 2 - VERTEX AI 5-YEAR PREDICTIVE FORECASTING (100%)   */}
         {/* ========================================================================= */}
-        <section className="space-y-4 bg-white rounded-3xl border border-red-100 p-6 sm:p-8 shadow-sm">
+        <section className="w-full space-y-4 bg-white rounded-3xl border border-red-100 p-6 sm:p-8 lg:p-10 shadow-sm">
           <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
             <div className="w-9 h-9 rounded-xl bg-red-500 text-white flex items-center justify-center font-bold text-sm">
               2
@@ -265,9 +265,9 @@ export const PropertyDetailClient: React.FC<PropertyDetailClientProps> = ({ prop
 
 
         {/* ========================================================================= */}
-        {/* SECTION 4: DIMENSION 3 - GEMINI MULTIMODAL VISION INSPECTION              */}
+        {/* SECTION 4: DIMENSION 3 - GEMINI MULTIMODAL VISION INSPECTION (100%)       */}
         {/* ========================================================================= */}
-        <section className="space-y-4 bg-white rounded-3xl border border-red-100 p-6 sm:p-8 shadow-sm">
+        <section className="w-full space-y-4 bg-white rounded-3xl border border-red-100 p-6 sm:p-8 lg:p-10 shadow-sm">
           <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
             <div className="w-9 h-9 rounded-xl bg-red-500 text-white flex items-center justify-center font-bold text-sm">
               3
@@ -305,7 +305,7 @@ export const PropertyDetailClient: React.FC<PropertyDetailClientProps> = ({ prop
 
             <button
               onClick={() => setIsGeminiModalOpen(true)}
-              className="w-full py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2"
+              className="w-full py-3.5 bg-red-500 hover:bg-red-600 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2"
             >
               <Scan className="w-4 h-4" />
               <span>Launch Live Gemini Vision Inspection Suite</span>
@@ -315,9 +315,9 @@ export const PropertyDetailClient: React.FC<PropertyDetailClientProps> = ({ prop
 
 
         {/* ========================================================================= */}
-        {/* SECTION 5: DIMENSION 4 - GOOGLE EARTH ENGINE & SATELLITE MULTISPECTRAL    */}
+        {/* SECTION 5: DIMENSION 4 - GOOGLE EARTH ENGINE & MULTISPECTRAL (100%)       */}
         {/* ========================================================================= */}
-        <section className="space-y-4 bg-white rounded-3xl border border-red-100 p-6 sm:p-8 shadow-sm">
+        <section className="w-full space-y-4 bg-white rounded-3xl border border-red-100 p-6 sm:p-8 lg:p-10 shadow-sm">
           <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
             <div className="w-9 h-9 rounded-xl bg-red-500 text-white flex items-center justify-center font-bold text-sm">
               4
@@ -356,9 +356,9 @@ export const PropertyDetailClient: React.FC<PropertyDetailClientProps> = ({ prop
 
 
         {/* ========================================================================= */}
-        {/* SECTION 6: DIMENSION 5 - SUBSURFACE GEOTECHNICAL MECHANICS               */}
+        {/* SECTION 6: DIMENSION 5 - SUBSURFACE GEOTECHNICAL MECHANICS (100%)         */}
         {/* ========================================================================= */}
-        <section className="space-y-4 bg-white rounded-3xl border border-red-100 p-6 sm:p-8 shadow-sm">
+        <section className="w-full space-y-4 bg-white rounded-3xl border border-red-100 p-6 sm:p-8 lg:p-10 shadow-sm">
           <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
             <div className="w-9 h-9 rounded-xl bg-red-500 text-white flex items-center justify-center font-bold text-sm">
               5
@@ -398,9 +398,9 @@ export const PropertyDetailClient: React.FC<PropertyDetailClientProps> = ({ prop
 
 
         {/* ========================================================================= */}
-        {/* SECTION 7: DIMENSION 6 - ENVIRONMENTAL & HEAT WAVE TELEMETRY              */}
+        {/* SECTION 7: DIMENSION 6 - ENVIRONMENTAL & HEAT WAVE TELEMETRY (100%)       */}
         {/* ========================================================================= */}
-        <section className="space-y-4 bg-white rounded-3xl border border-red-100 p-6 sm:p-8 shadow-sm">
+        <section className="w-full space-y-4 bg-white rounded-3xl border border-red-100 p-6 sm:p-8 lg:p-10 shadow-sm">
           <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
             <div className="w-9 h-9 rounded-xl bg-red-500 text-white flex items-center justify-center font-bold text-sm">
               6
@@ -434,9 +434,9 @@ export const PropertyDetailClient: React.FC<PropertyDetailClientProps> = ({ prop
 
 
         {/* ========================================================================= */}
-        {/* SECTION 8: DIMENSION 7 - AVIATION & EXACT KILOMETER PROXIMITIES          */}
+        {/* SECTION 8: DIMENSION 7 - AVIATION & EXACT KILOMETER PROXIMITIES (100%)    */}
         {/* ========================================================================= */}
-        <section className="space-y-4 bg-white rounded-3xl border border-red-100 p-6 sm:p-8 shadow-sm">
+        <section className="w-full space-y-4 bg-white rounded-3xl border border-red-100 p-6 sm:p-8 lg:p-10 shadow-sm">
           <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
             <div className="w-9 h-9 rounded-xl bg-red-500 text-white flex items-center justify-center font-bold text-sm">
               7
@@ -472,7 +472,7 @@ export const PropertyDetailClient: React.FC<PropertyDetailClientProps> = ({ prop
           {/* Points of Interest (Schools, Malls, Transit in KM) */}
           <div className="space-y-2 pt-2">
             <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500">Key Points of Interest Distances</h4>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
               {nearbyPointsOfInterest.slice(0, 6).map((poi) => (
                 <div key={poi.id} className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs flex items-center justify-between">
                   <div className="truncate mr-2">
@@ -488,9 +488,9 @@ export const PropertyDetailClient: React.FC<PropertyDetailClientProps> = ({ prop
 
 
         {/* ========================================================================= */}
-        {/* SECTION 9: DIMENSION 8 - PUBLIC SAFETY & 20-YEAR POLICE CORRIDORS         */}
+        {/* SECTION 9: DIMENSION 8 - PUBLIC SAFETY & 20-YEAR POLICE CORRIDORS (100%)  */}
         {/* ========================================================================= */}
-        <section className="space-y-4 bg-white rounded-3xl border border-red-100 p-6 sm:p-8 shadow-sm">
+        <section className="w-full space-y-4 bg-white rounded-3xl border border-red-100 p-6 sm:p-8 lg:p-10 shadow-sm">
           <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
             <div className="w-9 h-9 rounded-xl bg-red-500 text-white flex items-center justify-center font-bold text-sm">
               8
@@ -524,9 +524,9 @@ export const PropertyDetailClient: React.FC<PropertyDetailClientProps> = ({ prop
 
 
         {/* ========================================================================= */}
-        {/* SECTION 10: DIMENSION 9 - 2D ARCHITECTURAL CAD BLUEPRINTS                 */}
+        {/* SECTION 10: DIMENSION 9 - 2D ARCHITECTURAL CAD BLUEPRINTS (100%)          */}
         {/* ========================================================================= */}
-        <section className="space-y-4 bg-white rounded-3xl border border-red-100 p-6 sm:p-8 shadow-sm">
+        <section className="w-full space-y-4 bg-white rounded-3xl border border-red-100 p-6 sm:p-8 lg:p-10 shadow-sm">
           <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
             <div className="w-9 h-9 rounded-xl bg-red-500 text-white flex items-center justify-center font-bold text-sm">
               9
@@ -551,9 +551,9 @@ export const PropertyDetailClient: React.FC<PropertyDetailClientProps> = ({ prop
 
 
         {/* ========================================================================= */}
-        {/* SECTION 11: INSTANT DIGITAL LEASE APPLICATION                             */}
+        {/* SECTION 11: INSTANT DIGITAL LEASE APPLICATION (100%)                      */}
         {/* ========================================================================= */}
-        <section id="section-apply" className="space-y-6 bg-white rounded-3xl border border-red-200 p-6 sm:p-8 shadow-sm">
+        <section id="section-apply" className="w-full space-y-6 bg-white rounded-3xl border border-red-200 p-6 sm:p-8 lg:p-10 shadow-sm">
           <div className="flex items-center justify-between border-b border-slate-100 pb-4">
             <div>
               <span className="text-xs font-bold uppercase tracking-wider text-red-500">Instant Underwriting</span>
@@ -575,7 +575,7 @@ export const PropertyDetailClient: React.FC<PropertyDetailClientProps> = ({ prop
               </p>
             </div>
           ) : (
-            <form onSubmit={handleApply} className="space-y-4 bg-slate-50/60 p-6 rounded-2xl border border-slate-200">
+            <form onSubmit={handleApply} className="space-y-4 bg-slate-50/60 p-6 sm:p-8 rounded-2xl border border-slate-200">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs font-bold text-slate-700 block mb-1">Full Legal Name</label>
