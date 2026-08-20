@@ -333,23 +333,23 @@ export const PropertyDetailClient: React.FC<PropertyDetailClientProps> = ({ prop
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="p-4 rounded-2xl bg-red-50/50 border border-red-200">
               <span className="text-[10px] font-bold text-red-600 uppercase block">Copernicus Sentinel-2 NDVI</span>
-              <span className="text-xl font-black text-slate-900">{spectralMetrics.ndviScore}</span>
-              <p className="text-[11px] text-slate-500 mt-1">Vegetation canopy coverage: {spectralMetrics.canopyCoveragePercent}%</p>
+              <span className="text-xl font-black text-slate-900">{spectralMetrics.ndviIndex}</span>
+              <p className="text-[11px] text-slate-500 mt-1">Vegetation canopy: {spectralMetrics.treeCanopyCoveragePercent}%</p>
             </div>
             <div className="p-4 rounded-2xl bg-red-50/50 border border-red-200">
               <span className="text-[10px] font-bold text-red-600 uppercase block">Landsat-8 Surface Temp</span>
-              <span className="text-xl font-black text-slate-900">{spectralMetrics.surfaceTempC}°C</span>
-              <p className="text-[11px] text-slate-500 mt-1">Thermal heat island deviation: {spectralMetrics.heatIslandDeviationF}°F</p>
+              <span className="text-xl font-black text-slate-900">{spectralMetrics.surfaceTempF}°F</span>
+              <p className="text-[11px] text-slate-500 mt-1">Heat island deviation: {spectralMetrics.heatIslandDeviationF > 0 ? `+${spectralMetrics.heatIslandDeviationF}` : spectralMetrics.heatIslandDeviationF}°F</p>
             </div>
             <div className="p-4 rounded-2xl bg-red-50/50 border border-red-200">
-              <span className="text-[10px] font-bold text-red-600 uppercase block">Sentinel-5P Tropospheric NO₂</span>
-              <span className="text-xl font-black text-slate-900">{spectralMetrics.no2TroposphericIndex} µmol/m²</span>
-              <p className="text-[11px] text-slate-500 mt-1">Air Quality: AQI {spectralMetrics.airQualityAQI}</p>
+              <span className="text-[10px] font-bold text-red-600 uppercase block">Sentinel-5P NO₂ Density</span>
+              <span className="text-xl font-black text-slate-900">{spectralMetrics.airQualityNo2MicroMolM2} µmol/m²</span>
+              <p className="text-[11px] text-slate-500 mt-1">Air Quality: {spectralMetrics.airQualityVerdict}</p>
             </div>
             <div className="p-4 rounded-2xl bg-red-50/50 border border-red-200">
-              <span className="text-[10px] font-bold text-red-600 uppercase block">InSAR Soil Subsidence</span>
-              <span className="text-xl font-black text-slate-900">{spectralMetrics.groundSubsidenceMmPerYear} mm/yr</span>
-              <p className="text-[11px] text-slate-500 mt-1">Subsurface stability: Optimal</p>
+              <span className="text-[10px] font-bold text-red-600 uppercase block">InSAR Ground Subsidence</span>
+              <span className="text-xl font-black text-slate-900">{spectralMetrics.groundStabilityMmYr} mm/yr</span>
+              <p className="text-[11px] text-slate-500 mt-1">{spectralMetrics.groundStabilityVerdict}</p>
             </div>
           </div>
         </section>
