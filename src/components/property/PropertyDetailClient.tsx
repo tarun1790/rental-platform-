@@ -58,6 +58,7 @@ import { RoiCalculatorWidget } from './RoiCalculatorWidget';
 import { HouseRoiCalculatorModal } from './HouseRoiCalculatorModal';
 import { GeminiVisionInspector } from '../intelligence/GeminiVisionInspector';
 import { VertexPredictivePanel } from '../intelligence/VertexPredictivePanel';
+import { MultiAgentSynthesisConsole } from '../intelligence/MultiAgentSynthesisConsole';
 import { getNeighborhoodSpectralMetrics, EARTH_ENGINE_LAYERS } from '../../lib/earth-engine';
 import { getRankedSchoolsForProperty, getRankedMallsForProperty, getEventsAndLifestyleForProperty } from '../../lib/neighborhood-intelligence';
 
@@ -235,6 +236,14 @@ export const PropertyDetailClient: React.FC<PropertyDetailClientProps> = ({ prop
               <span className="text-base font-bold text-slate-900">{specs.finishedSqFt.toLocaleString()} sq ft</span>
             </div>
           </div>
+        </section>
+
+
+        {/* ========================================================================= */}
+        {/* SECTION: AUTONOMOUS MULTI-AGENT SYNTHESIS CONSOLE                         */}
+        {/* ========================================================================= */}
+        <section className="w-full">
+          <MultiAgentSynthesisConsole listing={listing} />
         </section>
 
 

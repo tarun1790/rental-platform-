@@ -83,3 +83,38 @@ export interface LanguageOption {
   nativeName: string;
   flag: string;
 }
+
+export type AgentDomainType = 
+  | 'VISION_STRUCTURAL' 
+  | 'GEOTECHNICAL_SUBSURFACE' 
+  | 'PREDICTIVE_MACRO' 
+  | 'FINANCIAL_UNDERWRITING' 
+  | 'CIVIC_INFRASTRUCTURE' 
+  | 'ACADEMIC_PROXIMITY';
+
+export type AgentStatus = 'INITIALIZING' | 'ANALYZING' | 'SYNTHESIZED' | 'VERIFIED';
+
+export interface IndividualAgentSynthesis {
+  agentId: string;
+  agentName: string;
+  domain: AgentDomainType;
+  modelArchitecture: string;
+  confidenceScore: number; // e.g. 98.6
+  status: AgentStatus;
+  executiveVerdict: string;
+  keyFindings: string[];
+  telemetryMetrics: Record<string, string | number>;
+}
+
+export interface MultiAgentExecutiveBrief {
+  propertyId: string;
+  propertyTitle: string;
+  overallInstitutionalRating: number; // 1.0 - 10.0
+  overallVerdict: 'STRONG_PASS_TO_FLOW' | 'PASS_TO_FLOW' | 'MODERATE_OPPORTUNITY' | 'CAUTION_REQUIRED';
+  executiveProseSummary: string;
+  riskIndex: number; // 0 - 100
+  alphaOpportunityIndex: number; // 0 - 100
+  agentReports: IndividualAgentSynthesis[];
+  timestamp: string;
+}
+
