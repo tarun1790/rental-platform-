@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  # =========================================================================
+  # Primary Web Application Service (Next.js + Node.js Backend API)
+  # =========================================================================
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: rental-platform-web
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - HOSTNAME=0.0.0.0
+      - REDIS_URL=redis://redis:6379
+      - NEXT_PUBLIC_FIREBASE_PROJECT_ID=${NEXT_PUBLIC_FIREBASE_PROJECT_ID:-rental-platform-production}
+      - NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=${NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN:-rental-platform-production.firebaseapp.com}
+      - NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=${NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET:-rental-platform-production.appspot.com}
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    networks:
+      - rental-network
+
+  # =========================================================================
+  # Redis In-Memory Micro-Cache Layer (L2 Caching)
+  # =========================================================================
+  redis:
+    image: redis:7-alpine
+    container_name: rental-platform-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - rental-network
+
+networks:
+  rental-network:
+    driver: bridge
+
+volumes:
+  redis_data:
+    driver: local

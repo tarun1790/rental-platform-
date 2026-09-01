@@ -1,0 +1,23 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Public property galleries, architectural floorplans, and blueprints
+    match /properties/{propertyId}/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAuthenticated() && request.auth.token.admin == true;
+    }
+    
+    // Lease application verification documents (pay stubs, IDs, credit reports)
+    match /applications/{applicationId}/{documentId} {
+      allow create: if request.resource.size < 15 * 1024 * 1024
+                    && request.resource.contentType.matches('application/pdf|image/jpeg|image/png|image/webp');
+      allow read: if isAuthenticated();
+      allow delete: if isAuthenticated() && request.auth.token.admin == true;
+    }
+  }
+}
