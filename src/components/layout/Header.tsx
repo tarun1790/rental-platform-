@@ -18,7 +18,8 @@ import {
   ArrowUpDown,
   Filter,
   ShieldCheck,
-  TreePine
+  TreePine,
+  Bot
 } from 'lucide-react';
 import { FilterState, ListingStatus, PropertyType } from '../../types/property';
 import { SupportedLanguageCode } from '../../types/intelligence';
@@ -40,6 +41,7 @@ interface HeaderProps {
   onSortChange: (sort: any) => void;
   onScrollToTop?: () => void;
   onOpenVoiceAssistant?: () => void;
+  onOpenNlpDialog?: () => void;
   currentLanguage?: SupportedLanguageCode;
   onLanguageChange?: (lang: SupportedLanguageCode) => void;
 }
@@ -59,6 +61,7 @@ export const Header: React.FC<HeaderProps> = ({
   onSortChange,
   onScrollToTop,
   onOpenVoiceAssistant,
+  onOpenNlpDialog,
   currentLanguage = 'en',
   onLanguageChange,
 }) => {
@@ -111,6 +114,19 @@ export const Header: React.FC<HeaderProps> = ({
               </button>
             )}
           </div>
+
+          {/* 2.5. AI NLP HOUSE ASSISTANT TRIGGER (1,000 TRAINED) */}
+          {onOpenNlpDialog && (
+            <button
+              onClick={onOpenNlpDialog}
+              className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold rounded-xl bg-red-500 hover:bg-red-600 text-white shadow-sm transition-all shrink-0 cursor-pointer"
+              title="Open AI Natural Language House Assistant (1,000 Trained Queries)"
+            >
+              <Bot className="w-3.5 h-3.5 animate-pulse" />
+              <span className="hidden lg:inline">AI House Assistant</span>
+              <span className="lg:hidden">AI NLP</span>
+            </button>
+          )}
 
           {/* 3. STATUS (FOR SALE / FOR RENT) */}
           <div className="relative hidden md:block">

@@ -9,6 +9,9 @@ import { PropertyDetailModal } from '../components/property/PropertyDetailModal'
 import { HouseRoiCalculatorModal } from '../components/property/HouseRoiCalculatorModal';
 import { ScribbleMap } from '../components/map/ScribbleMap';
 import { VoiceAssistantModal } from '../components/intelligence/VoiceAssistantModal';
+import { CustomerNlpDialog } from '../components/nlp/CustomerNlpDialog';
+import { FloatingNlpTrigger } from '../components/nlp/FloatingNlpTrigger';
+import { NlpCrawlerSearchBar } from '../components/search/NlpCrawlerSearchBar';
 import { CHICAGO_LISTINGS } from '../data/chicago-listings';
 import { ShikaakPropertyListing, FilterState, GeoCoordinate } from '../types/property';
 import { SupportedLanguageCode } from '../types/intelligence';
@@ -45,8 +48,8 @@ import {
 export default function Home() {
   const router = useRouter();
 
-  // Global Listings State (Chicago & Colorado Luxury Properties)
-  const [allListings] = useState<ShikaakPropertyListing[]>(CHICAGO_LISTINGS);
+  // Global Listings State (Chicago & Colorado Luxury Properties + Crawled Properties)
+  const [allListings, setAllListings] = useState<ShikaakPropertyListing[]>(CHICAGO_LISTINGS);
   const [selectedListing, setSelectedListing] = useState<ShikaakPropertyListing | null>(CHICAGO_LISTINGS[0]);
   const [modalListing, setModalListing] = useState<ShikaakPropertyListing | null>(null);
 
@@ -55,6 +58,7 @@ export default function Home() {
 
   // Intelligence & Voice Assistant
   const [isVoiceAssistantOpen, setIsVoiceAssistantOpen] = useState(false);
+  const [isNlpDialogOpen, setIsNlpDialogOpen] = useState(false);
   const [currentLanguage, setCurrentLanguage] = useState<SupportedLanguageCode>('en');
 
   // Freehand Scribble / Lasso State
@@ -253,9 +257,28 @@ export default function Home() {
           onSortChange={setSortBy}
           onScrollToTop={handleScrollToTop}
           onOpenVoiceAssistant={() => setIsVoiceAssistantOpen(true)}
+          onOpenNlpDialog={() => setIsNlpDialogOpen(true)}
           currentLanguage={currentLanguage}
           onLanguageChange={setCurrentLanguage}
         />
+
+        {/* Real-Time NLP Natural Language Search & Multi-Portal Web Crawler Bar */}
+        <div className="w-full px-4 sm:px-8 lg:px-12 py-3 bg-red-50/40 border-b border-red-100">
+          <NlpCrawlerSearchBar
+            onListingsCrawled={(crawled) => {
+              setAllListings(prev => {
+                const existingIds = new Set(prev.map(p => p.id));
+                const uniqueNew = crawled.filter(c => !existingIds.has(c.id));
+                return [...uniqueNew, ...prev];
+              });
+              if (crawled.length > 0) {
+                setSelectedListing(crawled[0]);
+              }
+              const spotlight = document.getElementById('selected-spotlight');
+              if (spotlight) spotlight.scrollIntoView({ behavior: 'smooth' });
+            }}
+          />
+        </div>
 
         {/* ============================================================ */}
         {/* SECTION UP: FULL-WIDTH INTERACTIVE SATELLITE MAP ON TOP     */}
@@ -472,6 +495,34 @@ export default function Home() {
           onClose={() => setModalListing(null)}
         />
       )}
+
+      {/* Customer NLP AI Conversational Dialog Box (1,000 Trained Examples & Self-Correction) */}
+      <CustomerNlpDialog
+        isOpen={isNlpDialogOpen}
+        onClose={() => setIsNlpDialogOpen(false)}
+        allListings={allListings}
+        onSelectProperty={(property) => {
+          setSelectedListing(property);
+          const spotlight = document.getElementById('selected-spotlight');
+          if (spotlight) spotlight.scrollIntoView({ behavior: 'smooth' });
+        }}
+        onApplyResultsToDashboard={(matched) => {
+          setAllListings(prev => {
+            const existingIds = new Set(prev.map(p => p.id));
+            const unique = matched.filter(m => !existingIds.has(m.id));
+            return [...unique, ...prev];
+          });
+          if (matched.length > 0) {
+            setSelectedListing(matched[0]);
+          }
+          setIsNlpDialogOpen(false);
+          const spotlight = document.getElementById('selected-spotlight');
+          if (spotlight) spotlight.scrollIntoView({ behavior: 'smooth' });
+        }}
+      />
+
+      {/* Floating Bottom-Right Launcher Trigger */}
+      <FloatingNlpTrigger onClick={() => setIsNlpDialogOpen(true)} />
     </div>
   );
 }
