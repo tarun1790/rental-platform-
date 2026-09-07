@@ -115,16 +115,16 @@ export const Header: React.FC<HeaderProps> = ({
             )}
           </div>
 
-          {/* 2.5. AI NLP HOUSE ASSISTANT TRIGGER (1,000 TRAINED) */}
-          {onOpenNlpDialog && (
+          {/* 2.5. PROPERTY DECISION CONCIERGE TRIGGER (VOICE & NLP) */}
+          {(onOpenNlpDialog || onOpenVoiceAssistant) && (
             <button
-              onClick={onOpenNlpDialog}
+              onClick={onOpenNlpDialog || onOpenVoiceAssistant}
               className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold rounded-xl bg-red-500 hover:bg-red-600 text-white shadow-sm transition-all shrink-0 cursor-pointer"
-              title="Open AI Natural Language House Assistant (1,000 Trained Queries)"
+              title="Open Property Decision Concierge (Voice & Natural Language Intelligence)"
             >
               <Bot className="w-3.5 h-3.5 animate-pulse" />
-              <span className="hidden lg:inline">AI House Assistant</span>
-              <span className="lg:hidden">AI NLP</span>
+              <span className="hidden lg:inline">Decision Concierge</span>
+              <span className="lg:hidden">Concierge</span>
             </button>
           )}
 

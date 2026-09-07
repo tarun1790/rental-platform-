@@ -8,7 +8,6 @@ import { PropertyCard } from '../components/property/PropertyCard';
 import { PropertyDetailModal } from '../components/property/PropertyDetailModal';
 import { HouseRoiCalculatorModal } from '../components/property/HouseRoiCalculatorModal';
 import { ScribbleMap } from '../components/map/ScribbleMap';
-import { VoiceAssistantModal } from '../components/intelligence/VoiceAssistantModal';
 import { CustomerNlpDialog } from '../components/nlp/CustomerNlpDialog';
 import { FloatingNlpTrigger } from '../components/nlp/FloatingNlpTrigger';
 import { NlpCrawlerSearchBar } from '../components/search/NlpCrawlerSearchBar';
@@ -58,8 +57,7 @@ export default function Home() {
   // Custom ROI Calculator Modal State for any house
   const [roiModalListing, setRoiModalListing] = useState<ShikaakPropertyListing | null>(null);
 
-  // Intelligence & Voice Assistant
-  const [isVoiceAssistantOpen, setIsVoiceAssistantOpen] = useState(false);
+  // Property Decision Concierge & Multilingual State
   const [isNlpDialogOpen, setIsNlpDialogOpen] = useState(false);
   const [currentLanguage, setCurrentLanguage] = useState<SupportedLanguageCode>('en');
 
@@ -263,7 +261,6 @@ export default function Home() {
           sortBy={sortBy}
           onSortChange={setSortBy}
           onScrollToTop={handleScrollToTop}
-          onOpenVoiceAssistant={() => setIsVoiceAssistantOpen(true)}
           onOpenNlpDialog={() => setIsNlpDialogOpen(true)}
           currentLanguage={currentLanguage}
           onLanguageChange={setCurrentLanguage}
@@ -493,14 +490,6 @@ export default function Home() {
         />
       )}
 
-      {/* Voice Assistant Modal */}
-      <VoiceAssistantModal
-        isOpen={isVoiceAssistantOpen}
-        onClose={() => setIsVoiceAssistantOpen(false)}
-        currentLanguage={currentLanguage}
-        onLanguageChange={setCurrentLanguage}
-      />
-
       {/* Comprehensive Property Detail Deep-Dive Modal (Fallback / Quick Preview) */}
       {modalListing && (
         <PropertyDetailModal
@@ -509,11 +498,13 @@ export default function Home() {
         />
       )}
 
-      {/* Customer NLP AI Conversational Dialog Box (1,000 Trained Examples & Self-Correction) */}
+      {/* Property Decision Concierge (Voice, Multilingual, 1,000 Trained Queries & Self-Correction) */}
       <CustomerNlpDialog
         isOpen={isNlpDialogOpen}
         onClose={() => setIsNlpDialogOpen(false)}
         allListings={allListings}
+        currentLanguage={currentLanguage}
+        onLanguageChange={setCurrentLanguage}
         onSelectProperty={(property) => {
           setSelectedListing(property);
           const spotlight = document.getElementById('selected-spotlight');
