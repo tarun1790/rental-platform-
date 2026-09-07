@@ -34,13 +34,14 @@ import { crawlUsPropertyPortals } from '../../lib/crawler/multi-portal-crawler';
 import { analyzeQueryIntelligence, QueryIntelligenceResult } from '../../lib/nlp/query-intelligence';
 import { SUPPORTED_LANGUAGES, speakText } from '../../lib/speech-translation';
 import { SupportedLanguageCode } from '../../types/intelligence';
+import { ParsedNlpQuery } from '../../lib/nlp-search-parser';
 
 interface CustomerNlpDialogProps {
   isOpen: boolean;
   onClose: () => void;
   allListings: ShikaakPropertyListing[];
   onSelectProperty: (property: ShikaakPropertyListing) => void;
-  onApplyResultsToDashboard?: (listings: ShikaakPropertyListing[]) => void;
+  onApplyResultsToDashboard?: (listings: ShikaakPropertyListing[], parsedQuery?: ParsedNlpQuery) => void;
   currentLanguage?: SupportedLanguageCode;
   onLanguageChange?: (lang: SupportedLanguageCode) => void;
 }
@@ -550,7 +551,7 @@ export const CustomerNlpDialog: React.FC<CustomerNlpDialogProps> = ({
                       Tailor-Matched Houses ({result.matchedHouses.length} Candidates Ranked)
                     </h3>
                     <button
-                      onClick={() => onApplyResultsToDashboard?.(result.matchedHouses.map(m => m.listing))}
+                      onClick={() => onApplyResultsToDashboard?.(result.matchedHouses.map(m => m.listing), result.parsedQuery)}
                       className="text-xs font-bold text-red-600 hover:text-red-700 flex items-center gap-1"
                     >
                       <span>Project all onto Map & Grid</span>

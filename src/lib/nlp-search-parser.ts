@@ -58,7 +58,14 @@ const KNOWN_LOCATIONS: Array<{
   { names: ['logan square', 'logan'], city: 'Chicago', state: 'IL', neighborhood: 'Logan Square', displayName: 'Logan Square, Chicago, IL' },
   { names: ['old town', 'oldtown'], city: 'Chicago', state: 'IL', neighborhood: 'Old Town', displayName: 'Old Town, Chicago, IL' },
   { names: ['river north', 'rivernorth'], city: 'Chicago', state: 'IL', neighborhood: 'River North', displayName: 'River North, Chicago, IL' },
-  { names: ['andersonville', 'edgewater'], city: 'Chicago', state: 'IL', neighborhood: 'Andersonville', displayName: 'Andersonville, Chicago, IL' },
+  { names: ['pilsen'], city: 'Chicago', state: 'IL', neighborhood: 'Pilsen', displayName: 'Pilsen, Chicago, IL' },
+  { names: ['bridgeport'], city: 'Chicago', state: 'IL', neighborhood: 'Bridgeport', displayName: 'Bridgeport, Chicago, IL' },
+  { names: ['humboldt park', 'humboldt'], city: 'Chicago', state: 'IL', neighborhood: 'Humboldt Park', displayName: 'Humboldt Park, Chicago, IL' },
+  { names: ['uptown'], city: 'Chicago', state: 'IL', neighborhood: 'Uptown', displayName: 'Uptown, Chicago, IL' },
+  { names: ['avondale'], city: 'Chicago', state: 'IL', neighborhood: 'Avondale', displayName: 'Avondale, Chicago, IL' },
+  { names: ['albany park'], city: 'Chicago', state: 'IL', neighborhood: 'Albany Park', displayName: 'Albany Park, Chicago, IL' },
+  { names: ['bronzeville'], city: 'Chicago', state: 'IL', neighborhood: 'Bronzeville', displayName: 'Bronzeville, Chicago, IL' },
+  { names: ['andersonville', 'edgewater'], city: 'Chicago', state: 'IL', neighborhood: 'Edgewater', displayName: 'Edgewater, Chicago, IL' },
   { names: ['chicago', 'chicago il', 'il'], city: 'Chicago', state: 'IL', displayName: 'Chicago, IL' },
 
   // Colorado Metros

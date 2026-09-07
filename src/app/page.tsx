@@ -133,13 +133,27 @@ export default function Home() {
       .filter((listing) => {
         // 1. Text Search Filter (Street, City, State, or Neighborhood)
         if (filters.searchQuery) {
-          const query = filters.searchQuery.toLowerCase();
+          const query = filters.searchQuery.toLowerCase().trim();
           const matchStreet = listing.propertyAddress.street.toLowerCase().includes(query);
           const matchCity = listing.propertyAddress.city.toLowerCase().includes(query);
           const matchState = listing.propertyAddress.state.toLowerCase().includes(query);
           const matchNeighborhood = listing.propertyAddress.neighborhood.toLowerCase().includes(query);
           const matchTitle = listing.title.toLowerCase().includes(query);
-          if (!matchStreet && !matchCity && !matchState && !matchNeighborhood && !matchTitle) return false;
+
+          if (!matchStreet && !matchCity && !matchState && !matchNeighborhood && !matchTitle) {
+            // Also check individual tokens (ignoring common stop words)
+            const tokens = query.split(/\s+/).filter(t => 
+              t.length > 2 && 
+              !['house', 'home', 'under', 'below', 'for', 'sale', 'rent', 'near', 'with', 'and', 'the'].includes(t) &&
+              !/\d/.test(t)
+            );
+            const tokenMatch = tokens.length > 0 && tokens.some(t =>
+              listing.propertyAddress.city.toLowerCase().includes(t) ||
+              listing.propertyAddress.neighborhood.toLowerCase().includes(t) ||
+              listing.propertyAddress.street.toLowerCase().includes(t)
+            );
+            if (!tokenMatch) return false;
+          }
         }
 
         // 2. Listing Status (Buy / Rent)
@@ -269,12 +283,21 @@ export default function Home() {
         {/* Real-Time NLP Natural Language Search & Multi-Portal Web Crawler Bar */}
         <div className="w-full px-4 sm:px-8 lg:px-12 py-3 bg-red-50/40 border-b border-red-100">
           <NlpCrawlerSearchBar
-            onListingsCrawled={(crawled) => {
+            onListingsCrawled={(crawled, parsedQuery) => {
               setAllListings(prev => {
                 const existingIds = new Set(prev.map(p => p.id));
                 const uniqueNew = crawled.filter(c => !existingIds.has(c.id));
                 return [...uniqueNew, ...prev];
               });
+              if (parsedQuery) {
+                setFilters(prev => ({
+                  ...prev,
+                  priceMax: parsedQuery.priceRange?.maxPrice !== undefined ? parsedQuery.priceRange.maxPrice : prev.priceMax,
+                  priceMin: parsedQuery.priceRange?.minPrice !== undefined ? parsedQuery.priceRange.minPrice : prev.priceMin,
+                  bedsMin: parsedQuery.beds !== undefined ? parsedQuery.beds : prev.bedsMin,
+                  searchQuery: parsedQuery.location?.neighborhood || parsedQuery.location?.city || prev.searchQuery,
+                }));
+              }
               if (crawled.length > 0) {
                 setSelectedListing(crawled[0]);
               }
@@ -510,12 +533,21 @@ export default function Home() {
           const spotlight = document.getElementById('selected-spotlight');
           if (spotlight) spotlight.scrollIntoView({ behavior: 'smooth' });
         }}
-        onApplyResultsToDashboard={(matched) => {
+        onApplyResultsToDashboard={(matched, parsedQuery) => {
           setAllListings(prev => {
             const existingIds = new Set(prev.map(p => p.id));
             const unique = matched.filter(m => !existingIds.has(m.id));
             return [...unique, ...prev];
           });
+          if (parsedQuery) {
+            setFilters(prev => ({
+              ...prev,
+              priceMax: parsedQuery.priceRange?.maxPrice !== undefined ? parsedQuery.priceRange.maxPrice : prev.priceMax,
+              priceMin: parsedQuery.priceRange?.minPrice !== undefined ? parsedQuery.priceRange.minPrice : prev.priceMin,
+              bedsMin: parsedQuery.beds !== undefined ? parsedQuery.beds : prev.bedsMin,
+              searchQuery: parsedQuery.location?.neighborhood || parsedQuery.location?.city || prev.searchQuery,
+            }));
+          }
           if (matched.length > 0) {
             setSelectedListing(matched[0]);
           }

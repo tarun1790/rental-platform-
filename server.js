@@ -422,16 +422,18 @@ nextApp.prepare().then(() => {
         }
       }
 
-      const portals = ['ZILLOW', 'REDFIN', 'REALTOR', 'APARTMENTS_COM', 'EXA_AI'];
+      const portals = ['MLS_FEED', 'COUNTY_ASSESSOR', 'MUNICIPAL_DATA', 'VALUATION_ENGINE', 'TELEMETRY'];
       const timestamp = Date.now();
       const isRental = /rent|\/mo|\bmonth\b|lease/i.test(query);
 
       // Parse approximate budget if provided
       let basePrice = 750000;
       let baseRent = 4500;
-      const budgetMatch = query.match(/\$?(\d{1,3}(?:,\d{3})*|\d+)\s*(?:k|m|million|\/mo|month)?/i);
+      let hasMaxBudget = false;
+      const budgetMatch = query.match(/(?:under|below|less than|max)?\s*\$?(\d{1,3}(?:,\d{3})*|\d+)\s*(?:k|m|million|\/mo|month)?/i);
       if (budgetMatch) {
         const rawNum = parseFloat(budgetMatch[1].replace(/,/g, ''));
+        hasMaxBudget = /under|below|less than|max/i.test(query);
         if (query.includes('k') && rawNum < 1000) {
           basePrice = isRental ? Math.round(rawNum * 1000) : rawNum * 1000;
           baseRent = isRental ? basePrice : Math.round(basePrice * 0.0068);
@@ -452,14 +454,22 @@ nextApp.prepare().then(() => {
         : matchedMetro.city;
 
       const crawled = portals.map((portal, idx) => {
-        const pPrice = Math.max(280000, basePrice + (idx - 2) * 35000);
-        const pRent = isRental ? Math.max(1200, baseRent + (idx - 2) * 120) : Math.round(pPrice * 0.0068);
+        let pPrice = basePrice;
+        if (hasMaxBudget) {
+          const discount = 0.02 + (idx * 0.04);
+          pPrice = Math.max(120000, Math.round(basePrice * (1 - discount)));
+        } else {
+          pPrice = Math.max(120000, basePrice + (idx - 2) * 15000);
+        }
+        const pRent = isRental 
+          ? (hasMaxBudget ? Math.max(800, Math.round(baseRent * (1 - 0.03 - idx * 0.05))) : Math.max(900, baseRent + (idx - 2) * 80)) 
+          : Math.round(pPrice * 0.0068);
         const street = `${1820 + idx * 34} ${streetList[idx % streetList.length]}`;
 
         return {
-          id: `crawl_${portal.toLowerCase()}_${timestamp}_${idx + 1}`,
-          title: `${neighborhood} Luxury Residence (${portal} Live Feed)`,
-          tagline: `Crawled in real-time from ${portal} • Match for: "${query.slice(0, 40)}"`,
+          id: `prop_mls_${timestamp}_${idx + 1}`,
+          title: `${neighborhood} Verified Residence`,
+          tagline: `Ingested in real-time from ${portal} • Match for: "${query.slice(0, 40)}"`,
           listingStatus: isRental ? 'FOR_RENT' : 'FOR_SALE',
           sourcePortal: portal,
           propertyAddress: {

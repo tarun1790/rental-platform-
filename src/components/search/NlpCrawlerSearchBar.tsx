@@ -123,6 +123,9 @@ export const NlpCrawlerSearchBar: React.FC<NlpCrawlerSearchBarProps> = ({
       setTimeout(() => {
         setCrawlResult(result);
         setIsCrawling(false);
+        if (result.properties && result.properties.length > 0) {
+          onListingsCrawled(result.properties, result.parsedQuery);
+        }
       }, 700);
     } catch (err) {
       console.error('Crawl execution failed:', err);

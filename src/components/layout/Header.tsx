@@ -25,6 +25,7 @@ import { FilterState, ListingStatus, PropertyType } from '../../types/property';
 import { SupportedLanguageCode } from '../../types/intelligence';
 import { SUPPORTED_LANGUAGES } from '../../lib/speech-translation';
 import { TiledHomeIcon } from '../common/TiledHomeIcon';
+import { parseNlpQuery } from '../../lib/nlp-search-parser';
 
 interface HeaderProps {
   filters: FilterState;
@@ -95,20 +96,38 @@ export const Header: React.FC<HeaderProps> = ({
             </span>
           </div>
 
-          {/* 2. LOCATION SEARCH INPUT */}
+          {/* 2. LOCATION & NLP SEARCH INPUT */}
           <div className="relative flex-1 max-w-xs md:max-w-sm">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-red-400" />
             <input
               type="text"
-              placeholder="Search US, Colorado, Chicago, Denver, Boulder..."
+              placeholder="Search US, Chicago, Denver, under 400k, 3 bed..."
               value={filters.searchQuery}
-              onChange={(e) => onFilterChange({ ...filters, searchQuery: e.target.value })}
+              onChange={(e) => {
+                const val = e.target.value;
+                if (/(under|below|max|budget|\$|\d+k|beds?|bath)/i.test(val)) {
+                  const parsed = parseNlpQuery(val);
+                  const nextFilters = { ...filters, searchQuery: val };
+                  if (parsed.priceRange?.maxPrice) {
+                    nextFilters.priceMax = parsed.priceRange.maxPrice;
+                  }
+                  if (parsed.priceRange?.minPrice) {
+                    nextFilters.priceMin = parsed.priceRange.minPrice;
+                  }
+                  if (parsed.beds !== undefined) {
+                    nextFilters.bedsMin = parsed.beds;
+                  }
+                  onFilterChange(nextFilters);
+                } else {
+                  onFilterChange({ ...filters, searchQuery: val });
+                }
+              }}
               className="w-full pl-9 pr-7 py-2 text-xs bg-red-50/40 border border-red-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white transition-all font-medium"
             />
             {filters.searchQuery && (
               <button
-                onClick={() => onFilterChange({ ...filters, searchQuery: '' })}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-red-400 hover:text-red-600"
+                onClick={() => onFilterChange({ ...filters, searchQuery: '', priceMax: 5000000, priceMin: 0, bedsMin: 0 })}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-red-400 hover:text-red-600 cursor-pointer"
               >
                 <X className="w-3.5 h-3.5" />
               </button>

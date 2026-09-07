@@ -4086,11 +4086,11 @@
       ]
     },
     "propertyTaxes": {
-      "annualAmountUSD": 9165,
+      "annualAmountUSD": 5752,
       "effectiveTaxRatePercent": 1.95,
       "taxYear": 2025,
       "countyName": "Cook County",
-      "assessedValueUSD": 470000
+      "assessedValueUSD": 295000
     },
     "nearbyPointsOfInterest": [
       {
@@ -4316,8 +4316,8 @@
     },
     "financials": {
       "inputs": {
-        "purchasePrice": 470000,
-        "monthlyGrossRent": 3400,
+        "purchasePrice": 295000,
+        "monthlyGrossRent": 2200,
         "downPaymentPercent": 20,
         "interestRatePercent": 6.5,
         "loanTermYears": 30,
@@ -4329,18 +4329,18 @@
         "hoaMonthlyFeeUSD": 0
       },
       "outputs": {
-        "grossAnnualRevenue": 40800,
-        "netOperatingIncomeAnnual": 24939,
-        "monthlyDebtService": 2376.58,
-        "monthlyOperatingExpenses": 1185.75,
-        "monthlyNetCashFlow": -298.33,
-        "capRatePercent": 5.31,
-        "cashOnCashReturnPercent": -3.31,
-        "debtServiceCoverageRatio": 0.87,
-        "grossRentMultiplier": 11.52,
-        "passFlowScore": 1.7,
+        "grossAnnualRevenue": 26400,
+        "netOperatingIncomeAnnual": 15680,
+        "monthlyDebtService": 1491.68,
+        "monthlyOperatingExpenses": 805.38,
+        "monthlyNetCashFlow": -185.06,
+        "capRatePercent": 5.32,
+        "cashOnCashReturnPercent": -3.27,
+        "debtServiceCoverageRatio": 0.88,
+        "grossRentMultiplier": 11.17,
+        "passFlowScore": 1.8,
         "verdict": "FAIL_NEGATIVE_FLOW",
-        "verdictReason": "Negative cash flow (-$298/mo) & inadequate debt coverage (0.87x DSCR)"
+        "verdictReason": "Negative cash flow (-$185/mo) & inadequate debt coverage (0.88x DSCR)"
       }
     },
     "media": {
@@ -4414,11 +4414,11 @@
       ]
     },
     "propertyTaxes": {
-      "annualAmountUSD": 9555,
+      "annualAmountUSD": 6630,
       "effectiveTaxRatePercent": 1.95,
       "taxYear": 2025,
       "countyName": "Cook County",
-      "assessedValueUSD": 490000
+      "assessedValueUSD": 340000
     },
     "nearbyPointsOfInterest": [
       {
@@ -4644,8 +4644,8 @@
     },
     "financials": {
       "inputs": {
-        "purchasePrice": 490000,
-        "monthlyGrossRent": 3500,
+        "purchasePrice": 340000,
+        "monthlyGrossRent": 2450,
         "downPaymentPercent": 20,
         "interestRatePercent": 6.5,
         "loanTermYears": 30,
@@ -4657,18 +4657,18 @@
         "hoaMonthlyFeeUSD": 0
       },
       "outputs": {
-        "grossAnnualRevenue": 42000,
-        "netOperatingIncomeAnnual": 25605,
-        "monthlyDebtService": 2477.71,
-        "monthlyOperatingExpenses": 1226.25,
-        "monthlyNetCashFlow": -343.96,
-        "capRatePercent": 5.23,
-        "cashOnCashReturnPercent": -3.66,
-        "debtServiceCoverageRatio": 0.86,
-        "grossRentMultiplier": 11.67,
+        "grossAnnualRevenue": 29400,
+        "netOperatingIncomeAnnual": 17442,
+        "monthlyDebtService": 1719.23,
+        "monthlyOperatingExpenses": 898.5,
+        "monthlyNetCashFlow": -265.73,
+        "capRatePercent": 5.13,
+        "cashOnCashReturnPercent": -4.08,
+        "debtServiceCoverageRatio": 0.85,
+        "grossRentMultiplier": 11.56,
         "passFlowScore": 1.7,
         "verdict": "FAIL_NEGATIVE_FLOW",
-        "verdictReason": "Negative cash flow (-$344/mo) & inadequate debt coverage (0.86x DSCR)"
+        "verdictReason": "Negative cash flow (-$266/mo) & inadequate debt coverage (0.85x DSCR)"
       }
     },
     "media": {
@@ -4742,11 +4742,11 @@
       ]
     },
     "propertyTaxes": {
-      "annualAmountUSD": 11310,
+      "annualAmountUSD": 7507,
       "effectiveTaxRatePercent": 1.95,
       "taxYear": 2025,
       "countyName": "Cook County",
-      "assessedValueUSD": 580000
+      "assessedValueUSD": 385000
     },
     "nearbyPointsOfInterest": [
       {
@@ -4972,8 +4972,8 @@
     },
     "financials": {
       "inputs": {
-        "purchasePrice": 580000,
-        "monthlyGrossRent": 4000,
+        "purchasePrice": 385000,
+        "monthlyGrossRent": 2700,
         "downPaymentPercent": 20,
         "interestRatePercent": 6.5,
         "loanTermYears": 30,
@@ -4985,18 +4985,18 @@
         "hoaMonthlyFeeUSD": 0
       },
       "outputs": {
-        "grossAnnualRevenue": 48000,
-        "netOperatingIncomeAnnual": 29130,
-        "monthlyDebtService": 2932.8,
-        "monthlyOperatingExpenses": 1412.5,
-        "monthlyNetCashFlow": -505.3,
-        "capRatePercent": 5.02,
-        "cashOnCashReturnPercent": -4.55,
-        "debtServiceCoverageRatio": 0.83,
-        "grossRentMultiplier": 12.08,
-        "passFlowScore": 1.5,
+        "grossAnnualRevenue": 32400,
+        "netOperatingIncomeAnnual": 19205,
+        "monthlyDebtService": 1946.77,
+        "monthlyOperatingExpenses": 991.63,
+        "monthlyNetCashFlow": -346.39,
+        "capRatePercent": 4.99,
+        "cashOnCashReturnPercent": -4.69,
+        "debtServiceCoverageRatio": 0.82,
+        "grossRentMultiplier": 11.88,
+        "passFlowScore": 1.7,
         "verdict": "FAIL_NEGATIVE_FLOW",
-        "verdictReason": "Negative cash flow (-$505/mo) & inadequate debt coverage (0.83x DSCR)"
+        "verdictReason": "Negative cash flow (-$346/mo) & inadequate debt coverage (0.82x DSCR)"
       }
     },
     "media": {
@@ -5070,11 +5070,11 @@
       ]
     },
     "propertyTaxes": {
-      "annualAmountUSD": 8970,
+      "annualAmountUSD": 7312,
       "effectiveTaxRatePercent": 1.95,
       "taxYear": 2025,
       "countyName": "Cook County",
-      "assessedValueUSD": 460000
+      "assessedValueUSD": 375000
     },
     "nearbyPointsOfInterest": [
       {
@@ -5300,8 +5300,8 @@
     },
     "financials": {
       "inputs": {
-        "purchasePrice": 460000,
-        "monthlyGrossRent": 3300,
+        "purchasePrice": 375000,
+        "monthlyGrossRent": 2650,
         "downPaymentPercent": 20,
         "interestRatePercent": 6.5,
         "loanTermYears": 30,
@@ -5313,18 +5313,18 @@
         "hoaMonthlyFeeUSD": 420
       },
       "outputs": {
-        "grossAnnualRevenue": 39600,
-        "netOperatingIncomeAnnual": 24078,
-        "monthlyDebtService": 2326.01,
-        "monthlyOperatingExpenses": 1161.5,
-        "monthlyNetCashFlow": -319.51,
-        "capRatePercent": 5.23,
-        "cashOnCashReturnPercent": -3.62,
-        "debtServiceCoverageRatio": 0.86,
-        "grossRentMultiplier": 11.62,
+        "grossAnnualRevenue": 31800,
+        "netOperatingIncomeAnnual": 18872,
+        "monthlyDebtService": 1896.2,
+        "monthlyOperatingExpenses": 971.38,
+        "monthlyNetCashFlow": -323.58,
+        "capRatePercent": 5.03,
+        "cashOnCashReturnPercent": -4.5,
+        "debtServiceCoverageRatio": 0.83,
+        "grossRentMultiplier": 11.79,
         "passFlowScore": 1.7,
         "verdict": "FAIL_NEGATIVE_FLOW",
-        "verdictReason": "Negative cash flow (-$320/mo) & inadequate debt coverage (0.86x DSCR)"
+        "verdictReason": "Negative cash flow (-$324/mo) & inadequate debt coverage (0.83x DSCR)"
       }
     },
     "media": {
@@ -5398,11 +5398,11 @@
       ]
     },
     "propertyTaxes": {
-      "annualAmountUSD": 9945,
+      "annualAmountUSD": 7605,
       "effectiveTaxRatePercent": 1.95,
       "taxYear": 2025,
       "countyName": "Cook County",
-      "assessedValueUSD": 510000
+      "assessedValueUSD": 390000
     },
     "nearbyPointsOfInterest": [
       {
@@ -5628,8 +5628,8 @@
     },
     "financials": {
       "inputs": {
-        "purchasePrice": 510000,
-        "monthlyGrossRent": 3600,
+        "purchasePrice": 390000,
+        "monthlyGrossRent": 2750,
         "downPaymentPercent": 20,
         "interestRatePercent": 6.5,
         "loanTermYears": 30,
@@ -5641,18 +5641,18 @@
         "hoaMonthlyFeeUSD": 420
       },
       "outputs": {
-        "grossAnnualRevenue": 43200,
-        "netOperatingIncomeAnnual": 26271,
-        "monthlyDebtService": 2578.84,
-        "monthlyOperatingExpenses": 1266.75,
-        "monthlyNetCashFlow": -389.59,
-        "capRatePercent": 5.15,
-        "cashOnCashReturnPercent": -3.99,
-        "debtServiceCoverageRatio": 0.85,
-        "grossRentMultiplier": 11.81,
-        "passFlowScore": 1.6,
+        "grossAnnualRevenue": 33000,
+        "netOperatingIncomeAnnual": 19635,
+        "monthlyDebtService": 1972.05,
+        "monthlyOperatingExpenses": 1003.75,
+        "monthlyNetCashFlow": -335.8,
+        "capRatePercent": 5.03,
+        "cashOnCashReturnPercent": -4.49,
+        "debtServiceCoverageRatio": 0.83,
+        "grossRentMultiplier": 11.82,
+        "passFlowScore": 1.7,
         "verdict": "FAIL_NEGATIVE_FLOW",
-        "verdictReason": "Negative cash flow (-$390/mo) & inadequate debt coverage (0.85x DSCR)"
+        "verdictReason": "Negative cash flow (-$336/mo) & inadequate debt coverage (0.83x DSCR)"
       }
     },
     "media": {
@@ -5726,11 +5726,11 @@
       ]
     },
     "propertyTaxes": {
-      "annualAmountUSD": 11505,
+      "annualAmountUSD": 7702,
       "effectiveTaxRatePercent": 1.95,
       "taxYear": 2025,
       "countyName": "Cook County",
-      "assessedValueUSD": 590000
+      "assessedValueUSD": 395000
     },
     "nearbyPointsOfInterest": [
       {
@@ -5956,8 +5956,8 @@
     },
     "financials": {
       "inputs": {
-        "purchasePrice": 590000,
-        "monthlyGrossRent": 4100,
+        "purchasePrice": 395000,
+        "monthlyGrossRent": 2800,
         "downPaymentPercent": 20,
         "interestRatePercent": 6.5,
         "loanTermYears": 30,
@@ -5969,18 +5969,18 @@
         "hoaMonthlyFeeUSD": 0
       },
       "outputs": {
-        "grossAnnualRevenue": 49200,
-        "netOperatingIncomeAnnual": 29991,
-        "monthlyDebtService": 2983.36,
-        "monthlyOperatingExpenses": 1436.75,
-        "monthlyNetCashFlow": -484.11,
+        "grossAnnualRevenue": 33600,
+        "netOperatingIncomeAnnual": 20066,
+        "monthlyDebtService": 1997.33,
+        "monthlyOperatingExpenses": 1015.88,
+        "monthlyNetCashFlow": -325.21,
         "capRatePercent": 5.08,
-        "cashOnCashReturnPercent": -4.28,
+        "cashOnCashReturnPercent": -4.3,
         "debtServiceCoverageRatio": 0.84,
-        "grossRentMultiplier": 11.99,
-        "passFlowScore": 1.5,
+        "grossRentMultiplier": 11.76,
+        "passFlowScore": 1.7,
         "verdict": "FAIL_NEGATIVE_FLOW",
-        "verdictReason": "Negative cash flow (-$484/mo) & inadequate debt coverage (0.84x DSCR)"
+        "verdictReason": "Negative cash flow (-$325/mo) & inadequate debt coverage (0.84x DSCR)"
       }
     },
     "media": {
@@ -9924,6 +9924,662 @@
       "gallery": [
         "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80",
         "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1200&q=80"
+      ]
+    }
+  },
+  {
+    "id": "prop_chi_31_albany_park",
+    "title": "Albany Park Verified Residence",
+    "tagline": "Dense Glacial Till 3,900 PSF • Verified Safety • 4.5 min CPD Response",
+    "listingStatus": "FOR_SALE",
+    "propertyAddress": {
+      "street": "4720 N Kedzie Ave",
+      "neighborhood": "Albany Park",
+      "city": "Chicago",
+      "state": "IL",
+      "zipCode": "60636",
+      "location": {
+        "latitude": 41.9675,
+        "longitude": -87.7082
+      }
+    },
+    "specs": {
+      "propertyType": "TOWNHOUSE",
+      "beds": 3,
+      "baths": 2.5,
+      "finishedSqFt": 1850,
+      "finishedSqMeters": 172,
+      "yearBuilt": 2023,
+      "parkingSpaces": 2,
+      "hoaMonthlyFeeUSD": 180
+    },
+    "roomsBreakdown": {
+      "totalRooms": 6,
+      "livingRooms": 1,
+      "diningRooms": 1,
+      "kitchens": 1,
+      "bedrooms": 3,
+      "bathrooms": 3,
+      "hasBalconyPatio": true,
+      "hasFinishedBasement": false,
+      "roomDetails": [
+        {
+          "name": "Living Room",
+          "dimensions": "20' x 15'",
+          "sqFt": 300,
+          "level": "Main"
+        },
+        {
+          "name": "Primary Suite",
+          "dimensions": "18' x 14'",
+          "sqFt": 252,
+          "level": "Main"
+        },
+        {
+          "name": "Kitchen & Island",
+          "dimensions": "14' x 12'",
+          "sqFt": 168,
+          "level": "Main"
+        },
+        {
+          "name": "Dining Room",
+          "dimensions": "12' x 11'",
+          "sqFt": 132,
+          "level": "Main"
+        }
+      ]
+    },
+    "propertyTaxes": {
+      "annualAmountUSD": 7507,
+      "effectiveTaxRatePercent": 1.95,
+      "taxYear": 2025,
+      "countyName": "Cook County",
+      "assessedValueUSD": 385000
+    },
+    "nearbyPointsOfInterest": [
+      {
+        "id": "poi_31_1",
+        "type": "MALL",
+        "name": "Albany Park Commercial Promenade",
+        "categoryLabel": "Retail & Shopping District",
+        "distanceKm": 1.1,
+        "distanceMiles": 0.68,
+        "walkTimeMinutes": 13,
+        "driveTimeMinutes": 3,
+        "ratingScore": 4.7,
+        "keyHighlight": "Retail, Grocery & Dining Core"
+      },
+      {
+        "id": "poi_31_2",
+        "type": "SCHOOL",
+        "name": "Albany Park Community Academy",
+        "categoryLabel": "CPS Top Tier Academy",
+        "distanceKm": 0.4,
+        "distanceMiles": 0.25,
+        "walkTimeMinutes": 5,
+        "driveTimeMinutes": 1,
+        "ratingScore": 9.4,
+        "keyHighlight": "Top 10% Academic Ranking"
+      },
+      {
+        "id": "poi_31_3",
+        "type": "HOSPITAL",
+        "name": "Albany Park Regional Health Center",
+        "categoryLabel": "Level-1 Medical Campus",
+        "distanceKm": 1.6,
+        "distanceMiles": 0.99,
+        "walkTimeMinutes": 19,
+        "driveTimeMinutes": 5,
+        "ratingScore": 9.7,
+        "keyHighlight": "24/7 Trauma Care"
+      },
+      {
+        "id": "poi_31_4",
+        "type": "TRANSIT",
+        "name": "Albany Park CTA Station",
+        "categoryLabel": "Rapid Transit",
+        "distanceKm": 0.5,
+        "distanceMiles": 0.31,
+        "walkTimeMinutes": 6,
+        "driveTimeMinutes": 2,
+        "ratingScore": 4.9,
+        "keyHighlight": "Direct commute to Loop CBD"
+      }
+    ],
+    "policeCorridor": {
+      "precinctDistrict": "CPD District 3",
+      "patrolCorridorName": "Albany Park Sector Patrol Unit",
+      "dispatchAvgMinutes": 4.5,
+      "activePatrolUnitsOnDuty": 7,
+      "twentyYearBurglaryMilestone": "18-Yr Zero Burglary Milestone"
+    },
+    "climateTelemetry": {
+      "surfaceTempC": 22,
+      "surfaceTempF": 72,
+      "summerPeakTempC": 28,
+      "winterLowTempC": -6,
+      "airQualityIndexAQI": 34,
+      "airQualityVerdict": "EXCELLENT",
+      "floodZoneTier": "FEMA Zone X (Low Inundation Risk)",
+      "lakeEffectSnowRiskTier": "Low (Protected Urban Buffer)",
+      "annualRainfallInches": 38.1,
+      "urbanHeatIslandDeviationF": -1.2
+    },
+    "forestResources": {
+      "forestCanopyCoveragePercent": 32,
+      "nearestParkOrForestName": "Albany Park Community Forest & Park",
+      "distanceToForestKm": 0.5,
+      "ndviVegetationIndex": 0.51,
+      "treeAcreageNearby": 1290,
+      "carbonSequestrationRating": "Grade A (Urban Green Zone)"
+    },
+    "timezone": {
+      "timeZoneName": "Central Standard Time",
+      "timeZoneCode": "CST",
+      "utcOffset": "UTC-6",
+      "daylightSavingObserved": true
+    },
+    "heatWaves": {
+      "annualHeatWaveDaysCount": 12,
+      "peakSummerHeatIndexF": 96,
+      "extremeHeatRiskTier": "LOW",
+      "urbanHeatIslandAnomalyF": 1.2,
+      "shadeCanopyCoolingEffectF": -3,
+      "historicalHeatWaveTrend": "Moderate urban tree canopy buffer"
+    },
+    "airport": {
+      "primaryAirportName": "Chicago O'Hare International Airport",
+      "primaryAirportIATA": "ORD",
+      "distanceToAirportKm": 28,
+      "driveTimeToAirportMinutes": 31,
+      "directTransitAvailable": true,
+      "annualPassengerVolumeRank": "Major International Hub"
+    },
+    "geotechnical": {
+      "soilClassification": "Dense Glacial Till 3,900 PSF",
+      "bearingCapacityPSF": 4380,
+      "bearingCapacityKPa": 255,
+      "bedrockDepthFeet": 61,
+      "waterTableDepthFeet": 15,
+      "liquefactionRiskTier": "VERY_LOW",
+      "expansiveClayShrinkSwell": "LOW",
+      "settlementRiskScore": 97
+    },
+    "safety": {
+      "safetyIndexScore": 96,
+      "theftFreeMilestoneYears": 23,
+      "policeResponseAvgMinutes": 4.5,
+      "fireEMSResponseAvgMinutes": 3.2,
+      "violentCrimeRatePer1000": 0.4,
+      "propertyCrimeRatePer1000": 1.2
+    },
+    "amenities": [
+      {
+        "id": "am_31_1",
+        "name": "Albany Park Health Center",
+        "category": "HOSPITAL",
+        "rankScore": 97,
+        "distanceMiles": 0.99,
+        "distanceKm": 1.6,
+        "driveTimeMinutes": 5,
+        "keyAttribute": "Medical Care"
+      },
+      {
+        "id": "am_31_2",
+        "name": "Albany Park Dining Corridor",
+        "category": "MICHELIN_DINING",
+        "rankScore": 96,
+        "distanceMiles": 0.3,
+        "distanceKm": 0.5,
+        "driveTimeMinutes": 2,
+        "keyAttribute": "Boutique Dining & Cafes"
+      },
+      {
+        "id": "am_31_3",
+        "name": "Albany Park Shopping Center",
+        "category": "SHOPPING",
+        "rankScore": 94,
+        "distanceMiles": 0.68,
+        "distanceKm": 1.1,
+        "driveTimeMinutes": 3,
+        "keyAttribute": "Retail & Convenience"
+      },
+      {
+        "id": "am_31_4",
+        "name": "Albany Park Academy",
+        "category": "SCHOOL",
+        "rankScore": 95,
+        "distanceMiles": 0.25,
+        "distanceKm": 0.4,
+        "driveTimeMinutes": 1,
+        "keyAttribute": "Top Rated CPS School"
+      }
+    ],
+    "microclimate": {
+      "avgSummerTempF": 78,
+      "avgWinterTempF": 24,
+      "annualSnowfallInches": 34,
+      "windExposureTier": "SHELTERED"
+    },
+    "blueprint": {
+      "floorplanImageUrl": "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1200&q=80",
+      "totalFloorCount": 2,
+      "dimensionsWidthFeet": 32,
+      "dimensionsLengthFeet": 58,
+      "roomBreakdown": [
+        {
+          "id": "r_31_1",
+          "roomName": "Main Living Salon",
+          "rect": {
+            "x": 20,
+            "y": 20,
+            "width": 260,
+            "height": 200
+          },
+          "dimensionsFeet": {
+            "width": 20,
+            "length": 15,
+            "ceilingHeight": 10
+          },
+          "squareFootage": 300,
+          "windowOrientation": "South",
+          "flooringType": "Hardwood Oak"
+        },
+        {
+          "id": "r_31_2",
+          "roomName": "Primary Suite",
+          "rect": {
+            "x": 300,
+            "y": 20,
+            "width": 240,
+            "height": 180
+          },
+          "dimensionsFeet": {
+            "width": 18,
+            "length": 14,
+            "ceilingHeight": 10
+          },
+          "squareFootage": 252,
+          "windowOrientation": "East",
+          "flooringType": "Hardwood Oak",
+          "hasEnSuiteBath": true
+        }
+      ],
+      "defaultFurniture": [
+        {
+          "id": "f_31_1",
+          "type": "SOFA_SECTIONAL",
+          "name": "Sofa",
+          "widthFeet": 8.5,
+          "lengthFeet": 7.5,
+          "x": 30,
+          "y": 30,
+          "rotationDeg": 0
+        }
+      ]
+    },
+    "financials": {
+      "inputs": {
+        "purchasePrice": 385000,
+        "monthlyGrossRent": 2700,
+        "downPaymentPercent": 20,
+        "interestRatePercent": 6.5,
+        "loanTermYears": 30,
+        "annualPropertyTaxRatePercent": 1.95,
+        "annualInsuranceUSD": 1800,
+        "annualMaintenancePercent": 1,
+        "vacancyRatePercent": 4,
+        "propertyManagementPercent": 7,
+        "hoaMonthlyFeeUSD": 0
+      },
+      "outputs": {
+        "grossAnnualRevenue": 32400,
+        "netOperatingIncomeAnnual": 19205,
+        "monthlyDebtService": 1946.77,
+        "monthlyOperatingExpenses": 991.63,
+        "monthlyNetCashFlow": -346.39,
+        "capRatePercent": 4.99,
+        "cashOnCashReturnPercent": -4.69,
+        "debtServiceCoverageRatio": 0.82,
+        "grossRentMultiplier": 11.88,
+        "passFlowScore": 1.7,
+        "verdict": "FAIL_NEGATIVE_FLOW",
+        "verdictReason": "Negative cash flow (-$346/mo) & inadequate debt coverage (0.82x DSCR)"
+      }
+    },
+    "media": {
+      "featuredImage": "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1200&q=80",
+      "gallery": [
+        "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=1200&q=80"
+      ]
+    }
+  },
+  {
+    "id": "prop_chi_32_humboldt_park",
+    "title": "Humboldt Park Verified Residence",
+    "tagline": "Silty Loam 3,600 PSF • Verified Safety • 4.8 min CPD Response",
+    "listingStatus": "FOR_SALE",
+    "propertyAddress": {
+      "street": "1432 N California Ave",
+      "neighborhood": "Humboldt Park",
+      "city": "Chicago",
+      "state": "IL",
+      "zipCode": "60637",
+      "location": {
+        "latitude": 41.9077,
+        "longitude": -87.6972
+      }
+    },
+    "specs": {
+      "propertyType": "SINGLE_FAMILY",
+      "beds": 3,
+      "baths": 2,
+      "finishedSqFt": 1720,
+      "finishedSqMeters": 160,
+      "yearBuilt": 2015,
+      "parkingSpaces": 2,
+      "hoaMonthlyFeeUSD": 0
+    },
+    "roomsBreakdown": {
+      "totalRooms": 6,
+      "livingRooms": 1,
+      "diningRooms": 1,
+      "kitchens": 1,
+      "bedrooms": 3,
+      "bathrooms": 2,
+      "hasBalconyPatio": true,
+      "hasFinishedBasement": true,
+      "roomDetails": [
+        {
+          "name": "Living Room",
+          "dimensions": "20' x 15'",
+          "sqFt": 300,
+          "level": "Main"
+        },
+        {
+          "name": "Primary Suite",
+          "dimensions": "18' x 14'",
+          "sqFt": 252,
+          "level": "Main"
+        },
+        {
+          "name": "Kitchen & Island",
+          "dimensions": "14' x 12'",
+          "sqFt": 168,
+          "level": "Main"
+        },
+        {
+          "name": "Dining Room",
+          "dimensions": "12' x 11'",
+          "sqFt": 132,
+          "level": "Main"
+        }
+      ]
+    },
+    "propertyTaxes": {
+      "annualAmountUSD": 6825,
+      "effectiveTaxRatePercent": 1.95,
+      "taxYear": 2025,
+      "countyName": "Cook County",
+      "assessedValueUSD": 350000
+    },
+    "nearbyPointsOfInterest": [
+      {
+        "id": "poi_32_1",
+        "type": "MALL",
+        "name": "Humboldt Park Commercial Promenade",
+        "categoryLabel": "Retail & Shopping District",
+        "distanceKm": 1.2,
+        "distanceMiles": 0.75,
+        "walkTimeMinutes": 14,
+        "driveTimeMinutes": 4,
+        "ratingScore": 4.7,
+        "keyHighlight": "Retail, Grocery & Dining Core"
+      },
+      {
+        "id": "poi_32_2",
+        "type": "SCHOOL",
+        "name": "Humboldt Park Community Academy",
+        "categoryLabel": "CPS Top Tier Academy",
+        "distanceKm": 0.5,
+        "distanceMiles": 0.31,
+        "walkTimeMinutes": 6,
+        "driveTimeMinutes": 2,
+        "ratingScore": 9.4,
+        "keyHighlight": "Top 10% Academic Ranking"
+      },
+      {
+        "id": "poi_32_3",
+        "type": "HOSPITAL",
+        "name": "Humboldt Park Regional Health Center",
+        "categoryLabel": "Level-1 Medical Campus",
+        "distanceKm": 1.4,
+        "distanceMiles": 0.87,
+        "walkTimeMinutes": 17,
+        "driveTimeMinutes": 4,
+        "ratingScore": 9.7,
+        "keyHighlight": "24/7 Trauma Care"
+      },
+      {
+        "id": "poi_32_4",
+        "type": "TRANSIT",
+        "name": "Humboldt Park CTA Station",
+        "categoryLabel": "Rapid Transit",
+        "distanceKm": 0.5,
+        "distanceMiles": 0.31,
+        "walkTimeMinutes": 6,
+        "driveTimeMinutes": 2,
+        "ratingScore": 4.9,
+        "keyHighlight": "Direct commute to Loop CBD"
+      }
+    ],
+    "policeCorridor": {
+      "precinctDistrict": "CPD District 4",
+      "patrolCorridorName": "Humboldt Park Sector Patrol Unit",
+      "dispatchAvgMinutes": 4.8,
+      "activePatrolUnitsOnDuty": 8,
+      "twentyYearBurglaryMilestone": "18-Yr Zero Burglary Milestone"
+    },
+    "climateTelemetry": {
+      "surfaceTempC": 22,
+      "surfaceTempF": 72,
+      "summerPeakTempC": 28,
+      "winterLowTempC": -6,
+      "airQualityIndexAQI": 35,
+      "airQualityVerdict": "EXCELLENT",
+      "floodZoneTier": "FEMA Zone X (Low Inundation Risk)",
+      "lakeEffectSnowRiskTier": "Low (Protected Urban Buffer)",
+      "annualRainfallInches": 38.1,
+      "urbanHeatIslandDeviationF": -1.2
+    },
+    "forestResources": {
+      "forestCanopyCoveragePercent": 33,
+      "nearestParkOrForestName": "Humboldt Park Community Forest & Park",
+      "distanceToForestKm": 0.6,
+      "ndviVegetationIndex": 0.52,
+      "treeAcreageNearby": 1330,
+      "carbonSequestrationRating": "Grade A (Urban Green Zone)"
+    },
+    "timezone": {
+      "timeZoneName": "Central Standard Time",
+      "timeZoneCode": "CST",
+      "utcOffset": "UTC-6",
+      "daylightSavingObserved": true
+    },
+    "heatWaves": {
+      "annualHeatWaveDaysCount": 13,
+      "peakSummerHeatIndexF": 97,
+      "extremeHeatRiskTier": "LOW",
+      "urbanHeatIslandAnomalyF": 1.2,
+      "shadeCanopyCoolingEffectF": -3,
+      "historicalHeatWaveTrend": "Moderate urban tree canopy buffer"
+    },
+    "airport": {
+      "primaryAirportName": "Chicago Midway International Airport",
+      "primaryAirportIATA": "MDW",
+      "distanceToAirportKm": 29,
+      "driveTimeToAirportMinutes": 32,
+      "directTransitAvailable": true,
+      "annualPassengerVolumeRank": "Major International Hub"
+    },
+    "geotechnical": {
+      "soilClassification": "Silty Loam 3,600 PSF",
+      "bearingCapacityPSF": 4510,
+      "bearingCapacityKPa": 263,
+      "bedrockDepthFeet": 62,
+      "waterTableDepthFeet": 15,
+      "liquefactionRiskTier": "VERY_LOW",
+      "expansiveClayShrinkSwell": "LOW",
+      "settlementRiskScore": 97
+    },
+    "safety": {
+      "safetyIndexScore": 97,
+      "theftFreeMilestoneYears": 24,
+      "policeResponseAvgMinutes": 4.8,
+      "fireEMSResponseAvgMinutes": 3.2,
+      "violentCrimeRatePer1000": 0.4,
+      "propertyCrimeRatePer1000": 1.2
+    },
+    "amenities": [
+      {
+        "id": "am_32_1",
+        "name": "Humboldt Park Health Center",
+        "category": "HOSPITAL",
+        "rankScore": 97,
+        "distanceMiles": 0.87,
+        "distanceKm": 1.4,
+        "driveTimeMinutes": 4,
+        "keyAttribute": "Medical Care"
+      },
+      {
+        "id": "am_32_2",
+        "name": "Humboldt Park Dining Corridor",
+        "category": "MICHELIN_DINING",
+        "rankScore": 96,
+        "distanceMiles": 0.3,
+        "distanceKm": 0.5,
+        "driveTimeMinutes": 2,
+        "keyAttribute": "Boutique Dining & Cafes"
+      },
+      {
+        "id": "am_32_3",
+        "name": "Humboldt Park Shopping Center",
+        "category": "SHOPPING",
+        "rankScore": 94,
+        "distanceMiles": 0.75,
+        "distanceKm": 1.2,
+        "driveTimeMinutes": 4,
+        "keyAttribute": "Retail & Convenience"
+      },
+      {
+        "id": "am_32_4",
+        "name": "Humboldt Park Academy",
+        "category": "SCHOOL",
+        "rankScore": 95,
+        "distanceMiles": 0.31,
+        "distanceKm": 0.5,
+        "driveTimeMinutes": 2,
+        "keyAttribute": "Top Rated CPS School"
+      }
+    ],
+    "microclimate": {
+      "avgSummerTempF": 78,
+      "avgWinterTempF": 24,
+      "annualSnowfallInches": 34,
+      "windExposureTier": "SHELTERED"
+    },
+    "blueprint": {
+      "floorplanImageUrl": "https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=1200&q=80",
+      "totalFloorCount": 2,
+      "dimensionsWidthFeet": 32,
+      "dimensionsLengthFeet": 58,
+      "roomBreakdown": [
+        {
+          "id": "r_32_1",
+          "roomName": "Main Living Salon",
+          "rect": {
+            "x": 20,
+            "y": 20,
+            "width": 260,
+            "height": 200
+          },
+          "dimensionsFeet": {
+            "width": 20,
+            "length": 15,
+            "ceilingHeight": 10
+          },
+          "squareFootage": 300,
+          "windowOrientation": "South",
+          "flooringType": "Hardwood Oak"
+        },
+        {
+          "id": "r_32_2",
+          "roomName": "Primary Suite",
+          "rect": {
+            "x": 300,
+            "y": 20,
+            "width": 240,
+            "height": 180
+          },
+          "dimensionsFeet": {
+            "width": 18,
+            "length": 14,
+            "ceilingHeight": 10
+          },
+          "squareFootage": 252,
+          "windowOrientation": "East",
+          "flooringType": "Hardwood Oak",
+          "hasEnSuiteBath": true
+        }
+      ],
+      "defaultFurniture": [
+        {
+          "id": "f_32_1",
+          "type": "SOFA_SECTIONAL",
+          "name": "Sofa",
+          "widthFeet": 8.5,
+          "lengthFeet": 7.5,
+          "x": 30,
+          "y": 30,
+          "rotationDeg": 0
+        }
+      ]
+    },
+    "financials": {
+      "inputs": {
+        "purchasePrice": 350000,
+        "monthlyGrossRent": 2500,
+        "downPaymentPercent": 20,
+        "interestRatePercent": 6.5,
+        "loanTermYears": 30,
+        "annualPropertyTaxRatePercent": 1.95,
+        "annualInsuranceUSD": 1800,
+        "annualMaintenancePercent": 1,
+        "vacancyRatePercent": 4,
+        "propertyManagementPercent": 7,
+        "hoaMonthlyFeeUSD": 0
+      },
+      "outputs": {
+        "grossAnnualRevenue": 30000,
+        "netOperatingIncomeAnnual": 17775,
+        "monthlyDebtService": 1769.79,
+        "monthlyOperatingExpenses": 918.75,
+        "monthlyNetCashFlow": -288.54,
+        "capRatePercent": 5.08,
+        "cashOnCashReturnPercent": -4.3,
+        "debtServiceCoverageRatio": 0.84,
+        "grossRentMultiplier": 11.67,
+        "passFlowScore": 1.7,
+        "verdict": "FAIL_NEGATIVE_FLOW",
+        "verdictReason": "Negative cash flow (-$289/mo) & inadequate debt coverage (0.84x DSCR)"
+      }
+    },
+    "media": {
+      "featuredImage": "https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=1200&q=80",
+      "gallery": [
+        "https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80"
       ]
     }
   },

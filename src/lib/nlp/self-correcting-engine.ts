@@ -175,32 +175,32 @@ export function matchHousesForCustomer(
       }
     }
 
-    // 2. Price or Rent Match (Weight: 25%)
+    // 2. Price or Rent Match (Weight: 30%)
     if (parsedQuery.monthlyRentBudget) {
       const rent = listing.financials.inputs.monthlyGrossRent;
       if (rent <= parsedQuery.monthlyRentBudget) {
-        score += 25;
+        score += 30;
         reasons.push(`Monthly rent ($${rent.toLocaleString()}/mo) comfortably within your budget (< $${parsedQuery.monthlyRentBudget.toLocaleString()}/mo)`);
       } else {
         const overBudgetPercent = ((rent - parsedQuery.monthlyRentBudget) / parsedQuery.monthlyRentBudget) * 100;
-        if (overBudgetPercent <= 15) {
-          score += 8;
+        if (overBudgetPercent <= 5) {
+          score += 5;
           reasons.push(`Monthly rent ($${rent.toLocaleString()}/mo) close to target budget`);
         } else {
-          score -= 20;
+          score -= 50;
         }
       }
     } else if (parsedQuery.priceRange?.maxPrice) {
       if (purchasePrice <= parsedQuery.priceRange.maxPrice) {
-        score += 20;
+        score += 30;
         reasons.push(`Price ($${purchasePrice.toLocaleString()}) comfortably under maximum budget ($${parsedQuery.priceRange.maxPrice.toLocaleString()})`);
       } else {
         const overBudgetPercent = ((purchasePrice - parsedQuery.priceRange.maxPrice) / parsedQuery.priceRange.maxPrice) * 100;
-        if (overBudgetPercent <= 10) {
+        if (overBudgetPercent <= 5) {
           score += 5;
           reasons.push(`Slightly above target price ($${purchasePrice.toLocaleString()}) but negotiable`);
         } else {
-          score -= 25;
+          score -= 50;
         }
       }
     }
@@ -284,8 +284,24 @@ export function matchHousesForCustomer(
     });
   }
 
+  // If user specified a price ceiling and we have listings strictly within budget, filter out listings that exceed budget
+  let filtered = recommendations;
+  if (parsedQuery.priceRange?.maxPrice) {
+    const maxAllowed = parsedQuery.priceRange.maxPrice * 1.05;
+    const underBudget = recommendations.filter(r => r.listing.financials.inputs.purchasePrice <= maxAllowed);
+    if (underBudget.length > 0) {
+      filtered = underBudget;
+    }
+  } else if (parsedQuery.monthlyRentBudget) {
+    const maxRentAllowed = parsedQuery.monthlyRentBudget * 1.10;
+    const underRent = recommendations.filter(r => r.listing.financials.inputs.monthlyGrossRent <= maxRentAllowed);
+    if (underRent.length > 0) {
+      filtered = underRent;
+    }
+  }
+
   // Sort descending by match score
-  return recommendations.sort((a, b) => b.matchScorePercent - a.matchScorePercent);
+  return filtered.sort((a, b) => b.matchScorePercent - a.matchScorePercent);
 }
 
 /**

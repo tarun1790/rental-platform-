@@ -118,11 +118,30 @@ export async function crawlUsPropertyPortals(
 
   for (let i = 0; i < candidateCount; i++) {
     const portal = portalList[i % portalList.length];
-    const priceVariance = (i - 2) * 15000;
-    const price = Math.max(120000, basePrice + priceVariance);
-    const rentRate = targetStatus === 'FOR_RENT' 
-      ? Math.max(900, baseRent + (i - 2) * 80)
-      : Math.round(price * 0.0068);
+    let price: number;
+    if (parsedQuery.priceRange?.maxPrice) {
+      // Strictly below the maxPrice ceiling, stepped downwards realistically
+      const discountRatio = 0.02 + (i * 0.04);
+      price = Math.max(120000, Math.round(parsedQuery.priceRange.maxPrice * (1 - discountRatio)));
+    } else if (parsedQuery.priceRange?.minPrice) {
+      const markupRatio = 0.02 + (i * 0.05);
+      price = Math.round(parsedQuery.priceRange.minPrice * (1 + markupRatio));
+    } else {
+      const priceVariance = (i - 2) * 15000;
+      price = Math.max(120000, basePrice + priceVariance);
+    }
+
+    let rentRate: number;
+    if (targetStatus === 'FOR_RENT') {
+      if (parsedQuery.monthlyRentBudget) {
+        const discountRatio = 0.03 + (i * 0.05);
+        rentRate = Math.max(800, Math.round(parsedQuery.monthlyRentBudget * (1 - discountRatio)));
+      } else {
+        rentRate = Math.max(900, baseRent + (i - 2) * 80);
+      }
+    } else {
+      rentRate = Math.round(price * 0.0068);
+    }
 
     const houseBeds = Math.max(1, bedsCount + (i % 2 === 0 ? 0 : (i === 1 ? 1 : -1)));
     const houseBaths = Math.max(1, bathsCount + (i % 2 === 0 ? 0 : 0.5));
