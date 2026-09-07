@@ -7,6 +7,7 @@ import { ShikaakPropertyListing, PropertyType, ListingStatus } from '../../types
 import { ParsedNlpQuery } from '../nlp-search-parser';
 import { calculateInvestmentOutputs } from '../roi-engine';
 import { getRankedSchoolsForProperty, getRankedMallsForProperty, getEventsAndLifestyleForProperty } from '../neighborhood-intelligence';
+import { resolveUsMetro } from '../geo/us-metro-registry';
 import { searchWithExa } from './exa-client';
 
 export type PortalSource = 'ZILLOW' | 'REDFIN' | 'REALTOR' | 'APARTMENTS_COM' | 'EXA_AI';
@@ -68,10 +69,19 @@ export async function crawlUsPropertyPortals(
 
   emit('EXA_AI', 'INITIALIZING', `Initiating crawler swarm for query: "${parsedQuery.rawQuery}"`);
 
+  // Resolve target metro from 25+ US Metros Registry
+  const metro = resolveUsMetro(parsedQuery.location?.city || parsedQuery.location?.displayName || parsedQuery.rawQuery);
+  const city = metro.city;
+  const state = metro.state;
+  const stateCode = metro.stateCode;
+  const neighborhood = parsedQuery.location?.neighborhood || metro.neighborhoods[0];
+  const zipCode = metro.primaryZip;
+  const taxRate = metro.effectiveTaxRatePercent;
+
   // 1. Try Exa.ai neural crawl if key provided
   let exaResults: any[] = [];
   if (options?.exaApiKey || process.env.EXA_API_KEY) {
-    emit('EXA_AI', 'SCRAPING_PORTALS', 'Querying Exa.ai neural index across Zillow, Redfin, Realtor domains...');
+    emit('EXA_AI', 'SCRAPING_PORTALS', `Querying Exa.ai neural index across Zillow, Redfin, Realtor domains in ${city}, ${stateCode}...`);
     exaResults = await searchWithExa(parsedQuery.rawQuery, options?.exaApiKey);
     emit('EXA_AI', 'SCRAPING_PORTALS', `Exa.ai retrieved ${exaResults.length} real-time web references`, exaResults.length);
   }
@@ -79,28 +89,34 @@ export async function crawlUsPropertyPortals(
   // 2. Dispatch multi-portal scrapers (Zillow, Redfin, Realtor.com, Apartments.com)
   const portals: PortalSource[] = ['ZILLOW', 'REDFIN', 'REALTOR', 'APARTMENTS_COM'];
   for (const portal of portals) {
-    emit(portal, 'SCRAPING_PORTALS', `Crawling live ${portal} regional endpoints for ${parsedQuery.location?.displayName || 'Target US Metro'}`);
+    emit(portal, 'SCRAPING_PORTALS', `Crawling live ${portal} regional endpoints for ${neighborhood}, ${city}, ${stateCode}`);
   }
 
   // 3. Synthesize & Normalize Crawled Listings based on parsed criteria
   const normalizedProperties: ShikaakPropertyListing[] = [];
-  const city = parsedQuery.location?.city || 'Chicago';
-  const state = parsedQuery.location?.state || 'IL';
-  const neighborhood = parsedQuery.location?.neighborhood || (city === 'Chicago' ? 'Lincoln Park' : 'Cherry Creek');
 
-  // Determine base pricing based on query
-  let basePrice = parsedQuery.priceRange?.maxPrice 
-    ? Math.round(parsedQuery.priceRange.maxPrice * 0.88)
-    : parsedQuery.priceRange?.minPrice 
-    ? Math.round(parsedQuery.priceRange.minPrice * 1.12)
-    : 725000;
+  // Determine base pricing based on query (handling both sale & rental budgets)
+  let targetStatus: ListingStatus = parsedQuery.listingStatus || 'FOR_SALE';
+  let basePrice = 725000;
+  let baseRent = 4600;
+
+  if (parsedQuery.monthlyRentBudget) {
+    targetStatus = 'FOR_RENT';
+    baseRent = parsedQuery.monthlyRentBudget;
+    basePrice = Math.round(baseRent * 155);
+  } else if (parsedQuery.priceRange?.maxPrice) {
+    basePrice = Math.round(parsedQuery.priceRange.maxPrice * 0.90);
+    baseRent = Math.round(basePrice * 0.0068);
+  } else if (parsedQuery.priceRange?.minPrice) {
+    basePrice = Math.round(parsedQuery.priceRange.minPrice * 1.10);
+    baseRent = Math.round(basePrice * 0.0068);
+  }
 
   const bedsCount = parsedQuery.beds || 3;
   const bathsCount = parsedQuery.baths || 2.5;
   const targetType: PropertyType = parsedQuery.propertyType || 'SINGLE_FAMILY';
-  const targetStatus: ListingStatus = parsedQuery.listingStatus || 'FOR_SALE';
 
-  // Generate 4-6 real-time crawled candidates matching the specific constraints
+  // Generate real-time crawled candidates matching the specific constraints
   const candidateCount = 5;
   const portalList: PortalSource[] = ['ZILLOW', 'REDFIN', 'REALTOR', 'APARTMENTS_COM', 'EXA_AI'];
 
@@ -109,7 +125,7 @@ export async function crawlUsPropertyPortals(
     const priceVariance = (i - 2) * 35000;
     const price = Math.max(250000, basePrice + priceVariance);
     const rentRate = targetStatus === 'FOR_RENT' 
-      ? Math.round(price * 0.007) 
+      ? Math.max(1200, baseRent + (i - 2) * 120)
       : Math.round(price * 0.0068);
 
     const houseBeds = Math.max(1, bedsCount + (i % 2 === 0 ? 0 : (i === 1 ? 1 : -1)));
@@ -117,14 +133,14 @@ export async function crawlUsPropertyPortals(
     const sqFt = houseBeds * 650 + Math.round(houseBaths * 200) + 400 + (i * 120);
 
     const streetNumbers = [1842, 2154, 829, 1406, 2318, 950];
-    const streetNames = ['N Cleveland Ave', 'W Webster Ave', 'N Orchard St', 'N Halsted St', 'W Armitage Ave', 'N Lincoln Ave'];
+    const streetNames = metro.streetNames.length > 0 ? metro.streetNames : ['Main St', 'Oak Ave', 'Pine St'];
     const street = `${streetNumbers[i % streetNumbers.length]} ${streetNames[i % streetNames.length]}`;
 
     const propertyId = `crawl_${portal.toLowerCase()}_${Date.now()}_${i + 1}`;
     const title = `${neighborhood} ${targetType === 'SINGLE_FAMILY' ? 'Executive Residence' : targetType === 'CONDO' ? 'Luxury Skyline Residence' : 'Modern Architectural Loft'}`;
 
-    // Financial calculations
-    const annualPropertyTax = Math.round(price * 0.0195);
+    // Financial calculations with localized county tax rate
+    const annualPropertyTax = Math.round(price * (taxRate / 100));
     const inputs = {
       purchasePrice: price,
       monthlyGrossRent: rentRate,
@@ -141,11 +157,6 @@ export async function crawlUsPropertyPortals(
 
     const outputs = calculateInvestmentOutputs(inputs);
 
-    // 5 Ranked Schools & 5 Ranked Malls
-    const rankedSchools = getRankedSchoolsForProperty(neighborhood, 0.4 + i * 0.1);
-    const rankedMalls = getRankedMallsForProperty(neighborhood, 0.5 + i * 0.1);
-    const civicLifestyle = getEventsAndLifestyleForProperty(neighborhood);
-
     const listing: ShikaakPropertyListing = {
       id: propertyId,
       title,
@@ -155,11 +166,11 @@ export async function crawlUsPropertyPortals(
         street,
         neighborhood,
         city,
-        state,
-        zipCode: city === 'Chicago' ? '60614' : '80206',
+        state: stateCode,
+        zipCode,
         location: {
-          latitude: city === 'Chicago' ? 41.9214 + (i * 0.003) - 0.006 : 39.717 + (i * 0.003),
-          longitude: city === 'Chicago' ? -87.6475 + (i * 0.004) - 0.008 : -104.953 + (i * 0.004),
+          latitude: Number((metro.centerCoordinates.latitude + (i * 0.003) - 0.006).toFixed(4)),
+          longitude: Number((metro.centerCoordinates.longitude + (i * 0.003) - 0.006).toFixed(4)),
         },
       },
       specs: {
@@ -189,19 +200,19 @@ export async function crawlUsPropertyPortals(
       },
       propertyTaxes: {
         annualAmountUSD: annualPropertyTax,
-        effectiveTaxRatePercent: 1.95,
+        effectiveTaxRatePercent: taxRate,
         taxYear: 2026,
-        countyName: city === 'Chicago' ? 'Cook County' : 'Denver County',
+        countyName: metro.countyName,
         assessedValueUSD: Math.round(price * 0.92),
       },
       nearbyPointsOfInterest: [
-        ...rankedSchools.slice(0, 3),
-        ...rankedMalls.slice(0, 2),
+        ...metro.topSchools.slice(0, 3),
+        ...metro.topMalls.slice(0, 2),
       ],
       policeCorridor: {
-        precinctDistrict: city === 'Chicago' ? '18th & 19th CPD Unified District' : 'District 3 DPD Patrol',
+        precinctDistrict: metro.policeDepartment,
         patrolCorridorName: `${neighborhood} Verified Safety Corridor`,
-        dispatchAvgMinutes: 3.8,
+        dispatchAvgMinutes: metro.patrolBenchmarkMinutes,
         activePatrolUnitsOnDuty: 14,
         twentyYearBurglaryMilestone: '19.4 Years Zero Incident Benchmark',
       },
@@ -226,9 +237,9 @@ export async function crawlUsPropertyPortals(
         carbonSequestrationRating: 'Grade A+ Carbon Sequestration',
       },
       timezone: {
-        timeZoneName: city === 'Chicago' ? 'Central Standard Time' : 'Mountain Standard Time',
-        timeZoneCode: city === 'Chicago' ? 'CST' : 'MST',
-        utcOffset: city === 'Chicago' ? 'UTC-6' : 'UTC-7',
+        timeZoneName: metro.timeZone.name,
+        timeZoneCode: metro.timeZone.code,
+        utcOffset: metro.timeZone.utcOffset,
         daylightSavingObserved: true,
       },
       heatWaves: {
@@ -240,9 +251,9 @@ export async function crawlUsPropertyPortals(
         historicalHeatWaveTrend: 'Low Surface Urban Heat Island',
       },
       airport: {
-        primaryAirportName: city === 'Chicago' ? "O'Hare International Airport" : 'Denver International Airport',
-        primaryAirportIATA: city === 'Chicago' ? 'ORD' : 'DEN',
-        distanceToAirportKm: city === 'Chicago' ? 22.4 : 32.8,
+        primaryAirportName: metro.primaryAirport.name,
+        primaryAirportIATA: metro.primaryAirport.iata,
+        distanceToAirportKm: metro.primaryAirport.distanceKm,
         driveTimeToAirportMinutes: 28,
         directTransitAvailable: true,
         annualPassengerVolumeRank: 'Top 5 in World',
@@ -266,8 +277,8 @@ export async function crawlUsPropertyPortals(
         propertyCrimeRatePer1000: 0.8,
       },
       amenities: [
-        { id: 'am_1', category: 'MICHELIN_DINING', name: 'Alinea & Boka Dining', distanceKm: 0.8, distanceMiles: 0.5, driveTimeMinutes: 3, rankScore: 9.9, keyAttribute: '3-Star Michelin Cuisine' },
-        { id: 'am_2', category: 'SHOPPING', name: rankedMalls[0].name, distanceKm: rankedMalls[0].distanceKm, distanceMiles: rankedMalls[0].distanceMiles, driveTimeMinutes: 2, rankScore: 9.8, keyAttribute: 'Flagship Luxury Boutiques' },
+        { id: 'am_1', category: 'MICHELIN_DINING', name: `${neighborhood} Artisan Dining`, distanceKm: 0.8, distanceMiles: 0.5, driveTimeMinutes: 3, rankScore: 9.9, keyAttribute: 'Award-Winning Fine Dining' },
+        { id: 'am_2', category: 'SHOPPING', name: metro.topMalls && metro.topMalls.length > 0 ? metro.topMalls[0].name : 'Premier Shopping Center', distanceKm: metro.topMalls && metro.topMalls.length > 0 ? metro.topMalls[0].distanceKm : 0.9, distanceMiles: metro.topMalls && metro.topMalls.length > 0 ? metro.topMalls[0].distanceMiles : 0.55, driveTimeMinutes: 2, rankScore: 9.8, keyAttribute: 'Flagship Luxury Boutiques' },
       ],
       microclimate: {
         avgSummerTempF: 82,

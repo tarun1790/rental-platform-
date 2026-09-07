@@ -392,7 +392,7 @@ export const Header: React.FC<HeaderProps> = ({
               <option value="PRICE_ASC">Price: Low to High</option>
               <option value="PRICE_DESC">Price: High to Low</option>
               <option value="SQFT_DESC">Largest Finished Area</option>
-              <option value="SOIL_DESC">Highest Soil Bearing (PSF)</option>
+              <option value="CAPRATE_DESC">Highest Cap Rate (%)</option>
             </select>
           </div>
         </div>
@@ -421,24 +421,24 @@ export const Header: React.FC<HeaderProps> = ({
               </div>
             </div>
 
-            {/* Soil Bearing Capacity */}
+            {/* Min Cap Rate Return */}
             <div>
               <label className="block text-xs font-bold text-slate-800 mb-1">
-                Min Soil Bearing (PSF)
+                Minimum Cap Rate (% Return)
               </label>
               <input
                 type="range"
                 min="0"
-                max="6000"
-                step="500"
-                value={filters.minSoilBearingPSF}
-                onChange={(e) => onFilterChange({ ...filters, minSoilBearingPSF: Number(e.target.value) })}
+                max="10"
+                step="0.5"
+                value={filters.minCapRatePercent || 0}
+                onChange={(e) => onFilterChange({ ...filters, minCapRatePercent: Number(e.target.value) })}
                 className="w-full accent-red-600"
               />
               <div className="flex justify-between text-[10px] text-slate-600 font-mono">
-                <span>0 PSF</span>
-                <span className="font-bold text-red-600">{filters.minSoilBearingPSF.toLocaleString()} PSF</span>
-                <span>6,000 PSF</span>
+                <span>0%</span>
+                <span className="font-bold text-red-600">{((filters.minCapRatePercent || 0)).toFixed(1)}% Cap Rate</span>
+                <span>10%</span>
               </div>
             </div>
 

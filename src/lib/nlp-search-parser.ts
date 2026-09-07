@@ -16,6 +16,7 @@ export interface ParsedNlpQuery {
     minPrice?: number;
     maxPrice?: number;
   };
+  monthlyRentBudget?: number;
   beds?: number;
   baths?: number;
   propertyType?: PropertyType;
@@ -37,7 +38,7 @@ export interface ParsedNlpQuery {
   }>;
 }
 
-// Known geographic entities
+// Known geographic entities across 25+ US Metropolitan Regions
 const KNOWN_LOCATIONS: Array<{
   names: string[];
   city: string;
@@ -66,12 +67,23 @@ const KNOWN_LOCATIONS: Array<{
   { names: ['aspen', 'aspen co', 'red mountain'], city: 'Aspen', state: 'CO', neighborhood: 'Red Mountain', displayName: 'Aspen, CO' },
   { names: ['colorado', 'co'], city: 'Denver', state: 'CO', displayName: 'Colorado Region' },
 
-  // Other Major US Metros for live crawling
-  { names: ['austin', 'austin tx', 'texas'], city: 'Austin', state: 'TX', displayName: 'Austin, TX' },
-  { names: ['seattle', 'seattle wa', 'washington'], city: 'Seattle', state: 'WA', displayName: 'Seattle, WA' },
-  { names: ['miami', 'miami fl', 'florida'], city: 'Miami', state: 'FL', displayName: 'Miami, FL' },
-  { names: ['san francisco', 'sf', 'bay area'], city: 'San Francisco', state: 'CA', displayName: 'San Francisco, CA' },
-  { names: ['new york', 'nyc', 'manhattan'], city: 'New York', state: 'NY', displayName: 'New York, NY' },
+  // Texas Metros
+  { names: ['austin', 'austin tx', 'zilker', 'south congress', 'the domain', 'domain'], city: 'Austin', state: 'TX', neighborhood: 'Zilker', displayName: 'Austin (Zilker), TX' },
+  { names: ['dallas', 'dallas tx', 'uptown dallas', 'highland park'], city: 'Dallas', state: 'TX', neighborhood: 'Uptown', displayName: 'Dallas, TX' },
+
+  // Washington Metros
+  { names: ['seattle', 'seattle wa', 'capitol hill', 'bellevue', 'queen anne', 'ballard'], city: 'Seattle', state: 'WA', neighborhood: 'Capitol Hill', displayName: 'Seattle (Capitol Hill), WA' },
+
+  // Florida Metros
+  { names: ['miami', 'miami fl', 'brickell', 'south beach', 'coconut grove', 'coral gables'], city: 'Miami', state: 'FL', neighborhood: 'Brickell', displayName: 'Miami (Brickell), FL' },
+
+  // California Metros
+  { names: ['san francisco', 'sf', 'bay area', 'pacific heights', 'soma', 'marina'], city: 'San Francisco', state: 'CA', neighborhood: 'Pacific Heights', displayName: 'San Francisco, CA' },
+  { names: ['los angeles', 'la', 'santa monica', 'beverly hills', 'silver lake', 'pasadena'], city: 'Los Angeles', state: 'CA', neighborhood: 'Santa Monica', displayName: 'Los Angeles, CA' },
+
+  // East Coast Metros
+  { names: ['new york', 'nyc', 'manhattan', 'tribeca', 'brooklyn', 'soho'], city: 'New York', state: 'NY', neighborhood: 'Tribeca', displayName: 'New York, NY' },
+  { names: ['boston', 'boston ma', 'cambridge', 'back bay', 'beacon hill'], city: 'Boston', state: 'MA', neighborhood: 'Back Bay', displayName: 'Boston, MA' },
 ];
 
 /**
@@ -104,69 +116,92 @@ export function parseNlpQuery(query: string): ParsedNlpQuery {
     if (detectedLocation) break;
   }
 
-  // 2. Detect Price Range
+  // 2. Detect Monthly Rent vs Purchase Price Range
   let minPrice: number | undefined;
   let maxPrice: number | undefined;
+  let monthlyRentBudget: number | undefined;
 
-  // Under / Max price: e.g., "under 800k", "below $1.2m", "less than 650000", "under $900,000"
-  const underPriceMatch = normalized.match(/(?:under|below|less than|max|up to)\s*\$?([0-9.,]+)\s*(k|m|million|thousand)?/i);
-  if (underPriceMatch) {
-    let val = parseFloat(underPriceMatch[1].replace(/,/g, ''));
-    const unit = (underPriceMatch[2] || '').toLowerCase();
-    if (unit === 'k' || unit === 'thousand') val *= 1000;
-    else if (unit === 'm' || unit === 'million') val *= 1000000;
-    else if (val < 2000) val *= 1000; // sensible shorthand e.g. "800" for 800k
-    maxPrice = Math.round(val);
-    chips.push({
-      category: 'PRICE',
-      label: 'Max Price',
-      value: `< $${maxPrice.toLocaleString()}`,
-    });
+  // 2.1. Monthly Rent Budget Detection (e.g. "$2,500/mo", "rent under 3k", "around $1,800/month", "rent under 2200")
+  const explicitRentMatch = normalized.match(/(?:under|below|around|approx|for|up to|max|\$)?\s*\$?([0-9.,]+)\s*(k)?\s*(?:\/mo|\/month|per month|a month|\bmo\b|\bmonth\b)/i);
+  const rentPrefixMatch = normalized.match(/(?:rent|rental|lease|renting)\s*(?:of|under|below|around|approx|for|up to|max)?\s*\$?([0-9.,]+)\s*(k)?(?!\s*(?:bed|bedroom|br|bds|bath))/i);
+
+  const matchedRent = explicitRentMatch || rentPrefixMatch;
+  if (matchedRent) {
+    let val = parseFloat(matchedRent[1].replace(/,/g, ''));
+    const unit = (matchedRent[2] || '').toLowerCase();
+    if (unit === 'k') val *= 1000;
+    if (val >= 400 && val <= 25000) {
+      monthlyRentBudget = Math.round(val);
+      chips.push({
+        category: 'PRICE',
+        label: 'Monthly Rent',
+        value: `< $${monthlyRentBudget.toLocaleString()}/mo`,
+      });
+    }
   }
 
-  // Min / Over price: e.g., "over 500k", "above 1m", "minimum 400k"
-  const overPriceMatch = normalized.match(/(?:over|above|greater than|min|at least)\s*\$?([0-9.,]+)\s*(k|m|million|thousand)?/i);
-  if (overPriceMatch) {
-    let val = parseFloat(overPriceMatch[1].replace(/,/g, ''));
-    const unit = (overPriceMatch[2] || '').toLowerCase();
-    if (unit === 'k' || unit === 'thousand') val *= 1000;
-    else if (unit === 'm' || unit === 'million') val *= 1000000;
-    else if (val < 2000) val *= 1000;
-    minPrice = Math.round(val);
-    chips.push({
-      category: 'PRICE',
-      label: 'Min Price',
-      value: `> $${minPrice.toLocaleString()}`,
-    });
-  }
+  // 2.2. Purchase Price Range (only if monthlyRentBudget is not already parsed)
+  if (!monthlyRentBudget) {
+    // Under / Max price: e.g., "under 800k", "below $1.2m", "less than 650000", "under $900,000"
+    const underPriceMatch = normalized.match(/(?:under|below|less than|max|up to)\s*\$?([0-9.,]+)\s*(k|m|million|thousand)?(?!\s*(?:\/mo|\/month|per month|a month|\bmo\b|\bmonth\b))/i);
+    if (underPriceMatch) {
+      let val = parseFloat(underPriceMatch[1].replace(/,/g, ''));
+      const unit = (underPriceMatch[2] || '').toLowerCase();
+      if (unit === 'k' || unit === 'thousand') val *= 1000;
+      else if (unit === 'm' || unit === 'million') val *= 1000000;
+      else if (val < 2000) val *= 1000; // sensible shorthand e.g. "800" for 800k
+      maxPrice = Math.round(val);
+      chips.push({
+        category: 'PRICE',
+        label: 'Max Price',
+        value: `< $${maxPrice.toLocaleString()}`,
+      });
+    }
 
-  // Between range: e.g., "500k to 900k", "between 600k and 1m"
-  const betweenMatch = normalized.match(/(?:between\s*)?\$?([0-9.,]+)\s*(k|m)?\s*(?:to|-|and)\s*\$?([0-9.,]+)\s*(k|m)/i);
-  if (betweenMatch && !maxPrice) {
-    let low = parseFloat(betweenMatch[1].replace(/,/g, ''));
-    const lowUnit = (betweenMatch[2] || '').toLowerCase();
-    if (lowUnit === 'k') low *= 1000;
-    else if (lowUnit === 'm') low *= 1000000;
-    else if (low < 2000) low *= 1000;
+    // Min / Over price: e.g., "over 500k", "above 1m", "minimum 400k"
+    const overPriceMatch = normalized.match(/(?:over|above|greater than|min|at least)\s*\$?([0-9.,]+)\s*(k|m|million|thousand)?(?!\s*(?:\/mo|\/month|per month|a month|\bmo\b|\bmonth\b))/i);
+    if (overPriceMatch) {
+      let val = parseFloat(overPriceMatch[1].replace(/,/g, ''));
+      const unit = (overPriceMatch[2] || '').toLowerCase();
+      if (unit === 'k' || unit === 'thousand') val *= 1000;
+      else if (unit === 'm' || unit === 'million') val *= 1000000;
+      else if (val < 2000) val *= 1000;
+      minPrice = Math.round(val);
+      chips.push({
+        category: 'PRICE',
+        label: 'Min Price',
+        value: `> $${minPrice.toLocaleString()}`,
+      });
+    }
 
-    let high = parseFloat(betweenMatch[3].replace(/,/g, ''));
-    const highUnit = (betweenMatch[4] || '').toLowerCase();
-    if (highUnit === 'k') high *= 1000;
-    else if (highUnit === 'm') high *= 1000000;
-    else if (high < 2000) high *= 1000;
+    // Between range: e.g., "500k to 900k", "between 600k and 1m"
+    const betweenMatch = normalized.match(/(?:between\s*)?\$?([0-9.,]+)\s*(k|m)?\s*(?:to|-|and)\s*\$?([0-9.,]+)\s*(k|m)/i);
+    if (betweenMatch && !maxPrice) {
+      let low = parseFloat(betweenMatch[1].replace(/,/g, ''));
+      const lowUnit = (betweenMatch[2] || '').toLowerCase();
+      if (lowUnit === 'k') low *= 1000;
+      else if (lowUnit === 'm') low *= 1000000;
+      else if (low < 2000) low *= 1000;
 
-    minPrice = Math.round(low);
-    maxPrice = Math.round(high);
-    chips.push({
-      category: 'PRICE',
-      label: 'Price Range',
-      value: `$${minPrice.toLocaleString()} - $${maxPrice.toLocaleString()}`,
-    });
+      let high = parseFloat(betweenMatch[3].replace(/,/g, ''));
+      const highUnit = (betweenMatch[4] || '').toLowerCase();
+      if (highUnit === 'k') high *= 1000;
+      else if (highUnit === 'm') high *= 1000000;
+      else if (high < 2000) high *= 1000;
+
+      minPrice = Math.round(low);
+      maxPrice = Math.round(high);
+      chips.push({
+        category: 'PRICE',
+        label: 'Price Range',
+        value: `$${minPrice.toLocaleString()} - $${maxPrice.toLocaleString()}`,
+      });
+    }
   }
 
   // 3. Detect Bedrooms
   let beds: number | undefined;
-  const bedsMatch = normalized.match(/(\d+)\s*(?:\+)?\s*(?:bed|bedroom|bds|br)\b/i);
+  const bedsMatch = normalized.match(/(\d+)\s*(?:\+)?\s*(?:bed|bedroom|bds|br)s?\b/i);
   if (bedsMatch) {
     beds = parseInt(bedsMatch[1], 10);
     chips.push({
@@ -185,7 +220,7 @@ export function parseNlpQuery(query: string): ParsedNlpQuery {
 
   // 4. Detect Bathrooms
   let baths: number | undefined;
-  const bathsMatch = normalized.match(/(\d+(?:\.\d+)?)\s*(?:\+)?\s*(?:bath|bathroom|ba)\b/i);
+  const bathsMatch = normalized.match(/(\d+(?:\.\d+)?)\s*(?:\+)?\s*(?:bath|bathroom|ba)s?\b/i);
   if (bathsMatch) {
     baths = parseFloat(bathsMatch[1]);
     chips.push({
@@ -270,6 +305,7 @@ export function parseNlpQuery(query: string): ParsedNlpQuery {
     rawQuery: query,
     location: detectedLocation,
     priceRange: (minPrice !== undefined || maxPrice !== undefined) ? { minPrice, maxPrice } : undefined,
+    monthlyRentBudget,
     beds,
     baths,
     propertyType,

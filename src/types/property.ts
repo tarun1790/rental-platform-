@@ -370,7 +370,9 @@ export interface FilterState {
   propertyType: PropertyType;
   minPassFlowScore: number;
   zeroTheftOnly: boolean;
-  minSoilBearingPSF: number;
+  minSoilBearingPSF?: number;
+  minMonthlyProfitUSD?: number;
+  minCapRatePercent?: number;
   maxPropertyTaxesUSD: number;
   maxDistanceToSchoolKm: number;
 }

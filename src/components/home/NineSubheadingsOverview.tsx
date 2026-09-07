@@ -57,14 +57,14 @@ export const NineSubheadingsOverview: React.FC<NineSubheadingsProps> = ({
     },
     {
       num: '05',
-      title: 'Deep Subsurface Geotechnical Mechanics & Bedrock Strata',
-      description: 'Certified soil bearing capacity (3,500 to 7,500 PSF / 160 to 360 kPa), depth to solid limestone bedrock, and subterranean water table clearance.',
+      title: 'Structural Home Build Quality & Foundation Integrity',
+      description: 'Certified inspection covering monolithic foundation stability, dry basement guarantees, 30-year roof durability, and dual-zone high-efficiency climate systems.',
       icon: Layers,
     },
     {
       num: '06',
-      title: 'Copernicus Sentinel Multispectral & Microclimate Telemetry',
-      description: 'Copernicus Sentinel-2 NDVI canopy density, Landsat-8 thermal surface variance, and Sentinel-5P NO₂ tropospheric air quality monitoring.',
+      title: 'Neighborhood Living Quality, Greenery & Clean Air Environment',
+      description: 'Neighborhood air purity benchmarks, lush mature tree canopy coverage, sunlight exposure, and FEMA Zone X flood safety certifications.',
       icon: Sun,
     },
     {

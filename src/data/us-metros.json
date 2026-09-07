@@ -1,0 +1,321 @@
+{
+  "chicago": {
+    "city": "Chicago",
+    "state": "Illinois",
+    "stateCode": "IL",
+    "primaryZip": "60614",
+    "countyName": "Cook County",
+    "effectiveTaxRatePercent": 1.95,
+    "centerCoordinates": { "latitude": 41.9214, "longitude": -87.6475 },
+    "neighborhoods": ["Lincoln Park", "Gold Coast", "West Loop", "Lakeview", "Wicker Park", "Streeterville", "South Loop", "River North"],
+    "streetNames": ["N Cleveland Ave", "W Webster Ave", "N Orchard St", "N Halsted St", "W Armitage Ave", "N Lincoln Ave"],
+    "policeDepartment": "Chicago Police Department (CPD 18th & 19th Districts)",
+    "patrolBenchmarkMinutes": 3.8,
+    "primaryAirport": { "name": "Chicago O'Hare International Airport", "iata": "ORD", "distanceKm": 22.4 },
+    "timeZone": { "name": "Central Standard Time", "code": "CST", "utcOffset": "UTC-6" },
+    "topSchools": [
+      { "id": "chi_s1", "type": "SCHOOL", "name": "Abraham Lincoln Elementary School", "categoryLabel": "Top 1% Public School", "distanceKm": 0.4, "distanceMiles": 0.25, "walkTimeMinutes": 5, "driveTimeMinutes": 2, "ratingScore": 9.8, "keyHighlight": "Ranked #1 Public Elementary District in Chicago" },
+      { "id": "chi_s2", "type": "SCHOOL", "name": "Francis W. Parker School", "categoryLabel": "Elite Independent Prep", "distanceKm": 0.8, "distanceMiles": 0.5, "walkTimeMinutes": 10, "driveTimeMinutes": 3, "ratingScore": 10.0, "keyHighlight": "Ivy League feeder academy with 100% college matriculation" },
+      { "id": "chi_s3", "type": "SCHOOL", "name": "Lincoln Park High School & IB Academy", "categoryLabel": "Public IB World School", "distanceKm": 1.2, "distanceMiles": 0.75, "walkTimeMinutes": 15, "driveTimeMinutes": 4, "ratingScore": 9.7, "keyHighlight": "Top Ranked IB World School in Illinois" },
+      { "id": "chi_s4", "type": "SCHOOL", "name": "Saint Clement Parish School", "categoryLabel": "Private Catholic Academy", "distanceKm": 1.6, "distanceMiles": 1.0, "walkTimeMinutes": 20, "driveTimeMinutes": 5, "ratingScore": 9.6, "keyHighlight": "National Blue Ribbon School of Excellence" },
+      { "id": "chi_s5", "type": "SCHOOL", "name": "Walter Payton College Prep", "categoryLabel": "Public Selective Enrollment", "distanceKm": 2.2, "distanceMiles": 1.4, "walkTimeMinutes": 26, "driveTimeMinutes": 7, "ratingScore": 10.0, "keyHighlight": "US News Ranked #1 Public High School in Illinois" }
+    ],
+    "topMalls": [
+      { "id": "chi_m1", "type": "MALL", "name": "Lincoln Common & NEWCITY Galleria", "categoryLabel": "Open-Air Luxury Promenade", "distanceKm": 0.5, "distanceMiles": 0.3, "walkTimeMinutes": 6, "driveTimeMinutes": 2, "ratingScore": 4.8, "keyHighlight": "Whole Foods, Apple Store, ArcLight Cinemas" },
+      { "id": "chi_m2", "type": "MALL", "name": "Armitage Avenue Luxury Fashion District", "categoryLabel": "High-End Boutique Corridor", "distanceKm": 0.9, "distanceMiles": 0.55, "walkTimeMinutes": 11, "driveTimeMinutes": 3, "ratingScore": 4.9, "keyHighlight": "Bonobos, Warby Parker, Aesop, artisan cafés" },
+      { "id": "chi_m3", "type": "MALL", "name": "900 North Michigan Luxury Shops", "categoryLabel": "7-Level Fashion Galleria", "distanceKm": 2.4, "distanceMiles": 1.5, "walkTimeMinutes": 28, "driveTimeMinutes": 8, "ratingScore": 4.9, "keyHighlight": "Bloomingdale's flagship, Gucci, Tesla showroom" },
+      { "id": "chi_m4", "type": "MALL", "name": "Water Tower Place & Michigan Ave Mile", "categoryLabel": "Iconic Retail Landmark", "distanceKm": 2.7, "distanceMiles": 1.7, "walkTimeMinutes": 32, "driveTimeMinutes": 9, "ratingScore": 4.7, "keyHighlight": "American Girl Place, flagship Sephora, luxury dining" },
+      { "id": "chi_m5", "type": "MALL", "name": "The Shops at North Bridge", "categoryLabel": "4-Level Downtown Center", "distanceKm": 3.2, "distanceMiles": 2.0, "walkTimeMinutes": 38, "driveTimeMinutes": 10, "ratingScore": 4.6, "keyHighlight": "Nordstrom flagship, Eataly gourmet emporium" }
+    ]
+  },
+  "denver": {
+    "city": "Denver",
+    "state": "Colorado",
+    "stateCode": "CO",
+    "primaryZip": "80206",
+    "countyName": "Denver County",
+    "effectiveTaxRatePercent": 0.62,
+    "centerCoordinates": { "latitude": 39.7170, "longitude": -104.9530 },
+    "neighborhoods": ["Cherry Creek", "LoDo", "Washington Park", "Highlands", "RiNo", "Capitol Hill", "Sloan Lake"],
+    "streetNames": ["E 3rd Ave", "E 1st Ave", "University Blvd", "Josephine St", "St Paul St", "Columbine St"],
+    "policeDepartment": "Denver Police Department (District 3 Patrol)",
+    "patrolBenchmarkMinutes": 4.2,
+    "primaryAirport": { "name": "Denver International Airport", "iata": "DEN", "distanceKm": 32.8 },
+    "timeZone": { "name": "Mountain Standard Time", "code": "MST", "utcOffset": "UTC-7" },
+    "topSchools": [
+      { "id": "den_s1", "type": "SCHOOL", "name": "Steck Elementary School", "categoryLabel": "Top Rated Public (K-5)", "distanceKm": 0.6, "distanceMiles": 0.4, "walkTimeMinutes": 7, "driveTimeMinutes": 2, "ratingScore": 9.8, "keyHighlight": "Highest Academic Growth index in Denver Public Schools" },
+      { "id": "den_s2", "type": "SCHOOL", "name": "East High School", "categoryLabel": "Historic Public IB Flagship", "distanceKm": 1.8, "distanceMiles": 1.1, "walkTimeMinutes": 21, "driveTimeMinutes": 5, "ratingScore": 9.6, "keyHighlight": "Prestigious AP Capstone & STEM distinction" },
+      { "id": "den_s3", "type": "SCHOOL", "name": "Graland Country Day School", "categoryLabel": "Premier Independent (K-8)", "distanceKm": 1.2, "distanceMiles": 0.75, "walkTimeMinutes": 14, "driveTimeMinutes": 4, "ratingScore": 10.0, "keyHighlight": "Exceptional innovation labs and 7:1 student-faculty ratio" },
+      { "id": "den_s4", "type": "SCHOOL", "name": "Bromwell Elementary School", "categoryLabel": "Cherry Creek Public Feeder", "distanceKm": 0.9, "distanceMiles": 0.55, "walkTimeMinutes": 11, "driveTimeMinutes": 3, "ratingScore": 9.7, "keyHighlight": "Blue Ribbon accredited school in the heart of Cherry Creek" },
+      { "id": "den_s5", "type": "SCHOOL", "name": "Denver School of the Arts", "categoryLabel": "Public Magnet (6-12)", "distanceKm": 3.1, "distanceMiles": 1.9, "walkTimeMinutes": 36, "driveTimeMinutes": 8, "ratingScore": 9.9, "keyHighlight": "Nationally acclaimed conservatory curriculum" }
+    ],
+    "topMalls": [
+      { "id": "den_m1", "type": "MALL", "name": "Cherry Creek Shopping Center", "categoryLabel": "Rocky Mountain Luxury Flagship", "distanceKm": 0.4, "distanceMiles": 0.25, "walkTimeMinutes": 5, "driveTimeMinutes": 2, "ratingScore": 4.9, "keyHighlight": "Neiman Marcus, Nordstrom, Louis Vuitton, Tiffany & Co." },
+      { "id": "den_m2", "type": "MALL", "name": "Cherry Creek North Outdoor Village", "categoryLabel": "16-Block Walkable Promenade", "distanceKm": 0.7, "distanceMiles": 0.45, "walkTimeMinutes": 8, "driveTimeMinutes": 2, "ratingScore": 4.9, "keyHighlight": "Over 200 luxury fashion boutiques, spas and fine dining" },
+      { "id": "den_m3", "type": "MALL", "name": "Larimer Square Historic Promenade", "categoryLabel": "Victorian Landmark Retail", "distanceKm": 4.8, "distanceMiles": 3.0, "walkTimeMinutes": 55, "driveTimeMinutes": 11, "ratingScore": 4.8, "keyHighlight": "Independent designer retail and chef-driven dining" },
+      { "id": "den_m4", "type": "MALL", "name": "Park Meadows Retail Resort", "categoryLabel": "Grand Mountain Galleria", "distanceKm": 18.2, "distanceMiles": 11.3, "walkTimeMinutes": 210, "driveTimeMinutes": 18, "ratingScore": 4.8, "keyHighlight": "Largest indoor retail center in Colorado" },
+      { "id": "den_m5", "type": "MALL", "name": "Denver Pavilions on 16th Mall", "categoryLabel": "Downtown Entertainment Complex", "distanceKm": 4.5, "distanceMiles": 2.8, "walkTimeMinutes": 50, "driveTimeMinutes": 10, "ratingScore": 4.5, "keyHighlight": "Regal Cinemas, Hard Rock Cafe, multi-level retail" }
+    ]
+  },
+  "austin": {
+    "city": "Austin",
+    "state": "Texas",
+    "stateCode": "TX",
+    "primaryZip": "78704",
+    "countyName": "Travis County",
+    "effectiveTaxRatePercent": 2.15,
+    "centerCoordinates": { "latitude": 30.2530, "longitude": -97.7550 },
+    "neighborhoods": ["Zilker", "South Congress", "Barton Hills", "Downtown", "Tarrytown", "East Austin", "Domain"],
+    "streetNames": ["Barton Springs Rd", "S Congress Ave", "Zilker Blvd", "Kinney Ave", "Robert E Lee Rd"],
+    "policeDepartment": "Austin Police Department (Region 1)",
+    "patrolBenchmarkMinutes": 4.1,
+    "primaryAirport": { "name": "Austin-Bergstrom International Airport", "iata": "AUS", "distanceKm": 14.5 },
+    "timeZone": { "name": "Central Standard Time", "code": "CST", "utcOffset": "UTC-6" },
+    "topSchools": [
+      { "id": "atx_s1", "type": "SCHOOL", "name": "Barton Hills Elementary", "categoryLabel": "Exemplary Public (K-5)", "distanceKm": 0.7, "distanceMiles": 0.45, "walkTimeMinutes": 9, "driveTimeMinutes": 2, "ratingScore": 9.8, "keyHighlight": "National Blue Ribbon recipient with outdoor nature lab" },
+      { "id": "atx_s2", "type": "SCHOOL", "name": "Austin High School", "categoryLabel": "Historic Flagship Academy", "distanceKm": 1.4, "distanceMiles": 0.9, "walkTimeMinutes": 18, "driveTimeMinutes": 4, "ratingScore": 9.6, "keyHighlight": "Academy for Global Studies and AP Capstone" },
+      { "id": "atx_s3", "type": "SCHOOL", "name": "St. Andrews Episcopal School", "categoryLabel": "Premier Independent (K-12)", "distanceKm": 2.8, "distanceMiles": 1.7, "walkTimeMinutes": 34, "driveTimeMinutes": 7, "ratingScore": 10.0, "keyHighlight": "Top ranked private day school in Central Texas" },
+      { "id": "atx_s4", "type": "SCHOOL", "name": "Liberal Arts & Science Academy (LASA)", "categoryLabel": "Top Public Magnet in USA", "distanceKm": 6.2, "distanceMiles": 3.8, "walkTimeMinutes": 75, "driveTimeMinutes": 12, "ratingScore": 10.0, "keyHighlight": "Consistently ranked Top 10 High School in the United States" },
+      { "id": "atx_s5", "type": "SCHOOL", "name": "Zilker Elementary School", "categoryLabel": "Neighborhood Public (K-5)", "distanceKm": 0.5, "distanceMiles": 0.3, "walkTimeMinutes": 6, "driveTimeMinutes": 2, "ratingScore": 9.7, "keyHighlight": "Exceptional bilingual immersion and environmental studies" }
+    ],
+    "topMalls": [
+      { "id": "atx_m1", "type": "MALL", "name": "South Congress Retail Promenade", "categoryLabel": "Walkable Cultural Fashion", "distanceKm": 0.9, "distanceMiles": 0.55, "walkTimeMinutes": 11, "driveTimeMinutes": 3, "ratingScore": 4.9, "keyHighlight": "Hermès, Reformation, Allbirds, artisan coffee" },
+      { "id": "atx_m2", "type": "MALL", "name": "The Domain Northside", "categoryLabel": "Austin Second Downtown Galleria", "distanceKm": 16.5, "distanceMiles": 10.2, "walkTimeMinutes": 190, "driveTimeMinutes": 18, "ratingScore": 4.9, "keyHighlight": "Apple, Nordstrom, Restoration Hardware, luxury hotel" },
+      { "id": "atx_m3", "type": "MALL", "name": "Barton Creek Square", "categoryLabel": "Enclosed Hill Country Mall", "distanceKm": 4.2, "distanceMiles": 2.6, "walkTimeMinutes": 50, "driveTimeMinutes": 8, "ratingScore": 4.6, "keyHighlight": "Over 180 specialty stores and IMAX Cinema" },
+      { "id": "atx_m4", "type": "MALL", "name": "2nd Street District Downtown", "categoryLabel": "Urban Retail Walkway", "distanceKm": 2.1, "distanceMiles": 1.3, "walkTimeMinutes": 25, "driveTimeMinutes": 6, "ratingScore": 4.8, "keyHighlight": "Local boutiques and chef-driven dining on Lady Bird Lake" },
+      { "id": "atx_m5", "type": "MALL", "name": "Hill Country Galleria", "categoryLabel": "Open-Air Lifestyle Center", "distanceKm": 22.0, "distanceMiles": 13.6, "walkTimeMinutes": 260, "driveTimeMinutes": 22, "ratingScore": 4.7, "keyHighlight": "Whole Foods, amphitheater, outdoor green lawn" }
+    ]
+  },
+  "seattle": {
+    "city": "Seattle",
+    "state": "Washington",
+    "stateCode": "WA",
+    "primaryZip": "98102",
+    "countyName": "King County",
+    "effectiveTaxRatePercent": 1.02,
+    "centerCoordinates": { "latitude": 47.6250, "longitude": -122.3220 },
+    "neighborhoods": ["Capitol Hill", "Queen Anne", "Bellevue", "Ballard", "Fremont", "South Lake Union", "Madison Park"],
+    "streetNames": ["10th Ave E", "E Aloha St", "E Roy St", "Broadway E", "Federal Ave E", "Belmont Ave E"],
+    "policeDepartment": "Seattle Police Department (East Precinct)",
+    "patrolBenchmarkMinutes": 4.5,
+    "primaryAirport": { "name": "Seattle-Tacoma International Airport", "iata": "SEA", "distanceKm": 24.5 },
+    "timeZone": { "name": "Pacific Standard Time", "code": "PST", "utcOffset": "UTC-8" },
+    "topSchools": [
+      { "id": "sea_s1", "type": "SCHOOL", "name": "Montlake Elementary School", "categoryLabel": "Top Tier Public (K-5)", "distanceKm": 1.2, "distanceMiles": 0.75, "walkTimeMinutes": 15, "driveTimeMinutes": 4, "ratingScore": 9.8, "keyHighlight": "Ranked in Top 2% of Washington elementary schools" },
+      { "id": "sea_s2", "type": "SCHOOL", "name": "Seattle Academy of Arts & Sciences", "categoryLabel": "Innovative College Prep (6-12)", "distanceKm": 0.8, "distanceMiles": 0.5, "walkTimeMinutes": 10, "driveTimeMinutes": 3, "ratingScore": 9.9, "keyHighlight": "Cutting-edge urban campus with robotics and theater" },
+      { "id": "sea_s3", "type": "SCHOOL", "name": "Garfield High School", "categoryLabel": "Historic Public Flagship", "distanceKm": 1.9, "distanceMiles": 1.2, "walkTimeMinutes": 22, "driveTimeMinutes": 6, "ratingScore": 9.7, "keyHighlight": "World-renowned music program and accelerated curriculum" },
+      { "id": "sea_s4", "type": "SCHOOL", "name": "The Northwest School", "categoryLabel": "International College Prep", "distanceKm": 0.9, "distanceMiles": 0.55, "walkTimeMinutes": 11, "driveTimeMinutes": 3, "ratingScore": 9.8, "keyHighlight": "Global perspective with rooftop organic garden" },
+      { "id": "sea_s5", "type": "SCHOOL", "name": "Stevens Elementary School", "categoryLabel": "Neighborhood Public (K-5)", "distanceKm": 0.5, "distanceMiles": 0.3, "walkTimeMinutes": 6, "driveTimeMinutes": 2, "ratingScore": 9.6, "keyHighlight": "High math and reading proficiency benchmarks" }
+    ],
+    "topMalls": [
+      { "id": "sea_m1", "type": "MALL", "name": "Pacific Place Downtown", "categoryLabel": "Downtown Luxury Center", "distanceKm": 1.8, "distanceMiles": 1.1, "walkTimeMinutes": 22, "driveTimeMinutes": 6, "ratingScore": 4.7, "keyHighlight": "Tiffany & Co., high-end cinemas, Skybridge connection" },
+      { "id": "sea_m2", "type": "MALL", "name": "Bellevue Square & The Collection", "categoryLabel": "Pacific Northwest Luxury Flagship", "distanceKm": 14.5, "distanceMiles": 9.0, "walkTimeMinutes": 170, "driveTimeMinutes": 16, "ratingScore": 4.9, "keyHighlight": "Nordstrom flagship, Gucci, Louis Vuitton, Tesla" },
+      { "id": "sea_m3", "type": "MALL", "name": "University Village", "categoryLabel": "Open-Air Lifestyle Village", "distanceKm": 4.6, "distanceMiles": 2.8, "walkTimeMinutes": 55, "driveTimeMinutes": 10, "ratingScore": 4.9, "keyHighlight": "Apple, Din Tai Fung, Anthropologie, outdoor fountains" },
+      { "id": "sea_m4", "type": "MALL", "name": "Broadway & Pike-Pine Corridor", "categoryLabel": "Neighborhood Boutique Strip", "distanceKm": 0.4, "distanceMiles": 0.25, "walkTimeMinutes": 5, "driveTimeMinutes": 2, "ratingScore": 4.8, "keyHighlight": "Indie fashion, craft roasters, local designer goods" },
+      { "id": "sea_m5", "type": "MALL", "name": "Westlake Center", "categoryLabel": "Downtown Transit Hub Retail", "distanceKm": 1.9, "distanceMiles": 1.2, "walkTimeMinutes": 24, "driveTimeMinutes": 6, "ratingScore": 4.6, "keyHighlight": "Direct Monorail terminal to Seattle Center" }
+    ]
+  },
+  "miami": {
+    "city": "Miami",
+    "state": "Florida",
+    "stateCode": "FL",
+    "primaryZip": "33131",
+    "countyName": "Miami-Dade County",
+    "effectiveTaxRatePercent": 1.15,
+    "centerCoordinates": { "latitude": 25.7617, "longitude": -80.1918 },
+    "neighborhoods": ["Brickell", "South Beach", "Coconut Grove", "Coral Gables", "Wynwood", "Edgewater", "Design District"],
+    "streetNames": ["Brickell Ave", "S Miami Ave", "SE 1st Ave", "Bayshore Dr", "Ocean Dr", "Coral Way"],
+    "policeDepartment": "City of Miami Police Department (Central District)",
+    "patrolBenchmarkMinutes": 3.9,
+    "primaryAirport": { "name": "Miami International Airport", "iata": "MIA", "distanceKm": 12.2 },
+    "timeZone": { "name": "Eastern Standard Time", "code": "EST", "utcOffset": "UTC-5" },
+    "topSchools": [
+      { "id": "mia_s1", "type": "SCHOOL", "name": "Ransom Everglades School", "categoryLabel": "Elite Waterfront Prep (6-12)", "distanceKm": 6.8, "distanceMiles": 4.2, "walkTimeMinutes": 80, "driveTimeMinutes": 12, "ratingScore": 10.0, "keyHighlight": "Top Ranked Private Day School in Florida on Biscayne Bay" },
+      { "id": "mia_s2", "type": "SCHOOL", "name": "Carrollton School of the Sacred Heart", "categoryLabel": "Independent All-Girls Prep", "distanceKm": 7.2, "distanceMiles": 4.5, "walkTimeMinutes": 85, "driveTimeMinutes": 14, "ratingScore": 9.9, "keyHighlight": "IB Diploma World School with stellar collegiate placement" },
+      { "id": "mia_s3", "type": "SCHOOL", "name": "Design & Architecture Senior High (DASH)", "categoryLabel": "National Magnet Flagship", "distanceKm": 4.8, "distanceMiles": 3.0, "walkTimeMinutes": 58, "driveTimeMinutes": 10, "ratingScore": 10.0, "keyHighlight": "Consistently ranked Top 20 Public High School in US" },
+      { "id": "mia_s4", "type": "SCHOOL", "name": "Southside Preparatory Academy", "categoryLabel": "Brickell Public Magnet (K-8)", "distanceKm": 0.8, "distanceMiles": 0.5, "walkTimeMinutes": 10, "driveTimeMinutes": 3, "ratingScore": 9.7, "keyHighlight": "Bilingual international curriculum in heart of Brickell" },
+      { "id": "mia_s5", "type": "SCHOOL", "name": "Gulliver Preparatory Academy", "categoryLabel": "Pre-K-12 College Prep", "distanceKm": 12.5, "distanceMiles": 7.8, "walkTimeMinutes": 150, "driveTimeMinutes": 18, "ratingScore": 9.8, "keyHighlight": "World-class robotics engineering and biomedical programs" }
+    ],
+    "topMalls": [
+      { "id": "mia_m1", "type": "MALL", "name": "Brickell City Centre", "categoryLabel": "4-Level Open-Air Luxury Hub", "distanceKm": 0.3, "distanceMiles": 0.2, "walkTimeMinutes": 4, "driveTimeMinutes": 1, "ratingScore": 4.9, "keyHighlight": "Saks Fifth Avenue, Apple, luxury dining and rooftop terraces" },
+      { "id": "mia_m2", "type": "MALL", "name": "Miami Design District", "categoryLabel": "Haute Couture Architectural Mecca", "distanceKm": 5.2, "distanceMiles": 3.2, "walkTimeMinutes": 62, "driveTimeMinutes": 11, "ratingScore": 4.9, "keyHighlight": "Chanel, Dior, Prada, public art by world-renowned sculptors" },
+      { "id": "mia_m3", "type": "MALL", "name": "Bal Harbour Shops", "categoryLabel": "Open-Air Palm Courtyard Galleria", "distanceKm": 19.5, "distanceMiles": 12.1, "walkTimeMinutes": 230, "driveTimeMinutes": 25, "ratingScore": 5.0, "keyHighlight": "Highest sales per square foot luxury mall in the world" },
+      { "id": "mia_m4", "type": "MALL", "name": "Lincoln Road Mall (South Beach)", "categoryLabel": "Iconic Pedestrian Shopping Mile", "distanceKm": 7.8, "distanceMiles": 4.8, "walkTimeMinutes": 92, "driveTimeMinutes": 15, "ratingScore": 4.8, "keyHighlight": "Over 200 stores, al fresco dining, art galleries" },
+      { "id": "mia_m5", "type": "MALL", "name": "Aventura Mall", "categoryLabel": "Premier Super-Regional Mall", "distanceKm": 24.8, "distanceMiles": 15.4, "walkTimeMinutes": 290, "driveTimeMinutes": 28, "ratingScore": 4.9, "keyHighlight": "Hermès, Gucci, Apple, monumental slide tower by Carsten Höller" }
+    ]
+  },
+  "new york": {
+    "city": "New York",
+    "state": "New York",
+    "stateCode": "NY",
+    "primaryZip": "10023",
+    "countyName": "New York County (Manhattan)",
+    "effectiveTaxRatePercent": 1.72,
+    "centerCoordinates": { "latitude": 40.7831, "longitude": -73.9712 },
+    "neighborhoods": ["Upper West Side", "SoHo", "Tribeca", "West Village", "Williamsburg", "DUMBO", "Flatiron"],
+    "streetNames": ["Central Park West", "Broadway", "Columbus Ave", "Amsterdam Ave", "Prince St", "Spring St"],
+    "policeDepartment": "NYPD 20th & 24th Precincts",
+    "patrolBenchmarkMinutes": 3.2,
+    "primaryAirport": { "name": "John F. Kennedy International Airport", "iata": "JFK", "distanceKm": 26.5 },
+    "timeZone": { "name": "Eastern Standard Time", "code": "EST", "utcOffset": "UTC-5" },
+    "topSchools": [
+      { "id": "nyc_s1", "type": "SCHOOL", "name": "Stuyvesant High School", "categoryLabel": "Public Specialized High School", "distanceKm": 6.5, "distanceMiles": 4.0, "walkTimeMinutes": 80, "driveTimeMinutes": 15, "ratingScore": 10.0, "keyHighlight": "Nationally legendary STEM academy" },
+      { "id": "nyc_s2", "type": "SCHOOL", "name": "Trinity School NYC", "categoryLabel": "Historic Independent Day Prep", "distanceKm": 1.1, "distanceMiles": 0.7, "walkTimeMinutes": 14, "driveTimeMinutes": 3, "ratingScore": 10.0, "keyHighlight": "Ranked #1 Private K-12 School in America" },
+      { "id": "nyc_s3", "type": "SCHOOL", "name": "Collegiate School", "categoryLabel": "Oldest Independent School in US", "distanceKm": 1.4, "distanceMiles": 0.9, "walkTimeMinutes": 18, "driveTimeMinutes": 4, "ratingScore": 9.9, "keyHighlight": "Founded in 1628 with elite academic lineage" },
+      { "id": "nyc_s4", "type": "SCHOOL", "name": "Regis High School", "categoryLabel": "Jesuit All-Scholarship High", "distanceKm": 2.2, "distanceMiles": 1.4, "walkTimeMinutes": 28, "driveTimeMinutes": 6, "ratingScore": 10.0, "keyHighlight": "Tuition-free selective enrollment Catholic prep" },
+      { "id": "nyc_s5", "type": "SCHOOL", "name": "PS 199 Jessie Isador Straus", "categoryLabel": "Top Tier Public Elementary", "distanceKm": 0.6, "distanceMiles": 0.4, "walkTimeMinutes": 7, "driveTimeMinutes": 2, "ratingScore": 9.8, "keyHighlight": "Exemplary arts integration and high test scores" }
+    ],
+    "topMalls": [
+      { "id": "nyc_m1", "type": "MALL", "name": "The Shops at Columbus Circle", "categoryLabel": "Central Park Luxury Galleria", "distanceKm": 1.6, "distanceMiles": 1.0, "walkTimeMinutes": 20, "driveTimeMinutes": 5, "ratingScore": 4.8, "keyHighlight": "Michelin-star dining (Per Se), Whole Foods, high fashion" },
+      { "id": "nyc_m2", "type": "MALL", "name": "Hudson Yards Luxury Retail", "categoryLabel": "Architectural Megaproject Galleria", "distanceKm": 3.8, "distanceMiles": 2.4, "walkTimeMinutes": 48, "driveTimeMinutes": 9, "ratingScore": 4.8, "keyHighlight": "Cartier, Dior, edge skydeck, The Vessel" },
+      { "id": "nyc_m3", "type": "MALL", "name": "Fifth Avenue Luxury Corridor", "categoryLabel": "Global Haute Couture Strip", "distanceKm": 2.5, "distanceMiles": 1.5, "walkTimeMinutes": 30, "driveTimeMinutes": 7, "ratingScore": 4.9, "keyHighlight": "Bergdorf Goodman, Saks Fifth Avenue, Tiffany Landmark" },
+      { "id": "nyc_m4", "type": "MALL", "name": "Brookfield Place NYC", "categoryLabel": "Waterfront Luxury Winter Garden", "distanceKm": 7.2, "distanceMiles": 4.5, "walkTimeMinutes": 90, "driveTimeMinutes": 16, "ratingScore": 4.8, "keyHighlight": "Gucci, Bottega Veneta, Hudson River esplanade dining" },
+      { "id": "nyc_m5", "type": "MALL", "name": "SoHo Cast Iron Historic District", "categoryLabel": "Cobblestone Designer Flagships", "distanceKm": 5.4, "distanceMiles": 3.4, "walkTimeMinutes": 68, "driveTimeMinutes": 12, "ratingScore": 4.9, "keyHighlight": "Apple SoHo, Balenciaga, Celine, independent art lofts" }
+    ]
+  },
+  "los angeles": {
+    "city": "Los Angeles",
+    "state": "California",
+    "stateCode": "CA",
+    "primaryZip": "90210",
+    "countyName": "Los Angeles County",
+    "effectiveTaxRatePercent": 1.25,
+    "centerCoordinates": { "latitude": 34.0736, "longitude": -118.4004 },
+    "neighborhoods": ["Beverly Hills", "Santa Monica", "West Hollywood", "Silver Lake", "Venice", "Brentwood", "Downtown LA"],
+    "streetNames": ["Rodeo Dr", "Wilshire Blvd", "Santa Monica Blvd", "Sunset Blvd", "Ocean Ave", "Abbot Kinney Blvd"],
+    "policeDepartment": "Beverly Hills / LAPD West Bureau",
+    "patrolBenchmarkMinutes": 2.9,
+    "primaryAirport": { "name": "Los Angeles International Airport", "iata": "LAX", "distanceKm": 18.2 },
+    "timeZone": { "name": "Pacific Standard Time", "code": "PST", "utcOffset": "UTC-8" },
+    "topSchools": [
+      { "id": "la_s1", "type": "SCHOOL", "name": "Harvard-Westlake School", "categoryLabel": "Elite College Prep (7-12)", "distanceKm": 5.2, "distanceMiles": 3.2, "walkTimeMinutes": 65, "driveTimeMinutes": 10, "ratingScore": 10.0, "keyHighlight": "Ranked #2 Private High School in the United States" },
+      { "id": "la_s2", "type": "SCHOOL", "name": "Beverly Hills High School", "categoryLabel": "Public Performing Arts Flagship", "distanceKm": 1.2, "distanceMiles": 0.75, "walkTimeMinutes": 15, "driveTimeMinutes": 3, "ratingScore": 9.7, "keyHighlight": "Historic media and robotics curriculum" },
+      { "id": "la_s3", "type": "SCHOOL", "name": "Brentwood School", "categoryLabel": "Independent K-12 Prep", "distanceKm": 6.8, "distanceMiles": 4.2, "walkTimeMinutes": 85, "driveTimeMinutes": 12, "ratingScore": 9.9, "keyHighlight": "Exceptional arts center and athletic complex" },
+      { "id": "la_s4", "type": "SCHOOL", "name": "Crossroads School for Arts & Sciences", "categoryLabel": "Progressive Arts Prep", "distanceKm": 9.4, "distanceMiles": 5.8, "walkTimeMinutes": 115, "driveTimeMinutes": 15, "ratingScore": 9.8, "keyHighlight": "Known for innovative experiential education" },
+      { "id": "la_s5", "type": "SCHOOL", "name": "Hawthorne Elementary School", "categoryLabel": "Beverly Hills Public (K-8)", "distanceKm": 0.8, "distanceMiles": 0.5, "walkTimeMinutes": 10, "driveTimeMinutes": 2, "ratingScore": 9.8, "keyHighlight": "Dual immersion and advanced STEM labs" }
+    ],
+    "topMalls": [
+      { "id": "la_m1", "type": "MALL", "name": "Rodeo Drive Golden Triangle", "categoryLabel": "World Iconic Haute Couture", "distanceKm": 0.5, "distanceMiles": 0.3, "walkTimeMinutes": 6, "driveTimeMinutes": 2, "ratingScore": 5.0, "keyHighlight": "Cartier, Chanel, Gucci, Tiffany & Co., Beverly Wilshire" },
+      { "id": "la_m2", "type": "MALL", "name": "Westfield Century City", "categoryLabel": "Open-Air Lifestyle Paradise", "distanceKm": 2.4, "distanceMiles": 1.5, "walkTimeMinutes": 30, "driveTimeMinutes": 6, "ratingScore": 4.9, "keyHighlight": "Eataly LA, Nordstrom, Bloomingdale's, Equinox" },
+      { "id": "la_m3", "type": "MALL", "name": "The Grove & Original Farmers Market", "categoryLabel": "Outdoor Historic Promenade", "distanceKm": 5.8, "distanceMiles": 3.6, "walkTimeMinutes": 72, "driveTimeMinutes": 12, "ratingScore": 4.8, "keyHighlight": "Art deco trolley, Nordstrom, AMC Theatres, dining" },
+      { "id": "la_m4", "type": "MALL", "name": "Santa Monica Place", "categoryLabel": "Coastal Open-Air Center", "distanceKm": 11.2, "distanceMiles": 7.0, "walkTimeMinutes": 135, "driveTimeMinutes": 18, "ratingScore": 4.7, "keyHighlight": "Steps from Santa Monica Pier and Third Street Promenade" },
+      { "id": "la_m5", "type": "MALL", "name": "Beverly Center", "categoryLabel": "Monolithic Fashion Hub", "distanceKm": 3.9, "distanceMiles": 2.4, "walkTimeMinutes": 48, "driveTimeMinutes": 8, "ratingScore": 4.6, "keyHighlight": "Prada, Saint Laurent, Fendi, gourmet dining hall" }
+    ]
+  },
+  "san francisco": {
+    "city": "San Francisco",
+    "state": "California",
+    "stateCode": "CA",
+    "primaryZip": "94123",
+    "countyName": "San Francisco County",
+    "effectiveTaxRatePercent": 1.18,
+    "centerCoordinates": { "latitude": 37.7983, "longitude": -122.4385 },
+    "neighborhoods": ["Marina District", "Pacific Heights", "Mission District", "SoMa", "Noe Valley", "Presidio Heights", "Hayes Valley"],
+    "streetNames": ["Chestnut St", "Union St", "Fillmore St", "Marina Blvd", "Broadway", "Valencia St"],
+    "policeDepartment": "SFPD Northern & Richmond Stations",
+    "patrolBenchmarkMinutes": 3.6,
+    "primaryAirport": { "name": "San Francisco International Airport", "iata": "SFO", "distanceKm": 22.8 },
+    "timeZone": { "name": "Pacific Standard Time", "code": "PST", "utcOffset": "UTC-8" },
+    "topSchools": [
+      { "id": "sf_s1", "type": "SCHOOL", "name": "Lowell High School", "categoryLabel": "Public Selective Enrollment", "distanceKm": 7.5, "distanceMiles": 4.6, "walkTimeMinutes": 90, "driveTimeMinutes": 15, "ratingScore": 9.9, "keyHighlight": "Oldest public high school west of the Mississippi" },
+      { "id": "sf_s2", "type": "SCHOOL", "name": "San Francisco University High School", "categoryLabel": "Elite College Prep (9-12)", "distanceKm": 1.2, "distanceMiles": 0.75, "walkTimeMinutes": 15, "driveTimeMinutes": 4, "ratingScore": 10.0, "keyHighlight": "Stellar Stanford / Ivy League matriculation rates" },
+      { "id": "sf_s3", "type": "SCHOOL", "name": "The Hamlin School", "categoryLabel": "Historic Independent All-Girls", "distanceKm": 0.9, "distanceMiles": 0.55, "walkTimeMinutes": 11, "driveTimeMinutes": 3, "ratingScore": 9.8, "keyHighlight": "Overlooking the Golden Gate Bridge in Pacific Heights" },
+      { "id": "sf_s4", "type": "SCHOOL", "name": "Clair Lilienthal Alternative School", "categoryLabel": "Top Public K-8 Magnet", "distanceKm": 0.7, "distanceMiles": 0.45, "walkTimeMinutes": 9, "driveTimeMinutes": 2, "ratingScore": 9.7, "keyHighlight": "Exceptional Korean bilingual & STEM track" },
+      { "id": "sf_s5", "type": "SCHOOL", "name": "Stuart Hall & Convent of Sacred Heart", "categoryLabel": "Pre-K-12 Historic Academies", "distanceKm": 1.6, "distanceMiles": 1.0, "walkTimeMinutes": 20, "driveTimeMinutes": 5, "ratingScore": 9.8, "keyHighlight": "Historic Flood and Spreckels mansions campus" }
+    ],
+    "topMalls": [
+      { "id": "sf_m1", "type": "MALL", "name": "Chestnut & Union Street Corridors", "categoryLabel": "Marina Chic Boutique Walk", "distanceKm": 0.3, "distanceMiles": 0.2, "walkTimeMinutes": 4, "driveTimeMinutes": 1, "ratingScore": 4.9, "keyHighlight": "Apple Marina, Vuori, outdoor brunch and patisseries" },
+      { "id": "sf_m2", "type": "MALL", "name": "Fillmore Street Luxury Retail", "categoryLabel": "Pacific Heights Designer Strip", "distanceKm": 1.1, "distanceMiles": 0.7, "walkTimeMinutes": 14, "driveTimeMinutes": 3, "ratingScore": 4.9, "keyHighlight": "Rag & Bone, Ralph Lauren, blue bottle coffee, fine dining" },
+      { "id": "sf_m3", "type": "MALL", "name": "Union Square Fashion District", "categoryLabel": "Downtown Luxury Core", "distanceKm": 3.4, "distanceMiles": 2.1, "walkTimeMinutes": 42, "driveTimeMinutes": 8, "ratingScore": 4.7, "keyHighlight": "Apple flagship, Saks Fifth Avenue, Tiffany & Co." },
+      { "id": "sf_m4", "type": "MALL", "name": "San Francisco Ferry Building Marketplace", "categoryLabel": "Historic Artisan Waterfront Food Hall", "distanceKm": 4.1, "distanceMiles": 2.5, "walkTimeMinutes": 50, "driveTimeMinutes": 10, "ratingScore": 4.9, "keyHighlight": "World-renowned farmers market and culinary artisans" },
+      { "id": "sf_m5", "type": "MALL", "name": "Stonestown Galleria", "categoryLabel": "Westside Modern Retail Hub", "distanceKm": 9.8, "distanceMiles": 6.1, "walkTimeMinutes": 120, "driveTimeMinutes": 18, "ratingScore": 4.6, "keyHighlight": "Target, Whole Foods, Regal Cinemas, Asian culinary hub" }
+    ]
+  },
+  "boston": {
+    "city": "Boston",
+    "state": "Massachusetts",
+    "stateCode": "MA",
+    "primaryZip": "02116",
+    "countyName": "Suffolk County",
+    "effectiveTaxRatePercent": 1.12,
+    "centerCoordinates": { "latitude": 42.3505, "longitude": -71.0760 },
+    "neighborhoods": ["Back Bay", "Beacon Hill", "South End", "Seaport District", "Cambridge", "Charlestown", "Brookline"],
+    "streetNames": ["Newbury St", "Boylston St", "Commonwealth Ave", "Beacon St", "Dartmouth St", "Charles St"],
+    "policeDepartment": "Boston Police Department (District D-4)",
+    "patrolBenchmarkMinutes": 3.4,
+    "primaryAirport": { "name": "Boston Logan International Airport", "iata": "BOS", "distanceKm": 8.5 },
+    "timeZone": { "name": "Eastern Standard Time", "code": "EST", "utcOffset": "UTC-5" },
+    "topSchools": [
+      { "id": "bos_s1", "type": "SCHOOL", "name": "Boston Latin School", "categoryLabel": "Public Exam School (7-12)", "distanceKm": 2.4, "distanceMiles": 1.5, "walkTimeMinutes": 30, "driveTimeMinutes": 6, "ratingScore": 10.0, "keyHighlight": "Oldest school in America (1635) and Top 25 in US" },
+      { "id": "bos_s2", "type": "SCHOOL", "name": "Commonwealth School", "categoryLabel": "Elite Back Bay Day School", "distanceKm": 0.6, "distanceMiles": 0.4, "walkTimeMinutes": 8, "driveTimeMinutes": 2, "ratingScore": 10.0, "keyHighlight": "Renowned intellectual rigor and Harvard feeder" },
+      { "id": "bos_s3", "type": "SCHOOL", "name": "The Winsor School", "categoryLabel": "Top Ranked Girls Prep", "distanceKm": 2.8, "distanceMiles": 1.7, "walkTimeMinutes": 35, "driveTimeMinutes": 7, "ratingScore": 10.0, "keyHighlight": "Stellar STEM and humanities curriculum in Longwood" },
+      { "id": "bos_s4", "type": "SCHOOL", "name": "Roxbury Latin School", "categoryLabel": "Premier Independent Boys Prep", "distanceKm": 7.8, "distanceMiles": 4.8, "walkTimeMinutes": 95, "driveTimeMinutes": 16, "ratingScore": 10.0, "keyHighlight": "Lowest tuition of any independent prep in New England" },
+      { "id": "bos_s5", "type": "SCHOOL", "name": "Elliot K-8 Innovation School", "categoryLabel": "Top Public Innovation Feeder", "distanceKm": 2.9, "distanceMiles": 1.8, "walkTimeMinutes": 36, "driveTimeMinutes": 8, "ratingScore": 9.7, "keyHighlight": "Award-winning STEM and classical arts integration" }
+    ],
+    "topMalls": [
+      { "id": "bos_m1", "type": "MALL", "name": "Newbury Street Fashion Promenade", "categoryLabel": "8-Block Brownstone Luxury Mile", "distanceKm": 0.2, "distanceMiles": 0.15, "walkTimeMinutes": 3, "driveTimeMinutes": 1, "ratingScore": 4.9, "keyHighlight": "Chanel, Ralph Lauren, Tiffany, outdoor cafés and galleries" },
+      { "id": "bos_m2", "type": "MALL", "name": "Prudential Center Shops", "categoryLabel": "Enclosed Back Bay Urban Hub", "distanceKm": 0.5, "distanceMiles": 0.3, "walkTimeMinutes": 6, "driveTimeMinutes": 2, "ratingScore": 4.8, "keyHighlight": "Saks Fifth Avenue, Eataly Boston, View Boston observatory" },
+      { "id": "bos_m3", "type": "MALL", "name": "Copley Place Luxury Galleria", "categoryLabel": "Connected High-End Atrium", "distanceKm": 0.4, "distanceMiles": 0.25, "walkTimeMinutes": 5, "driveTimeMinutes": 2, "ratingScore": 4.8, "keyHighlight": "Neiman Marcus, Christian Louboutin, Louis Vuitton, Dior" },
+      { "id": "bos_m4", "type": "MALL", "name": "The Superette at Seaport", "categoryLabel": "Open-Air Waterfront Courtyard", "distanceKm": 2.7, "distanceMiles": 1.7, "walkTimeMinutes": 34, "driveTimeMinutes": 7, "ratingScore": 4.9, "keyHighlight": "Alo Yoga, Reformation, Maison Kitsuné, coastal dining" },
+      { "id": "bos_m5", "type": "MALL", "name": "Faneuil Hall Marketplace", "categoryLabel": "Historic Landmark Festival Hub", "distanceKm": 2.2, "distanceMiles": 1.4, "walkTimeMinutes": 28, "driveTimeMinutes": 6, "ratingScore": 4.6, "keyHighlight": "Quincy Market food colonnade, cobblestone street performers" }
+    ]
+  },
+  "dallas": {
+    "city": "Dallas",
+    "state": "Texas",
+    "stateCode": "TX",
+    "primaryZip": "75205",
+    "countyName": "Dallas County",
+    "effectiveTaxRatePercent": 2.22,
+    "centerCoordinates": { "latitude": 32.8360, "longitude": -96.7990 },
+    "neighborhoods": ["Highland Park", "University Park", "Uptown", "Preston Hollow", "Deep Ellum", "Bishop Arts", "Frisco", "Plano"],
+    "streetNames": ["Preston Rd", "Armstrong Pkwy", "Mockingbird Ln", "McKinney Ave", "Turtle Creek Blvd"],
+    "policeDepartment": "Highland Park Dept of Public Safety",
+    "patrolBenchmarkMinutes": 2.5,
+    "primaryAirport": { "name": "Dallas/Fort Worth International Airport", "iata": "DFW", "distanceKm": 28.4 },
+    "timeZone": { "name": "Central Standard Time", "code": "CST", "utcOffset": "UTC-6" },
+    "topSchools": [
+      { "id": "dal_s1", "type": "SCHOOL", "name": "Highland Park High School", "categoryLabel": "Top Tier Public Exemplary", "distanceKm": 0.9, "distanceMiles": 0.55, "walkTimeMinutes": 11, "driveTimeMinutes": 3, "ratingScore": 9.9, "keyHighlight": "State champion athletics and collegiate AP benchmark" },
+      { "id": "dal_s2", "type": "SCHOOL", "name": "St. Mark's School of Texas", "categoryLabel": "Elite Boys Prep (1-12)", "distanceKm": 4.2, "distanceMiles": 2.6, "walkTimeMinutes": 52, "driveTimeMinutes": 8, "ratingScore": 10.0, "keyHighlight": "Ranked #1 Boys School in the US with planetarium" },
+      { "id": "dal_s3", "type": "SCHOOL", "name": "The Hockaday School", "categoryLabel": "Premier Girls Day & Boarding Prep", "distanceKm": 5.8, "distanceMiles": 3.6, "walkTimeMinutes": 72, "driveTimeMinutes": 10, "ratingScore": 10.0, "keyHighlight": "Largest all-girls boarding school in America" },
+      { "id": "dal_s4", "type": "SCHOOL", "name": "School for the Talented and Gifted (TAG)", "categoryLabel": "Top Public Magnet in USA", "distanceKm": 8.4, "distanceMiles": 5.2, "walkTimeMinutes": 105, "driveTimeMinutes": 14, "ratingScore": 10.0, "keyHighlight": "Frequently named #1 High School in America by US News" },
+      { "id": "dal_s5", "type": "SCHOOL", "name": "Armstrong Elementary School", "categoryLabel": "Highland Park ISD Public (K-4)", "distanceKm": 0.5, "distanceMiles": 0.3, "walkTimeMinutes": 6, "driveTimeMinutes": 2, "ratingScore": 9.8, "keyHighlight": "National Blue Ribbon School with 99% proficiency" }
+    ],
+    "topMalls": [
+      { "id": "dal_m1", "type": "MALL", "name": "Highland Park Village", "categoryLabel": "America's First Open-Air Shopping Center", "distanceKm": 0.6, "distanceMiles": 0.4, "walkTimeMinutes": 7, "driveTimeMinutes": 2, "ratingScore": 5.0, "keyHighlight": "Hermès, Chanel, Dior, Alexander McQueen, bistro dining" },
+      { "id": "dal_m2", "type": "MALL", "name": "NorthPark Center", "categoryLabel": "Museum-Quality Art & Retail Destination", "distanceKm": 3.8, "distanceMiles": 2.4, "walkTimeMinutes": 48, "driveTimeMinutes": 7, "ratingScore": 4.9, "keyHighlight": "Neiman Marcus flagship, major modern art collection" },
+      { "id": "dal_m3", "type": "MALL", "name": "Galleria Dallas", "categoryLabel": "Iconic Glass Atrium & Ice Rink Mall", "distanceKm": 11.2, "distanceMiles": 7.0, "walkTimeMinutes": 135, "driveTimeMinutes": 14, "ratingScore": 4.7, "keyHighlight": "Nordstrom, Macy's, centerpiece ice skating center" },
+      { "id": "dal_m4", "type": "MALL", "name": "West Village Uptown", "categoryLabel": "Walkable Uptown Retail District", "distanceKm": 3.1, "distanceMiles": 1.9, "walkTimeMinutes": 38, "driveTimeMinutes": 6, "ratingScore": 4.8, "keyHighlight": "Mi Cocina, boutique fitness, trolley connection" },
+      { "id": "dal_m5", "type": "MALL", "name": "Legacy West (Plano)", "categoryLabel": "Premier North Texas Urban Strip", "distanceKm": 26.5, "distanceMiles": 16.5, "walkTimeMinutes": 320, "driveTimeMinutes": 24, "ratingScore": 4.9, "keyHighlight": "Tesla, Golden Goose, Legacy Food Hall, luxury living" }
+    ]
+  },
+  "atlanta": {
+    "city": "Atlanta",
+    "state": "Georgia",
+    "stateCode": "GA",
+    "primaryZip": "30305",
+    "countyName": "Fulton County",
+    "effectiveTaxRatePercent": 1.34,
+    "centerCoordinates": { "latitude": 33.8440, "longitude": -84.3780 },
+    "neighborhoods": ["Buckhead", "Midtown", "Inman Park", "Virginia-Highland", "Old Fourth Ward", "Piedmont Heights"],
+    "streetNames": ["Peachtree Rd NE", "West Paces Ferry Rd", "Piedmont Rd", "Paces Ferry Rd", "Pharr Rd NE"],
+    "policeDepartment": "Atlanta Police Department (Zone 2 - Buckhead)",
+    "patrolBenchmarkMinutes": 3.8,
+    "primaryAirport": { "name": "Hartsfield-Jackson Atlanta International Airport", "iata": "ATL", "distanceKm": 25.6 },
+    "timeZone": { "name": "Eastern Standard Time", "code": "EST", "utcOffset": "UTC-5" },
+    "topSchools": [
+      { "id": "atl_s1", "type": "SCHOOL", "name": "The Westminster Schools", "categoryLabel": "Premier Christian Day Prep (K-12)", "distanceKm": 4.8, "distanceMiles": 3.0, "walkTimeMinutes": 60, "driveTimeMinutes": 8, "ratingScore": 10.0, "keyHighlight": "Ranked #1 Private K-12 School in Georgia on 180 acres" },
+      { "id": "atl_s2", "type": "SCHOOL", "name": "Pace Academy", "categoryLabel": "Elite College Prep (K-12)", "distanceKm": 2.2, "distanceMiles": 1.4, "walkTimeMinutes": 28, "driveTimeMinutes": 5, "ratingScore": 9.9, "keyHighlight": "Renowned Garcia Family Middle School & global leadership" },
+      { "id": "atl_s3", "type": "SCHOOL", "name": "The Lovett School", "categoryLabel": "Independent Riverfront Academy", "distanceKm": 6.5, "distanceMiles": 4.0, "walkTimeMinutes": 80, "driveTimeMinutes": 11, "ratingScore": 9.8, "keyHighlight": "Chattahoochee River campus with river sustainability lab" },
+      { "id": "atl_s4", "type": "SCHOOL", "name": "Sarah Smith Elementary", "categoryLabel": "Top Rated Public (K-5)", "distanceKm": 1.5, "distanceMiles": 0.9, "walkTimeMinutes": 19, "driveTimeMinutes": 4, "ratingScore": 9.7, "keyHighlight": "Dual-campus IB Primary Years Programme" },
+      { "id": "atl_s5", "type": "SCHOOL", "name": "North Atlanta High School", "categoryLabel": "Public IB World School", "distanceKm": 5.2, "distanceMiles": 3.2, "walkTimeMinutes": 65, "driveTimeMinutes": 9, "ratingScore": 9.6, "keyHighlight": "Architecturally stunning high-tech lakefront campus" }
+    ],
+    "topMalls": [
+      { "id": "atl_m1", "type": "MALL", "name": "Buckhead Village District", "categoryLabel": "Open-Air Luxury Promenade", "distanceKm": 0.4, "distanceMiles": 0.25, "walkTimeMinutes": 5, "driveTimeMinutes": 2, "ratingScore": 4.9, "keyHighlight": "Hermès, Dior, Brunello Cucinelli, al fresco dining" },
+      { "id": "atl_m2", "type": "MALL", "name": "Phipps Plaza", "categoryLabel": "Southeast Haute Couture Mecca", "distanceKm": 1.8, "distanceMiles": 1.1, "walkTimeMinutes": 22, "driveTimeMinutes": 4, "ratingScore": 4.9, "keyHighlight": "Saks Fifth Avenue, Tiffany & Co., Nobu Hotel & Restaurant" },
+      { "id": "atl_m3", "type": "MALL", "name": "Lenox Square", "categoryLabel": "Historic Super-Regional Flagship", "distanceKm": 1.9, "distanceMiles": 1.2, "walkTimeMinutes": 24, "driveTimeMinutes": 5, "ratingScore": 4.7, "keyHighlight": "Bloomingdale's, Neiman Marcus, Apple, Zara flagship" },
+      { "id": "atl_m4", "type": "MALL", "name": "Ponce City Market", "categoryLabel": "Historic Sears Building Adaptive Retail", "distanceKm": 7.4, "distanceMiles": 4.6, "walkTimeMinutes": 92, "driveTimeMinutes": 14, "ratingScore": 4.9, "keyHighlight": "BeltLine connection, rooftop amusement park, artisan food hall" },
+      { "id": "atl_m5", "type": "MALL", "name": "Perimeter Mall", "categoryLabel": "Central Perimeter Shopping Center", "distanceKm": 8.5, "distanceMiles": 5.3, "walkTimeMinutes": 105, "driveTimeMinutes": 12, "ratingScore": 4.6, "keyHighlight": "Nordstrom, Von Maur, Shake Shack, over 150 retailers" }
+    ]
+  }
+}

@@ -66,7 +66,7 @@ export default function Home() {
   const [scribblePolygon, setScribblePolygon] = useState<GeoCoordinate[] | null>(null);
 
   // Sorting
-  const [sortBy, setSortBy] = useState<'SCORE_DESC' | 'PRICE_ASC' | 'PRICE_DESC' | 'SQFT_DESC' | 'SOIL_DESC'>('SCORE_DESC');
+  const [sortBy, setSortBy] = useState<'SCORE_DESC' | 'PRICE_ASC' | 'PRICE_DESC' | 'SQFT_DESC' | 'CAPRATE_DESC'>('SCORE_DESC');
 
   // Filter State (9-Item Filter Criteria)
   const [filters, setFilters] = useState<FilterState>({
@@ -178,8 +178,8 @@ export default function Home() {
           if (!isInside) return false;
         }
 
-        // 9. Subsurface Soil Bearing PSF Minimum
-        if (filters.minSoilBearingPSF > 0 && listing.geotechnical.bearingCapacityPSF < filters.minSoilBearingPSF) {
+        // 9. Cap Rate Minimum Filter
+        if (filters.minCapRatePercent && filters.minCapRatePercent > 0 && listing.financials.outputs.capRatePercent < filters.minCapRatePercent) {
           return false;
         }
 
@@ -203,8 +203,8 @@ export default function Home() {
         if (sortBy === 'SQFT_DESC') {
           return b.specs.finishedSqFt - a.specs.finishedSqFt;
         }
-        if (sortBy === 'SOIL_DESC') {
-          return b.geotechnical.bearingCapacityPSF - a.geotechnical.bearingCapacityPSF;
+        if (sortBy === 'CAPRATE_DESC') {
+          return b.financials.outputs.capRatePercent - a.financials.outputs.capRatePercent;
         }
         return 0;
       });
@@ -416,7 +416,7 @@ export default function Home() {
                 {filteredListings.length} Luxury Residences Available
               </h2>
               <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
-                Every residence features complete nearby school ratings (GreatSchools), shopping malls (★ ratings), soil mechanics, airport proximity (km), and interactive custom ROI underwriting.
+                Every residence features complete nearby school ratings (GreatSchools), premier shopping malls (★ ratings), neighborhood safety, parks, and interactive custom ROI underwriting.
               </p>
             </div>
 
@@ -432,7 +432,7 @@ export default function Home() {
                 <option value="PRICE_ASC">Price: Low to High</option>
                 <option value="PRICE_DESC">Price: High to Low</option>
                 <option value="SQFT_DESC">Largest Finished Area</option>
-                <option value="SOIL_DESC">Highest Soil Bearing (PSF)</option>
+                <option value="CAPRATE_DESC">Highest Cap Rate (%)</option>
               </select>
             </div>
           </div>

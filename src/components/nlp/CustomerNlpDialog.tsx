@@ -25,6 +25,7 @@ import {
 import { ShikaakPropertyListing } from '../../types/property';
 import { executeCustomerNlpPipeline, CustomerNlpInferenceResult, MatchedHouseRecommendation } from '../../lib/nlp/self-correcting-engine';
 import { NLP_1000_TRAINING_CORPUS, TrainingExample } from '../../lib/nlp/nlp-training-corpus';
+import { crawlUsPropertyPortals } from '../../lib/crawler/multi-portal-crawler';
 
 interface CustomerNlpDialogProps {
   isOpen: boolean;
@@ -37,8 +38,9 @@ interface CustomerNlpDialogProps {
 const QUICK_PROMPTS = [
   { label: 'Lincoln Park 3 Bed (<$800k)', query: '3 bed house in lincon park chicgo undr 800k with cap rate > 6%' },
   { label: 'Denver High Cashflow (<$1.2M)', query: 'Denver mountain home under 1.2M with positive cash flow near parks' },
-  { label: 'Gold Coast Luxury Condo (<$650k)', query: 'luxury 2br condo in gold cost under 650k near top elementary' },
-  { label: 'West Loop Modern Loft (<$900k)', query: 'modern loft in westloop between 500k and 900k near whole foods' },
+  { label: 'Austin Family Home (<$850k)', query: '3 bed single family home in austin tx undr 850k near top elementary' },
+  { label: 'Seattle Capitol Hill Loft (<$900k)', query: 'modern 2br loft in seattle capitol hill undr 900k near light rail' },
+  { label: 'Miami Luxury Rental (<$3,500/mo)', query: 'luxury rental in miami brickell under 3500/mo near ocean' },
 ];
 
 export const CustomerNlpDialog: React.FC<CustomerNlpDialogProps> = ({
@@ -50,23 +52,65 @@ export const CustomerNlpDialog: React.FC<CustomerNlpDialogProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState<'MATCH' | 'TRAINING_BENCHMARK'>('MATCH');
   const [inputQuery, setInputQuery] = useState('');
+  const [currentListings, setCurrentListings] = useState<ShikaakPropertyListing[]>(allListings);
+  const [isCrawling, setIsCrawling] = useState(false);
+  const [crawlProgressText, setCrawlProgressText] = useState('');
   const [result, setResult] = useState<CustomerNlpInferenceResult | null>(null);
   const [trainingFilter, setTrainingFilter] = useState<string>('ALL');
+
+  useEffect(() => {
+    setCurrentListings(allListings);
+  }, [allListings]);
 
   // Default initial query on mount
   useEffect(() => {
     if (isOpen && !result) {
       const defaultQuery = '3 bed house in lincon park chicgo undr 800k with cap rate > 6% near top schools';
       setInputQuery(defaultQuery);
-      const initialResult = executeCustomerNlpPipeline(defaultQuery, allListings);
+      const initialResult = executeCustomerNlpPipeline(defaultQuery, currentListings);
       setResult(initialResult);
     }
-  }, [isOpen, allListings]);
+  }, [isOpen, currentListings]);
 
-  const handleRunInference = (customQuery?: string) => {
+  const handleRunInference = async (customQuery?: string) => {
     const q = customQuery || inputQuery;
     if (!q.trim()) return;
-    const inferenceResult = executeCustomerNlpPipeline(q, allListings);
+
+    let inferenceResult = executeCustomerNlpPipeline(q, currentListings);
+
+    // If query targets an out-of-market city, finds 0 matches, or top candidate fit < 75%, trigger crawler
+    const targetCity = inferenceResult.parsedQuery.location?.city;
+    const topScore = inferenceResult.matchedHouses.length > 0 ? inferenceResult.matchedHouses[0].matchScorePercent : 0;
+    const hasCityListings = targetCity
+      ? currentListings.some(l =>
+          l.propertyAddress.city.toLowerCase() === targetCity.toLowerCase() ||
+          l.propertyAddress.neighborhood.toLowerCase().includes(targetCity.toLowerCase())
+        )
+      : false;
+
+    if (!hasCityListings || inferenceResult.matchedHouses.length === 0 || topScore < 75) {
+      setIsCrawling(true);
+      setCrawlProgressText(`Live crawling Zillow, Redfin, Realtor.com for ${targetCity || 'matching residences'}...`);
+      try {
+        const crawlResult = await crawlUsPropertyPortals(inferenceResult.parsedQuery, {
+          onProgress: (evt) => {
+            setCrawlProgressText(`[${evt.portal}] ${evt.message}`);
+          },
+        });
+        if (crawlResult.properties && crawlResult.properties.length > 0) {
+          const updated = [...crawlResult.properties, ...currentListings];
+          setCurrentListings(updated);
+          onApplyResultsToDashboard?.(updated);
+          inferenceResult = executeCustomerNlpPipeline(q, updated);
+        }
+      } catch (err) {
+        console.error('Crawler dispatch error', err);
+      } finally {
+        setIsCrawling(false);
+        setCrawlProgressText('');
+      }
+    }
+
     setResult(inferenceResult);
   };
 
@@ -181,6 +225,17 @@ export const CustomerNlpDialog: React.FC<CustomerNlpDialogProps> = ({
             {/* 2. RESULTS SCROLL STREAM */}
             <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-5 bg-slate-50/60">
               
+              {/* Real-time Multi-Portal Crawler Activity Notification */}
+              {isCrawling && (
+                <div className="flex items-center gap-3 p-3.5 bg-red-500 text-white rounded-2xl shadow-md animate-pulse">
+                  <RefreshCw className="w-5 h-5 animate-spin shrink-0 text-white" />
+                  <div className="text-xs font-semibold">
+                    <span className="font-bold block uppercase tracking-wider text-[10px] text-red-100">Live Multi-Portal Crawler Dispatched</span>
+                    <span>{crawlProgressText || 'Scanning Zillow, Redfin, Realtor.com, and Apartments.com...'}</span>
+                  </div>
+                </div>
+              )}
+
               {result && (
                 <>
                   {/* Active Learning Self-Correction Telemetry Box */}

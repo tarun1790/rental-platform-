@@ -60,8 +60,21 @@ const MISTAKE_REMEDIATION_MAP: Record<string, { corrected: string; category: Sel
   'hide park': { corrected: 'Hyde Park', category: 'SPELLING_TYPO', rule: 'Homophone correction: "hide park" -> "Hyde Park"' },
   'bolder': { corrected: 'Boulder', category: 'SPELLING_TYPO', rule: 'Phonetic typo: "bolder" -> "Boulder, CO"' },
   'dnver': { corrected: 'Denver', category: 'SPELLING_TYPO', rule: 'Spelling typo: "dnver" -> "Denver, CO"' },
+  'denvr': { corrected: 'Denver', category: 'SPELLING_TYPO', rule: 'Spelling typo: "denvr" -> "Denver, CO"' },
   'aspin': { corrected: 'Aspen', category: 'SPELLING_TYPO', rule: 'Spelling typo: "aspin" -> "Aspen, CO"' },
   'chicgo': { corrected: 'Chicago', category: 'SPELLING_TYPO', rule: 'Typo correction: "chicgo" -> "Chicago, IL"' },
+  'austn': { corrected: 'Austin', category: 'SPELLING_TYPO', rule: 'Typo correction: "austn" -> "Austin, TX"' },
+  'seatle': { corrected: 'Seattle', category: 'SPELLING_TYPO', rule: 'Typo correction: "seatle" -> "Seattle, WA"' },
+  'miame': { corrected: 'Miami', category: 'SPELLING_TYPO', rule: 'Typo correction: "miame" -> "Miami, FL"' },
+  'bostn': { corrected: 'Boston', category: 'SPELLING_TYPO', rule: 'Typo correction: "bostn" -> "Boston, MA"' },
+  'dalas': { corrected: 'Dallas', category: 'SPELLING_TYPO', rule: 'Typo correction: "dalas" -> "Dallas, TX"' },
+  'atlant': { corrected: 'Atlanta', category: 'SPELLING_TYPO', rule: 'Typo correction: "atlant" -> "Atlanta, GA"' },
+  'manhatan': { corrected: 'Manhattan', category: 'SPELLING_TYPO', rule: 'Typo correction: "manhatan" -> "Manhattan, NY"' },
+  'ny c': { corrected: 'New York', category: 'SLANG_SHORTHAND', rule: 'Shorthand: "ny c" -> "New York, NY"' },
+  'cherry crek': { corrected: 'Cherry Creek', category: 'SPELLING_TYPO', rule: 'Phonetic typo: "cherry crek" -> "Cherry Creek, Denver"' },
+  'beverly hils': { corrected: 'Beverly Hills', category: 'SPELLING_TYPO', rule: 'Phonetic typo: "beverly hils" -> "Beverly Hills, LA"' },
+  'cap hill': { corrected: 'Capitol Hill', category: 'SLANG_SHORTHAND', rule: 'Neighborhood slang: "cap hill" -> "Capitol Hill, Seattle"' },
+  'brickel': { corrected: 'Brickell', category: 'SPELLING_TYPO', rule: 'Phonetic typo: "brickel" -> "Brickell, Miami"' },
 
   // Budget & Price Typos
   'undr': { corrected: 'under', category: 'SPELLING_TYPO', rule: 'Typo correction: "undr" -> "under"' },
@@ -69,6 +82,11 @@ const MISTAKE_REMEDIATION_MAP: Record<string, { corrected: string; category: Sel
   'chaper than': { corrected: 'under', category: 'SPELLING_TYPO', rule: 'Typo correction: "chaper than" -> "under"' },
   'not exceeding': { corrected: 'under', category: 'NEGATIVE_CONSTRAINT', rule: 'Negative constraint inverted to upper bound' },
   'no more than': { corrected: 'under', category: 'NEGATIVE_CONSTRAINT', rule: 'Negative constraint inverted to upper bound' },
+  'down town': { corrected: 'downtown', category: 'SPELLING_TYPO', rule: 'Compound word merge: "down town" -> "downtown"' },
+  'rnt': { corrected: 'rent', category: 'SPELLING_TYPO', rule: 'Typo correction: "rnt" -> "rent"' },
+  'luxry': { corrected: 'luxury', category: 'SPELLING_TYPO', rule: 'Typo correction: "luxry" -> "luxury"' },
+  'scools': { corrected: 'schools', category: 'SPELLING_TYPO', rule: 'Typo correction: "scools" -> "schools"' },
+  'ocen': { corrected: 'ocean', category: 'SPELLING_TYPO', rule: 'Typo correction: "ocen" -> "ocean"' },
 
   // Spec shorthand
   '3br': { corrected: '3 bedrooms', category: 'SLANG_SHORTHAND', rule: 'Shorthand expansion: "3br" -> "3 bedrooms"' },
@@ -157,8 +175,22 @@ export function matchHousesForCustomer(
       }
     }
 
-    // 2. Price Match (Weight: 25%)
-    if (parsedQuery.priceRange?.maxPrice) {
+    // 2. Price or Rent Match (Weight: 25%)
+    if (parsedQuery.monthlyRentBudget) {
+      const rent = listing.financials.inputs.monthlyGrossRent;
+      if (rent <= parsedQuery.monthlyRentBudget) {
+        score += 25;
+        reasons.push(`Monthly rent ($${rent.toLocaleString()}/mo) comfortably within your budget (< $${parsedQuery.monthlyRentBudget.toLocaleString()}/mo)`);
+      } else {
+        const overBudgetPercent = ((rent - parsedQuery.monthlyRentBudget) / parsedQuery.monthlyRentBudget) * 100;
+        if (overBudgetPercent <= 15) {
+          score += 8;
+          reasons.push(`Monthly rent ($${rent.toLocaleString()}/mo) close to target budget`);
+        } else {
+          score -= 20;
+        }
+      }
+    } else if (parsedQuery.priceRange?.maxPrice) {
       if (purchasePrice <= parsedQuery.priceRange.maxPrice) {
         score += 20;
         reasons.push(`Price ($${purchasePrice.toLocaleString()}) comfortably under maximum budget ($${parsedQuery.priceRange.maxPrice.toLocaleString()})`);
@@ -173,7 +205,7 @@ export function matchHousesForCustomer(
       }
     }
 
-    if (parsedQuery.priceRange?.minPrice) {
+    if (!parsedQuery.monthlyRentBudget && parsedQuery.priceRange?.minPrice) {
       if (purchasePrice >= parsedQuery.priceRange.minPrice) {
         score += 10;
       }

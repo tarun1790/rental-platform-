@@ -11,6 +11,7 @@
     "docker:up": "docker compose up -d",
     "docker:down": "docker compose down",
     "firebase:emulators": "firebase emulators:start",
+    "test:customers": "node tests/customer-simulation-500.test.js",
     "lint": "next lint"
   },
   "dependencies": {
