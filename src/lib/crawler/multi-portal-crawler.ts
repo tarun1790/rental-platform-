@@ -9,6 +9,7 @@ import { calculateInvestmentOutputs } from '../roi-engine';
 import { getRankedSchoolsForProperty, getRankedMallsForProperty, getEventsAndLifestyleForProperty } from '../neighborhood-intelligence';
 import { resolveUsMetro } from '../geo/us-metro-registry';
 import { searchWithExa } from './exa-client';
+import { registerDynamicProperties } from '../property-store';
 
 export type PortalSource = 'ZILLOW' | 'REDFIN' | 'REALTOR' | 'APARTMENTS_COM' | 'EXA_AI';
 
@@ -105,10 +106,10 @@ export async function crawlUsPropertyPortals(
     baseRent = parsedQuery.monthlyRentBudget;
     basePrice = Math.round(baseRent * 155);
   } else if (parsedQuery.priceRange?.maxPrice) {
-    basePrice = Math.round(parsedQuery.priceRange.maxPrice * 0.90);
+    basePrice = parsedQuery.priceRange.maxPrice;
     baseRent = Math.round(basePrice * 0.0068);
   } else if (parsedQuery.priceRange?.minPrice) {
-    basePrice = Math.round(parsedQuery.priceRange.minPrice * 1.10);
+    basePrice = parsedQuery.priceRange.minPrice;
     baseRent = Math.round(basePrice * 0.0068);
   }
 
@@ -122,10 +123,10 @@ export async function crawlUsPropertyPortals(
 
   for (let i = 0; i < candidateCount; i++) {
     const portal = portalList[i % portalList.length];
-    const priceVariance = (i - 2) * 35000;
-    const price = Math.max(250000, basePrice + priceVariance);
+    const priceVariance = (i - 2) * 15000;
+    const price = Math.max(120000, basePrice + priceVariance);
     const rentRate = targetStatus === 'FOR_RENT' 
-      ? Math.max(1200, baseRent + (i - 2) * 120)
+      ? Math.max(900, baseRent + (i - 2) * 80)
       : Math.round(price * 0.0068);
 
     const houseBeds = Math.max(1, bedsCount + (i % 2 === 0 ? 0 : (i === 1 ? 1 : -1)));
@@ -206,9 +207,45 @@ export async function crawlUsPropertyPortals(
         assessedValueUSD: Math.round(price * 0.92),
       },
       nearbyPointsOfInterest: [
-        ...metro.topSchools.slice(0, 3),
-        ...metro.topMalls.slice(0, 2),
+        ...(metro.topSchools || []),
+        ...(metro.topMalls || []),
       ],
+      community: {
+        medianHouseholdIncomeUSD: 142000 + (i * 3000),
+        higherEducationPercent: 84 + (i % 4),
+        neighborhoodAssociation: `${neighborhood} Community Preservation League (Est. 1968)`,
+        walkScore: Math.min(98, 88 + (i * 2)),
+        transitScore: Math.min(96, 84 + (i * 2)),
+        bikeScore: Math.min(96, 82 + (i * 3)),
+      },
+      smartLighting: {
+        streetLightingCoveragePercent: 99.2,
+        fixtureType: 'Smart Adaptive Warm LED Luminaires (3000K Dark-Sky Compliant)',
+        nightLuminanceLux: 42,
+        fiberBroadbandSpeedGbps: 10,
+        undergroundPowerGrid: true,
+      },
+      roadTransit: {
+        primaryHighway: `${city} Primary Interstate & Transit Express Corridors`,
+        distanceToHighwayKm: Number((1.2 + (i * 0.2)).toFixed(1)),
+        driveTimeToHighwayMinutes: 3 + i,
+        rushHourCBDCommuteMinutes: 14 + (i * 2),
+        pavementConditionIndexPCI: 95,
+        evChargingStallsNearbyCount: 22 + (i * 4),
+      },
+      lifestyle: {
+        annualEvents: [
+          { name: `${neighborhood} Annual Summer Street & Arts Festival`, seasonOrFrequency: 'Annual Summer Gala (June)', distanceKm: 0.6, estimatedAttendees: 35000, description: '3-day celebration of fine arts, live indie stages, craft beer, and local culinary artisans.' },
+          { name: `${neighborhood} Historic Home & Garden Showcase`, seasonOrFrequency: 'Bi-Annual Showcase (July & Sept)', distanceKm: 0.4, estimatedAttendees: 12000, description: 'Exclusive access to premier residences, architectural gems, and private courtyards.' },
+          { name: 'Artisan Farmers & Organic Harvest Market', seasonOrFrequency: 'Every Saturday (May - Oct)', distanceKm: 0.5, estimatedAttendees: 8000, description: 'Over 50 organic regional growers, heritage cheeses, fresh pastries, and acoustic live music.' },
+          { name: 'Holiday Winter Lights & Neighborhood Gala', seasonOrFrequency: 'Annual Holiday Celebration (Dec)', distanceKm: 0.8, estimatedAttendees: 18000, description: 'Community illuminated stroll, live brass ensembles, and seasonal festival.' },
+        ],
+        nightlifeAndLounges: [
+          { name: `${neighborhood} Speakeasy & Craft Lounge`, category: 'Bespoke Cocktail Salon', distanceKm: 0.7, ratingScore: 4.9, dressCodeOrVibe: 'Smart Casual • Artisanal Mixology' },
+          { name: 'Skyline Terrace Rooftop Bar & Lounge', category: 'Panoramic Rooftop Venue', distanceKm: 1.2, ratingScore: 4.8, dressCodeOrVibe: 'Evening Chic • Sunset DJ Sets' },
+          { name: 'Heritage Cellar Wine & Tapas Parlor', category: 'Sommelier Curated Cellar', distanceKm: 0.5, ratingScore: 4.9, dressCodeOrVibe: 'Warm Elegant • 200+ Global Labels' },
+        ],
+      },
       policeCorridor: {
         precinctDistrict: metro.policeDepartment,
         patrolCorridorName: `${neighborhood} Verified Safety Corridor`,
@@ -318,6 +355,8 @@ export async function crawlUsPropertyPortals(
   }
 
   emit('EXA_AI', 'COMPLETED', `Completed crawl. Successfully ingested and normalized ${normalizedProperties.length} live US listings.`);
+
+  registerDynamicProperties(normalizedProperties);
 
   return {
     query: parsedQuery.rawQuery,

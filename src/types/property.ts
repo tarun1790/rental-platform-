@@ -314,6 +314,121 @@ export interface FinancialOutputs {
 export type InvestmentInputs = FinancialInputs;
 export type InvestmentOutputs = FinancialOutputs;
 
+// =========================================================================
+// Property Intelligence & Decision Engine Types
+// =========================================================================
+
+export type VerificationClassification = 'VERIFIED_FACT' | 'CALCULATED' | 'MODEL_ESTIMATE' | 'FORECAST';
+
+export type SourceType =
+  | 'MLS_IDX'
+  | 'COUNTY_ASSESSOR'
+  | 'MUNICIPAL_RECORDS'
+  | 'AUTHORIZED_API'
+  | 'PARTNER_FEED'
+  | 'USER_URL';
+
+export interface EvidenceField<T> {
+  value: T;
+  source: SourceType;
+  sourceName: string;
+  retrievedAt: string;
+  confidence: number; // 0.00 - 1.00
+  verification: VerificationClassification;
+  citationOrRecordId?: string;
+}
+
+export interface PropertyEvidenceGraph {
+  canonicalId: string;
+  address: EvidenceField<string>;
+  parcelIdAPN: EvidenceField<string>;
+  mlsNumber?: EvidenceField<string>;
+  coordinates: EvidenceField<GeoCoordinate>;
+  price: EvidenceField<number>;
+  beds: EvidenceField<number>;
+  baths: EvidenceField<number>;
+  finishedSqFt: EvidenceField<number>;
+  yearBuilt: EvidenceField<number>;
+  propertyType: EvidenceField<PropertyType>;
+  annualPropertyTax: EvidenceField<number>;
+  assessedValue: EvidenceField<number>;
+  monthlyRentEstimate: EvidenceField<number>;
+  monthlyHoaDues: EvidenceField<number>;
+  foundationType: EvidenceField<string>;
+  roofType: EvidenceField<string>;
+  hvacSystem: EvidenceField<string>;
+  safetyScore: EvidenceField<number>;
+  overallDataConfidence: number; // 0 - 100
+  lastVerifiedAt: string;
+}
+
+export interface BuyerPriorityWeights {
+  budget: number;       // default 0.30
+  schools: number;      // default 0.20
+  safety: number;       // default 0.20
+  commute: number;      // default 0.15
+  lifestyle: number;    // default 0.15
+}
+
+export interface PropertyDimensionScores {
+  budgetFit: number;          // 0 - 100
+  locationFit: number;        // 0 - 100
+  investmentFit: number;      // 0 - 100
+  schoolFit: number;          // 0 - 100
+  safetyFit: number;          // 0 - 100
+  transportationFit: number;  // 0 - 100
+  lifestyleFit: number;       // 0 - 100
+  propertyQualityFit: number; // 0 - 100
+  dataConfidence: number;     // 0 - 100
+  overallScore: number;       // 0 - 100 (weighted)
+  compositeScore: number;     // alias for overallScore
+}
+
+export interface MonthlyOperatingExpensesBreakdown {
+  grossMonthlyRent: number;
+  vacancyLoss: number;
+  propertyManagementFee: number;
+  maintenanceReserve: number;
+  capexReserve: number;
+  propertyTaxMonthly: number;
+  insuranceMonthly: number;
+  hoaDuesMonthly: number;
+  utilitiesMonthly: number;
+  mortgageDebtService: number;
+  totalMonthlyExpenses: number;
+  netMonthlyCashFlow: number;
+}
+
+export interface ScenarioProjection {
+  name: 'Conservative' | 'Base' | 'Optimistic';
+  rentGrowthPercentAnnual: number;
+  appreciationPercentAnnual: number;
+  vacancyRatePercent: number;
+  maintenanceCapExPercent: number;
+  monthlyNetCashFlow: number;
+  capRatePercent: number;
+  cashOnCashReturnPercent: number;
+  fiveYearEquityUSD: number;
+  fiveYearTotalWealthUSD: number;
+}
+
+export interface MultiScenarioAnalysis {
+  expenses: MonthlyOperatingExpensesBreakdown;
+  conservative: ScenarioProjection;
+  base: ScenarioProjection;
+  optimistic: ScenarioProjection;
+}
+
+export interface DueDiligenceNotice {
+  positiveHighlights: string[];
+  dueDiligenceWarnings: Array<{
+    category: string;
+    severity: 'LOW' | 'MEDIUM' | 'HIGH';
+    message: string;
+    recommendation: string;
+  }>;
+}
+
 export interface PropertyFinancials {
   inputs: FinancialInputs;
   outputs: FinancialOutputs;
@@ -321,6 +436,7 @@ export interface PropertyFinancials {
 
 export interface ShikaakPropertyListing {
   id: string;
+  canonicalId?: string;
   title: string;
   tagline: string;
   listingStatus: ListingStatus;
@@ -358,6 +474,10 @@ export interface ShikaakPropertyListing {
     featuredImage: string;
     gallery: string[];
   };
+  evidenceGraph?: PropertyEvidenceGraph;
+  scores?: PropertyDimensionScores;
+  financialScenarios?: MultiScenarioAnalysis;
+  dueDiligence?: DueDiligenceNotice;
 }
 
 export interface FilterState {
@@ -376,3 +496,4 @@ export interface FilterState {
   maxPropertyTaxesUSD: number;
   maxDistanceToSchoolKm: number;
 }
+

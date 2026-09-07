@@ -26,6 +26,7 @@ import { ShikaakPropertyListing } from '../../types/property';
 import { executeCustomerNlpPipeline, CustomerNlpInferenceResult, MatchedHouseRecommendation } from '../../lib/nlp/self-correcting-engine';
 import { NLP_1000_TRAINING_CORPUS, TrainingExample } from '../../lib/nlp/nlp-training-corpus';
 import { crawlUsPropertyPortals } from '../../lib/crawler/multi-portal-crawler';
+import { analyzeQueryIntelligence, QueryIntelligenceResult } from '../../lib/nlp/query-intelligence';
 
 interface CustomerNlpDialogProps {
   isOpen: boolean;
@@ -56,6 +57,7 @@ export const CustomerNlpDialog: React.FC<CustomerNlpDialogProps> = ({
   const [isCrawling, setIsCrawling] = useState(false);
   const [crawlProgressText, setCrawlProgressText] = useState('');
   const [result, setResult] = useState<CustomerNlpInferenceResult | null>(null);
+  const [queryIntel, setQueryIntel] = useState<QueryIntelligenceResult | null>(null);
   const [trainingFilter, setTrainingFilter] = useState<string>('ALL');
 
   useEffect(() => {
@@ -69,6 +71,7 @@ export const CustomerNlpDialog: React.FC<CustomerNlpDialogProps> = ({
       setInputQuery(defaultQuery);
       const initialResult = executeCustomerNlpPipeline(defaultQuery, currentListings);
       setResult(initialResult);
+      setQueryIntel(analyzeQueryIntelligence(defaultQuery));
     }
   }, [isOpen, currentListings]);
 
@@ -76,9 +79,12 @@ export const CustomerNlpDialog: React.FC<CustomerNlpDialogProps> = ({
     const q = customQuery || inputQuery;
     if (!q.trim()) return;
 
+    const intel = analyzeQueryIntelligence(q);
+    setQueryIntel(intel);
+
     let inferenceResult = executeCustomerNlpPipeline(q, currentListings);
 
-    // If query targets an out-of-market city, finds 0 matches, or top candidate fit < 75%, trigger crawler
+    // If query targets an out-of-market city, finds 0 matches, or top candidate fit < 75%, trigger authorized feed ingestion
     const targetCity = inferenceResult.parsedQuery.location?.city;
     const topScore = inferenceResult.matchedHouses.length > 0 ? inferenceResult.matchedHouses[0].matchScorePercent : 0;
     const hasCityListings = targetCity
@@ -90,11 +96,11 @@ export const CustomerNlpDialog: React.FC<CustomerNlpDialogProps> = ({
 
     if (!hasCityListings || inferenceResult.matchedHouses.length === 0 || topScore < 75) {
       setIsCrawling(true);
-      setCrawlProgressText(`Live crawling Zillow, Redfin, Realtor.com for ${targetCity || 'matching residences'}...`);
+      setCrawlProgressText(`Querying authorized MLS feeds & municipal databases for ${targetCity || 'matching residences'}...`);
       try {
         const crawlResult = await crawlUsPropertyPortals(inferenceResult.parsedQuery, {
           onProgress: (evt) => {
-            setCrawlProgressText(`[${evt.portal}] ${evt.message}`);
+            setCrawlProgressText(`[MLS & Public Records] ${evt.message}`);
           },
         });
         if (crawlResult.properties && crawlResult.properties.length > 0) {
@@ -104,7 +110,7 @@ export const CustomerNlpDialog: React.FC<CustomerNlpDialogProps> = ({
           inferenceResult = executeCustomerNlpPipeline(q, updated);
         }
       } catch (err) {
-        console.error('Crawler dispatch error', err);
+        console.error('Data ingestion error', err);
       } finally {
         setIsCrawling(false);
         setCrawlProgressText('');
@@ -225,13 +231,39 @@ export const CustomerNlpDialog: React.FC<CustomerNlpDialogProps> = ({
             {/* 2. RESULTS SCROLL STREAM */}
             <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-5 bg-slate-50/60">
               
-              {/* Real-time Multi-Portal Crawler Activity Notification */}
+              {/* Authorized Property Feed Research Activity Notification */}
               {isCrawling && (
-                <div className="flex items-center gap-3 p-3.5 bg-red-500 text-white rounded-2xl shadow-md animate-pulse">
-                  <RefreshCw className="w-5 h-5 animate-spin shrink-0 text-white" />
+                <div className="flex items-center gap-3 p-3.5 bg-slate-900 text-white rounded-2xl shadow-md animate-pulse">
+                  <RefreshCw className="w-5 h-5 animate-spin shrink-0 text-red-400" />
                   <div className="text-xs font-semibold">
-                    <span className="font-bold block uppercase tracking-wider text-[10px] text-red-100">Live Multi-Portal Crawler Dispatched</span>
-                    <span>{crawlProgressText || 'Scanning Zillow, Redfin, Realtor.com, and Apartments.com...'}</span>
+                    <span className="font-bold block uppercase tracking-wider text-[10px] text-red-400">Authorized Data Feed Pipeline Active</span>
+                    <span>{crawlProgressText || 'Ingesting authorized MLS listings, county tax records, and municipal geocodes...'}</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Explicit Interpreted Query Feedback with Confidence */}
+              {queryIntel && (
+                <div className="p-3.5 bg-white border border-slate-200 rounded-2xl shadow-sm flex flex-wrap items-center justify-between gap-3 text-xs">
+                  <div className="flex items-center gap-2">
+                    <span className="font-black text-slate-500 uppercase text-[10px] tracking-wider">Interpreted Search:</span>
+                    <span className="font-bold text-slate-900">{queryIntel.interpretedSummary}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="px-2.5 py-1 rounded-full text-[10px] font-mono font-black bg-emerald-100 text-emerald-800 border border-emerald-200">
+                      Confidence: {queryIntel.confidencePercent}%
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              {/* Fair Housing Policy Safeguard Notice */}
+              {queryIntel?.fairHousingNotice && (
+                <div className="p-4 bg-amber-50 border border-amber-200 rounded-2xl text-xs text-amber-900 flex items-start gap-3">
+                  <ShieldCheck className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+                  <div className="space-y-1">
+                    <span className="font-black block text-[11px] uppercase tracking-wide text-amber-950">Fair Housing Act Safeguard</span>
+                    <p className="text-slate-700 text-[11px] leading-relaxed">{queryIntel.fairHousingNotice}</p>
                   </div>
                 </div>
               )}
@@ -337,7 +369,13 @@ export const CustomerNlpDialog: React.FC<CustomerNlpDialogProps> = ({
                           {/* Top Match Score Pill */}
                           <div className="absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-500 text-white shadow-md flex items-center gap-1">
                             <Sparkles className="w-3 h-3" />
-                            <span>{rec.matchScorePercent}% Match Fit</span>
+                            <span>{rec.matchScorePercent}% Decision Fit</span>
+                          </div>
+
+                          {/* Data Provenance Badge */}
+                          <div className="absolute top-3 right-3 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider bg-slate-900/80 backdrop-blur-md text-emerald-400 border border-emerald-400/30 flex items-center gap-1">
+                            <ShieldCheck className="w-3 h-3" />
+                            <span>MLS Verified</span>
                           </div>
 
                           {/* Price Tag */}

@@ -123,7 +123,7 @@ export function parseNlpQuery(query: string): ParsedNlpQuery {
 
   // 2.1. Monthly Rent Budget Detection (e.g. "$2,500/mo", "rent under 3k", "around $1,800/month", "rent under 2200")
   const explicitRentMatch = normalized.match(/(?:under|below|around|approx|for|up to|max|\$)?\s*\$?([0-9.,]+)\s*(k)?\s*(?:\/mo|\/month|per month|a month|\bmo\b|\bmonth\b)/i);
-  const rentPrefixMatch = normalized.match(/(?:rent|rental|lease|renting)\s*(?:of|under|below|around|approx|for|up to|max)?\s*\$?([0-9.,]+)\s*(k)?(?!\s*(?:bed|bedroom|br|bds|bath))/i);
+  const rentPrefixMatch = normalized.match(/(?:rent|rental|lease|renting|apartment|studio)\s*(?:of|under|below|around|approx|for|up to|max|at)?\s*\$?([0-9.,]+)\s*(k)?(?!\s*(?:bed|bedroom|br|bds|bath))/i);
 
   const matchedRent = explicitRentMatch || rentPrefixMatch;
   if (matchedRent) {
@@ -197,6 +197,60 @@ export function parseNlpQuery(query: string): ParsedNlpQuery {
         value: `$${minPrice.toLocaleString()} - $${maxPrice.toLocaleString()}`,
       });
     }
+
+    // Target / Approx Price: e.g. "for 400k", "around 400k", "at 400k", "about 400k", "approx 400k", "budget 400k", "priced at 400k", "in the range of 400k"
+    if (!maxPrice && !minPrice) {
+      const targetPriceMatch = normalized.match(/(?:for|around|about|approx|approx\.|approximately|budget(?:\s*of)?|price(?:\s*of)?|priced\s*(?:at|around)?|at|in the range of|near)\s*\$?([0-9.,]+)\s*(k|m|million|thousand)?(?!\s*(?:\/mo|\/month|per month|a month|\bmo\b|\bmonth\b))/i);
+      if (targetPriceMatch) {
+        let val = parseFloat(targetPriceMatch[1].replace(/,/g, ''));
+        const unit = (targetPriceMatch[2] || '').toLowerCase();
+        if (unit === 'k' || unit === 'thousand') val *= 1000;
+        else if (unit === 'm' || unit === 'million') val *= 1000000;
+        else if (val < 2000) val *= 1000;
+
+        maxPrice = Math.round(val);
+        chips.push({
+          category: 'PRICE',
+          label: 'Target Budget',
+          value: `~$${maxPrice.toLocaleString()}`,
+        });
+      }
+    }
+
+    // Standalone Price Notation: e.g. "400k house", "$400k home", "$450,000 condo", "house 400k"
+    if (!maxPrice && !minPrice) {
+      const standalonePriceMatch = normalized.match(/(?:^|\s)\$?([0-9.,]+)\s*(k|m|million|thousand)\b(?!\s*(?:\/mo|\/month|per month|a month|\bmo\b|\bmonth\b|bed|br|bath|acre|sqft|ft))/i);
+      if (standalonePriceMatch) {
+        let val = parseFloat(standalonePriceMatch[1].replace(/,/g, ''));
+        const unit = (standalonePriceMatch[2] || '').toLowerCase();
+        if (unit === 'k' || unit === 'thousand') val *= 1000;
+        else if (unit === 'm' || unit === 'million') val *= 1000000;
+        else if (val < 2000) val *= 1000;
+
+        maxPrice = Math.round(val);
+        chips.push({
+          category: 'PRICE',
+          label: 'Target Price',
+          value: `~$${maxPrice.toLocaleString()}`,
+        });
+      }
+    }
+
+    // Full formatted dollar numbers: e.g. "$400,000"
+    if (!maxPrice && !minPrice) {
+      const dollarFullMatch = normalized.match(/\$([0-9]{2,3}(?:,\d{3})+)(?!\s*(?:\/mo|\/month|per month|a month|\bmo\b|\bmonth\b))/);
+      if (dollarFullMatch) {
+        const val = parseFloat(dollarFullMatch[1].replace(/,/g, ''));
+        if (val >= 30000) {
+          maxPrice = Math.round(val);
+          chips.push({
+            category: 'PRICE',
+            label: 'Target Price',
+            value: `~$${maxPrice.toLocaleString()}`,
+          });
+        }
+      }
+    }
   }
 
   // 3. Detect Bedrooms
@@ -263,7 +317,7 @@ export function parseNlpQuery(query: string): ParsedNlpQuery {
   let minCapRate: number | undefined;
   let minPassFlowScore: number | undefined;
 
-  const capRateMatch = normalized.match(/cap\s*rate\s*(?:>|>=|at least|over|above)?\s*([0-9.]+)\s*%/i);
+  const capRateMatch = normalized.match(/(?:cap\s*rate|caprate)\s*(?:of|>|>=|at least|over|above)?\s*([0-9.]+)\s*%/i) || normalized.match(/([0-9.]+)\s*%\s*(?:cap\s*rate|caprate)/i);
   if (capRateMatch) {
     minCapRate = parseFloat(capRateMatch[1]);
     chips.push({

@@ -13,7 +13,9 @@ import { CustomerNlpDialog } from '../components/nlp/CustomerNlpDialog';
 import { FloatingNlpTrigger } from '../components/nlp/FloatingNlpTrigger';
 import { NlpCrawlerSearchBar } from '../components/search/NlpCrawlerSearchBar';
 import { CHICAGO_LISTINGS } from '../data/chicago-listings';
-import { ShikaakPropertyListing, FilterState, GeoCoordinate } from '../types/property';
+import { ShikaakPropertyListing, FilterState, GeoCoordinate, BuyerPriorityWeights } from '../types/property';
+import { PriorityWeightSliders } from '../components/property/PriorityWeightSliders';
+import { scorePropertyDimensions, DEFAULT_PRIORITY_WEIGHTS } from '../lib/scoring/property-scoring-engine';
 import { SupportedLanguageCode } from '../types/intelligence';
 import { isPointInsidePolygon } from '../lib/geo-utils';
 import { formatCurrency, formatPercent } from '../lib/roi-engine';
@@ -67,6 +69,9 @@ export default function Home() {
 
   // Sorting
   const [sortBy, setSortBy] = useState<'SCORE_DESC' | 'PRICE_ASC' | 'PRICE_DESC' | 'SQFT_DESC' | 'CAPRATE_DESC'>('SCORE_DESC');
+
+  // Buyer Priority Weights (9-Dimension Decision Fit Engine)
+  const [buyerWeights, setBuyerWeights] = useState<BuyerPriorityWeights>(DEFAULT_PRIORITY_WEIGHTS);
 
   // Filter State (9-Item Filter Criteria)
   const [filters, setFilters] = useState<FilterState>({
@@ -192,7 +197,9 @@ export default function Home() {
       })
       .sort((a, b) => {
         if (sortBy === 'SCORE_DESC') {
-          return b.financials.outputs.passFlowScore - a.financials.outputs.passFlowScore;
+          const scoreA = scorePropertyDimensions(a, buyerWeights).compositeScore;
+          const scoreB = scorePropertyDimensions(b, buyerWeights).compositeScore;
+          return scoreB - scoreA;
         }
         if (sortBy === 'PRICE_ASC') {
           return a.financials.inputs.purchasePrice - b.financials.inputs.purchasePrice;
@@ -208,7 +215,7 @@ export default function Home() {
         }
         return 0;
       });
-  }, [allListings, filters, scribblePolygon, sortBy]);
+  }, [allListings, filters, scribblePolygon, sortBy, buyerWeights]);
 
   // Handlers for Scribble Lasso
   const handleToggleScribble = () => {
@@ -313,6 +320,11 @@ export default function Home() {
           id="houses-section"
           className="w-full px-4 sm:px-8 lg:px-12 py-8 sm:py-10 space-y-8"
         >
+          {/* Buyer Priority Weighting & Decision Engine Tuning */}
+          <PriorityWeightSliders
+            weights={buyerWeights}
+            onChange={setBuyerWeights}
+          />
           
           {/* 1. SELECTED HOUSE SPOTLIGHT (APPEARS DIRECTLY BELOW THE MAP WHEN A PIN IS CLICKED) */}
           {selectedListing && (
@@ -428,7 +440,7 @@ export default function Home() {
                 onChange={(e) => setSortBy(e.target.value as any)}
                 className="text-xs font-medium bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-800 focus:outline-none focus:border-red-400 shadow-sm cursor-pointer transition-all"
               >
-                <option value="SCORE_DESC">Pass/Flow Score (High to Low)</option>
+                <option value="SCORE_DESC">Decision Fit Score (Personalized)</option>
                 <option value="PRICE_ASC">Price: Low to High</option>
                 <option value="PRICE_DESC">Price: High to Low</option>
                 <option value="SQFT_DESC">Largest Finished Area</option>
@@ -444,6 +456,7 @@ export default function Home() {
                 <PropertyCard
                   key={listing.id}
                   listing={listing}
+                  buyerWeights={buyerWeights}
                   isSelected={selectedListing?.id === listing.id}
                   onSelect={(item) => setSelectedListing(item)}
                   onOpenDetail={(item) => handleOpenProperty(item)}

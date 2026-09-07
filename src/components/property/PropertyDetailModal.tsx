@@ -202,7 +202,7 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
                     About {listing.title}
                   </h3>
                   <p className="text-sm text-slate-600 leading-relaxed">
-                    Exclusively surveyed and underwritten by HOME. Located in prestigious {propertyAddress.neighborhood}, this property features verified post-fire brick/masonry architectural engineering, tested silty loam foundation bearing capacity of {geotechnical.bearingCapacityPSF.toLocaleString()} PSF, a documented {safety.theftFreeMilestoneYears}-year zero-burglary block security milestone, and an institutional Pass/Flow investment rating of <strong>{outputs.passFlowScore.toFixed(1)} / 5.0</strong>.
+                    Exclusively surveyed and underwritten by HOME. Located in prestigious {propertyAddress.neighborhood}, this property features verified post-fire brick/masonry architectural engineering, tested silty loam foundation bearing capacity of {geotechnical.bearingCapacityPSF.toLocaleString()} PSF, a documented {safety.theftFreeMilestoneYears}-year public safety corridor record, and an institutional Pass/Flow investment rating of <strong>{outputs.passFlowScore.toFixed(1)} / 5.0</strong>.
                   </p>
 
                   {/* Microclimate Telemetry Grid */}

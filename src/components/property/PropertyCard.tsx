@@ -20,12 +20,14 @@ import {
   Star,
   Calculator
 } from 'lucide-react';
-import { ShikaakPropertyListing } from '../../types/property';
+import { ShikaakPropertyListing, BuyerPriorityWeights } from '../../types/property';
 import { formatCurrency, formatPercent } from '../../lib/roi-engine';
+import { scorePropertyDimensions, DEFAULT_PRIORITY_WEIGHTS } from '../../lib/scoring/property-scoring-engine';
 
 interface PropertyCardProps {
   listing: ShikaakPropertyListing;
   isSelected?: boolean;
+  buyerWeights?: BuyerPriorityWeights;
   onSelect?: (listing: ShikaakPropertyListing) => void;
   onOpenDetail?: (listing: ShikaakPropertyListing) => void;
   onOpenRoiCalculator?: (listing: ShikaakPropertyListing) => void;
@@ -34,12 +36,17 @@ interface PropertyCardProps {
 export const PropertyCard: React.FC<PropertyCardProps> = ({
   listing,
   isSelected = false,
+  buyerWeights,
   onSelect,
   onOpenDetail,
   onOpenRoiCalculator,
 }) => {
   const { specs, geotechnical, financials, propertyAddress, media, propertyTaxes, roomsBreakdown, forestResources, timezone, airport, heatWaves, policeCorridor, climateTelemetry, nearbyPointsOfInterest } = listing;
   const { inputs, outputs } = financials;
+
+  const dimScores = React.useMemo(() => {
+    return scorePropertyDimensions(listing, buyerWeights || DEFAULT_PRIORITY_WEIGHTS);
+  }, [listing, buyerWeights]);
 
   const topSchool = nearbyPointsOfInterest.find(p => p.type === 'SCHOOL' || p.categoryLabel.toLowerCase().includes('school')) || nearbyPointsOfInterest[0];
   const topMall = nearbyPointsOfInterest.find(p => p.type === 'MALL' || p.categoryLabel.toLowerCase().includes('mall') || p.categoryLabel.toLowerCase().includes('retail')) || nearbyPointsOfInterest[1];
@@ -62,16 +69,18 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
           className="w-full h-full object-cover transition-transform duration-500 ease-out"
         />
 
-        {/* Top Floating Subtle Badges */}
+        {/* Top Floating Badges */}
         <div className="absolute top-3.5 inset-x-3.5 flex items-center justify-between pointer-events-none">
-          {/* Pass/Flow Score Pill */}
-          <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/95 text-red-500 font-mono text-xs font-bold shadow-sm border border-slate-200">
-            <span>Pass/Flow {outputs.passFlowScore.toFixed(1)}</span>
+          {/* Decision Fit Score Pill */}
+          <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-900/90 text-white font-mono text-xs font-bold shadow-sm backdrop-blur-sm">
+            <Sparkles className="w-3.5 h-3.5 text-red-400" />
+            <span>Fit {Math.round(dimScores.compositeScore)}%</span>
           </div>
 
-          {/* Location / Time Zone Tag */}
-          <div className="px-2.5 py-1 rounded-full bg-white/95 text-slate-700 font-sans text-[11px] font-medium shadow-sm border border-slate-200">
-            {propertyAddress.city}, {propertyAddress.state} ({timezone?.timeZoneCode || 'CST'})
+          {/* MLS Verified Tag */}
+          <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/95 text-slate-700 font-sans text-[11px] font-bold shadow-sm border border-slate-200">
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+            <span>MLS Verified</span>
           </div>
         </div>
       </div>

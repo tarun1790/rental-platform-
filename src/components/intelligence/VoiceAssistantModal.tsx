@@ -48,7 +48,7 @@ export const VoiceAssistantModal: React.FC<VoiceAssistantModalProps> = ({
         const sampleQuery = 'What is the Pass/Flow investment rating and soil capacity in Lincoln Park?';
         setTranscript(sampleQuery);
         const responseText =
-          'Lincoln Park Prairie Estate features a 4.8 / 5.0 Pass/Flow rating, 3,500 PSF tested silty loam bearing capacity, 20-year verified zero residential burglary timeline, and 4.8-minute CPD police dispatch.';
+          'Lincoln Park Prairie Estate features a 4.8 / 5.0 Pass/Flow rating, 3,500 PSF tested silty loam bearing capacity, 20-year documented public safety corridor record, and 4.8-minute CPD police dispatch.';
         setAssistantResponse(responseText);
         speakText(responseText, currentLanguage);
       }, 2000);
