@@ -138,12 +138,12 @@ export const Header: React.FC<HeaderProps> = ({
           {(onOpenNlpDialog || onOpenVoiceAssistant) && (
             <button
               onClick={onOpenNlpDialog || onOpenVoiceAssistant}
-              className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold rounded-xl bg-red-500 hover:bg-red-600 text-white shadow-sm transition-all shrink-0 cursor-pointer"
-              title="Open Property Decision Concierge (Voice & Natural Language Intelligence)"
+              className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold rounded-xl bg-red-600 hover:bg-red-700 text-white shadow-sm transition-all shrink-0 cursor-pointer"
+              title="Open AI Property Advisor Chat (Conversational Needs & Specification Intelligence)"
             >
               <Bot className="w-3.5 h-3.5 animate-pulse" />
-              <span className="hidden lg:inline">Decision Concierge</span>
-              <span className="lg:hidden">Concierge</span>
+              <span className="hidden sm:inline">AI Property Chat</span>
+              <span className="sm:hidden">Chat</span>
             </button>
           )}
 

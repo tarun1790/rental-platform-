@@ -9,7 +9,6 @@ import { PropertyDetailModal } from '../components/property/PropertyDetailModal'
 import { HouseRoiCalculatorModal } from '../components/property/HouseRoiCalculatorModal';
 import { ScribbleMap } from '../components/map/ScribbleMap';
 import { CustomerNlpDialog } from '../components/nlp/CustomerNlpDialog';
-import { FloatingNlpTrigger } from '../components/nlp/FloatingNlpTrigger';
 import { NlpCrawlerSearchBar } from '../components/search/NlpCrawlerSearchBar';
 import { CHICAGO_LISTINGS } from '../data/chicago-listings';
 import { ShikaakPropertyListing, FilterState, GeoCoordinate, BuyerPriorityWeights } from '../types/property';
@@ -556,9 +555,6 @@ export default function Home() {
           if (spotlight) spotlight.scrollIntoView({ behavior: 'smooth' });
         }}
       />
-
-      {/* Floating Bottom-Right Launcher Trigger */}
-      <FloatingNlpTrigger onClick={() => setIsNlpDialogOpen(true)} />
     </div>
   );
 }
