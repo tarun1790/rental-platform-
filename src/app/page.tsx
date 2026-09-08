@@ -17,6 +17,8 @@ import { scorePropertyDimensions, DEFAULT_PRIORITY_WEIGHTS } from '../lib/scorin
 import { SupportedLanguageCode } from '../types/intelligence';
 import { isPointInsidePolygon } from '../lib/geo-utils';
 import { formatCurrency, formatPercent } from '../lib/roi-engine';
+import { crawlUsPropertyPortals } from '../lib/crawler/multi-portal-crawler';
+import { parseNlpQuery } from '../lib/nlp-search-parser';
 import { 
   Sparkles, 
   ArrowUpDown, 
@@ -42,7 +44,9 @@ import {
   Calculator,
   GraduationCap,
   ShoppingBag,
-  Star
+  Star,
+  RotateCw,
+  CheckCircle2
 } from 'lucide-react';
 
 export default function Home() {
@@ -52,6 +56,11 @@ export default function Home() {
   const [allListings, setAllListings] = useState<ShikaakPropertyListing[]>(CHICAGO_LISTINGS);
   const [selectedListing, setSelectedListing] = useState<ShikaakPropertyListing | null>(CHICAGO_LISTINGS[0]);
   const [modalListing, setModalListing] = useState<ShikaakPropertyListing | null>(null);
+
+  // Live Real-Time Multi-Portal Crawler State
+  const [isLiveCrawling, setIsLiveCrawling] = useState(false);
+  const [liveCrawlQuery, setLiveCrawlQuery] = useState<string | null>(null);
+  const [liveCrawlCount, setLiveCrawlCount] = useState<number>(0);
 
   // Custom ROI Calculator Modal State for any house
   const [roiModalListing, setRoiModalListing] = useState<ShikaakPropertyListing | null>(null);
@@ -124,6 +133,58 @@ export default function Home() {
         cardEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
     }, 150);
+  };
+
+  // Live Real-Time Multi-Portal Crawler Trigger
+  const handleTriggerLiveCrawl = async (customQuery?: string) => {
+    let q = (customQuery !== undefined ? customQuery : filters.searchQuery || '').trim();
+    if (!q) {
+      const parts: string[] = [];
+      if (filters.searchQuery) parts.push(filters.searchQuery);
+      if (filters.listingStatus === 'FOR_RENT') parts.push('for rent');
+      else if (filters.listingStatus === 'FOR_SALE') parts.push('for sale');
+      if (filters.bedsMin > 0) parts.push(`${filters.bedsMin} bed`);
+      if (filters.bathsMin > 0) parts.push(`${filters.bathsMin} bath`);
+      if (filters.priceMax < 5000000) parts.push(`under $${filters.priceMax.toLocaleString()}`);
+      if (filters.propertyType !== 'ALL') parts.push(filters.propertyType.toLowerCase().replace(/_/g, ' '));
+      q = parts.join(' ') || 'homes in Chicago';
+    }
+
+    setIsLiveCrawling(true);
+    try {
+      const parsed = parseNlpQuery(q);
+      const result = await crawlUsPropertyPortals(parsed);
+      if (result.properties && result.properties.length > 0) {
+        setAllListings((prev) => {
+          const existingIds = new Set(result.properties.map((p) => p.id));
+          const filteredOld = prev.filter((p) => !existingIds.has(p.id));
+          return [...result.properties, ...filteredOld];
+        });
+        setSelectedListing(result.properties[0]);
+        setLiveCrawlQuery(q);
+        setLiveCrawlCount(result.properties.length);
+
+        // Synchronize filters
+        setFilters((prev) => ({
+          ...prev,
+          searchQuery: parsed.location?.city || parsed.location?.neighborhood || q,
+          priceMax: parsed.priceRange?.maxPrice !== undefined ? parsed.priceRange.maxPrice : prev.priceMax,
+          priceMin: parsed.priceRange?.minPrice !== undefined ? parsed.priceRange.minPrice : prev.priceMin,
+          bedsMin: parsed.beds !== undefined ? parsed.beds : prev.bedsMin,
+          listingStatus: parsed.listingStatus || prev.listingStatus,
+        }));
+
+        // Scroll to houses
+        setTimeout(() => {
+          const el = document.getElementById('houses-section') || document.getElementById('dashboard-section');
+          if (el) el.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+      }
+    } catch (err) {
+      console.error('Real-time crawl failed:', err);
+    } finally {
+      setIsLiveCrawling(false);
+    }
   };
 
   // Filter and Sort Listings
@@ -277,6 +338,8 @@ export default function Home() {
           onOpenNlpDialog={() => setIsNlpDialogOpen(true)}
           currentLanguage={currentLanguage}
           onLanguageChange={setCurrentLanguage}
+          onTriggerLiveCrawl={handleTriggerLiveCrawl}
+          isCrawling={isLiveCrawling}
         />
 
         {/* Real-Time NLP Natural Language Search & Multi-Portal Web Crawler Bar */}
@@ -339,6 +402,53 @@ export default function Home() {
           id="houses-section"
           className="w-full px-4 sm:px-8 lg:px-12 py-8 sm:py-10 space-y-8"
         >
+          {/* Live Real-Time Multi-Portal Scanning Progress Banner */}
+          {isLiveCrawling && (
+            <div className="w-full p-4 rounded-2xl bg-red-600 text-white flex flex-col sm:flex-row items-center justify-between gap-3 shadow-lg animate-pulse">
+              <div className="flex items-center gap-3">
+                <RotateCw className="w-5 h-5 animate-spin shrink-0" />
+                <div>
+                  <h4 className="text-xs sm:text-sm font-bold uppercase tracking-wider">Scanning Rental & MLS Portals Live in Real Time...</h4>
+                  <p className="text-[11px] sm:text-xs text-red-100 font-medium">Querying real-time OpenStreetMap addresses, atmospheric sensors, and underwriting data.</p>
+                </div>
+              </div>
+              <span className="text-xs font-mono bg-red-800 px-3 py-1 rounded-xl shrink-0">Live Scrape Active</span>
+            </div>
+          )}
+
+          {/* Live Ingestion Confirmation Banner */}
+          {liveCrawlQuery && !isLiveCrawling && (
+            <div className="w-full p-4 rounded-2xl bg-emerald-50 border border-emerald-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold shrink-0">
+                  <CheckCircle2 className="w-4 h-4" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full border border-emerald-300">
+                      Real-Time Live Web Ingestion Active
+                    </span>
+                    <span className="text-xs font-bold text-slate-800">
+                      {liveCrawlCount} Live Listings Harvested
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-600 font-medium mt-0.5">
+                    Results for <span className="font-bold text-slate-900">"{liveCrawlQuery}"</span> with live OpenStreetMap coordinates and atmospheric weather telemetry.
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => {
+                  setLiveCrawlQuery(null);
+                  setAllListings(CHICAGO_LISTINGS);
+                }}
+                className="px-3 py-1.5 bg-white hover:bg-emerald-100 text-emerald-800 border border-emerald-300 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0"
+              >
+                Reset to Default
+              </button>
+            </div>
+          )}
+
           {/* Buyer Priority Weighting & Decision Engine Tuning */}
           <PriorityWeightSliders
             weights={buyerWeights}
@@ -484,20 +594,57 @@ export default function Home() {
               ))}
             </div>
           ) : (
-            <div className="py-16 text-center bg-slate-50 rounded-3xl border border-slate-200 space-y-4 max-w-2xl mx-auto">
-              <Compass className="w-10 h-10 text-slate-400 mx-auto" />
-              <h3 className="text-lg font-bold text-slate-800">
-                No properties match your current boundary or filter criteria
+            <div className="py-14 text-center bg-red-50/40 rounded-3xl border-2 border-red-200 p-8 space-y-4 max-w-xl mx-auto shadow-sm">
+              <div className="w-14 h-14 rounded-2xl bg-red-600 text-white flex items-center justify-center mx-auto shadow-md shadow-red-200">
+                <Globe className="w-7 h-7 animate-pulse" />
+              </div>
+              <h3 className="text-base sm:text-lg font-black text-slate-900">
+                Crawl Live Rental Websites for "{filters.searchQuery || 'Current Filters'}"
               </h3>
-              <p className="text-xs text-slate-500 max-w-md mx-auto">
-                Try clearing the drawn polygon boundary on the map above or resetting your price and bedroom filters.
+              <p className="text-xs text-slate-600 max-w-md mx-auto leading-relaxed">
+                No pre-stored properties matched your criteria. Run our real-time multi-portal crawler to scan verified MLS feeds, county public records, and live weather telemetry right now.
               </p>
-              <button
-                onClick={handleClearScribble}
-                className="px-5 py-2.5 bg-red-500 hover:bg-red-600 text-white text-xs font-bold rounded-xl transition-all"
-              >
-                Clear Boundary & Show All Homes
-              </button>
+              <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-2.5">
+                <button
+                  onClick={() => handleTriggerLiveCrawl(filters.searchQuery)}
+                  disabled={isLiveCrawling}
+                  className="px-6 py-3 bg-red-600 hover:bg-red-700 disabled:bg-slate-300 text-white font-bold rounded-2xl text-xs uppercase tracking-wider transition-all shadow-md flex items-center gap-2 cursor-pointer"
+                >
+                  {isLiveCrawling ? (
+                    <>
+                      <RotateCw className="w-4 h-4 animate-spin" />
+                      <span>Crawling Live Portals...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="w-4 h-4" />
+                      <span>Crawl Live Rental Websites Now (Enter ↵)</span>
+                    </>
+                  )}
+                </button>
+                <button
+                  onClick={() => {
+                    handleClearScribble();
+                    setFilters({
+                      searchQuery: '',
+                      listingStatus: 'ALL',
+                      priceMin: 0,
+                      priceMax: 5000000,
+                      bedsMin: 0,
+                      bathsMin: 0,
+                      propertyType: 'ALL',
+                      minPassFlowScore: 1.0,
+                      zeroTheftOnly: false,
+                      minSoilBearingPSF: 0,
+                      maxPropertyTaxesUSD: 50000,
+                      maxDistanceToSchoolKm: 10,
+                    });
+                  }}
+                  className="px-4 py-3 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 font-bold rounded-2xl text-xs transition-all cursor-pointer"
+                >
+                  Reset Filters
+                </button>
+              </div>
             </div>
           )}
         </section>

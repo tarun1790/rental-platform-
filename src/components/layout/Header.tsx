@@ -45,6 +45,8 @@ interface HeaderProps {
   onOpenNlpDialog?: () => void;
   currentLanguage?: SupportedLanguageCode;
   onLanguageChange?: (lang: SupportedLanguageCode) => void;
+  onTriggerLiveCrawl?: (query?: string) => void;
+  isCrawling?: boolean;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -65,6 +67,8 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenNlpDialog,
   currentLanguage = 'en',
   onLanguageChange,
+  onTriggerLiveCrawl,
+  isCrawling = false,
 }) => {
   // Dropdown Popover States
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
@@ -101,7 +105,7 @@ export const Header: React.FC<HeaderProps> = ({
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-red-400" />
             <input
               type="text"
-              placeholder="Search US, Chicago, Denver, under 400k, 3 bed..."
+              placeholder="Search US, Chicago, Dallas, under 400k, 3 bed..."
               value={filters.searchQuery}
               onChange={(e) => {
                 const val = e.target.value;
@@ -122,16 +126,36 @@ export const Header: React.FC<HeaderProps> = ({
                   onFilterChange({ ...filters, searchQuery: val });
                 }
               }}
-              className="w-full pl-9 pr-7 py-2 text-xs bg-red-50/40 border border-red-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white transition-all font-medium"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  onTriggerLiveCrawl?.(filters.searchQuery);
+                }
+              }}
+              className="w-full pl-9 pr-24 py-2 text-xs bg-red-50/40 border border-red-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white transition-all font-medium"
             />
-            {filters.searchQuery && (
+            <div className="absolute right-1.5 top-1/2 -translate-y-1/2 flex items-center gap-1">
+              {filters.searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => onFilterChange({ ...filters, searchQuery: '', priceMax: 5000000, priceMin: 0, bedsMin: 0 })}
+                  className="text-red-400 hover:text-red-600 p-0.5 cursor-pointer"
+                  title="Clear search"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
               <button
-                onClick={() => onFilterChange({ ...filters, searchQuery: '', priceMax: 5000000, priceMin: 0, bedsMin: 0 })}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-red-400 hover:text-red-600 cursor-pointer"
+                type="button"
+                onClick={() => onTriggerLiveCrawl?.(filters.searchQuery)}
+                disabled={isCrawling}
+                title="Press Enter or click to crawl live rental portals in real time"
+                className="flex items-center gap-1 px-2 py-1 bg-red-600 hover:bg-red-700 disabled:bg-slate-300 text-white rounded-lg text-[10px] font-black uppercase tracking-wider transition-all shadow-sm cursor-pointer"
               >
-                <X className="w-3.5 h-3.5" />
+                <span>{isCrawling ? '...' : 'Crawl'}</span>
+                <span className="hidden sm:inline opacity-80 font-mono text-[9px]">↵</span>
               </button>
-            )}
+            </div>
           </div>
 
           {/* 2.5. PROPERTY DECISION CONCIERGE TRIGGER (VOICE & NLP) */}
@@ -221,6 +245,8 @@ export const Header: React.FC<HeaderProps> = ({
                       className="w-full text-xs p-2 bg-red-50/40 border border-red-200 rounded-xl font-medium"
                     >
                       <option value="0">$0</option>
+                      <option value="200000">$200,000</option>
+                      <option value="300000">$300,000</option>
                       <option value="400000">$400,000</option>
                       <option value="600000">$600,000</option>
                       <option value="800000">$800,000</option>
@@ -235,6 +261,9 @@ export const Header: React.FC<HeaderProps> = ({
                       className="w-full text-xs p-2 bg-red-50/40 border border-red-200 rounded-xl font-medium"
                     >
                       <option value="5000000">Any Max</option>
+                      <option value="300000">$300,000</option>
+                      <option value="400000">$400,000</option>
+                      <option value="500000">$500,000</option>
                       <option value="700000">$700,000</option>
                       <option value="900000">$900,000</option>
                       <option value="1200000">$1,200,000</option>
@@ -242,6 +271,19 @@ export const Header: React.FC<HeaderProps> = ({
                     </select>
                   </div>
                 </div>
+
+                {/* Instant Crawl Action */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    closeDropdowns();
+                    onTriggerLiveCrawl?.();
+                  }}
+                  className="w-full py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
+                >
+                  <Globe className="w-3.5 h-3.5" />
+                  <span>Apply & Crawl Live Portals (Enter ↵)</span>
+                </button>
               </div>
             )}
           </div>
@@ -298,6 +340,19 @@ export const Header: React.FC<HeaderProps> = ({
                     ))}
                   </div>
                 </div>
+
+                {/* Instant Crawl Action */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    closeDropdowns();
+                    onTriggerLiveCrawl?.();
+                  }}
+                  className="w-full py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
+                >
+                  <Globe className="w-3.5 h-3.5" />
+                  <span>Apply & Crawl Live Portals (Enter ↵)</span>
+                </button>
               </div>
             )}
           </div>
@@ -317,7 +372,7 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
 
             {openDropdown === 'type' && (
-              <div className="absolute left-0 mt-2 w-48 bg-white border border-red-200 rounded-2xl shadow-xl p-2 z-50 animate-in fade-in space-y-1">
+              <div className="absolute left-0 mt-2 w-52 bg-white border border-red-200 rounded-2xl shadow-xl p-2 z-50 animate-in fade-in space-y-1">
                 {(['ALL', 'SINGLE_FAMILY', 'CONDO', 'TOWNHOUSE', 'LOFT'] as PropertyType[]).map((t) => (
                   <button
                     key={t}
@@ -333,6 +388,21 @@ export const Header: React.FC<HeaderProps> = ({
                     {filters.propertyType === t && <Check className="w-3.5 h-3.5 text-red-600" />}
                   </button>
                 ))}
+
+                {/* Instant Crawl Action */}
+                <div className="pt-1 border-t border-red-100">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      closeDropdowns();
+                      onTriggerLiveCrawl?.();
+                    }}
+                    className="w-full py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-xl text-[11px] font-bold transition-all flex items-center justify-center gap-1 cursor-pointer shadow-sm"
+                  >
+                    <Globe className="w-3 h-3" />
+                    <span>Crawl Live Portals (Enter ↵)</span>
+                  </button>
+                </div>
               </div>
             )}
           </div>
@@ -344,6 +414,18 @@ export const Header: React.FC<HeaderProps> = ({
           >
             <SlidersHorizontal className="w-3.5 h-3.5 text-red-600" />
             <span className="hidden sm:inline">More Filters</span>
+          </button>
+
+          {/* 7.5. INSTANT LIVE CRAWL BUTTON FOR CURRENT FILTERS */}
+          <button
+            onClick={() => onTriggerLiveCrawl?.()}
+            disabled={isCrawling}
+            title="Scan & Ingest Active Live Listings from Other Rental Websites for Current Filters"
+            className="flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold rounded-xl bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 disabled:bg-slate-300 text-white shadow-sm transition-all shrink-0 cursor-pointer"
+          >
+            <Globe className={`w-3.5 h-3.5 ${isCrawling ? 'animate-spin' : 'animate-pulse'}`} />
+            <span className="hidden md:inline">{isCrawling ? 'Crawling Portals...' : 'Crawl Live Portals'}</span>
+            <span className="md:hidden">{isCrawling ? '...' : 'Crawl'}</span>
           </button>
 
           {/* 8. DRAW / SCRIBBLE BOUNDARY BUTTON (RED & WHITE) */}
