@@ -478,6 +478,10 @@ export interface ShikaakPropertyListing {
     featuredImage: string;
     gallery: string[];
   };
+  sourcePortal?: 'ZILLOW' | 'REDFIN' | 'REALTOR' | 'APARTMENTS_COM' | 'TRULIA' | 'HOTPADS' | 'MLS_FEED' | 'COUNTY_ASSESSOR' | 'MUNICIPAL_DATA' | 'VALUATION_ENGINE' | 'TELEMETRY' | string;
+  externalUrl?: string;
+  isLiveCrawled?: boolean;
+  crawlVerifiedAt?: string;
   evidenceGraph?: PropertyEvidenceGraph;
   scores?: PropertyDimensionScores;
   financialScenarios?: MultiScenarioAnalysis;

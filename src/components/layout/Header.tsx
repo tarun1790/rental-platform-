@@ -19,13 +19,16 @@ import {
   Filter,
   ShieldCheck,
   TreePine,
-  Bot
+  Bot,
+  Zap,
+  ExternalLink
 } from 'lucide-react';
 import { FilterState, ListingStatus, PropertyType } from '../../types/property';
 import { SupportedLanguageCode } from '../../types/intelligence';
 import { SUPPORTED_LANGUAGES } from '../../lib/speech-translation';
 import { TiledHomeIcon } from '../common/TiledHomeIcon';
 import { parseNlpQuery } from '../../lib/nlp-search-parser';
+import { testExaApiKey } from '../../lib/crawler/exa-client';
 
 interface HeaderProps {
   filters: FilterState;
@@ -45,7 +48,7 @@ interface HeaderProps {
   onOpenNlpDialog?: () => void;
   currentLanguage?: SupportedLanguageCode;
   onLanguageChange?: (lang: SupportedLanguageCode) => void;
-  onTriggerLiveCrawl?: (query?: string) => void;
+  onTriggerLiveCrawl?: (query?: string, exaApiKey?: string) => void;
   isCrawling?: boolean;
 }
 
@@ -73,6 +76,23 @@ export const Header: React.FC<HeaderProps> = ({
   // Dropdown Popover States
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [showMoreModal, setShowMoreModal] = useState(false);
+
+  // Exa.ai Live Neural Crawler Modal & Key States
+  const [showExaModal, setShowExaModal] = useState(false);
+  const [exaKeyInput, setExaKeyInput] = useState('');
+  const [hasExaKey, setHasExaKey] = useState(false);
+  const [testingExa, setTestingExa] = useState(false);
+  const [exaTestStatus, setExaTestStatus] = useState<{ valid?: boolean; message?: string } | null>(null);
+
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const stored = window.localStorage.getItem('EXA_API_KEY');
+      if (stored && stored.trim()) {
+        setHasExaKey(true);
+        setExaKeyInput(stored.trim());
+      }
+    }
+  }, []);
 
   const toggleDropdown = (name: string) => {
     setOpenDropdown(openDropdown === name ? null : name);
@@ -129,7 +149,7 @@ export const Header: React.FC<HeaderProps> = ({
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
                   e.preventDefault();
-                  onTriggerLiveCrawl?.(filters.searchQuery);
+                  onTriggerLiveCrawl?.(filters.searchQuery, exaKeyInput.trim() || undefined);
                 }
               }}
               className="w-full pl-9 pr-24 py-2 text-xs bg-red-50/40 border border-red-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white transition-all font-medium"
@@ -147,7 +167,7 @@ export const Header: React.FC<HeaderProps> = ({
               )}
               <button
                 type="button"
-                onClick={() => onTriggerLiveCrawl?.(filters.searchQuery)}
+                onClick={() => onTriggerLiveCrawl?.(filters.searchQuery, exaKeyInput.trim() || undefined)}
                 disabled={isCrawling}
                 title="Press Enter or click to crawl live rental portals in real time"
                 className="flex items-center gap-1 px-2 py-1 bg-red-600 hover:bg-red-700 disabled:bg-slate-300 text-white rounded-lg text-[10px] font-black uppercase tracking-wider transition-all shadow-sm cursor-pointer"
@@ -170,6 +190,22 @@ export const Header: React.FC<HeaderProps> = ({
               <span className="sm:hidden">Chat</span>
             </button>
           )}
+
+          {/* 2.6. EXA.AI LIVE NEURAL CRAWLER TRIGGER */}
+          <button
+            onClick={() => setShowExaModal(true)}
+            className={`flex items-center gap-1.5 px-3 py-2 text-xs font-bold rounded-xl border transition-all shrink-0 cursor-pointer ${
+              hasExaKey
+                ? 'bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100 shadow-sm'
+                : 'bg-white text-slate-700 border-red-200 hover:border-red-400 hover:bg-red-50/50'
+            }`}
+            title="Configure Exa.ai Neural Search to crawl live listings from Zillow, Redfin, Realtor.com"
+          >
+            <Zap className={`w-3.5 h-3.5 ${hasExaKey ? 'text-emerald-600' : 'text-red-500'}`} />
+            <span className="hidden sm:inline">{hasExaKey ? 'Exa.ai Active' : 'Exa.ai Live Search'}</span>
+            <span className="sm:hidden">Exa</span>
+            {hasExaKey && <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />}
+          </button>
 
           {/* 3. STATUS (FOR SALE / FOR RENT) */}
           <div className="relative hidden md:block">
@@ -579,6 +615,148 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         )}
       </div>
+
+      {/* EXA.AI LIVE NEURAL CRAWLER CONFIGURATION MODAL */}
+      {showExaModal && (
+        <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
+          <div className="bg-white rounded-3xl shadow-2xl border border-red-200 w-full max-w-lg overflow-hidden flex flex-col">
+            <div className="p-6 border-b border-red-100 flex items-center justify-between bg-red-50/50">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-red-600 text-white flex items-center justify-center shadow-md shadow-red-500/20">
+                  <Zap className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-base font-black text-slate-900">Exa.ai Neural Search Ingestion</h3>
+                  <p className="text-xs text-slate-500 font-medium">Crawl live properties directly from Zillow, Redfin, & Realtor</p>
+                </div>
+              </div>
+              <button
+                onClick={() => {
+                  setShowExaModal(false);
+                  setExaTestStatus(null);
+                }}
+                className="w-8 h-8 rounded-full bg-white hover:bg-red-50 text-slate-400 hover:text-red-600 flex items-center justify-center transition-colors cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4 text-xs">
+              <div className="bg-amber-50 border border-amber-200 text-amber-900 p-3.5 rounded-2xl flex items-start gap-2.5">
+                <Sparkles className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                <p className="leading-relaxed">
+                  Connecting an <strong>Exa.ai API Key</strong> enables real-time neural web searches across <strong>zillow.com, redfin.com, realtor.com, apartments.com, and trulia.com</strong> based on your location and criteria.
+                </p>
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="font-bold text-slate-800">
+                    Exa.ai API Key:
+                  </label>
+                  <a
+                    href="https://exa.ai"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-red-600 hover:underline flex items-center gap-1 font-semibold"
+                  >
+                    <span>Get API key at exa.ai</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                </div>
+                <input
+                  type="password"
+                  placeholder="e.g. exa-xxxxxxxxxxxxxxxxxxxxxxxx"
+                  value={exaKeyInput}
+                  onChange={(e) => {
+                    setExaKeyInput(e.target.value);
+                    setExaTestStatus(null);
+                  }}
+                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white font-mono text-xs transition-all"
+                />
+                <p className="text-[11px] text-slate-400 mt-1">
+                  Persists in browser localStorage or can be configured via <code className="bg-slate-100 px-1 py-0.5 rounded text-slate-700">EXA_API_KEY</code> in environment.
+                </p>
+              </div>
+
+              {exaTestStatus && (
+                <div
+                  className={`p-3 rounded-xl border flex items-start gap-2 ${
+                    exaTestStatus.valid
+                      ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
+                      : 'bg-red-50 border-red-200 text-red-800'
+                  }`}
+                >
+                  {exaTestStatus.valid ? (
+                    <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                  ) : (
+                    <X className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
+                  )}
+                  <span className="leading-tight font-medium">{exaTestStatus.message}</span>
+                </div>
+              )}
+
+              <div className="pt-2 flex items-center justify-between gap-2 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (typeof window !== 'undefined') {
+                      window.localStorage.removeItem('EXA_API_KEY');
+                    }
+                    setExaKeyInput('');
+                    setHasExaKey(false);
+                    setExaTestStatus({ valid: false, message: 'Exa API key cleared. Standard MLS & public records crawler active.' });
+                  }}
+                  disabled={!hasExaKey && !exaKeyInput}
+                  className="px-3.5 py-2 rounded-xl text-slate-500 hover:text-red-600 hover:bg-red-50 font-bold transition-all disabled:opacity-40 cursor-pointer"
+                >
+                  Clear Key
+                </button>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    disabled={testingExa || !exaKeyInput.trim()}
+                    onClick={async () => {
+                      setTestingExa(true);
+                      setExaTestStatus(null);
+                      const res = await testExaApiKey(exaKeyInput.trim());
+                      setTestingExa(false);
+                      setExaTestStatus(res);
+                      if (res.valid) {
+                        if (typeof window !== 'undefined') {
+                          window.localStorage.setItem('EXA_API_KEY', exaKeyInput.trim());
+                        }
+                        setHasExaKey(true);
+                      }
+                    }}
+                    className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold transition-all disabled:opacity-50 cursor-pointer"
+                  >
+                    {testingExa ? 'Testing...' : 'Test Connection'}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const trimmed = exaKeyInput.trim();
+                      if (trimmed) {
+                        if (typeof window !== 'undefined') {
+                          window.localStorage.setItem('EXA_API_KEY', trimmed);
+                        }
+                        setHasExaKey(true);
+                      }
+                      setShowExaModal(false);
+                    }}
+                    className="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold transition-all shadow-sm cursor-pointer"
+                  >
+                    Save & Apply
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 };

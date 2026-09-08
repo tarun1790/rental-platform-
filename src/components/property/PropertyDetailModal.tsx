@@ -32,7 +32,8 @@ import {
   Home,
   TreePine,
   Plane,
-  Globe
+  Globe,
+  ExternalLink
 } from 'lucide-react';
 import { ShikaakPropertyListing } from '../../types/property';
 import { formatCurrency, formatPercent } from '../../lib/roi-engine';
@@ -95,6 +96,20 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
           </div>
 
           <div className="flex items-center gap-3">
+            {/* Live External Portal Direct Link */}
+            {listing.externalUrl && (
+              <a
+                href={listing.externalUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 hover:text-blue-900 border border-blue-200 text-xs font-bold transition-all shadow-sm"
+                title={`Open official listing on ${listing.sourcePortal || 'Portal'}`}
+              >
+                <span>View on {listing.sourcePortal || 'Portal'}</span>
+                <ExternalLink className="w-3.5 h-3.5 text-blue-600" />
+              </a>
+            )}
+
             {/* Price Pill */}
             <div className="hidden sm:flex flex-col text-right">
               <span className="text-lg font-black text-red-600 font-mono">
@@ -174,6 +189,32 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
                   ))}
                 </div>
               </div>
+
+              {/* Verified Source Portal Live Link Banner */}
+              {listing.externalUrl && (
+                <div className="flex flex-col sm:flex-row items-center justify-between p-4 bg-blue-50/70 border border-blue-200 rounded-2xl gap-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-2.5 h-2.5 rounded-full bg-blue-600 animate-pulse shrink-0" />
+                    <div>
+                      <span className="text-xs font-bold text-blue-900">
+                        Live Crawled Listing on {listing.sourcePortal || 'Portal'}
+                      </span>
+                      <p className="text-[11px] text-blue-700">
+                        Direct portal reference with real-time underwriting and geospatial telemetry.
+                      </p>
+                    </div>
+                  </div>
+                  <a
+                    href={listing.externalUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-all shadow-sm shrink-0"
+                  >
+                    <span>View on {listing.sourcePortal || 'Portal'}</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                </div>
+              )}
 
               {/* Core Highlights Banner */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 bg-slate-50 border border-slate-200 rounded-2xl">

@@ -18,7 +18,8 @@ import {
   GraduationCap,
   ShoppingBag,
   Star,
-  Calculator
+  Calculator,
+  ExternalLink
 } from 'lucide-react';
 import { ShikaakPropertyListing, BuyerPriorityWeights } from '../../types/property';
 import { formatCurrency, formatPercent } from '../../lib/roi-engine';
@@ -79,7 +80,12 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
 
           {/* Live Ingested Feed Badge */}
           <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/95 text-slate-800 font-sans text-[11px] font-bold shadow-sm border border-slate-200">
-            {listing.climateTelemetry?.isLiveSensorData ? (
+            {listing.sourcePortal && ['ZILLOW', 'REDFIN', 'REALTOR', 'APARTMENTS_COM', 'TRULIA', 'HOTPADS'].includes(listing.sourcePortal) ? (
+              <>
+                <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse" />
+                <span className="font-extrabold text-blue-700 tracking-wider uppercase text-[10px]">{listing.sourcePortal.replace(/_/g, '.')}</span>
+              </>
+            ) : listing.climateTelemetry?.isLiveSensorData ? (
               <>
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                 <span>Live Feed • {listing.climateTelemetry.surfaceTempF}°F</span>
@@ -187,7 +193,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
           </div>
         </div>
 
-        {/* Action Row: Custom ROI Calculator & Inspect CTA */}
+        {/* Action Row: Custom ROI Calculator, Live Portal Link & Inspect CTA */}
         <div className="pt-2 flex items-center justify-between border-t border-slate-100 gap-2">
           <button
             onClick={(e) => {
@@ -197,19 +203,35 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
             className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-red-50 text-slate-700 hover:text-red-600 text-xs font-bold transition-all border border-slate-200"
           >
             <Calculator className="w-3.5 h-3.5 text-red-500" />
-            <span>ROI Calculator</span>
+            <span>ROI</span>
           </button>
 
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onOpenDetail?.(listing);
-            }}
-            className="flex items-center gap-1 px-3.5 py-1.5 rounded-xl bg-red-500 hover:bg-red-600 text-white text-xs font-bold uppercase tracking-wider transition-all"
-          >
-            <span>Inspect</span>
-            <ChevronRight className="w-3.5 h-3.5" />
-          </button>
+          <div className="flex items-center gap-1.5">
+            {listing.externalUrl && (
+              <a
+                href={listing.externalUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 hover:text-blue-900 text-xs font-bold transition-all border border-blue-200"
+                title={`Open listing on ${listing.sourcePortal || 'Portal'}`}
+              >
+                <span>{listing.sourcePortal || 'Portal'}</span>
+                <ExternalLink className="w-3 h-3 text-blue-600" />
+              </a>
+            )}
+
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onOpenDetail?.(listing);
+              }}
+              className="flex items-center gap-1 px-3.5 py-1.5 rounded-xl bg-red-500 hover:bg-red-600 text-white text-xs font-bold uppercase tracking-wider transition-all cursor-pointer"
+            >
+              <span>Inspect</span>
+              <ChevronRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
         </div>
       </div>
     </div>

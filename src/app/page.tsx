@@ -61,6 +61,7 @@ export default function Home() {
   const [isLiveCrawling, setIsLiveCrawling] = useState(false);
   const [liveCrawlQuery, setLiveCrawlQuery] = useState<string | null>(null);
   const [liveCrawlCount, setLiveCrawlCount] = useState<number>(0);
+  const [crawlSourceInfo, setCrawlSourceInfo] = useState<{ isExa: boolean; portals: string[] } | null>(null);
 
   // Custom ROI Calculator Modal State for any house
   const [roiModalListing, setRoiModalListing] = useState<ShikaakPropertyListing | null>(null);
@@ -136,7 +137,7 @@ export default function Home() {
   };
 
   // Live Real-Time Multi-Portal Crawler Trigger
-  const handleTriggerLiveCrawl = async (customQuery?: string) => {
+  const handleTriggerLiveCrawl = async (customQuery?: string, explicitExaKey?: string) => {
     let q = (customQuery !== undefined ? customQuery : filters.searchQuery || '').trim();
     if (!q) {
       const parts: string[] = [];
@@ -147,13 +148,15 @@ export default function Home() {
       if (filters.bathsMin > 0) parts.push(`${filters.bathsMin} bath`);
       if (filters.priceMax < 5000000) parts.push(`under $${filters.priceMax.toLocaleString()}`);
       if (filters.propertyType !== 'ALL') parts.push(filters.propertyType.toLowerCase().replace(/_/g, ' '));
-      q = parts.join(' ') || 'homes in Chicago';
+    q = parts.join(' ') || 'homes in Chicago';
     }
+
+    const storedExaKey = explicitExaKey || (typeof window !== 'undefined' ? window.localStorage.getItem('EXA_API_KEY') : null) || undefined;
 
     setIsLiveCrawling(true);
     try {
       const parsed = parseNlpQuery(q);
-      const result = await crawlUsPropertyPortals(parsed);
+      const result = await crawlUsPropertyPortals(parsed, { exaApiKey: storedExaKey || undefined });
       if (result.properties && result.properties.length > 0) {
         setAllListings((prev) => {
           const existingIds = new Set(result.properties.map((p) => p.id));
@@ -163,6 +166,11 @@ export default function Home() {
         setSelectedListing(result.properties[0]);
         setLiveCrawlQuery(q);
         setLiveCrawlCount(result.properties.length);
+        const hasExa = result.portalsScanned.includes('EXA_AI_NEURAL') || result.properties.some(p => p.sourcePortal && ['ZILLOW', 'REDFIN', 'REALTOR', 'APARTMENTS_COM', 'TRULIA'].includes(p.sourcePortal));
+        setCrawlSourceInfo({
+          isExa: Boolean(hasExa),
+          portals: result.portalsScanned.map(String)
+        });
 
         // Synchronize filters
         setFilters((prev) => ({
@@ -408,8 +416,8 @@ export default function Home() {
               <div className="flex items-center gap-3">
                 <RotateCw className="w-5 h-5 animate-spin shrink-0" />
                 <div>
-                  <h4 className="text-xs sm:text-sm font-bold uppercase tracking-wider">Scanning Rental & MLS Portals Live in Real Time...</h4>
-                  <p className="text-[11px] sm:text-xs text-red-100 font-medium">Querying real-time OpenStreetMap addresses, atmospheric sensors, and underwriting data.</p>
+                  <h4 className="text-xs sm:text-sm font-bold uppercase tracking-wider">Scanning Real-Time Portals (Zillow, Redfin, Realtor.com)...</h4>
+                  <p className="text-[11px] sm:text-xs text-red-100 font-medium">Executing neural crawl across active US real estate portals, OpenStreetMap roads, and atmospheric sensors.</p>
                 </div>
               </div>
               <span className="text-xs font-mono bg-red-800 px-3 py-1 rounded-xl shrink-0">Live Scrape Active</span>
@@ -424,28 +432,42 @@ export default function Home() {
                   <CheckCircle2 className="w-4 h-4" />
                 </div>
                 <div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <span className="text-[10px] font-black uppercase tracking-wider text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full border border-emerald-300">
                       Real-Time Live Web Ingestion Active
                     </span>
+                    {crawlSourceInfo?.isExa && (
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-white bg-blue-600 px-2 py-0.5 rounded-full shadow-sm">
+                        ⚡ Exa.ai Neural Crawl Verified
+                      </span>
+                    )}
                     <span className="text-xs font-bold text-slate-800">
                       {liveCrawlCount} Live Listings Harvested
                     </span>
                   </div>
                   <p className="text-xs text-slate-600 font-medium mt-0.5">
-                    Results for <span className="font-bold text-slate-900">"{liveCrawlQuery}"</span> with live OpenStreetMap coordinates and atmospheric weather telemetry.
+                    Results for <span className="font-bold text-slate-900">"{liveCrawlQuery}"</span> {crawlSourceInfo?.isExa ? 'scraped live from Zillow, Redfin, Realtor.com' : 'from regional MLS feeds'} with authentic coordinates and atmospheric weather telemetry.
                   </p>
                 </div>
               </div>
-              <button
-                onClick={() => {
-                  setLiveCrawlQuery(null);
-                  setAllListings(CHICAGO_LISTINGS);
-                }}
-                className="px-3 py-1.5 bg-white hover:bg-emerald-100 text-emerald-800 border border-emerald-300 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0"
-              >
-                Reset to Default
-              </button>
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  onClick={() => handleTriggerLiveCrawl()}
+                  className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer"
+                >
+                  Re-crawl ↵
+                </button>
+                <button
+                  onClick={() => {
+                    setLiveCrawlQuery(null);
+                    setCrawlSourceInfo(null);
+                    setAllListings(CHICAGO_LISTINGS);
+                  }}
+                  className="px-3 py-1.5 bg-white hover:bg-emerald-100 text-emerald-800 border border-emerald-300 rounded-xl text-xs font-bold transition-all cursor-pointer"
+                >
+                  Reset
+                </button>
+              </div>
             </div>
           )}
 
