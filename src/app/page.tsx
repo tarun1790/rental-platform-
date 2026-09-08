@@ -9,7 +9,7 @@ import { PropertyDetailModal } from '../components/property/PropertyDetailModal'
 import { HouseRoiCalculatorModal } from '../components/property/HouseRoiCalculatorModal';
 import { ScribbleMap } from '../components/map/ScribbleMap';
 import { CustomerNlpDialog } from '../components/nlp/CustomerNlpDialog';
-import { NlpCrawlerSearchBar } from '../components/search/NlpCrawlerSearchBar';
+import { resolveUsMetro } from '../lib/geo/us-metro-registry';
 import { CHICAGO_LISTINGS } from '../data/chicago-listings';
 import { ShikaakPropertyListing, FilterState, GeoCoordinate, BuyerPriorityWeights } from '../types/property';
 import { PriorityWeightSliders } from '../components/property/PriorityWeightSliders';
@@ -174,24 +174,63 @@ export default function Home() {
   // Live Real-Time Multi-Portal Crawler Trigger
   const handleTriggerLiveCrawl = async (customQuery?: string, explicitExaKey?: string, filterOverrides?: Partial<FilterState>) => {
     const activeFilters = { ...filters, ...filterOverrides };
-    let q = (customQuery !== undefined ? customQuery : activeFilters.searchQuery || '').trim();
-    if (!q) {
-      const parts: string[] = [];
-      if (activeFilters.searchQuery) parts.push(activeFilters.searchQuery);
-      if (activeFilters.listingStatus === 'FOR_RENT') parts.push('for rent');
-      else if (activeFilters.listingStatus === 'FOR_SALE') parts.push('for sale');
-      if (activeFilters.bedsMin > 0) parts.push(`${activeFilters.bedsMin} bed`);
-      if (activeFilters.bathsMin > 0) parts.push(`${activeFilters.bathsMin} bath`);
-      if (activeFilters.priceMax < 5000000) parts.push(`under $${activeFilters.priceMax.toLocaleString()}`);
-      if (activeFilters.propertyType !== 'ALL') parts.push(activeFilters.propertyType.toLowerCase().replace(/_/g, ' '));
-      q = parts.join(' ') || 'homes in Chicago';
+    
+    // 1. Determine location query or base query
+    const baseText = (customQuery !== undefined ? customQuery : activeFilters.searchQuery || '').trim();
+    
+    // Check if baseText resolves to a metro or use active metro pill
+    const resolvedMetro = resolveUsMetro(baseText || activeMetroPill || 'Chicago');
+    const metroCity = resolvedMetro.city;
+
+    // 2. Build full NLP query incorporating active filters
+    const queryParts: string[] = [];
+    if (baseText) {
+      queryParts.push(baseText);
+    } else {
+      queryParts.push(`${metroCity} homes`);
     }
 
+    const currentQueryLower = queryParts.join(' ').toLowerCase();
+
+    // Listing status (Buy vs Rent)
+    if (activeFilters.listingStatus === 'FOR_RENT' && !/rent|rental|lease|apartment/i.test(currentQueryLower)) {
+      queryParts.push('for rent');
+    } else if (activeFilters.listingStatus === 'FOR_SALE' && !/sale|buy/i.test(currentQueryLower)) {
+      queryParts.push('for sale');
+    }
+
+    // Beds
+    if (activeFilters.bedsMin > 0 && !/\b\d+\s*beds?\b/i.test(currentQueryLower)) {
+      queryParts.push(`${activeFilters.bedsMin}+ bed`);
+    }
+
+    // Baths
+    if (activeFilters.bathsMin > 0 && !/\b\d+\s*baths?\b/i.test(currentQueryLower)) {
+      queryParts.push(`${activeFilters.bathsMin}+ bath`);
+    }
+
+    // Price Max
+    if (activeFilters.listingStatus === 'FOR_RENT') {
+      if (activeFilters.priceMax < 10000 && !/under|below|\$|max/i.test(currentQueryLower)) {
+        queryParts.push(`under $${activeFilters.priceMax.toLocaleString()}/mo`);
+      }
+    } else {
+      if (activeFilters.priceMax < 5000000 && !/under|below|\$|max/i.test(currentQueryLower)) {
+        queryParts.push(`under $${activeFilters.priceMax.toLocaleString()}`);
+      }
+    }
+
+    // Property Type
+    if (activeFilters.propertyType !== 'ALL' && !currentQueryLower.includes(activeFilters.propertyType.toLowerCase().replace(/_/g, ' '))) {
+      queryParts.push(activeFilters.propertyType.toLowerCase().replace(/_/g, ' '));
+    }
+
+    const finalCrawlQuery = queryParts.join(' ');
     const storedExaKey = explicitExaKey || (typeof window !== 'undefined' ? window.localStorage.getItem('EXA_API_KEY') : null) || undefined;
 
     setIsLiveCrawling(true);
     try {
-      const parsed = parseNlpQuery(q);
+      const parsed = parseNlpQuery(finalCrawlQuery);
       const result = await crawlUsPropertyPortals(parsed, {
         exaApiKey: storedExaKey || undefined,
         listingStatus: activeFilters.listingStatus,
@@ -202,6 +241,7 @@ export default function Home() {
         propertyType: activeFilters.propertyType,
         limit: 16,
       });
+
       if (result.properties && result.properties.length > 0) {
         setAllListings((prev) => {
           const existingIds = new Set(result.properties.map((p) => p.id));
@@ -209,7 +249,7 @@ export default function Home() {
           return [...result.properties, ...filteredOld];
         });
         setSelectedListing(result.properties[0]);
-        setLiveCrawlQuery(q);
+        setLiveCrawlQuery(finalCrawlQuery);
         setLiveCrawlCount(result.properties.length);
         const hasExa = result.portalsScanned.includes('EXA_AI_NEURAL') || result.properties.some(p => p.sourcePortal && ['ZILLOW', 'REDFIN', 'REALTOR', 'APARTMENTS_COM', 'TRULIA'].includes(p.sourcePortal));
         setCrawlSourceInfo({
@@ -217,11 +257,12 @@ export default function Home() {
           portals: result.portalsScanned.map(String)
         });
 
-        // Synchronize filters
+        // Synchronize filters cleanly without corrupting the search query input
+        const displaySearch = customQuery !== undefined ? customQuery : (baseText || metroCity);
         setFilters((prev) => ({
           ...prev,
           ...filterOverrides,
-          searchQuery: parsed.location?.city || parsed.location?.neighborhood || q,
+          searchQuery: displaySearch,
           priceMax: parsed.priceRange?.maxPrice !== undefined ? parsed.priceRange.maxPrice : (filterOverrides?.priceMax !== undefined ? filterOverrides.priceMax : prev.priceMax),
           priceMin: parsed.priceRange?.minPrice !== undefined ? parsed.priceRange.minPrice : (filterOverrides?.priceMin !== undefined ? filterOverrides.priceMin : prev.priceMin),
           bedsMin: parsed.beds !== undefined ? parsed.beds : (filterOverrides?.bedsMin !== undefined ? filterOverrides.bedsMin : prev.bedsMin),
@@ -229,7 +270,7 @@ export default function Home() {
           propertyType: parsed.propertyType || (filterOverrides?.propertyType || prev.propertyType),
         }));
 
-        // Scroll to houses
+        // Scroll to houses smoothly
         setTimeout(() => {
           const el = document.getElementById('houses-section') || document.getElementById('dashboard-section');
           if (el) el.scrollIntoView({ behavior: 'smooth' });
@@ -411,33 +452,6 @@ export default function Home() {
           onTriggerLiveCrawl={handleTriggerLiveCrawl}
           isCrawling={isLiveCrawling}
         />
-
-        {/* Real-Time NLP Natural Language Search & Multi-Portal Web Crawler Bar */}
-        <div className="w-full px-4 sm:px-8 lg:px-12 py-3 bg-red-50/40 border-b border-red-100">
-          <NlpCrawlerSearchBar
-            onListingsCrawled={(crawled, parsedQuery) => {
-              setAllListings(prev => {
-                const existingIds = new Set(prev.map(p => p.id));
-                const uniqueNew = crawled.filter(c => !existingIds.has(c.id));
-                return [...uniqueNew, ...prev];
-              });
-              if (parsedQuery) {
-                setFilters(prev => ({
-                  ...prev,
-                  priceMax: parsedQuery.priceRange?.maxPrice !== undefined ? parsedQuery.priceRange.maxPrice : prev.priceMax,
-                  priceMin: parsedQuery.priceRange?.minPrice !== undefined ? parsedQuery.priceRange.minPrice : prev.priceMin,
-                  bedsMin: parsedQuery.beds !== undefined ? parsedQuery.beds : prev.bedsMin,
-                  searchQuery: parsedQuery.location?.neighborhood || parsedQuery.location?.city || prev.searchQuery,
-                }));
-              }
-              if (crawled.length > 0) {
-                setSelectedListing(crawled[0]);
-              }
-              const spotlight = document.getElementById('selected-spotlight');
-              if (spotlight) spotlight.scrollIntoView({ behavior: 'smooth' });
-            }}
-          />
-        </div>
 
         {/* Instant US Metro Quick-Switcher Strip */}
         <div className="w-full px-4 sm:px-8 lg:px-12 py-2.5 bg-white border-b border-slate-100 flex items-center gap-2 overflow-x-auto text-xs scrollbar-none">

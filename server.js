@@ -528,14 +528,33 @@ nextApp.prepare().then(() => {
         topMalls: []
       };
 
+      // 1. Direct key match or full city name match
       for (const [key, m] of Object.entries(metrosData)) {
-        if (qLower.includes(key) || qLower.includes(m.city.toLowerCase()) || qLower.includes(m.stateCode.toLowerCase())) {
+        const keyWords = key.replace(/_/g, ' ');
+        if (qLower.includes(m.city.toLowerCase()) || qLower.includes(keyWords)) {
           matchedMetro = m;
           break;
         }
-        if (m.neighborhoods && m.neighborhoods.some(n => qLower.includes(n.toLowerCase()))) {
-          matchedMetro = m;
-          break;
+      }
+
+      // 2. Neighborhood match if city wasn't matched explicitly
+      if (matchedMetro.city === 'Chicago' && !qLower.includes('chicago')) {
+        for (const [, m] of Object.entries(metrosData)) {
+          if (m.neighborhoods && m.neighborhoods.some(n => qLower.includes(n.toLowerCase()))) {
+            matchedMetro = m;
+            break;
+          }
+        }
+      }
+
+      // 3. State code match with strict word boundary
+      if (matchedMetro.city === 'Chicago' && !qLower.includes('chicago')) {
+        for (const [, m] of Object.entries(metrosData)) {
+          const stateRegex = new RegExp(`\\b${m.stateCode.toLowerCase()}\\b`, 'i');
+          if (stateRegex.test(qLower)) {
+            matchedMetro = m;
+            break;
+          }
         }
       }
 
