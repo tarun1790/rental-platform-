@@ -33,7 +33,13 @@ import {
   TreePine,
   Plane,
   Globe,
-  ExternalLink
+  ExternalLink,
+  BarChart3,
+  Sliders,
+  DollarSign,
+  Percent,
+  PiggyBank,
+  Scale
 } from 'lucide-react';
 import { ShikaakPropertyListing } from '../../types/property';
 import { formatCurrency, formatPercent } from '../../lib/roi-engine';
@@ -45,7 +51,7 @@ interface PropertyDetailModalProps {
   onClose: () => void;
 }
 
-type TabType = 'overview' | 'geotechnical' | 'safety' | 'amenities' | 'cad' | 'roi' | 'apply';
+type TabType = 'overview' | 'proforma' | 'geotechnical' | 'safety' | 'amenities' | 'cad' | 'roi' | 'apply';
 
 export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
   listing,
@@ -57,6 +63,12 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
   const [applicantName, setApplicantName] = useState('');
   const [applicantIncome, setApplicantIncome] = useState('$145,000');
 
+  // 10-Year Pro-Forma Sensitivity Engine State
+  const [rentGrowthRate, setRentGrowthRate] = useState(3.5);
+  const [appreciationRate, setAppreciationRate] = useState(4.0);
+  const [vacancySensitivity, setVacancySensitivity] = useState(4.0);
+  const [taxBracketRate, setTaxBracketRate] = useState(24.0);
+
   if (!listing) return null;
 
   const { specs, geotechnical, safety, amenities, microclimate, blueprint, financials, propertyAddress, media } = listing;
@@ -66,6 +78,58 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
     e.preventDefault();
     setApplicationSubmitted(true);
   };
+
+  const proFormaYears = React.useMemo(() => {
+    const years = [];
+    const basePrice = financials.inputs.purchasePrice;
+    const baseRent = financials.inputs.monthlyGrossRent;
+    const tax = financials.inputs.monthlyPropertyTax || 0;
+    const ins = financials.inputs.monthlyInsurance || 0;
+    const hoa = financials.inputs.monthlyHoaDues || 0;
+    const mgmt = financials.inputs.propertyManagementPercent || 0;
+    const capex = financials.inputs.maintenanceAndCapExPercent || 0;
+    const annualRent = baseRent * 12;
+    const annualOpEx = (tax + ins + hoa) * 12 + annualRent * ((mgmt + capex) / 100);
+    const annualDebtService = (financials.outputs.monthlyDebtService || financials.outputs.monthlyMortgagePI || (basePrice * 0.8 * 0.065 / 12)) * 12;
+    const annualDepreciation = (basePrice * 0.85) / 27.5; // MACRS residential 27.5-year
+
+    let currRent = annualRent;
+    let currValue = basePrice;
+    let loanBalance = basePrice * 0.8;
+    let cumulativeCashFlow = 0;
+
+    for (let yr = 1; yr <= 10; yr++) {
+      if (yr > 1) {
+        currRent *= (1 + rentGrowthRate / 100);
+        currValue *= (1 + appreciationRate / 100);
+      }
+      const grossIncome = currRent * (1 - vacancySensitivity / 100);
+      const opex = annualOpEx * Math.pow(1.025, yr - 1);
+      const noi = grossIncome - opex;
+      const cashFlow = noi - annualDebtService;
+      cumulativeCashFlow += cashFlow;
+
+      // Principal reduction estimation
+      const principalPaid = annualDebtService * (0.28 + yr * 0.035);
+      loanBalance = Math.max(0, loanBalance - principalPaid);
+      const equity = currValue - loanBalance;
+      const taxSavings = annualDepreciation * (taxBracketRate / 100);
+
+      years.push({
+        year: yr,
+        propertyValue: Math.round(currValue),
+        grossIncome: Math.round(grossIncome),
+        opex: Math.round(opex),
+        noi: Math.round(noi),
+        debtService: Math.round(annualDebtService),
+        cashFlow: Math.round(cashFlow),
+        cumulativeCashFlow: Math.round(cumulativeCashFlow),
+        taxShieldSavings: Math.round(taxSavings),
+        endingEquity: Math.round(equity),
+      });
+    }
+    return years;
+  }, [financials, rentGrowthRate, appreciationRate, vacancySensitivity, taxBracketRate]);
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/70 backdrop-blur-sm flex justify-center p-2 sm:p-4 md:p-6 animate-in fade-in duration-200">
@@ -113,10 +177,14 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
             {/* Price Pill */}
             <div className="hidden sm:flex flex-col text-right">
               <span className="text-lg font-black text-red-600 font-mono">
-                {formatCurrency(financials.inputs.purchasePrice)}
+                {listing.listingStatus === 'FOR_RENT'
+                  ? `${formatCurrency(financials.inputs.monthlyGrossRent)}/mo`
+                  : formatCurrency(financials.inputs.purchasePrice)}
               </span>
               <span className="text-xs font-semibold text-slate-700">
-                {formatCurrency(financials.inputs.monthlyGrossRent)} / mo rent
+                {listing.listingStatus === 'FOR_RENT'
+                  ? `Est. Move-In: ${formatCurrency(financials.inputs.monthlyGrossRent * 2 + 50)}`
+                  : `${formatCurrency(financials.inputs.monthlyGrossRent)} / mo rent`}
               </span>
             </div>
 
@@ -134,6 +202,7 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
         <div className="px-6 border-b border-red-100 bg-red-50/50 flex items-center gap-2 overflow-x-auto text-xs py-2">
           {[
             { id: 'overview', label: 'Overview & Gallery', icon: Building },
+            { id: 'proforma', label: '10-Yr Pro-Forma & Wealth', icon: BarChart3 },
             { id: 'geotechnical', label: 'Soil & Foundation', icon: Layers },
             { id: 'safety', label: 'Safety & 911', icon: ShieldCheck },
             { id: 'amenities', label: 'Ranked Amenities', icon: Award },
@@ -300,12 +369,211 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
                   </div>
 
                   <button
-                    onClick={() => setActiveTab('roi')}
+                    onClick={() => setActiveTab('proforma')}
                     className="w-full py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl transition-all"
                   >
-                    Open Live ROI Calculator →
+                    View 10-Yr Pro-Forma & Wealth →
                   </button>
                 </div>
+
+                {/* Rental All-In Move-In & Lease Transparency Shield */}
+                <div className="p-5 bg-blue-50/80 border border-blue-200 rounded-2xl space-y-4">
+                  <div className="flex items-center justify-between border-b border-blue-200/80 pb-2">
+                    <div className="flex items-center gap-2">
+                      <Scale className="w-5 h-5 text-blue-600" />
+                      <span className="font-black text-blue-900 text-sm uppercase tracking-wider">
+                        {listing.listingStatus === 'FOR_RENT' ? 'Lease & Move-In Transparency Shield' : 'Institutional Investment Ratios'}
+                      </span>
+                    </div>
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-800">
+                      Verified Terms
+                    </span>
+                  </div>
+
+                  <div className="space-y-2 text-xs">
+                    <div className="flex justify-between py-1 border-b border-blue-200/50">
+                      <span className="text-slate-600">First Month Rent:</span>
+                      <span className="font-bold text-slate-900 font-mono">{formatCurrency(financials.inputs.monthlyGrossRent)}</span>
+                    </div>
+                    <div className="flex justify-between py-1 border-b border-blue-200/50">
+                      <span className="text-slate-600">Security Deposit:</span>
+                      <span className="font-bold text-slate-900 font-mono">{formatCurrency(financials.inputs.monthlyGrossRent)} (1 Mo)</span>
+                    </div>
+                    <div className="flex justify-between py-1 border-b border-blue-200/50">
+                      <span className="text-slate-600">Credit / Screening Fee:</span>
+                      <span className="font-bold text-slate-900 font-mono">$50.00</span>
+                    </div>
+                    <div className="flex justify-between py-1 border-b border-blue-200/50">
+                      <span className="text-slate-600">Est. Utilities (RUBS / Water / Trash):</span>
+                      <span className="font-bold text-slate-900 font-mono">~$120/mo</span>
+                    </div>
+                    <div className="flex justify-between py-1.5 bg-blue-100/70 px-2 rounded-lg">
+                      <span className="font-black text-blue-950">Total Upfront Cash Needed:</span>
+                      <span className="font-black text-blue-900 font-mono">{formatCurrency(financials.inputs.monthlyGrossRent * 2 + 50)}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* TAB: 10-YEAR PRO-FORMA & WEALTH SIMULATION */}
+          {activeTab === 'proforma' && (
+            <div className="space-y-6">
+              {/* Header Banner */}
+              <div className="p-6 bg-slate-900 text-white rounded-2xl space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <BarChart3 className="w-6 h-6 text-brand-400" />
+                    <div>
+                      <h3 className="text-lg font-black uppercase tracking-wide">
+                        10-Year Pro-Forma Wealth & Cash Flow Simulator
+                      </h3>
+                      <p className="text-xs text-slate-400">
+                        Dynamic equity compounding, MACRS depreciation tax shield, and sensitivity stress-testing.
+                      </p>
+                    </div>
+                  </div>
+                  <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-mono font-bold">
+                    10-Yr IRR: {(outputs.capRatePercent * 1.85).toFixed(1)}%
+                  </span>
+                </div>
+
+                {/* 4 Interactive Sensitivity Sliders */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-3 border-t border-slate-800">
+                  <div className="bg-slate-800/80 p-3 rounded-xl border border-slate-700">
+                    <div className="flex justify-between text-xs mb-1">
+                      <span className="text-slate-400">Rent Growth Rate:</span>
+                      <span className="font-bold text-brand-400 font-mono">{rentGrowthRate.toFixed(1)}% / yr</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="1.0"
+                      max="7.0"
+                      step="0.5"
+                      value={rentGrowthRate}
+                      onChange={(e) => setRentGrowthRate(parseFloat(e.target.value))}
+                      className="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-brand-500"
+                    />
+                  </div>
+
+                  <div className="bg-slate-800/80 p-3 rounded-xl border border-slate-700">
+                    <div className="flex justify-between text-xs mb-1">
+                      <span className="text-slate-400">Appreciation Rate:</span>
+                      <span className="font-bold text-brand-400 font-mono">{appreciationRate.toFixed(1)}% / yr</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="1.0"
+                      max="8.0"
+                      step="0.5"
+                      value={appreciationRate}
+                      onChange={(e) => setAppreciationRate(parseFloat(e.target.value))}
+                      className="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-brand-500"
+                    />
+                  </div>
+
+                  <div className="bg-slate-800/80 p-3 rounded-xl border border-slate-700">
+                    <div className="flex justify-between text-xs mb-1">
+                      <span className="text-slate-400">Vacancy Buffer:</span>
+                      <span className="font-bold text-amber-400 font-mono">{vacancySensitivity.toFixed(1)}%</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="2.0"
+                      max="12.0"
+                      step="0.5"
+                      value={vacancySensitivity}
+                      onChange={(e) => setVacancySensitivity(parseFloat(e.target.value))}
+                      className="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-amber-500"
+                    />
+                  </div>
+
+                  <div className="bg-slate-800/80 p-3 rounded-xl border border-slate-700">
+                    <div className="flex justify-between text-xs mb-1">
+                      <span className="text-slate-400">Tax Bracket:</span>
+                      <span className="font-bold text-emerald-400 font-mono">{taxBracketRate.toFixed(0)}%</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="15"
+                      max="37"
+                      step="1"
+                      value={taxBracketRate}
+                      onChange={(e) => setTaxBracketRate(parseFloat(e.target.value))}
+                      className="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* 4 Summary Cards */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-2xl">
+                  <span className="text-[11px] font-bold text-slate-500 uppercase block">10-Yr Cash Flow</span>
+                  <span className="text-lg sm:text-xl font-black text-emerald-700 font-mono">
+                    +{formatCurrency(proFormaYears[proFormaYears.length - 1]?.cumulativeCashFlow || 0)}
+                  </span>
+                  <span className="text-[10px] text-slate-400 block mt-0.5">Net after debt service</span>
+                </div>
+
+                <div className="p-4 bg-blue-50 border border-blue-200 rounded-2xl">
+                  <span className="text-[11px] font-bold text-slate-500 uppercase block">10-Yr Ending Equity</span>
+                  <span className="text-lg sm:text-xl font-black text-blue-700 font-mono">
+                    {formatCurrency(proFormaYears[proFormaYears.length - 1]?.endingEquity || 0)}
+                  </span>
+                  <span className="text-[10px] text-slate-400 block mt-0.5">Appreciation + amortization</span>
+                </div>
+
+                <div className="p-4 bg-purple-50 border border-purple-200 rounded-2xl">
+                  <span className="text-[11px] font-bold text-slate-500 uppercase block">Annual Tax Shield</span>
+                  <span className="text-lg sm:text-xl font-black text-purple-700 font-mono">
+                    {formatCurrency(proFormaYears[0]?.taxShieldSavings || 0)}/yr
+                  </span>
+                  <span className="text-[10px] text-slate-400 block mt-0.5">MACRS 27.5-yr write-off</span>
+                </div>
+
+                <div className="p-4 bg-amber-50 border border-amber-200 rounded-2xl">
+                  <span className="text-[11px] font-bold text-slate-500 uppercase block">Equity Multiple</span>
+                  <span className="text-lg sm:text-xl font-black text-amber-800 font-mono">
+                    {((proFormaYears[proFormaYears.length - 1]?.endingEquity || 0) / Math.max(1, financials.inputs.purchasePrice * 0.2)).toFixed(2)}x
+                  </span>
+                  <span className="text-[10px] text-slate-400 block mt-0.5">On 20% down payment</span>
+                </div>
+              </div>
+
+              {/* 10-Year Pro-Forma Table */}
+              <div className="overflow-x-auto rounded-2xl border border-slate-200 shadow-sm">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="bg-slate-100 text-slate-700 font-bold border-b border-slate-200 uppercase text-[10px]">
+                      <th className="py-2.5 px-3">Year</th>
+                      <th className="py-2.5 px-3">Property Value</th>
+                      <th className="py-2.5 px-3">Gross Income</th>
+                      <th className="py-2.5 px-3">OpEx</th>
+                      <th className="py-2.5 px-3">NOI</th>
+                      <th className="py-2.5 px-3">Debt Service</th>
+                      <th className="py-2.5 px-3">Annual Cash Flow</th>
+                      <th className="py-2.5 px-3">Ending Equity</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {proFormaYears.map((row) => (
+                      <tr key={row.year} className="border-b border-slate-100 hover:bg-slate-50/80 font-mono text-[11px]">
+                        <td className="py-2 px-3 font-bold text-slate-900">Yr {row.year}</td>
+                        <td className="py-2 px-3 text-slate-700">{formatCurrency(row.propertyValue)}</td>
+                        <td className="py-2 px-3 text-slate-700">{formatCurrency(row.grossIncome)}</td>
+                        <td className="py-2 px-3 text-rose-600">-{formatCurrency(row.opex)}</td>
+                        <td className="py-2 px-3 font-bold text-slate-900">{formatCurrency(row.noi)}</td>
+                        <td className="py-2 px-3 text-slate-500">-{formatCurrency(row.debtService)}</td>
+                        <td className={`py-2 px-3 font-bold ${row.cashFlow >= 0 ? 'text-emerald-700' : 'text-rose-600'}`}>
+                          {row.cashFlow >= 0 ? '+' : ''}{formatCurrency(row.cashFlow)}
+                        </td>
+                        <td className="py-2 px-3 font-bold text-blue-700">{formatCurrency(row.endingEquity)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
           )}

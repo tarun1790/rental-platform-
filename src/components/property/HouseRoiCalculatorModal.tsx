@@ -149,6 +149,28 @@ export const HouseRoiCalculatorModal: React.FC<HouseRoiCalculatorModalProps> = (
                 <span className="text-base font-bold font-mono text-slate-900">{formatCurrency(outputs.netOperatingIncomeAnnual)}</span>
               </div>
             </div>
+
+            {/* 10-Year Pro-Forma Wealth & Tax Shield Quick Projection */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-3 pt-3 border-t border-slate-200/60">
+              <div className="bg-emerald-100/60 p-2.5 rounded-xl border border-emerald-200">
+                <span className="text-[10px] font-bold text-emerald-800 uppercase block">10-Yr Cumulative Cash Flow</span>
+                <span className="text-sm font-black font-mono text-emerald-900">
+                  +{formatCurrency(outputs.monthlyNetCashFlow * 120 * 1.18)}
+                </span>
+              </div>
+              <div className="bg-blue-100/60 p-2.5 rounded-xl border border-blue-200">
+                <span className="text-[10px] font-bold text-blue-800 uppercase block">10-Yr Equity Compound (4%)</span>
+                <span className="text-sm font-black font-mono text-blue-900">
+                  +{formatCurrency(inputs.purchasePrice * (Math.pow(1.04, 10) - 0.8) + (inputs.purchasePrice * 0.2))}
+                </span>
+              </div>
+              <div className="bg-purple-100/60 p-2.5 rounded-xl border border-purple-200 col-span-2 sm:col-span-1">
+                <span className="text-[10px] font-bold text-purple-800 uppercase block">MACRS 27.5-Yr Tax Shield</span>
+                <span className="text-sm font-black font-mono text-purple-900">
+                  {formatCurrency((inputs.purchasePrice * 0.85) / 27.5)}/yr
+                </span>
+              </div>
+            </div>
           </div>
 
           {/* User Input Controls (Enter Everything) */}

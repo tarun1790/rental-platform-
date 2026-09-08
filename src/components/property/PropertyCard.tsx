@@ -1,12 +1,14 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { 
   Bed, 
   Bath, 
   Square, 
   MapPin, 
-  ChevronRight, 
+  ChevronRight,
+  ChevronLeft,
+  Camera,
   Plane, 
   TreePine, 
   Flame, 
@@ -45,6 +47,25 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
   const { specs, geotechnical, financials, propertyAddress, media, propertyTaxes, roomsBreakdown, forestResources, timezone, airport, heatWaves, policeCorridor, climateTelemetry, nearbyPointsOfInterest } = listing;
   const { inputs, outputs } = financials;
 
+  const [activePhotoIdx, setActivePhotoIdx] = useState(0);
+
+  // Deduplicate and assemble authentic photo stream
+  const photoList = useMemo(() => {
+    const raw = [media?.featuredImage, ...(media?.gallery || [])].filter(Boolean) as string[];
+    const unique = Array.from(new Set(raw));
+    return unique.length > 0 ? unique : ['https://photos.zillowstatic.com/fp/848f6a9144d553a02d967df41e3ccb9d-p_e.jpg'];
+  }, [media]);
+
+  const handlePrevPhoto = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setActivePhotoIdx((prev) => (prev > 0 ? prev - 1 : photoList.length - 1));
+  };
+
+  const handleNextPhoto = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setActivePhotoIdx((prev) => (prev < photoList.length - 1 ? prev + 1 : 0));
+  };
+
   const dimScores = React.useMemo(() => {
     return scorePropertyDimensions(listing, buyerWeights || DEFAULT_PRIORITY_WEIGHTS);
   }, [listing, buyerWeights]);
@@ -62,16 +83,55 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
           : 'border-slate-200 hover:border-slate-300 hover:shadow-sm'
       }`}
     >
-      {/* 1. Spacious Photo Container (Top) */}
-      <div className="relative aspect-[16/10] w-full overflow-hidden bg-slate-100">
+      {/* 1. Interactive Multi-Photo Container with Live Carousel Controls */}
+      <div className="relative aspect-[16/10] w-full overflow-hidden bg-slate-900 select-none">
         <img
-          src={media.featuredImage}
-          alt={listing.title}
+          src={photoList[activePhotoIdx] || media.featuredImage}
+          alt={`${listing.title} - photo ${activePhotoIdx + 1}`}
           className="w-full h-full object-cover transition-transform duration-500 ease-out"
         />
 
+        {/* Next / Previous In-Card Navigation Controls (Visible on hover or mobile) */}
+        {photoList.length > 1 && (
+          <>
+            <button
+              onClick={handlePrevPhoto}
+              className="absolute left-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-black/60 hover:bg-black/80 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm shadow-md cursor-pointer z-10"
+              title="Previous photo"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <button
+              onClick={handleNextPhoto}
+              className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-black/60 hover:bg-black/80 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm shadow-md cursor-pointer z-10"
+              title="Next photo"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+
+            {/* Bottom Carousel Indicator Pills & Photo Counter */}
+            <div className="absolute bottom-2 inset-x-2 flex items-center justify-between pointer-events-none z-10">
+              <div className="flex items-center gap-1 bg-black/60 backdrop-blur-sm px-2 py-0.5 rounded-full text-[10px] font-bold text-white font-mono">
+                <Camera className="w-2.5 h-2.5 text-red-400" />
+                <span>{activePhotoIdx + 1} / {photoList.length}</span>
+              </div>
+
+              <div className="flex items-center gap-1">
+                {photoList.map((_, pIdx) => (
+                  <span
+                    key={pIdx}
+                    className={`h-1.5 rounded-full transition-all ${
+                      pIdx === activePhotoIdx ? 'w-4 bg-white' : 'w-1.5 bg-white/50'
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
+          </>
+        )}
+
         {/* Top Floating Badges */}
-        <div className="absolute top-3.5 inset-x-3.5 flex items-center justify-between pointer-events-none">
+        <div className="absolute top-3.5 inset-x-3.5 flex items-center justify-between pointer-events-none z-10">
           {/* Decision Fit Score Pill */}
           <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-900/90 text-white font-mono text-xs font-bold shadow-sm backdrop-blur-sm">
             <Sparkles className="w-3.5 h-3.5 text-red-400" />
@@ -107,10 +167,14 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
         <div className="flex items-baseline justify-between">
           <div className="flex items-baseline gap-2">
             <span className="text-2xl font-bold text-red-500 font-mono tracking-tight">
-              {formatCurrency(inputs.purchasePrice)}
+              {listing.listingStatus === 'FOR_RENT'
+                ? `${formatCurrency(inputs.monthlyGrossRent)}/mo`
+                : formatCurrency(inputs.purchasePrice)}
             </span>
             <span className="text-xs font-medium text-slate-400 font-mono">
-              {formatCurrency(inputs.monthlyGrossRent)}/mo rent
+              {listing.listingStatus === 'FOR_RENT'
+                ? `Est. Move-In: ${formatCurrency(inputs.monthlyGrossRent * 2 + 50)}`
+                : `${formatCurrency(inputs.monthlyGrossRent)}/mo rent`}
             </span>
           </div>
 
