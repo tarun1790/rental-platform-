@@ -237,8 +237,8 @@ export const ScribbleMap: React.FC<ScribbleMapProps> = ({
         const poiLat = homeLat + latOffset;
         const poiLng = homeLng + lngOffset;
 
-        const isSchool = poi.type === 'SCHOOL' || poi.categoryLabel.toLowerCase().includes('school');
-        const isMall = poi.type === 'MALL' || poi.categoryLabel.toLowerCase().includes('mall') || poi.categoryLabel.toLowerCase().includes('retail');
+        const isSchool = poi.type === 'SCHOOL' || (poi.categoryLabel && poi.categoryLabel.toLowerCase().includes('school'));
+        const isMall = poi.type === 'MALL' || (poi.categoryLabel && (poi.categoryLabel.toLowerCase().includes('mall') || poi.categoryLabel.toLowerCase().includes('retail')));
         const iconSymbol = isSchool ? '🎓' : isMall ? '🛍️' : poi.type === 'HOSPITAL' ? '🏥' : '🚆';
         const badgeBg = isSchool ? 'bg-emerald-600 text-white' : isMall ? 'bg-amber-500 text-white' : 'bg-slate-800 text-white';
 

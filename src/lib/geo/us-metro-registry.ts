@@ -178,6 +178,143 @@ export const US_METROS_REGISTRY: Record<string, UsMetroConfig> = {
       { id: 'mia_m5', type: 'MALL', name: 'Aventura Mall', categoryLabel: 'Premier Super-Regional Mall', distanceKm: 24.8, distanceMiles: 15.4, walkTimeMinutes: 290, driveTimeMinutes: 28, ratingScore: 4.9, keyHighlight: 'Hermès, Gucci, Apple, monumental slide tower by Carsten Höller' },
     ],
   },
+  // 6. NEW YORK, NY
+  'new_york': {
+    city: 'New York',
+    state: 'New York',
+    stateCode: 'NY',
+    primaryZip: '10013',
+    countyName: 'New York County',
+    effectiveTaxRatePercent: 1.45,
+    centerCoordinates: { latitude: 40.7128, longitude: -74.0060 },
+    neighborhoods: ['Tribeca', 'SoHo', 'West Village', 'Upper East Side', 'Upper West Side', 'Chelsea', 'Brooklyn Heights', 'Manhattan'],
+    streetNames: ['Greenwich St', 'Spring St', 'Perry St', 'Madison Ave', 'Columbus Ave', '7th Ave'],
+    policeDepartment: 'New York City Police Department (NYPD 1st Precinct)',
+    patrolBenchmarkMinutes: 3.4,
+    primaryAirport: { name: 'John F. Kennedy International Airport', iata: 'JFK', distanceKm: 26.5 },
+    timeZone: { name: 'Eastern Standard Time', code: 'EST', utcOffset: 'UTC-5' },
+    topSchools: [
+      { id: 'ny_s1', type: 'SCHOOL', name: 'Stuyvesant High School', categoryLabel: 'Specialized High School', distanceKm: 1.2, distanceMiles: 0.75, walkTimeMinutes: 14, driveTimeMinutes: 4, ratingScore: 10.0, keyHighlight: 'Ranked #1 Public High School in New York State' },
+    ],
+    topMalls: [
+      { id: 'ny_m1', type: 'MALL', name: 'The Shops at Columbus Circle', categoryLabel: 'Urban Luxury Center', distanceKm: 1.8, distanceMiles: 1.1, walkTimeMinutes: 22, driveTimeMinutes: 6, ratingScore: 4.8, keyHighlight: 'Whole Foods, Coach, Equinox, luxury boutique dining' },
+    ],
+  },
+
+  // 7. LOS ANGELES, CA
+  'los_angeles': {
+    city: 'Los Angeles',
+    state: 'California',
+    stateCode: 'CA',
+    primaryZip: '90401',
+    countyName: 'Los Angeles County',
+    effectiveTaxRatePercent: 0.79,
+    centerCoordinates: { latitude: 34.0522, longitude: -118.2437 },
+    neighborhoods: ['Santa Monica', 'Beverly Hills', 'Silver Lake', 'West Hollywood', 'Venice', 'Brentwood', 'Pasadena'],
+    streetNames: ['Wilshire Blvd', 'Santa Monica Blvd', 'Rodeo Dr', 'Sunset Blvd', 'Ocean Ave'],
+    policeDepartment: 'Los Angeles Police Department (LAPD West Los Angeles)',
+    patrolBenchmarkMinutes: 4.6,
+    primaryAirport: { name: 'Los Angeles International Airport', iata: 'LAX', distanceKm: 19.8 },
+    timeZone: { name: 'Pacific Standard Time', code: 'PST', utcOffset: 'UTC-8' },
+    topSchools: [
+      { id: 'la_s1', type: 'SCHOOL', name: 'Harvard-Westlake School', categoryLabel: 'Private Preparatory', distanceKm: 3.2, distanceMiles: 2.0, walkTimeMinutes: 38, driveTimeMinutes: 8, ratingScore: 10.0, keyHighlight: 'Prestigious independent day school' },
+    ],
+    topMalls: [
+      { id: 'la_m1', type: 'MALL', name: 'The Grove Los Angeles', categoryLabel: 'Open-Air Retail Destination', distanceKm: 2.1, distanceMiles: 1.3, walkTimeMinutes: 25, driveTimeMinutes: 5, ratingScore: 4.9, keyHighlight: 'Nordstrom, Apple, outdoor promenade' },
+    ],
+  },
+
+  // 8. SAN FRANCISCO, CA
+  'san_francisco': {
+    city: 'San Francisco',
+    state: 'California',
+    stateCode: 'CA',
+    primaryZip: '94115',
+    countyName: 'San Francisco County',
+    effectiveTaxRatePercent: 0.72,
+    centerCoordinates: { latitude: 37.7749, longitude: -122.4194 },
+    neighborhoods: ['Pacific Heights', 'Marina', 'SoMa', 'Nob Hill', 'Presidio Heights', 'Noe Valley', 'Mission'],
+    streetNames: ['Broadway', 'Chestnut St', 'Union St', 'Fillmore St', 'California St'],
+    policeDepartment: 'San Francisco Police Department (Northern Station)',
+    patrolBenchmarkMinutes: 4.1,
+    primaryAirport: { name: 'San Francisco International Airport', iata: 'SFO', distanceKm: 21.2 },
+    timeZone: { name: 'Pacific Standard Time', code: 'PST', utcOffset: 'UTC-8' },
+    topSchools: [
+      { id: 'sf_s1', type: 'SCHOOL', name: 'Lowell High School', categoryLabel: 'Public Magnet High School', distanceKm: 2.6, distanceMiles: 1.6, walkTimeMinutes: 30, driveTimeMinutes: 7, ratingScore: 10.0, keyHighlight: 'Distinguished public exam academy' },
+    ],
+    topMalls: [
+      { id: 'sf_m1', type: 'MALL', name: 'Westfield San Francisco Centre', categoryLabel: 'Urban Shopping Destination', distanceKm: 1.5, distanceMiles: 0.9, walkTimeMinutes: 18, driveTimeMinutes: 4, ratingScore: 4.7, keyHighlight: 'Bloomingdales, Nordstrom flagship, dome dining' },
+    ],
+  },
+
+  // 9. BOSTON, MA
+  'boston': {
+    city: 'Boston',
+    state: 'Massachusetts',
+    stateCode: 'MA',
+    primaryZip: '02116',
+    countyName: 'Suffolk County',
+    effectiveTaxRatePercent: 1.15,
+    centerCoordinates: { latitude: 42.3601, longitude: -71.0589 },
+    neighborhoods: ['Back Bay', 'Beacon Hill', 'South End', 'Cambridge', 'Seaport', 'Charlestown'],
+    streetNames: ['Newbury St', 'Boylston St', 'Commonwealth Ave', 'Beacon St', 'Charles St'],
+    policeDepartment: 'Boston Police Department (District D-4)',
+    patrolBenchmarkMinutes: 3.6,
+    primaryAirport: { name: 'Boston Logan International Airport', iata: 'BOS', distanceKm: 8.5 },
+    timeZone: { name: 'Eastern Standard Time', code: 'EST', utcOffset: 'UTC-5' },
+    topSchools: [
+      { id: 'bos_s1', type: 'SCHOOL', name: 'Boston Latin School', categoryLabel: 'Public Exam School', distanceKm: 1.9, distanceMiles: 1.2, walkTimeMinutes: 22, driveTimeMinutes: 5, ratingScore: 10.0, keyHighlight: 'Oldest public school in America' },
+    ],
+    topMalls: [
+      { id: 'bos_m1', type: 'MALL', name: 'Prudential Center Boston', categoryLabel: 'Urban Luxury Center', distanceKm: 1.2, distanceMiles: 0.75, walkTimeMinutes: 15, driveTimeMinutes: 3, ratingScore: 4.8, keyHighlight: 'Saks Fifth Avenue, Eataly, skywalk observatory' },
+    ],
+  },
+
+  // 10. DALLAS, TX
+  'dallas': {
+    city: 'Dallas',
+    state: 'Texas',
+    stateCode: 'TX',
+    primaryZip: '75205',
+    countyName: 'Dallas County',
+    effectiveTaxRatePercent: 1.93,
+    centerCoordinates: { latitude: 32.7767, longitude: -96.7970 },
+    neighborhoods: ['Highland Park', 'Uptown', 'University Park', 'Lakewood', 'Preston Hollow', 'Deep Ellum'],
+    streetNames: ['Preston Rd', 'McKinney Ave', 'Oak Lawn Ave', 'Mockingbird Ln', 'Turtle Creek Blvd'],
+    policeDepartment: 'Dallas Police Department (Central Division)',
+    patrolBenchmarkMinutes: 4.3,
+    primaryAirport: { name: 'Dallas/Fort Worth International Airport', iata: 'DFW', distanceKm: 29.5 },
+    timeZone: { name: 'Central Standard Time', code: 'CST', utcOffset: 'UTC-6' },
+    topSchools: [
+      { id: 'dal_s1', type: 'SCHOOL', name: 'School for the Talented and Gifted (TAG)', categoryLabel: 'Public Magnet', distanceKm: 2.8, distanceMiles: 1.7, walkTimeMinutes: 34, driveTimeMinutes: 7, ratingScore: 10.0, keyHighlight: 'Consistently ranked #1 High School in Texas' },
+    ],
+    topMalls: [
+      { id: 'dal_m1', type: 'MALL', name: 'NorthPark Center', categoryLabel: 'Premier Shopping Destination', distanceKm: 3.1, distanceMiles: 1.9, walkTimeMinutes: 37, driveTimeMinutes: 8, ratingScore: 4.9, keyHighlight: 'Neiman Marcus flagship, world-class modern sculpture collection' },
+    ],
+  },
+
+  // 11. ATLANTA, GA
+  'atlanta': {
+    city: 'Atlanta',
+    state: 'Georgia',
+    stateCode: 'GA',
+    primaryZip: '30309',
+    countyName: 'Fulton County',
+    effectiveTaxRatePercent: 1.12,
+    centerCoordinates: { latitude: 33.7490, longitude: -84.3880 },
+    neighborhoods: ['Buckhead', 'Midtown', 'Inman Park', 'Virginia-Highland', 'Old Fourth Ward', 'Decatur'],
+    streetNames: ['Peachtree St NE', 'Piedmont Ave NE', 'Ponce De Leon Ave NE', 'West Paces Ferry Rd'],
+    policeDepartment: 'Atlanta Police Department (Zone 2 Precinct)',
+    patrolBenchmarkMinutes: 4.0,
+    primaryAirport: { name: 'Hartsfield-Jackson Atlanta International Airport', iata: 'ATL', distanceKm: 18.2 },
+    timeZone: { name: 'Eastern Standard Time', code: 'EST', utcOffset: 'UTC-5' },
+    topSchools: [
+      { id: 'atl_s1', type: 'SCHOOL', name: 'Midtown High School', categoryLabel: 'Public High School', distanceKm: 1.7, distanceMiles: 1.1, walkTimeMinutes: 20, driveTimeMinutes: 5, ratingScore: 9.5, keyHighlight: 'Top ranked Atlanta Public Schools IB Academy' },
+    ],
+    topMalls: [
+      { id: 'atl_m1', type: 'MALL', name: 'Lenox Square', categoryLabel: 'Premier Luxury Mall', distanceKm: 2.9, distanceMiles: 1.8, walkTimeMinutes: 35, driveTimeMinutes: 7, ratingScore: 4.8, keyHighlight: 'Bloomingdales, Neiman Marcus, luxury designer boutiques' },
+    ],
+  },
 };
 
 /**
@@ -189,21 +326,35 @@ export function resolveUsMetro(queryLocation?: string): UsMetroConfig {
   }
 
   const clean = queryLocation.toLowerCase().trim();
+  const cleanNorm = clean.replace(/[\s-]+/g, '_');
 
-  // Check direct keys
-  if (US_METROS_REGISTRY[clean]) {
-    return US_METROS_REGISTRY[clean];
+  // 1. Check direct keys
+  if (US_METROS_REGISTRY[cleanNorm]) {
+    return US_METROS_REGISTRY[cleanNorm];
   }
 
-  // Check aliases and neighborhoods
+  // 2. Check full city names and key words first
   for (const [key, metro] of Object.entries(US_METROS_REGISTRY)) {
-    if (clean.includes(key) || clean.includes(metro.city.toLowerCase()) || clean.includes(metro.stateCode.toLowerCase())) {
+    const keyWords = key.replace(/_/g, ' ');
+    if (clean.includes(metro.city.toLowerCase()) || clean.includes(keyWords)) {
       return metro;
     }
+  }
+
+  // 3. Check neighborhoods
+  for (const [, metro] of Object.entries(US_METROS_REGISTRY)) {
     for (const n of metro.neighborhoods) {
       if (clean.includes(n.toLowerCase())) {
         return metro;
       }
+    }
+  }
+
+  // 4. Check state codes with word boundary
+  for (const [, metro] of Object.entries(US_METROS_REGISTRY)) {
+    const stateRegex = new RegExp(`\\b${metro.stateCode.toLowerCase()}\\b`, 'i');
+    if (stateRegex.test(clean)) {
+      return metro;
     }
   }
 

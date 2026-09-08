@@ -69,28 +69,52 @@ const KNOWN_LOCATIONS: Array<{
   { names: ['chicago', 'chicago il', 'il'], city: 'Chicago', state: 'IL', displayName: 'Chicago, IL' },
 
   // Colorado Metros
-  { names: ['denver', 'denver co', 'cherry creek'], city: 'Denver', state: 'CO', neighborhood: 'Cherry Creek', displayName: 'Denver (Cherry Creek), CO' },
-  { names: ['boulder', 'boulder co', 'chautauqua'], city: 'Boulder', state: 'CO', neighborhood: 'Chautauqua', displayName: 'Boulder, CO' },
-  { names: ['aspen', 'aspen co', 'red mountain'], city: 'Aspen', state: 'CO', neighborhood: 'Red Mountain', displayName: 'Aspen, CO' },
+  { names: ['cherry creek', 'cherry crek'], city: 'Denver', state: 'CO', neighborhood: 'Cherry Creek', displayName: 'Denver (Cherry Creek), CO' },
+  { names: ['chautauqua'], city: 'Boulder', state: 'CO', neighborhood: 'Chautauqua', displayName: 'Boulder (Chautauqua), CO' },
+  { names: ['boulder', 'boulder co'], city: 'Boulder', state: 'CO', displayName: 'Boulder, CO' },
+  { names: ['red mountain'], city: 'Aspen', state: 'CO', neighborhood: 'Red Mountain', displayName: 'Aspen (Red Mountain), CO' },
+  { names: ['aspen', 'aspen co'], city: 'Aspen', state: 'CO', displayName: 'Aspen, CO' },
+  { names: ['denver', 'denver co', 'dnver'], city: 'Denver', state: 'CO', displayName: 'Denver, CO' },
   { names: ['colorado', 'co'], city: 'Denver', state: 'CO', displayName: 'Colorado Region' },
 
   // Texas Metros
-  { names: ['austin', 'austin tx', 'zilker', 'south congress', 'the domain', 'domain'], city: 'Austin', state: 'TX', neighborhood: 'Zilker', displayName: 'Austin (Zilker), TX' },
-  { names: ['dallas', 'dallas tx', 'uptown dallas', 'highland park'], city: 'Dallas', state: 'TX', neighborhood: 'Uptown', displayName: 'Dallas, TX' },
+  { names: ['zilker'], city: 'Austin', state: 'TX', neighborhood: 'Zilker', displayName: 'Austin (Zilker), TX' },
+  { names: ['south congress', 'the domain', 'domain'], city: 'Austin', state: 'TX', neighborhood: 'The Domain', displayName: 'Austin (Domain), TX' },
+  { names: ['austin', 'austin tx'], city: 'Austin', state: 'TX', displayName: 'Austin, TX' },
+  { names: ['highland park', 'uptown dallas'], city: 'Dallas', state: 'TX', neighborhood: 'Highland Park', displayName: 'Dallas (Highland Park), TX' },
+  { names: ['dallas', 'dallas tx'], city: 'Dallas', state: 'TX', displayName: 'Dallas, TX' },
 
   // Washington Metros
-  { names: ['seattle', 'seattle wa', 'capitol hill', 'bellevue', 'queen anne', 'ballard'], city: 'Seattle', state: 'WA', neighborhood: 'Capitol Hill', displayName: 'Seattle (Capitol Hill), WA' },
+  { names: ['capitol hill', 'cap hill'], city: 'Seattle', state: 'WA', neighborhood: 'Capitol Hill', displayName: 'Seattle (Capitol Hill), WA' },
+  { names: ['queen anne'], city: 'Seattle', state: 'WA', neighborhood: 'Queen Anne', displayName: 'Seattle (Queen Anne), WA' },
+  { names: ['ballard'], city: 'Seattle', state: 'WA', neighborhood: 'Ballard', displayName: 'Seattle (Ballard), WA' },
+  { names: ['bellevue'], city: 'Seattle', state: 'WA', displayName: 'Bellevue, WA' },
+  { names: ['seattle', 'seattle wa'], city: 'Seattle', state: 'WA', displayName: 'Seattle, WA' },
 
   // Florida Metros
-  { names: ['miami', 'miami fl', 'brickell', 'south beach', 'coconut grove', 'coral gables'], city: 'Miami', state: 'FL', neighborhood: 'Brickell', displayName: 'Miami (Brickell), FL' },
+  { names: ['brickell', 'brickel'], city: 'Miami', state: 'FL', neighborhood: 'Brickell', displayName: 'Miami (Brickell), FL' },
+  { names: ['south beach'], city: 'Miami', state: 'FL', neighborhood: 'South Beach', displayName: 'Miami Beach, FL' },
+  { names: ['coconut grove'], city: 'Miami', state: 'FL', neighborhood: 'Coconut Grove', displayName: 'Miami (Coconut Grove), FL' },
+  { names: ['coral gables'], city: 'Miami', state: 'FL', neighborhood: 'Coral Gables', displayName: 'Coral Gables, FL' },
+  { names: ['miami', 'miami fl'], city: 'Miami', state: 'FL', displayName: 'Miami, FL' },
 
   // California Metros
-  { names: ['san francisco', 'sf', 'bay area', 'pacific heights', 'soma', 'marina'], city: 'San Francisco', state: 'CA', neighborhood: 'Pacific Heights', displayName: 'San Francisco, CA' },
-  { names: ['los angeles', 'la', 'santa monica', 'beverly hills', 'silver lake', 'pasadena'], city: 'Los Angeles', state: 'CA', neighborhood: 'Santa Monica', displayName: 'Los Angeles, CA' },
+  { names: ['pacific heights'], city: 'San Francisco', state: 'CA', neighborhood: 'Pacific Heights', displayName: 'San Francisco (Pacific Heights), CA' },
+  { names: ['soma', 'marina'], city: 'San Francisco', state: 'CA', neighborhood: 'SoMa / Marina', displayName: 'San Francisco, CA' },
+  { names: ['san francisco', 'sf', 'bay area'], city: 'San Francisco', state: 'CA', displayName: 'San Francisco, CA' },
+  { names: ['santa monica'], city: 'Los Angeles', state: 'CA', neighborhood: 'Santa Monica', displayName: 'Santa Monica, CA' },
+  { names: ['beverly hills', 'beverly hils'], city: 'Los Angeles', state: 'CA', neighborhood: 'Beverly Hills', displayName: 'Beverly Hills, CA' },
+  { names: ['silver lake', 'pasadena'], city: 'Los Angeles', state: 'CA', neighborhood: 'Silver Lake', displayName: 'Los Angeles, CA' },
+  { names: ['los angeles', 'la'], city: 'Los Angeles', state: 'CA', displayName: 'Los Angeles, CA' },
 
   // East Coast Metros
-  { names: ['new york', 'nyc', 'manhattan', 'tribeca', 'brooklyn', 'soho'], city: 'New York', state: 'NY', neighborhood: 'Tribeca', displayName: 'New York, NY' },
-  { names: ['boston', 'boston ma', 'cambridge', 'back bay', 'beacon hill'], city: 'Boston', state: 'MA', neighborhood: 'Back Bay', displayName: 'Boston, MA' },
+  { names: ['tribeca', 'manhattan', 'manhatan', 'brooklyn', 'soho'], city: 'New York', state: 'NY', neighborhood: 'Tribeca', displayName: 'New York (Tribeca), NY' },
+  { names: ['new york', 'nyc'], city: 'New York', state: 'NY', displayName: 'New York, NY' },
+  { names: ['back bay', 'beacon hill', 'newbury st'], city: 'Boston', state: 'MA', neighborhood: 'Back Bay', displayName: 'Boston (Back Bay), MA' },
+  { names: ['cambridge'], city: 'Boston', state: 'MA', displayName: 'Cambridge, MA' },
+  { names: ['boston', 'boston ma'], city: 'Boston', state: 'MA', displayName: 'Boston, MA' },
+  { names: ['buckhead'], city: 'Atlanta', state: 'GA', neighborhood: 'Buckhead', displayName: 'Atlanta (Buckhead), GA' },
+  { names: ['atlanta', 'atlanta ga'], city: 'Atlanta', state: 'GA', displayName: 'Atlanta, GA' },
 ];
 
 /**
@@ -150,7 +174,7 @@ export function parseNlpQuery(query: string): ParsedNlpQuery {
   // 2.2. Purchase Price Range (only if monthlyRentBudget is not already parsed)
   if (!monthlyRentBudget) {
     // Under / Max price: e.g., "under 800k", "below $1.2m", "less than 650000", "under $900,000"
-    const underPriceMatch = normalized.match(/(?:under|below|less than|max|up to)\s*\$?([0-9.,]+)\s*(k|m|million|thousand)?(?!\s*(?:\/mo|\/month|per month|a month|\bmo\b|\bmonth\b))/i);
+    const underPriceMatch = normalized.match(/(?:under|below|less than|max|up to)\s*\$?([0-9.,]+)\s*(k|m|million|thousand)?(?!\s*(?:\/mo|\/month|per month|a month|\bmo\b|\bmonth\b|%|percent|\bcap\b|\broi\b|\bbed\b|\bbeds\b|\bbr\b|\bbath\b|\bbaths\b))/i);
     if (underPriceMatch) {
       let val = parseFloat(underPriceMatch[1].replace(/,/g, ''));
       const unit = (underPriceMatch[2] || '').toLowerCase();
@@ -166,7 +190,7 @@ export function parseNlpQuery(query: string): ParsedNlpQuery {
     }
 
     // Min / Over price: e.g., "over 500k", "above 1m", "minimum 400k"
-    const overPriceMatch = normalized.match(/(?:over|above|greater than|min|at least)\s*\$?([0-9.,]+)\s*(k|m|million|thousand)?(?!\s*(?:\/mo|\/month|per month|a month|\bmo\b|\bmonth\b))/i);
+    const overPriceMatch = normalized.match(/(?:over|above|greater than|min|at least)\s*\$?([0-9.,]+)\s*(k|m|million|thousand)?(?!\s*(?:\/mo|\/month|per month|a month|\bmo\b|\bmonth\b|%|percent|\bcap\b|\broi\b|\bbed\b|\bbeds\b|\bbr\b|\bbath\b|\bbaths\b))/i);
     if (overPriceMatch) {
       let val = parseFloat(overPriceMatch[1].replace(/,/g, ''));
       const unit = (overPriceMatch[2] || '').toLowerCase();

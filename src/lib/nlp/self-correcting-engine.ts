@@ -161,17 +161,33 @@ export function matchHousesForCustomer(
     const passFlow = listing.financials.outputs.passFlowScore;
 
     // 1. Location Match (Weight: 30%)
-    if (parsedQuery.location?.neighborhood) {
+    if (parsedQuery.location?.city) {
+      const targetCityLower = parsedQuery.location.city.toLowerCase();
+      const isTargetCity = city.includes(targetCityLower) || targetCityLower.includes(city);
+
+      if (isTargetCity) {
+        if (parsedQuery.location?.neighborhood) {
+          if (neighborhood.includes(parsedQuery.location.neighborhood.toLowerCase())) {
+            score += 25;
+            reasons.push(`Direct neighborhood match in ${listing.propertyAddress.neighborhood}`);
+          } else {
+            score += 10;
+            reasons.push(`Located within target metro (${listing.propertyAddress.city})`);
+          }
+        } else {
+          score += 20;
+          reasons.push(`Located within target metro (${listing.propertyAddress.city})`);
+        }
+      } else {
+        // Severe penalty for properties outside the customer's target city
+        score -= 40;
+      }
+    } else if (parsedQuery.location?.neighborhood) {
       if (neighborhood.includes(parsedQuery.location.neighborhood.toLowerCase())) {
         score += 25;
         reasons.push(`Direct neighborhood match in ${listing.propertyAddress.neighborhood}`);
       } else {
         score -= 15;
-      }
-    } else if (parsedQuery.location?.city) {
-      if (city.includes(parsedQuery.location.city.toLowerCase())) {
-        score += 15;
-        reasons.push(`Located within target metro (${listing.propertyAddress.city})`);
       }
     }
 
@@ -226,14 +242,17 @@ export function matchHousesForCustomer(
     // 4. ROI & Financial Underwriting Match (Weight: 15%)
     if (parsedQuery.minCapRate !== undefined) {
       if (capRate >= parsedQuery.minCapRate) {
-        score += 15;
+        score += 20;
         reasons.push(`Institutional Cap Rate of ${capRate}% meets minimum target (≥ ${parsedQuery.minCapRate}%)`);
+      } else if (capRate >= parsedQuery.minCapRate - 1.0) {
+        score += 8;
+        reasons.push(`Competitive Cap Rate of ${capRate}% near target (≥ ${parsedQuery.minCapRate}%)`);
       } else {
-        score -= 10;
+        score -= 15;
       }
     } else if (parsedQuery.amenities.positiveCashFlow || parsedQuery.amenities.highRoiOnly) {
-      if (passFlow >= 4.0) {
-        score += 10;
+      if (passFlow >= 4.0 || capRate >= 5.0) {
+        score += 15;
         reasons.push(`Strong positive cash flow with Pass/Flow score ${passFlow} / 5.0`);
       }
     }

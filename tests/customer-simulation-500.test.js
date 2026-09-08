@@ -22,7 +22,7 @@ const ts = require('typescript');
 function loadTsModule(absPath) {
   const code = fs.readFileSync(absPath, 'utf8');
   const js = ts.transpileModule(code, {
-    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 }
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020, esModuleInterop: true }
   }).outputText;
 
   const m = { exports: {} };

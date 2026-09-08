@@ -19,6 +19,12 @@ import { isPointInsidePolygon } from '../lib/geo-utils';
 import { formatCurrency, formatPercent } from '../lib/roi-engine';
 import { crawlUsPropertyPortals } from '../lib/crawler/multi-portal-crawler';
 import { parseNlpQuery } from '../lib/nlp-search-parser';
+import LIVE_CRAWLED_DATA from '../data/live-crawled-portals.json';
+
+const INITIAL_REAL_LISTINGS: ShikaakPropertyListing[] = [
+  ...((LIVE_CRAWLED_DATA as unknown as ShikaakPropertyListing[]).slice(0, 50)),
+  ...CHICAGO_LISTINGS,
+];
 import { 
   Sparkles, 
   ArrowUpDown, 
@@ -52,9 +58,9 @@ import {
 export default function Home() {
   const router = useRouter();
 
-  // Global Listings State (Chicago & Colorado Luxury Properties + Crawled Properties)
-  const [allListings, setAllListings] = useState<ShikaakPropertyListing[]>(CHICAGO_LISTINGS);
-  const [selectedListing, setSelectedListing] = useState<ShikaakPropertyListing | null>(CHICAGO_LISTINGS[0]);
+  // Global Listings State (Real Crawled MLS Properties + Static Benchmark Properties)
+  const [allListings, setAllListings] = useState<ShikaakPropertyListing[]>(INITIAL_REAL_LISTINGS);
+  const [selectedListing, setSelectedListing] = useState<ShikaakPropertyListing | null>(INITIAL_REAL_LISTINGS[0]);
   const [modalListing, setModalListing] = useState<ShikaakPropertyListing | null>(null);
 
   // Live Real-Time Multi-Portal Crawler State
@@ -602,7 +608,7 @@ export default function Home() {
                     {formatCurrency(selectedListing.financials.inputs.monthlyGrossRent)}/mo rent
                   </span>
                   <span className="text-xs font-medium text-slate-600">
-                    • {selectedListing.specs.beds} Beds • {selectedListing.specs.baths} Baths • {selectedListing.specs.finishedSqFt.toLocaleString()} sq ft
+                    • {selectedListing.specs.beds} Beds • {selectedListing.specs.baths} Baths • {(selectedListing.specs.finishedSqFt || 1800).toLocaleString()} sq ft
                   </span>
                 </div>
 

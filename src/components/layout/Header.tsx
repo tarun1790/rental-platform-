@@ -255,6 +255,19 @@ export const Header: React.FC<HeaderProps> = ({
                     {filters.listingStatus === st && <Check className="w-3.5 h-3.5 text-red-600" />}
                   </button>
                 ))}
+                <div className="pt-1 border-t border-red-100">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      closeDropdowns();
+                      onTriggerLiveCrawl?.(undefined, exaKeyInput.trim() || undefined, filters);
+                    }}
+                    className="w-full py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-xl text-[10px] font-bold transition-all flex items-center justify-center gap-1 cursor-pointer shadow-sm"
+                  >
+                    <Globe className="w-3 h-3" />
+                    <span>Crawl Live Portals ↵</span>
+                  </button>
+                </div>
               </div>
             )}
           </div>

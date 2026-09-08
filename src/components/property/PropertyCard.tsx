@@ -70,8 +70,9 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
     return scorePropertyDimensions(listing, buyerWeights || DEFAULT_PRIORITY_WEIGHTS);
   }, [listing, buyerWeights]);
 
-  const topSchool = nearbyPointsOfInterest.find(p => p.type === 'SCHOOL' || p.categoryLabel.toLowerCase().includes('school')) || nearbyPointsOfInterest[0];
-  const topMall = nearbyPointsOfInterest.find(p => p.type === 'MALL' || p.categoryLabel.toLowerCase().includes('mall') || p.categoryLabel.toLowerCase().includes('retail')) || nearbyPointsOfInterest[1];
+  const pois = nearbyPointsOfInterest || [];
+  const topSchool = pois.find(p => p.type === 'SCHOOL' || (p.categoryLabel && p.categoryLabel.toLowerCase().includes('school'))) || pois[0];
+  const topMall = pois.find(p => p.type === 'MALL' || (p.categoryLabel && (p.categoryLabel.toLowerCase().includes('mall') || p.categoryLabel.toLowerCase().includes('retail')))) || pois[1];
 
   return (
     <div
@@ -212,7 +213,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
           </div>
           <div className="flex items-center gap-1">
             <Square className="w-3.5 h-3.5 text-slate-400" />
-            <span>{specs.finishedSqFt.toLocaleString()} sq ft</span>
+            <span>{(specs.finishedSqFt || 1800).toLocaleString()} sq ft</span>
           </div>
         </div>
 

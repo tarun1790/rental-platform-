@@ -405,7 +405,7 @@ export const BoundaryScanRadar: React.FC<BoundaryScanRadarProps> = ({
             <div className="p-3 bg-red-50/40 rounded-2xl border border-red-200 space-y-2">
               <div className="flex justify-between items-center text-xs font-bold text-red-700">
                 <span>Room Dimensions Breakdown</span>
-                <span className="font-mono">{roomsBreakdown.totalRooms} Total Rooms ({specs.finishedSqFt.toLocaleString()} sq ft)</span>
+                <span className="font-mono">{roomsBreakdown.totalRooms} Total Rooms ({(specs.finishedSqFt || 1800).toLocaleString()} sq ft)</span>
               </div>
               <div className="space-y-1.5 pt-1">
                 {roomsBreakdown.roomDetails.map((rm, idx) => (
