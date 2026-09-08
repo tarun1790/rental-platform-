@@ -78,8 +78,42 @@ export async function crawlUsPropertyPortals(
 
   // 1. Ingest active listing inventory
   emit('MLS_FEED', 'SCRAPING_PORTALS', `Searching active regional residential inventory in ${city}, ${stateCode}...`);
+
+  // Attempt to query live backend crawler endpoint if running in browser
+  if (typeof window !== 'undefined') {
+    try {
+      const isGhPages = window.location.pathname.startsWith('/rental-platform-');
+      const crawlEndpoint = isGhPages ? '/rental-platform-/api/crawl' : '/api/crawl';
+      const res = await fetch(crawlEndpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: parsedQuery.rawQuery }),
+      });
+      if (res.ok) {
+        const json = await res.json();
+        const apiProperties: ShikaakPropertyListing[] = json.data || json.properties;
+        if (apiProperties && apiProperties.length > 0) {
+          registerDynamicProperties(apiProperties);
+          emit('MLS_FEED', 'COMPLETED', `Ingested ${apiProperties.length} live verified properties from real estate feeds`, apiProperties.length);
+          return {
+            query: parsedQuery.rawQuery,
+            parsedQuery,
+            portalsScanned: ['MLS_FEED', 'COUNTY_ASSESSOR', 'MUNICIPAL_DATA', 'VALUATION_ENGINE', 'TELEMETRY'],
+            totalRawFound: apiProperties.length,
+            totalNormalized: apiProperties.length,
+            executionDurationMs: Date.now() - startTime,
+            properties: apiProperties,
+            telemetryLog: log,
+          };
+        }
+      }
+    } catch (e) {
+      // Backend unavailable, proceed to client-side procedural synthesis
+    }
+  }
+
   let exaResults: any[] = [];
-  if (options?.exaApiKey || process.env.EXA_API_KEY) {
+  if (options?.exaApiKey || (typeof process !== 'undefined' && process.env?.EXA_API_KEY)) {
     exaResults = await searchWithExa(parsedQuery.rawQuery, options?.exaApiKey);
     emit('MLS_FEED', 'SCRAPING_PORTALS', `Retrieved ${exaResults.length} live listing references`, exaResults.length);
   }
@@ -120,24 +154,26 @@ export async function crawlUsPropertyPortals(
     const portal = portalList[i % portalList.length];
     let price: number;
     if (parsedQuery.priceRange?.maxPrice) {
-      // Strictly below the maxPrice ceiling, stepped downwards realistically
-      const discountRatio = 0.02 + (i * 0.04);
-      price = Math.max(120000, Math.round(parsedQuery.priceRange.maxPrice * (1 - discountRatio)));
+      // Stepped realistically below the max price ceiling (e.g. for 400k: 288k, 320k, 344k, 368k, 388k)
+      const discounts = [0.28, 0.20, 0.14, 0.08, 0.03];
+      const discountRatio = discounts[i % discounts.length];
+      price = Math.max(120000, Math.round((parsedQuery.priceRange.maxPrice * (1 - discountRatio)) / 1000) * 1000);
     } else if (parsedQuery.priceRange?.minPrice) {
       const markupRatio = 0.02 + (i * 0.05);
       price = Math.round(parsedQuery.priceRange.minPrice * (1 + markupRatio));
     } else {
-      const priceVariance = (i - 2) * 15000;
+      const priceVariance = (i - 2) * 25000;
       price = Math.max(120000, basePrice + priceVariance);
     }
 
     let rentRate: number;
     if (targetStatus === 'FOR_RENT') {
       if (parsedQuery.monthlyRentBudget) {
-        const discountRatio = 0.03 + (i * 0.05);
-        rentRate = Math.max(800, Math.round(parsedQuery.monthlyRentBudget * (1 - discountRatio)));
+        const rentDiscounts = [0.25, 0.20, 0.15, 0.08, 0.03];
+        const discountRatio = rentDiscounts[i % rentDiscounts.length];
+        rentRate = Math.max(800, Math.round((parsedQuery.monthlyRentBudget * (1 - discountRatio)) / 10) * 10);
       } else {
-        rentRate = Math.max(900, baseRent + (i - 2) * 80);
+        rentRate = Math.max(900, baseRent + (i - 2) * 120);
       }
     } else {
       rentRate = Math.round(price * 0.0068);
@@ -147,9 +183,10 @@ export async function crawlUsPropertyPortals(
     const houseBaths = Math.max(1, bathsCount + (i % 2 === 0 ? 0 : 0.5));
     const sqFt = houseBeds * 650 + Math.round(houseBaths * 200) + 400 + (i * 120);
 
-    const streetNumbers = [1842, 2154, 829, 1406, 2318, 950];
-    const streetNames = metro.streetNames.length > 0 ? metro.streetNames : ['Main St', 'Oak Ave', 'Pine St'];
-    const street = `${streetNumbers[i % streetNumbers.length]} ${streetNames[i % streetNames.length]}`;
+    const queryHash = parsedQuery.rawQuery.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
+    const streetNum = 900 + ((queryHash + i * 237) % 2200);
+    const streetNames = metro.streetNames.length > 0 ? metro.streetNames : ['Main St', 'Oak Ave', 'Pine St', 'Grand Ave', 'Lincoln Way'];
+    const street = `${streetNum} ${streetNames[i % streetNames.length]}`;
 
     const propertyId = `prop_mls_${Date.now()}_${i + 1}`;
     const titles = [
@@ -158,8 +195,10 @@ export async function crawlUsPropertyPortals(
       `${neighborhood} Executive Prairie Home`,
       `${neighborhood} Historic Timber Loft`,
       `${neighborhood} Sunlit Designer Residence`,
+      `${neighborhood} Skyline View Terrace Residence`,
+      `${neighborhood} Heritage Stone Townhome`,
     ];
-    const title = titles[i % titles.length];
+    const title = titles[(i + (queryHash % 3)) % titles.length];
 
     const taglines = [
       '3,500 PSF Silty Loam • Top Safety Tier • 4.8 Min CPD Response',

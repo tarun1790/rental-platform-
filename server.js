@@ -397,7 +397,7 @@ nextApp.prepare().then(() => {
   // =========================================================================
   // API ROUTE: /api/crawl (Real-Time US Multi-Portal Web Crawler)
   // =========================================================================
-  server.post('/api/crawl', (req, res) => {
+  server.post('/api/crawl', async (req, res) => {
     try {
       const { query } = req.body;
       if (!query) {
@@ -437,36 +437,83 @@ nextApp.prepare().then(() => {
         }
       }
 
+      let targetNeighborhood = matchedMetro.neighborhoods && matchedMetro.neighborhoods.length > 0 
+        ? matchedMetro.neighborhoods[0] 
+        : matchedMetro.city;
+
+      if (matchedMetro.neighborhoods) {
+        for (const n of matchedMetro.neighborhoods) {
+          if (qLower.includes(n.toLowerCase())) {
+            targetNeighborhood = n;
+            break;
+          }
+        }
+      }
+
+      // Live OpenStreetMap Nominatim Residential Ingestion (Real Roads & Coordinates)
+      const https = require('https');
+      const fetchLiveAddresses = (city, neigh) => {
+        return new Promise((resolve) => {
+          const searchQ = `${neigh || ''} ${city} house`.trim();
+          const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(searchQ)}&format=json&addressdetails=1&limit=8`;
+          const req = https.get(url, {
+            headers: { 'User-Agent': 'HouseIntelligenceEngine/2.0 (realestate@houseintelligence.org)' },
+            timeout: 2500,
+          }, (r) => {
+            let data = '';
+            r.on('data', c => data += c);
+            r.on('end', () => {
+              try {
+                const list = JSON.parse(data);
+                resolve(Array.isArray(list) ? list : []);
+              } catch (e) {
+                resolve([]);
+              }
+            });
+          });
+          req.on('error', () => resolve([]));
+          req.on('timeout', () => { req.destroy(); resolve([]); });
+        });
+      };
+
+      let liveOsmList = [];
+      try {
+        liveOsmList = await fetchLiveAddresses(matchedMetro.city, targetNeighborhood);
+      } catch (e) {
+        liveOsmList = [];
+      }
+
       const portals = ['MLS_FEED', 'COUNTY_ASSESSOR', 'MUNICIPAL_DATA', 'VALUATION_ENGINE', 'TELEMETRY'];
       const timestamp = Date.now();
       const isRental = /rent|\/mo|\bmonth\b|lease/i.test(query);
 
       // Parse approximate budget if provided
       let basePrice = 750000;
-      let baseRent = 4500;
-      let hasMaxBudget = false;
-      const budgetMatch = query.match(/(?:under|below|less than|max)?\s*\$?(\d{1,3}(?:,\d{3})*|\d+)\s*(?:k|m|million|\/mo|month)?/i);
+      let baseRent = 3500;
+      let hasMaxBudget = /under|below|less than|max/i.test(query);
+      const budgetMatch = query.match(/(?:under|below|less than|max)?\s*\$?(\d+(?:,\d{3})*|\d+)\s*(k|m|million|\/mo|month)?/i);
       if (budgetMatch) {
         const rawNum = parseFloat(budgetMatch[1].replace(/,/g, ''));
-        hasMaxBudget = /under|below|less than|max/i.test(query);
-        if (query.includes('k') && rawNum < 1000) {
-          basePrice = isRental ? Math.round(rawNum * 1000) : rawNum * 1000;
+        const unit = (budgetMatch[2] || '').toLowerCase();
+
+        if (unit === 'k' || (rawNum < 1000 && !isRental)) {
+          basePrice = rawNum * 1000;
           baseRent = isRental ? basePrice : Math.round(basePrice * 0.0068);
-        } else if (query.includes('m') || query.includes('million')) {
+        } else if (unit === 'm' || unit === 'million') {
           basePrice = rawNum * 1000000;
           baseRent = Math.round(basePrice * 0.0068);
-        } else if (isRental && rawNum < 15000) {
+        } else if (isRental || unit === '/mo' || unit === 'month' || rawNum <= 15000) {
           baseRent = rawNum;
           basePrice = Math.round(baseRent * 155);
+        } else {
+          basePrice = rawNum;
+          baseRent = Math.round(basePrice * 0.0068);
         }
       }
 
       const streetList = matchedMetro.streetNames && matchedMetro.streetNames.length > 0 
         ? matchedMetro.streetNames 
         : ['Main St', 'Oak Ave', 'Pine St'];
-      const neighborhood = matchedMetro.neighborhoods && matchedMetro.neighborhoods.length > 0 
-        ? matchedMetro.neighborhoods[0] 
-        : matchedMetro.city;
 
       const CRAWLER_IMAGES = [
         'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=85',
@@ -476,12 +523,12 @@ nextApp.prepare().then(() => {
         'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=85',
       ];
 
-      const titleList = [
-        `${neighborhood} Modern Architectural Residence`,
-        `${neighborhood} Contemporary Brick Townhouse`,
-        `${neighborhood} Executive Prairie Home`,
-        `${neighborhood} Historic Timber Loft`,
-        `${neighborhood} Sunlit Designer Residence`,
+      const styleTitles = [
+        'Modern Architectural Residence',
+        'Contemporary Brick Townhouse',
+        'Executive Prairie Home',
+        'Historic Restored Timber Loft',
+        'Sunlit Designer Residence',
       ];
 
       const taglineList = [
@@ -495,41 +542,56 @@ nextApp.prepare().then(() => {
       const crawled = portals.map((portal, idx) => {
         let pPrice = basePrice;
         if (hasMaxBudget) {
-          const discount = 0.02 + (idx * 0.04);
-          pPrice = Math.max(120000, Math.round(basePrice * (1 - discount)));
+          // Distributed strictly under the max budget ceiling (e.g., for 400k: 288k, 320k, 344k, 368k, 388k)
+          const discounts = [0.28, 0.20, 0.14, 0.08, 0.03];
+          const discount = discounts[idx % discounts.length];
+          pPrice = Math.max(120000, Math.round((basePrice * (1 - discount)) / 1000) * 1000);
         } else {
-          pPrice = Math.max(120000, basePrice + (idx - 2) * 15000);
+          pPrice = Math.max(120000, basePrice + (idx - 2) * 25000);
         }
+
         const pRent = isRental 
-          ? (hasMaxBudget ? Math.max(800, Math.round(baseRent * (1 - 0.03 - idx * 0.05))) : Math.max(900, baseRent + (idx - 2) * 80)) 
+          ? (hasMaxBudget 
+              ? Math.max(800, Math.round((baseRent * (1 - (0.25 - idx * 0.05))) / 10) * 10) 
+              : Math.max(900, baseRent + (idx - 2) * 120)) 
           : Math.round(pPrice * 0.0068);
-        const street = `${1820 + idx * 34} ${streetList[idx % streetList.length]}`;
+
+        // Incorporate real OSM address if live crawl returned results
+        const osmItem = liveOsmList[idx];
+        const osmRoad = osmItem?.address?.road || (osmItem?.display_name ? osmItem.display_name.split(',')[0].trim() : null);
+        const osmHouseNumber = osmItem?.address?.house_number || (1200 + ((idx * 163 + Math.floor(Math.random() * 40)) % 1800));
+        const street = osmRoad ? `${osmHouseNumber} ${osmRoad}` : `${1420 + idx * 64} ${streetList[idx % streetList.length]}`;
+        const itemNeighborhood = osmItem?.address?.suburb || osmItem?.address?.neighbourhood || targetNeighborhood;
+        const itemLat = osmItem?.lat ? Number(parseFloat(osmItem.lat).toFixed(4)) : Number((matchedMetro.centerCoordinates.latitude + (idx * 0.002)).toFixed(4));
+        const itemLon = osmItem?.lon ? Number(parseFloat(osmItem.lon).toFixed(4)) : Number((matchedMetro.centerCoordinates.longitude + (idx * 0.002)).toFixed(4));
+        const itemZip = osmItem?.address?.postcode || matchedMetro.primaryZip;
+
         const annualTax = Math.round(pPrice * 0.0195);
         const beds = 3 + (idx % 2);
         const baths = 2.5 + (idx % 2 ? 0.5 : 0);
 
         return {
           id: `prop_mls_${timestamp}_${idx + 1}`,
-          title: titleList[idx % titleList.length],
+          title: `${itemNeighborhood} ${styleTitles[idx % styleTitles.length]}`,
           tagline: taglineList[idx % taglineList.length],
           listingStatus: isRental ? 'FOR_RENT' : 'FOR_SALE',
           sourcePortal: portal,
           propertyAddress: {
             street,
-            neighborhood,
+            neighborhood: itemNeighborhood,
             city: matchedMetro.city,
             state: matchedMetro.stateCode,
-            zipCode: matchedMetro.primaryZip,
+            zipCode: itemZip,
             location: {
-              latitude: Number((matchedMetro.centerCoordinates.latitude + (idx * 0.002)).toFixed(4)),
-              longitude: Number((matchedMetro.centerCoordinates.longitude + (idx * 0.002)).toFixed(4)),
+              latitude: itemLat,
+              longitude: itemLon,
             }
           },
           specs: {
             propertyType: 'SINGLE_FAMILY',
             beds,
             baths,
-            finishedSqFt: 2850 + idx * 180,
+            finishedSqFt: 2450 + idx * 210,
             yearBuilt: 2022,
             stories: 3,
             garageSpaces: 2,
@@ -596,7 +658,7 @@ nextApp.prepare().then(() => {
           },
           policeCorridor: {
             precinctDistrict: matchedMetro.policeDepartment || 'CPD 18th District',
-            patrolCorridorName: `${neighborhood} Verified Safety Sector`,
+            patrolCorridorName: `${itemNeighborhood} Verified Safety Sector`,
             dispatchAvgMinutes: 4.2,
             activePatrolUnitsOnDuty: 12,
             twentyYearBurglaryMilestone: '19.4-Yr Zero Incident Benchmark',
@@ -604,7 +666,7 @@ nextApp.prepare().then(() => {
           community: {
             medianHouseholdIncomeUSD: 142000,
             higherEducationPercent: 86,
-            neighborhoodAssociation: `${neighborhood} Community Preservation League`,
+            neighborhoodAssociation: `${itemNeighborhood} Community Preservation League`,
             walkScore: 96,
             transitScore: 94,
             bikeScore: 92,

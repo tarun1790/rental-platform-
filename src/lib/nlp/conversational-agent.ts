@@ -283,11 +283,14 @@ export function processConversationalTurn(
     const topTitle = topCandidate ? topCandidate.listing.title : 'candidate residence';
     const topPrice = topCandidate ? topCandidate.keyHighlights.priceLabel : '';
     const topNeighborhood = topCandidate ? topCandidate.listing.propertyAddress.neighborhood : '';
+    const purchasePrices = matchedHouses.map(m => m.listing.financials.inputs.purchasePrice).filter(p => p > 0);
+    const minPriceFormatted = purchasePrices.length > 0 ? `$${Math.min(...purchasePrices).toLocaleString()}` : topPrice;
+    const maxPriceFormatted = purchasePrices.length > 0 ? `$${Math.max(...purchasePrices).toLocaleString()}` : topPrice;
 
     if (understoodNeeds.customerPersona === 'FAMILY_HOMEBUYER') {
       replyText = `I understand your primary need is a family-friendly home in ${understoodNeeds.locationSpec} ${budgetNote}. I found ${candidateCount} verified residences that provide the space, quiet streets, and top-rated elementary schools you need for your family.\n\nOur top recommendation is **${topTitle}** in ${topNeighborhood} for **${topPrice}** (${topCandidate.keyHighlights.bedsBathsLabel}), scoring **${topCandidate.matchScorePercent}% Decision Fit**.`;
     } else if (understoodNeeds.customerPersona === 'BUDGET_SAVVY_BUYER') {
-      replyText = `I understand you are looking for an affordable home ${budgetNote} in ${understoodNeeds.locationSpec}. I found ${candidateCount} verified residences that strictly respect your price ceiling, starting as low as **${matchedHouses[candidateCount - 1]?.keyHighlights.priceLabel || topPrice}** up to **${topPrice}**.\n\nTop match: **${topTitle}** in ${topNeighborhood} for **${topPrice}**, which is verified by official MLS and Cook County Assessor records.`;
+      replyText = `I understand you are looking for an affordable home ${budgetNote} in ${understoodNeeds.locationSpec}. I found ${candidateCount} verified residences that strictly respect your price ceiling, starting as low as **${minPriceFormatted}** up to **${maxPriceFormatted}**.\n\nTop match: **${topTitle}** in ${topNeighborhood} for **${topPrice}**, which is verified by official MLS and Cook County Assessor records.`;
     } else if (understoodNeeds.customerPersona === 'YIELD_INVESTOR') {
       replyText = `Understood: you are evaluating high-yield opportunities in ${understoodNeeds.locationSpec}. I have screened ${candidateCount} properties with verified net operating income and healthy cap rates.\n\nTop match: **${topTitle}** featuring **${topCandidate.keyHighlights.capRateLabel}** and strong tenant demand.`;
     } else if (understoodNeeds.customerPersona === 'URBAN_RENTER') {

@@ -225,7 +225,7 @@ export const CustomerNlpDialog: React.FC<CustomerNlpDialogProps> = ({
     // 2. Process Conversational Turn (Human Needs + Multi-Turn Context)
     let turnResult = processConversationalTurn(q, historyContext, currentListings);
 
-    // 3. Out-of-market / Zero-match crawler fallback
+    // 3. Live Multi-Portal Web Crawling & Ingestion
     const targetCity = turnResult.mergedParsedQuery.location?.city;
     const hasCityListings = targetCity
       ? currentListings.some(
@@ -235,16 +235,23 @@ export const CustomerNlpDialog: React.FC<CustomerNlpDialogProps> = ({
         )
       : false;
 
-    if (!hasCityListings || turnResult.matchedHouses.length === 0) {
+    const userWantsLiveCrawl = /(crawl|scan|live|web|portal|online|fresh|search|other|website|feed|look up|find)/i.test(q);
+    const hasPriceConstraint = Boolean(turnResult.mergedParsedQuery.priceRange?.maxPrice || turnResult.mergedParsedQuery.monthlyRentBudget);
+    const fewMatches = turnResult.matchedHouses.length < 3;
+    const shouldCrawl = userWantsLiveCrawl || hasPriceConstraint || fewMatches || !hasCityListings;
+
+    if (shouldCrawl) {
       try {
         const crawlResult = await crawlUsPropertyPortals(turnResult.mergedParsedQuery);
         if (crawlResult.properties && crawlResult.properties.length > 0) {
-          const updated = [...crawlResult.properties, ...currentListings];
+          const existingIds = new Set(currentListings.map((c) => c.id));
+          const freshCrawled = crawlResult.properties.filter((p) => !existingIds.has(p.id));
+          const updated = [...freshCrawled, ...currentListings];
           setCurrentListings(updated);
           turnResult = processConversationalTurn(q, historyContext, updated);
         }
       } catch (err) {
-        console.error('Crawler fallback error', err);
+        console.error('Live crawler execution error:', err);
       }
     }
 
