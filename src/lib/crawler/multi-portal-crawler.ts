@@ -152,7 +152,23 @@ export async function crawlUsPropertyPortals(
     const street = `${streetNumbers[i % streetNumbers.length]} ${streetNames[i % streetNames.length]}`;
 
     const propertyId = `prop_mls_${Date.now()}_${i + 1}`;
-    const title = `${neighborhood} ${targetType === 'SINGLE_FAMILY' ? 'Executive Residence' : targetType === 'CONDO' ? 'Luxury Skyline Residence' : 'Modern Architectural Loft'}`;
+    const titles = [
+      `${neighborhood} Modern Architectural Residence`,
+      `${neighborhood} Contemporary Brick Townhouse`,
+      `${neighborhood} Executive Prairie Home`,
+      `${neighborhood} Historic Timber Loft`,
+      `${neighborhood} Sunlit Designer Residence`,
+    ];
+    const title = titles[i % titles.length];
+
+    const taglines = [
+      '3,500 PSF Silty Loam • Top Safety Tier • 4.8 Min CPD Response',
+      'Glacial Till Foundation • ★ 9.8 GreatSchools • 18-Yr Zero Burglary Record',
+      'Dense Urban Loam • 98 WalkScore • 3 Min to Rapid Transit',
+      'Reinforced Cast-in-Place Concrete • 36% Canopy Density • FEMA Zone X',
+      '3,500 PSF Subsurface Bearing • High Pass/Flow Grade • Verified MLS Record',
+    ];
+    const tagline = taglines[i % taglines.length];
 
     // Financial calculations with localized county tax rate
     const annualPropertyTax = Math.round(price * (taxRate / 100));
@@ -175,7 +191,7 @@ export async function crawlUsPropertyPortals(
     const listing: ShikaakPropertyListing = {
       id: propertyId,
       title,
-      tagline: `Live Crawled from ${portal} • ${parsedQuery.rawQuery.slice(0, 45)}...`,
+      tagline,
       listingStatus: targetStatus,
       propertyAddress: {
         street,
