@@ -481,26 +481,34 @@ export async function crawlUsPropertyPortals(
   // 3. Synthesize & Normalize Crawled Listings based on parsed criteria
   const normalizedProperties: ShikaakPropertyListing[] = [];
 
-  // Determine base pricing based on query (handling both sale & rental budgets)
-  let targetStatus: ListingStatus = parsedQuery.listingStatus || 'FOR_SALE';
+  // Determine base pricing based on query and filter options (handling both sale & rental budgets)
+  let targetStatus: ListingStatus = options?.listingStatus || parsedQuery.listingStatus || 'FOR_SALE';
   let basePrice = 725000;
   let baseRent = 3500;
 
-  if (parsedQuery.monthlyRentBudget) {
-    targetStatus = 'FOR_RENT';
-    baseRent = parsedQuery.monthlyRentBudget;
+  const effectiveMaxPrice = options?.priceMax !== undefined ? options.priceMax : parsedQuery.priceRange?.maxPrice;
+  const effectiveMinPrice = options?.priceMin !== undefined ? options.priceMin : parsedQuery.priceRange?.minPrice;
+
+  if (targetStatus === 'FOR_RENT') {
+    if (parsedQuery.monthlyRentBudget) {
+      baseRent = parsedQuery.monthlyRentBudget;
+    } else if (effectiveMaxPrice && effectiveMaxPrice <= 30000) {
+      baseRent = effectiveMaxPrice;
+    }
     basePrice = Math.round(baseRent * 155);
-  } else if (parsedQuery.priceRange?.maxPrice) {
-    basePrice = parsedQuery.priceRange.maxPrice;
-    baseRent = Math.round(basePrice * 0.0068);
-  } else if (parsedQuery.priceRange?.minPrice) {
-    basePrice = parsedQuery.priceRange.minPrice;
-    baseRent = Math.round(basePrice * 0.0068);
+  } else {
+    if (effectiveMaxPrice && effectiveMaxPrice > 30000) {
+      basePrice = effectiveMaxPrice;
+      baseRent = Math.round(basePrice * 0.0068);
+    } else if (effectiveMinPrice) {
+      basePrice = effectiveMinPrice;
+      baseRent = Math.round(basePrice * 0.0068);
+    }
   }
 
-  const bedsCount = parsedQuery.beds || 3;
-  const bathsCount = parsedQuery.baths || 2.5;
-  const targetType: PropertyType = parsedQuery.propertyType || 'SINGLE_FAMILY';
+  const bedsCount = options?.bedsMin !== undefined && Number(options.bedsMin) > 0 ? Number(options.bedsMin) : (parsedQuery.beds || 3);
+  const bathsCount = options?.bathsMin !== undefined && Number(options.bathsMin) > 0 ? Number(options.bathsMin) : (parsedQuery.baths || 2.5);
+  const targetType: PropertyType = (options?.propertyType && options.propertyType !== 'ALL') ? options.propertyType : (parsedQuery.propertyType || 'SINGLE_FAMILY');
 
   // Generate real-time candidates matching the specific constraints (16 by default or custom requested for 15+ options)
   const countMatch = parsedQuery.rawQuery.match(/\b(?:top\s*|give\s*me\s*|show\s*me\s*)?(\d{1,2})\s*(?:houses?|homes?|properties|condos?|apartments?|listings?|results)\b/i);
@@ -549,14 +557,14 @@ export async function crawlUsPropertyPortals(
       externalUrl = `https://www.trulia.com/${stateCode}/${encodeURIComponent(city)}/`;
     }
     let price: number;
-    if (parsedQuery.priceRange?.maxPrice) {
+    if (targetStatus === 'FOR_SALE' && effectiveMaxPrice && effectiveMaxPrice > 30000) {
       // Stepped smoothly below the max price ceiling (from 30% discount down to 2% discount)
       const ratio = i / Math.max(1, candidateCount - 1);
       const discountRatio = 0.30 - ratio * 0.28;
-      price = Math.max(120000, Math.round((parsedQuery.priceRange.maxPrice * (1 - discountRatio)) / 1000) * 1000);
-    } else if (parsedQuery.priceRange?.minPrice) {
+      price = Math.max(120000, Math.round((effectiveMaxPrice * (1 - discountRatio)) / 1000) * 1000);
+    } else if (effectiveMinPrice && effectiveMinPrice > 30000) {
       const markupRatio = 0.02 + (i * 0.05);
-      price = Math.round(parsedQuery.priceRange.minPrice * (1 + markupRatio));
+      price = Math.round(effectiveMinPrice * (1 + markupRatio));
     } else {
       const priceVariance = (i - Math.floor(candidateCount / 2)) * 18000;
       price = Math.max(120000, basePrice + priceVariance);
@@ -564,10 +572,11 @@ export async function crawlUsPropertyPortals(
 
     let rentRate: number;
     if (targetStatus === 'FOR_RENT') {
-      if (parsedQuery.monthlyRentBudget) {
+      const effectiveMaxRent = parsedQuery.monthlyRentBudget || (effectiveMaxPrice && effectiveMaxPrice <= 30000 ? effectiveMaxPrice : null);
+      if (effectiveMaxRent) {
         const ratio = i / Math.max(1, candidateCount - 1);
         const discountRatio = 0.28 - ratio * 0.26;
-        rentRate = Math.max(800, Math.round((parsedQuery.monthlyRentBudget * (1 - discountRatio)) / 10) * 10);
+        rentRate = Math.max(800, Math.round((effectiveMaxRent * (1 - discountRatio)) / 10) * 10);
       } else {
         rentRate = Math.max(900, baseRent + (i - Math.floor(candidateCount / 2)) * 90);
       }

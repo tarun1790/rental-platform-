@@ -243,15 +243,17 @@ export default function Home() {
         }
 
         // 3. Price Min & Max (Distinguish monthly rent vs purchase price)
-        if ((listing.listingStatus === 'FOR_RENT' || filters.listingStatus === 'FOR_RENT') && filters.priceMax <= 20000) {
+        if (listing.listingStatus === 'FOR_RENT') {
           const rent = listing.financials.inputs.monthlyGrossRent;
-          if (rent < filters.priceMin || rent > filters.priceMax) {
-            return false;
+          if (filters.priceMax <= 30000) {
+            if (rent < filters.priceMin || rent > filters.priceMax) return false;
+          } else if (filters.priceMin > 0 && filters.priceMin <= 30000) {
+            if (rent < filters.priceMin) return false;
           }
         } else {
           if (
             listing.financials.inputs.purchasePrice < filters.priceMin ||
-            listing.financials.inputs.purchasePrice > filters.priceMax
+            (filters.priceMax > 30000 && listing.financials.inputs.purchasePrice > filters.priceMax)
           ) {
             return false;
           }

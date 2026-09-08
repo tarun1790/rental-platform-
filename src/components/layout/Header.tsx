@@ -237,7 +237,12 @@ export const Header: React.FC<HeaderProps> = ({
                   <button
                     key={st}
                     onClick={() => {
-                      const next = { ...filters, listingStatus: st };
+                      const next = { 
+                        ...filters, 
+                        listingStatus: st,
+                        priceMin: 0,
+                        priceMax: st === 'FOR_RENT' ? 10000 : 5000000,
+                      };
                       onFilterChange(next);
                       closeDropdowns();
                       onTriggerLiveCrawl?.(undefined, exaKeyInput.trim() || undefined, next);
@@ -259,16 +264,20 @@ export const Header: React.FC<HeaderProps> = ({
             <button
               onClick={() => toggleDropdown('price')}
               className={`flex items-center gap-1.5 px-3 py-2 text-xs font-bold rounded-xl border transition-all ${
-                openDropdown === 'price' || filters.priceMin > 0 || filters.priceMax < 5000000
+                openDropdown === 'price' || filters.priceMin > 0 || (filters.listingStatus === 'FOR_RENT' ? filters.priceMax < 10000 : filters.priceMax < 5000000)
                   ? 'bg-red-600 text-white border-red-600 shadow-sm'
                   : 'bg-white text-slate-800 border-red-200 hover:border-red-400 hover:bg-red-50/50'
               }`}
             >
               <DollarSign className="w-3.5 h-3.5" />
               <span>
-                {filters.priceMin > 0 || filters.priceMax < 5000000
-                  ? `$${(filters.priceMin / 1000).toFixed(0)}k - $${(filters.priceMax / 1000).toFixed(0)}k`
-                  : 'Price Range'}
+                {filters.listingStatus === 'FOR_RENT'
+                  ? (filters.priceMin > 0 || filters.priceMax < 10000
+                      ? `$${filters.priceMin.toLocaleString()} - $${filters.priceMax.toLocaleString()}/mo`
+                      : 'Monthly Rent')
+                  : (filters.priceMin > 0 || filters.priceMax < 5000000
+                      ? `$${(filters.priceMin / 1000).toFixed(0)}k - $${(filters.priceMax / 1000).toFixed(0)}k`
+                      : 'Price Range')}
               </span>
               <ChevronDown className="w-3 h-3 text-red-500" />
             </button>
@@ -276,14 +285,20 @@ export const Header: React.FC<HeaderProps> = ({
             {openDropdown === 'price' && (
               <div className="absolute left-0 mt-2 w-72 bg-white border border-red-200 rounded-2xl shadow-xl p-4 z-50 animate-in fade-in space-y-3">
                 <div className="flex justify-between items-center text-xs font-bold text-slate-900 border-b border-red-100 pb-2">
-                  <span className="text-red-600 font-black">Price Range (USD)</span>
+                  <span className="text-red-600 font-black">
+                    {filters.listingStatus === 'FOR_RENT' ? 'Monthly Rent (USD/mo)' : 'Purchase Price (USD)'}
+                  </span>
                   <button
                     onClick={() => {
-                      const next = { ...filters, priceMin: 0, priceMax: 5000000 };
+                      const next = { 
+                        ...filters, 
+                        priceMin: 0, 
+                        priceMax: filters.listingStatus === 'FOR_RENT' ? 10000 : 5000000 
+                      };
                       onFilterChange(next);
                       onTriggerLiveCrawl?.(undefined, exaKeyInput.trim() || undefined, next);
                     }}
-                    className="text-[11px] text-red-600 font-bold hover:underline"
+                    className="text-[11px] text-red-600 font-bold hover:underline cursor-pointer"
                   >
                     Reset
                   </button>
@@ -300,13 +315,28 @@ export const Header: React.FC<HeaderProps> = ({
                       }}
                       className="w-full text-xs p-2 bg-red-50/40 border border-red-200 rounded-xl font-medium"
                     >
-                      <option value="0">$0</option>
-                      <option value="200000">$200,000</option>
-                      <option value="300000">$300,000</option>
-                      <option value="400000">$400,000</option>
-                      <option value="600000">$600,000</option>
-                      <option value="800000">$800,000</option>
-                      <option value="1000000">$1,000,000</option>
+                      {filters.listingStatus === 'FOR_RENT' ? (
+                        <>
+                          <option value="0">$0</option>
+                          <option value="1000">$1,000/mo</option>
+                          <option value="1500">$1,500/mo</option>
+                          <option value="2000">$2,000/mo</option>
+                          <option value="2500">$2,500/mo</option>
+                          <option value="3000">$3,000/mo</option>
+                          <option value="4000">$4,000/mo</option>
+                          <option value="5000">$5,000/mo</option>
+                        </>
+                      ) : (
+                        <>
+                          <option value="0">$0</option>
+                          <option value="200000">$200,000</option>
+                          <option value="300000">$300,000</option>
+                          <option value="400000">$400,000</option>
+                          <option value="600000">$600,000</option>
+                          <option value="800000">$800,000</option>
+                          <option value="1000000">$1,000,000</option>
+                        </>
+                      )}
                     </select>
                   </div>
                   <div>
@@ -320,14 +350,30 @@ export const Header: React.FC<HeaderProps> = ({
                       }}
                       className="w-full text-xs p-2 bg-red-50/40 border border-red-200 rounded-xl font-medium"
                     >
-                      <option value="5000000">Any Max</option>
-                      <option value="300000">$300,000</option>
-                      <option value="400000">$400,000</option>
-                      <option value="500000">$500,000</option>
-                      <option value="700000">$700,000</option>
-                      <option value="900000">$900,000</option>
-                      <option value="1200000">$1,200,000</option>
-                      <option value="2000000">$2,000,000</option>
+                      {filters.listingStatus === 'FOR_RENT' ? (
+                        <>
+                          <option value="10000">Any Max</option>
+                          <option value="1500">$1,500/mo</option>
+                          <option value="2000">$2,000/mo</option>
+                          <option value="2500">$2,500/mo</option>
+                          <option value="3000">$3,000/mo</option>
+                          <option value="3500">$3,500/mo</option>
+                          <option value="4000">$4,000/mo</option>
+                          <option value="5000">$5,000/mo</option>
+                          <option value="7500">$7,500/mo</option>
+                        </>
+                      ) : (
+                        <>
+                          <option value="5000000">Any Max</option>
+                          <option value="300000">$300,000</option>
+                          <option value="400000">$400,000</option>
+                          <option value="500000">$500,000</option>
+                          <option value="700000">$700,000</option>
+                          <option value="900000">$900,000</option>
+                          <option value="1200000">$1,200,000</option>
+                          <option value="2000000">$2,000,000</option>
+                        </>
+                      )}
                     </select>
                   </div>
                 </div>
