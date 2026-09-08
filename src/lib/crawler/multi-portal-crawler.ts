@@ -125,6 +125,30 @@ export async function crawlUsPropertyPortals(
   emit('COUNTY_ASSESSOR', 'NORMALIZING_TELEMETRY', `Cross-referencing county tax assessor property records for ${neighborhood}, ${city}`);
   emit('MUNICIPAL_DATA', 'UNDERWRITING_ROI', `Validating municipal school ratings and location infrastructure metrics`);
 
+  // Attempt live climate sensor telemetry from Open-Meteo (public atmospheric sensor feed)
+  let liveWeather: { tempF: number; tempC: number; humidity: number; wind: number } | null = null;
+  if (typeof window !== 'undefined') {
+    try {
+      const wRes = await fetch(
+        `https://api.open-meteo.com/v1/forecast?latitude=${metro.centerCoordinates.latitude}&longitude=${metro.centerCoordinates.longitude}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&temperature_unit=fahrenheit`
+      );
+      if (wRes.ok) {
+        const wData = await wRes.json();
+        if (wData.current) {
+          const tempF = Math.round(wData.current.temperature_2m);
+          liveWeather = {
+            tempF,
+            tempC: Math.round(((tempF - 32) * 5) / 9),
+            humidity: Math.round(wData.current.relative_humidity_2m),
+            wind: Math.round(wData.current.wind_speed_10m),
+          };
+        }
+      }
+    } catch (e) {
+      // Graceful fallback to seasonal metro averages
+    }
+  }
+
   // 3. Synthesize & Normalize Crawled Listings based on parsed criteria
   const normalizedProperties: ShikaakPropertyListing[] = [];
 
@@ -327,16 +351,20 @@ export async function crawlUsPropertyPortals(
         twentyYearBurglaryMilestone: '19.4 Years Zero Incident Benchmark',
       },
       climateTelemetry: {
-        surfaceTempC: 22,
-        surfaceTempF: 72,
-        summerPeakTempC: 28,
+        surfaceTempC: liveWeather ? liveWeather.tempC : 22,
+        surfaceTempF: liveWeather ? liveWeather.tempF : 72,
+        summerPeakTempC: Math.max(28, (liveWeather ? liveWeather.tempC + 4 : 28)),
         winterLowTempC: -6,
+        relativeHumidityPercent: liveWeather ? liveWeather.humidity : 55,
+        windSpeedMph: liveWeather ? liveWeather.wind : 8,
         airQualityIndexAQI: 34,
         airQualityVerdict: 'EXCELLENT',
         floodZoneTier: 'FEMA Zone X (Minimal Risk)',
         lakeEffectSnowRiskTier: 'Low (Canopy Protected)',
         annualRainfallInches: 38.5,
         urbanHeatIslandDeviationF: -2.4,
+        isLiveSensorData: Boolean(liveWeather),
+        sensorTimestamp: liveWeather ? new Date().toISOString() : undefined,
       },
       forestResources: {
         forestCanopyCoveragePercent: 36,

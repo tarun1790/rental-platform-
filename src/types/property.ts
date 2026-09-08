@@ -101,6 +101,10 @@ export interface ClimateTelemetry {
   lakeEffectSnowRiskTier: string;
   annualRainfallInches: number;
   urbanHeatIslandDeviationF: number;
+  relativeHumidityPercent?: number;
+  windSpeedMph?: number;
+  isLiveSensorData?: boolean;
+  sensorTimestamp?: string;
 }
 
 export interface ForestResourcesTelemetry {

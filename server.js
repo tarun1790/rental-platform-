@@ -482,11 +482,44 @@ nextApp.prepare().then(() => {
         });
       };
 
+      const fetchLiveWeather = (lat, lon) => {
+        return new Promise((resolve) => {
+          const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&temperature_unit=fahrenheit`;
+          const req = https.get(url, { timeout: 2500 }, (r) => {
+            let data = '';
+            r.on('data', c => data += c);
+            r.on('end', () => {
+              try {
+                const j = JSON.parse(data);
+                if (j.current) {
+                  const tempF = Math.round(j.current.temperature_2m);
+                  const tempC = Math.round(((tempF - 32) * 5) / 9);
+                  const humidity = Math.round(j.current.relative_humidity_2m);
+                  const wind = Math.round(j.current.wind_speed_10m);
+                  resolve({ tempF, tempC, humidity, wind, live: true });
+                  return;
+                }
+              } catch (e) {}
+              resolve(null);
+            });
+          });
+          req.on('error', () => resolve(null));
+          req.on('timeout', () => { req.destroy(); resolve(null); });
+        });
+      };
+
       let liveOsmList = [];
+      let liveWeather = null;
       try {
-        liveOsmList = await fetchLiveAddresses(matchedMetro.city, targetNeighborhood);
+        const [addresses, weather] = await Promise.all([
+          fetchLiveAddresses(matchedMetro.city, targetNeighborhood),
+          fetchLiveWeather(matchedMetro.centerCoordinates.latitude, matchedMetro.centerCoordinates.longitude),
+        ]);
+        liveOsmList = addresses;
+        liveWeather = weather;
       } catch (e) {
         liveOsmList = [];
+        liveWeather = null;
       }
 
       const portals = ['MLS_FEED', 'COUNTY_ASSESSOR', 'MUNICIPAL_DATA', 'VALUATION_ENGINE', 'TELEMETRY'];
@@ -708,16 +741,20 @@ nextApp.prepare().then(() => {
             undergroundPowerGrid: true,
           },
           climateTelemetry: {
-            surfaceTempC: 22,
-            surfaceTempF: 72,
-            summerPeakTempC: 28,
+            surfaceTempC: liveWeather ? liveWeather.tempC : 22,
+            surfaceTempF: liveWeather ? liveWeather.tempF : 72,
+            summerPeakTempC: Math.max(28, (liveWeather ? liveWeather.tempC + 4 : 28)),
             winterLowTempC: -6,
+            relativeHumidityPercent: liveWeather ? liveWeather.humidity : 55,
+            windSpeedMph: liveWeather ? liveWeather.wind : 8,
             airQualityIndexAQI: 34,
             airQualityVerdict: 'EXCELLENT',
             floodZoneTier: 'FEMA Zone X (Minimal Risk)',
             lakeEffectSnowRiskTier: 'Low (Canopy Protected)',
             annualRainfallInches: 38.5,
             urbanHeatIslandDeviationF: -2.4,
+            isLiveSensorData: Boolean(liveWeather),
+            sensorTimestamp: liveWeather ? new Date().toISOString() : undefined,
           },
           media: {
             featuredImage: CRAWLER_IMAGES[idx % CRAWLER_IMAGES.length],
