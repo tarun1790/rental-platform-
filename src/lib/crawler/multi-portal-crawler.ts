@@ -82,12 +82,15 @@ export async function crawlUsPropertyPortals(
   // Attempt to query live backend crawler endpoint if running in browser
   if (typeof window !== 'undefined') {
     try {
+      const countMatch = parsedQuery.rawQuery.match(/\b(?:top\s*|give\s*me\s*|show\s*me\s*)?(\d{1,2})\s*(?:houses?|homes?|properties|condos?|apartments?|listings?|results)\b/i);
+      const requestedLimit = countMatch ? Math.min(30, Math.max(4, parseInt(countMatch[1], 10))) : 12;
+
       const isGhPages = window.location.pathname.startsWith('/rental-platform-');
       const crawlEndpoint = isGhPages ? '/rental-platform-/api/crawl' : '/api/crawl';
       const res = await fetch(crawlEndpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: parsedQuery.rawQuery }),
+        body: JSON.stringify({ query: parsedQuery.rawQuery, limit: requestedLimit }),
       });
       if (res.ok) {
         const json = await res.json();
@@ -128,7 +131,7 @@ export async function crawlUsPropertyPortals(
   // Determine base pricing based on query (handling both sale & rental budgets)
   let targetStatus: ListingStatus = parsedQuery.listingStatus || 'FOR_SALE';
   let basePrice = 725000;
-  let baseRent = 4600;
+  let baseRent = 3500;
 
   if (parsedQuery.monthlyRentBudget) {
     targetStatus = 'FOR_RENT';
@@ -146,34 +149,35 @@ export async function crawlUsPropertyPortals(
   const bathsCount = parsedQuery.baths || 2.5;
   const targetType: PropertyType = parsedQuery.propertyType || 'SINGLE_FAMILY';
 
-  // Generate real-time candidates matching the specific constraints
-  const candidateCount = 5;
+  // Generate real-time candidates matching the specific constraints (12 by default or custom requested)
+  const countMatch = parsedQuery.rawQuery.match(/\b(?:top\s*|give\s*me\s*|show\s*me\s*)?(\d{1,2})\s*(?:houses?|homes?|properties|condos?|apartments?|listings?|results)\b/i);
+  const candidateCount = countMatch ? Math.min(30, Math.max(4, parseInt(countMatch[1], 10))) : 12;
   const portalList: PortalSource[] = ['MLS_FEED', 'COUNTY_ASSESSOR', 'MUNICIPAL_DATA', 'VALUATION_ENGINE', 'TELEMETRY'];
 
   for (let i = 0; i < candidateCount; i++) {
     const portal = portalList[i % portalList.length];
     let price: number;
     if (parsedQuery.priceRange?.maxPrice) {
-      // Stepped realistically below the max price ceiling (e.g. for 400k: 288k, 320k, 344k, 368k, 388k)
-      const discounts = [0.28, 0.20, 0.14, 0.08, 0.03];
-      const discountRatio = discounts[i % discounts.length];
+      // Stepped smoothly below the max price ceiling (from 30% discount down to 2% discount)
+      const ratio = i / Math.max(1, candidateCount - 1);
+      const discountRatio = 0.30 - ratio * 0.28;
       price = Math.max(120000, Math.round((parsedQuery.priceRange.maxPrice * (1 - discountRatio)) / 1000) * 1000);
     } else if (parsedQuery.priceRange?.minPrice) {
       const markupRatio = 0.02 + (i * 0.05);
       price = Math.round(parsedQuery.priceRange.minPrice * (1 + markupRatio));
     } else {
-      const priceVariance = (i - 2) * 25000;
+      const priceVariance = (i - Math.floor(candidateCount / 2)) * 18000;
       price = Math.max(120000, basePrice + priceVariance);
     }
 
     let rentRate: number;
     if (targetStatus === 'FOR_RENT') {
       if (parsedQuery.monthlyRentBudget) {
-        const rentDiscounts = [0.25, 0.20, 0.15, 0.08, 0.03];
-        const discountRatio = rentDiscounts[i % rentDiscounts.length];
+        const ratio = i / Math.max(1, candidateCount - 1);
+        const discountRatio = 0.28 - ratio * 0.26;
         rentRate = Math.max(800, Math.round((parsedQuery.monthlyRentBudget * (1 - discountRatio)) / 10) * 10);
       } else {
-        rentRate = Math.max(900, baseRent + (i - 2) * 120);
+        rentRate = Math.max(900, baseRent + (i - Math.floor(candidateCount / 2)) * 90);
       }
     } else {
       rentRate = Math.round(price * 0.0068);
