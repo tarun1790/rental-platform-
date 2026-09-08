@@ -137,18 +137,19 @@ export default function Home() {
   };
 
   // Live Real-Time Multi-Portal Crawler Trigger
-  const handleTriggerLiveCrawl = async (customQuery?: string, explicitExaKey?: string) => {
-    let q = (customQuery !== undefined ? customQuery : filters.searchQuery || '').trim();
+  const handleTriggerLiveCrawl = async (customQuery?: string, explicitExaKey?: string, filterOverrides?: Partial<FilterState>) => {
+    const activeFilters = { ...filters, ...filterOverrides };
+    let q = (customQuery !== undefined ? customQuery : activeFilters.searchQuery || '').trim();
     if (!q) {
       const parts: string[] = [];
-      if (filters.searchQuery) parts.push(filters.searchQuery);
-      if (filters.listingStatus === 'FOR_RENT') parts.push('for rent');
-      else if (filters.listingStatus === 'FOR_SALE') parts.push('for sale');
-      if (filters.bedsMin > 0) parts.push(`${filters.bedsMin} bed`);
-      if (filters.bathsMin > 0) parts.push(`${filters.bathsMin} bath`);
-      if (filters.priceMax < 5000000) parts.push(`under $${filters.priceMax.toLocaleString()}`);
-      if (filters.propertyType !== 'ALL') parts.push(filters.propertyType.toLowerCase().replace(/_/g, ' '));
-    q = parts.join(' ') || 'homes in Chicago';
+      if (activeFilters.searchQuery) parts.push(activeFilters.searchQuery);
+      if (activeFilters.listingStatus === 'FOR_RENT') parts.push('for rent');
+      else if (activeFilters.listingStatus === 'FOR_SALE') parts.push('for sale');
+      if (activeFilters.bedsMin > 0) parts.push(`${activeFilters.bedsMin} bed`);
+      if (activeFilters.bathsMin > 0) parts.push(`${activeFilters.bathsMin} bath`);
+      if (activeFilters.priceMax < 5000000) parts.push(`under $${activeFilters.priceMax.toLocaleString()}`);
+      if (activeFilters.propertyType !== 'ALL') parts.push(activeFilters.propertyType.toLowerCase().replace(/_/g, ' '));
+      q = parts.join(' ') || 'homes in Chicago';
     }
 
     const storedExaKey = explicitExaKey || (typeof window !== 'undefined' ? window.localStorage.getItem('EXA_API_KEY') : null) || undefined;
@@ -156,7 +157,16 @@ export default function Home() {
     setIsLiveCrawling(true);
     try {
       const parsed = parseNlpQuery(q);
-      const result = await crawlUsPropertyPortals(parsed, { exaApiKey: storedExaKey || undefined });
+      const result = await crawlUsPropertyPortals(parsed, {
+        exaApiKey: storedExaKey || undefined,
+        listingStatus: activeFilters.listingStatus,
+        priceMin: activeFilters.priceMin,
+        priceMax: activeFilters.priceMax,
+        bedsMin: activeFilters.bedsMin,
+        bathsMin: activeFilters.bathsMin,
+        propertyType: activeFilters.propertyType,
+        limit: 16,
+      });
       if (result.properties && result.properties.length > 0) {
         setAllListings((prev) => {
           const existingIds = new Set(result.properties.map((p) => p.id));
@@ -175,11 +185,13 @@ export default function Home() {
         // Synchronize filters
         setFilters((prev) => ({
           ...prev,
+          ...filterOverrides,
           searchQuery: parsed.location?.city || parsed.location?.neighborhood || q,
-          priceMax: parsed.priceRange?.maxPrice !== undefined ? parsed.priceRange.maxPrice : prev.priceMax,
-          priceMin: parsed.priceRange?.minPrice !== undefined ? parsed.priceRange.minPrice : prev.priceMin,
-          bedsMin: parsed.beds !== undefined ? parsed.beds : prev.bedsMin,
-          listingStatus: parsed.listingStatus || prev.listingStatus,
+          priceMax: parsed.priceRange?.maxPrice !== undefined ? parsed.priceRange.maxPrice : (filterOverrides?.priceMax !== undefined ? filterOverrides.priceMax : prev.priceMax),
+          priceMin: parsed.priceRange?.minPrice !== undefined ? parsed.priceRange.minPrice : (filterOverrides?.priceMin !== undefined ? filterOverrides.priceMin : prev.priceMin),
+          bedsMin: parsed.beds !== undefined ? parsed.beds : (filterOverrides?.bedsMin !== undefined ? filterOverrides.bedsMin : prev.bedsMin),
+          listingStatus: parsed.listingStatus || (filterOverrides?.listingStatus || prev.listingStatus),
+          propertyType: parsed.propertyType || (filterOverrides?.propertyType || prev.propertyType),
         }));
 
         // Scroll to houses
@@ -220,7 +232,8 @@ export default function Home() {
               listing.propertyAddress.neighborhood.toLowerCase().includes(t) ||
               listing.propertyAddress.street.toLowerCase().includes(t)
             );
-            if (!tokenMatch) return false;
+            // Live crawled properties belong to current search context
+            if (!tokenMatch && !listing.isLiveCrawled) return false;
           }
         }
 
@@ -229,12 +242,19 @@ export default function Home() {
           return false;
         }
 
-        // 3. Price Min & Max
-        if (
-          listing.financials.inputs.purchasePrice < filters.priceMin ||
-          listing.financials.inputs.purchasePrice > filters.priceMax
-        ) {
-          return false;
+        // 3. Price Min & Max (Distinguish monthly rent vs purchase price)
+        if ((listing.listingStatus === 'FOR_RENT' || filters.listingStatus === 'FOR_RENT') && filters.priceMax <= 20000) {
+          const rent = listing.financials.inputs.monthlyGrossRent;
+          if (rent < filters.priceMin || rent > filters.priceMax) {
+            return false;
+          }
+        } else {
+          if (
+            listing.financials.inputs.purchasePrice < filters.priceMin ||
+            listing.financials.inputs.purchasePrice > filters.priceMax
+          ) {
+            return false;
+          }
         }
 
         // 4. Beds Min

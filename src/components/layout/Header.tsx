@@ -48,7 +48,7 @@ interface HeaderProps {
   onOpenNlpDialog?: () => void;
   currentLanguage?: SupportedLanguageCode;
   onLanguageChange?: (lang: SupportedLanguageCode) => void;
-  onTriggerLiveCrawl?: (query?: string, exaApiKey?: string) => void;
+  onTriggerLiveCrawl?: (query?: string, exaApiKey?: string, filterOverrides?: Partial<FilterState>) => void;
   isCrawling?: boolean;
 }
 
@@ -76,6 +76,7 @@ export const Header: React.FC<HeaderProps> = ({
   // Dropdown Popover States
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [showMoreModal, setShowMoreModal] = useState(false);
+  const searchDebounceRef = React.useRef<NodeJS.Timeout | null>(null);
 
   // Exa.ai Live Neural Crawler Modal & Key States
   const [showExaModal, setShowExaModal] = useState(false);
@@ -129,9 +130,9 @@ export const Header: React.FC<HeaderProps> = ({
               value={filters.searchQuery}
               onChange={(e) => {
                 const val = e.target.value;
+                const nextFilters = { ...filters, searchQuery: val };
                 if (/(under|below|max|budget|\$|\d+k|beds?|bath)/i.test(val)) {
                   const parsed = parseNlpQuery(val);
-                  const nextFilters = { ...filters, searchQuery: val };
                   if (parsed.priceRange?.maxPrice) {
                     nextFilters.priceMax = parsed.priceRange.maxPrice;
                   }
@@ -141,15 +142,21 @@ export const Header: React.FC<HeaderProps> = ({
                   if (parsed.beds !== undefined) {
                     nextFilters.bedsMin = parsed.beds;
                   }
-                  onFilterChange(nextFilters);
-                } else {
-                  onFilterChange({ ...filters, searchQuery: val });
+                }
+                onFilterChange(nextFilters);
+
+                if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
+                if (val.trim().length >= 2) {
+                  searchDebounceRef.current = setTimeout(() => {
+                    onTriggerLiveCrawl?.(val.trim(), exaKeyInput.trim() || undefined, nextFilters);
+                  }, 450);
                 }
               }}
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
                   e.preventDefault();
-                  onTriggerLiveCrawl?.(filters.searchQuery, exaKeyInput.trim() || undefined);
+                  if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
+                  onTriggerLiveCrawl?.(filters.searchQuery, exaKeyInput.trim() || undefined, filters);
                 }
               }}
               className="w-full pl-9 pr-24 py-2 text-xs bg-red-50/40 border border-red-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white transition-all font-medium"
@@ -167,7 +174,10 @@ export const Header: React.FC<HeaderProps> = ({
               )}
               <button
                 type="button"
-                onClick={() => onTriggerLiveCrawl?.(filters.searchQuery, exaKeyInput.trim() || undefined)}
+                onClick={() => {
+                  if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
+                  onTriggerLiveCrawl?.(filters.searchQuery, exaKeyInput.trim() || undefined, filters);
+                }}
                 disabled={isCrawling}
                 title="Press Enter or click to crawl live rental portals in real time"
                 className="flex items-center gap-1 px-2 py-1 bg-red-600 hover:bg-red-700 disabled:bg-slate-300 text-white rounded-lg text-[10px] font-black uppercase tracking-wider transition-all shadow-sm cursor-pointer"
@@ -227,8 +237,10 @@ export const Header: React.FC<HeaderProps> = ({
                   <button
                     key={st}
                     onClick={() => {
-                      onFilterChange({ ...filters, listingStatus: st });
+                      const next = { ...filters, listingStatus: st };
+                      onFilterChange(next);
                       closeDropdowns();
+                      onTriggerLiveCrawl?.(undefined, exaKeyInput.trim() || undefined, next);
                     }}
                     className={`w-full text-left px-3 py-1.5 text-xs rounded-xl font-bold flex items-center justify-between ${
                       filters.listingStatus === st ? 'bg-red-50 text-red-600' : 'text-slate-700 hover:bg-red-50/60'
@@ -266,7 +278,11 @@ export const Header: React.FC<HeaderProps> = ({
                 <div className="flex justify-between items-center text-xs font-bold text-slate-900 border-b border-red-100 pb-2">
                   <span className="text-red-600 font-black">Price Range (USD)</span>
                   <button
-                    onClick={() => onFilterChange({ ...filters, priceMin: 0, priceMax: 5000000 })}
+                    onClick={() => {
+                      const next = { ...filters, priceMin: 0, priceMax: 5000000 };
+                      onFilterChange(next);
+                      onTriggerLiveCrawl?.(undefined, exaKeyInput.trim() || undefined, next);
+                    }}
                     className="text-[11px] text-red-600 font-bold hover:underline"
                   >
                     Reset
@@ -277,7 +293,11 @@ export const Header: React.FC<HeaderProps> = ({
                     <label className="text-[10px] text-slate-600 font-bold uppercase block mb-1">Minimum</label>
                     <select
                       value={filters.priceMin}
-                      onChange={(e) => onFilterChange({ ...filters, priceMin: Number(e.target.value) })}
+                      onChange={(e) => {
+                        const next = { ...filters, priceMin: Number(e.target.value) };
+                        onFilterChange(next);
+                        onTriggerLiveCrawl?.(undefined, exaKeyInput.trim() || undefined, next);
+                      }}
                       className="w-full text-xs p-2 bg-red-50/40 border border-red-200 rounded-xl font-medium"
                     >
                       <option value="0">$0</option>
@@ -293,7 +313,11 @@ export const Header: React.FC<HeaderProps> = ({
                     <label className="text-[10px] text-slate-600 font-bold uppercase block mb-1">Maximum</label>
                     <select
                       value={filters.priceMax}
-                      onChange={(e) => onFilterChange({ ...filters, priceMax: Number(e.target.value) })}
+                      onChange={(e) => {
+                        const next = { ...filters, priceMax: Number(e.target.value) };
+                        onFilterChange(next);
+                        onTriggerLiveCrawl?.(undefined, exaKeyInput.trim() || undefined, next);
+                      }}
                       className="w-full text-xs p-2 bg-red-50/40 border border-red-200 rounded-xl font-medium"
                     >
                       <option value="5000000">Any Max</option>
@@ -313,7 +337,7 @@ export const Header: React.FC<HeaderProps> = ({
                   type="button"
                   onClick={() => {
                     closeDropdowns();
-                    onTriggerLiveCrawl?.();
+                    onTriggerLiveCrawl?.(undefined, exaKeyInput.trim() || undefined, filters);
                   }}
                   className="w-full py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
                 >
@@ -349,7 +373,11 @@ export const Header: React.FC<HeaderProps> = ({
                     {[0, 1, 2, 3, 4].map((b) => (
                       <button
                         key={b}
-                        onClick={() => onFilterChange({ ...filters, bedsMin: b })}
+                        onClick={() => {
+                          const next = { ...filters, bedsMin: b };
+                          onFilterChange(next);
+                          onTriggerLiveCrawl?.(undefined, exaKeyInput.trim() || undefined, next);
+                        }}
                         className={`flex-1 py-1 text-xs font-bold rounded-lg transition-all ${
                           filters.bedsMin === b ? 'bg-red-600 text-white shadow-sm' : 'text-slate-700 hover:text-red-600'
                         }`}
@@ -366,7 +394,11 @@ export const Header: React.FC<HeaderProps> = ({
                     {[0, 1, 2, 3].map((ba) => (
                       <button
                         key={ba}
-                        onClick={() => onFilterChange({ ...filters, bathsMin: ba })}
+                        onClick={() => {
+                          const next = { ...filters, bathsMin: ba };
+                          onFilterChange(next);
+                          onTriggerLiveCrawl?.(undefined, exaKeyInput.trim() || undefined, next);
+                        }}
                         className={`flex-1 py-1 text-xs font-bold rounded-lg transition-all ${
                           filters.bathsMin === ba ? 'bg-red-600 text-white shadow-sm' : 'text-slate-700 hover:text-red-600'
                         }`}
@@ -382,7 +414,7 @@ export const Header: React.FC<HeaderProps> = ({
                   type="button"
                   onClick={() => {
                     closeDropdowns();
-                    onTriggerLiveCrawl?.();
+                    onTriggerLiveCrawl?.(undefined, exaKeyInput.trim() || undefined, filters);
                   }}
                   className="w-full py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
                 >
@@ -413,8 +445,10 @@ export const Header: React.FC<HeaderProps> = ({
                   <button
                     key={t}
                     onClick={() => {
-                      onFilterChange({ ...filters, propertyType: t });
+                      const next = { ...filters, propertyType: t };
+                      onFilterChange(next);
                       closeDropdowns();
+                      onTriggerLiveCrawl?.(undefined, exaKeyInput.trim() || undefined, next);
                     }}
                     className={`w-full text-left px-3 py-1.5 text-xs rounded-xl font-bold flex items-center justify-between ${
                       filters.propertyType === t ? 'bg-red-50 text-red-600' : 'text-slate-700 hover:bg-red-50/60'
@@ -431,7 +465,7 @@ export const Header: React.FC<HeaderProps> = ({
                     type="button"
                     onClick={() => {
                       closeDropdowns();
-                      onTriggerLiveCrawl?.();
+                      onTriggerLiveCrawl?.(undefined, exaKeyInput.trim() || undefined, filters);
                     }}
                     className="w-full py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-xl text-[11px] font-bold transition-all flex items-center justify-center gap-1 cursor-pointer shadow-sm"
                   >
