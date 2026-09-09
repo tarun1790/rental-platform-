@@ -143,8 +143,20 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
           <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/95 text-slate-800 font-sans text-[11px] font-bold shadow-sm border border-slate-200">
             {listing.sourcePortal && ['ZILLOW', 'REDFIN', 'REALTOR', 'APARTMENTS_COM', 'TRULIA', 'HOTPADS'].includes(listing.sourcePortal) ? (
               <>
-                <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse" />
-                <span className="font-extrabold text-blue-700 tracking-wider uppercase text-[10px]">{listing.sourcePortal.replace(/_/g, '.')}</span>
+                <span className={`w-2 h-2 rounded-full animate-pulse ${
+                  listing.sourcePortal === 'REDFIN' ? 'bg-red-600' :
+                  listing.sourcePortal === 'ZILLOW' ? 'bg-blue-600' :
+                  listing.sourcePortal === 'APARTMENTS_COM' ? 'bg-emerald-600' :
+                  listing.sourcePortal === 'TRULIA' ? 'bg-teal-600' : 'bg-amber-600'
+                }`} />
+                <span className={`font-black tracking-wider uppercase text-[10px] ${
+                  listing.sourcePortal === 'REDFIN' ? 'text-red-700' :
+                  listing.sourcePortal === 'ZILLOW' ? 'text-blue-700' :
+                  listing.sourcePortal === 'APARTMENTS_COM' ? 'text-emerald-700' :
+                  listing.sourcePortal === 'TRULIA' ? 'text-teal-700' : 'text-amber-700'
+                }`}>
+                  {listing.sourcePortal === 'APARTMENTS_COM' ? 'Apartments.com' : listing.sourcePortal.replace(/_/g, '.')}
+                </span>
               </>
             ) : listing.climateTelemetry?.isLiveSensorData ? (
               <>
@@ -278,11 +290,17 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 hover:text-blue-900 text-xs font-bold transition-all border border-blue-200"
-                title={`Open listing on ${listing.sourcePortal || 'Portal'}`}
+                className={`flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all border shadow-sm ${
+                  listing.sourcePortal === 'REDFIN' ? 'bg-red-50 hover:bg-red-100 text-red-700 border-red-200' :
+                  listing.sourcePortal === 'ZILLOW' ? 'bg-blue-50 hover:bg-blue-100 text-blue-700 border-blue-200' :
+                  listing.sourcePortal === 'APARTMENTS_COM' ? 'bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border-emerald-200' :
+                  listing.sourcePortal === 'TRULIA' ? 'bg-teal-50 hover:bg-teal-100 text-teal-800 border-teal-200' :
+                  'bg-amber-50 hover:bg-amber-100 text-amber-800 border-amber-200'
+                }`}
+                title={`Open authentic listing on ${listing.sourcePortal || 'Portal'}`}
               >
-                <span>{listing.sourcePortal || 'Portal'}</span>
-                <ExternalLink className="w-3 h-3 text-blue-600" />
+                <span>{listing.sourcePortal === 'APARTMENTS_COM' ? 'Apartments.com' : listing.sourcePortal || 'Portal'}</span>
+                <ExternalLink className="w-3 h-3" />
               </a>
             )}
 

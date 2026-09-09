@@ -20,6 +20,7 @@ import { formatCurrency, formatPercent } from '../lib/roi-engine';
 import { crawlUsPropertyPortals } from '../lib/crawler/multi-portal-crawler';
 import { parseNlpQuery } from '../lib/nlp-search-parser';
 import LIVE_CRAWLED_DATA from '../data/live-crawled-portals.json';
+import { LiveCrawlerHUD } from '../components/crawler/LiveCrawlerHUD';
 
 const INITIAL_REAL_LISTINGS: ShikaakPropertyListing[] = [
   ...((LIVE_CRAWLED_DATA as unknown as ShikaakPropertyListing[]).slice(0, 50)),
@@ -514,18 +515,15 @@ export default function Home() {
           id="houses-section"
           className="w-full px-4 sm:px-8 lg:px-12 py-8 sm:py-10 space-y-8"
         >
-          {/* Live Real-Time Multi-Portal Scanning Progress Banner */}
+          {/* Interactive Live Real-Time Multi-Portal Scanning HUD */}
           {isLiveCrawling && (
-            <div className="w-full p-4 rounded-2xl bg-red-600 text-white flex flex-col sm:flex-row items-center justify-between gap-3 shadow-lg animate-pulse">
-              <div className="flex items-center gap-3">
-                <RotateCw className="w-5 h-5 animate-spin shrink-0" />
-                <div>
-                  <h4 className="text-xs sm:text-sm font-bold uppercase tracking-wider">Scanning Real-Time Portals (Zillow, Redfin, Realtor.com)...</h4>
-                  <p className="text-[11px] sm:text-xs text-red-100 font-medium">Executing neural crawl across active US real estate portals, OpenStreetMap roads, and atmospheric sensors.</p>
-                </div>
-              </div>
-              <span className="text-xs font-mono bg-red-800 px-3 py-1 rounded-xl shrink-0">Live Scrape Active</span>
-            </div>
+            <LiveCrawlerHUD
+              query={liveCrawlQuery || filters.searchQuery || 'Active Criteria'}
+              isCrawling={isLiveCrawling}
+              targetMetro={activeMetroPill || 'Chicago'}
+              discoveredListings={allListings.filter(p => p.isLiveCrawled)}
+              stageMessage="Parallel scrape active across Zillow, Redfin, Realtor.com, Apartments.com, & Trulia"
+            />
           )}
 
           {/* Live Ingestion Confirmation Banner */}
