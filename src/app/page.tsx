@@ -53,7 +53,8 @@ import {
   ShoppingBag,
   Star,
   RotateCw,
-  CheckCircle2
+  CheckCircle2,
+  Activity
 } from 'lucide-react';
 
 export default function Home() {
@@ -66,6 +67,7 @@ export default function Home() {
 
   // Live Real-Time Multi-Portal Crawler State
   const [isLiveCrawling, setIsLiveCrawling] = useState(false);
+  const [showCrawlerHUD, setShowCrawlerHUD] = useState<boolean>(false);
   const [liveCrawlQuery, setLiveCrawlQuery] = useState<string | null>(null);
   const [liveCrawlCount, setLiveCrawlCount] = useState<number>(0);
   const [crawlSourceInfo, setCrawlSourceInfo] = useState<{ isExa: boolean; portals: string[] } | null>(null);
@@ -230,6 +232,7 @@ export default function Home() {
     const storedExaKey = explicitExaKey || (typeof window !== 'undefined' ? window.localStorage.getItem('EXA_API_KEY') : null) || undefined;
 
     setIsLiveCrawling(true);
+    setShowCrawlerHUD(true);
     try {
       const parsed = parseNlpQuery(finalCrawlQuery);
       const result = await crawlUsPropertyPortals(parsed, {
@@ -516,13 +519,14 @@ export default function Home() {
           className="w-full px-4 sm:px-8 lg:px-12 py-8 sm:py-10 space-y-8"
         >
           {/* Interactive Live Real-Time Multi-Portal Scanning HUD */}
-          {isLiveCrawling && (
+          {(isLiveCrawling || showCrawlerHUD) && (
             <LiveCrawlerHUD
               query={liveCrawlQuery || filters.searchQuery || 'Active Criteria'}
               isCrawling={isLiveCrawling}
               targetMetro={activeMetroPill || 'Chicago'}
               discoveredListings={allListings.filter(p => p.isLiveCrawled)}
               stageMessage="Parallel scrape active across Zillow, Redfin, Realtor.com, Apartments.com, & Trulia"
+              onClose={() => setShowCrawlerHUD(false)}
             />
           )}
 
@@ -554,6 +558,13 @@ export default function Home() {
               </div>
               <div className="flex items-center gap-2 shrink-0">
                 <button
+                  onClick={() => setShowCrawlerHUD((prev) => !prev)}
+                  className="px-3 py-1.5 bg-white hover:bg-emerald-100 text-emerald-800 border border-emerald-300 rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer flex items-center gap-1.5"
+                >
+                  <Activity className="w-3.5 h-3.5" />
+                  <span>{showCrawlerHUD ? 'Hide HUD' : 'View Crawler HUD'}</span>
+                </button>
+                <button
                   onClick={() => handleTriggerLiveCrawl()}
                   className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer"
                 >
@@ -563,6 +574,7 @@ export default function Home() {
                   onClick={() => {
                     setLiveCrawlQuery(null);
                     setCrawlSourceInfo(null);
+                    setShowCrawlerHUD(false);
                     setAllListings(CHICAGO_LISTINGS);
                   }}
                   className="px-3 py-1.5 bg-white hover:bg-emerald-100 text-emerald-800 border border-emerald-300 rounded-xl text-xs font-bold transition-all cursor-pointer"

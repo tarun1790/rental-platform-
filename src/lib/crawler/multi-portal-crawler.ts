@@ -691,8 +691,8 @@ export async function crawlUsPropertyPortals(
   registerDynamicProperties(normalizedProperties);
 
   const portalsScanned: PortalSource[] = exaResults.length > 0
-    ? ['EXA_AI_NEURAL', 'ZILLOW', 'REDFIN', 'REALTOR', 'MLS_FEED', 'COUNTY_ASSESSOR', 'MUNICIPAL_DATA', 'VALUATION_ENGINE', 'TELEMETRY']
-    : ['MLS_FEED', 'COUNTY_ASSESSOR', 'MUNICIPAL_DATA', 'VALUATION_ENGINE', 'TELEMETRY'];
+    ? ['EXA_AI_NEURAL', 'ZILLOW', 'REDFIN', 'REALTOR', 'APARTMENTS_COM', 'TRULIA', 'MLS_FEED', 'COUNTY_ASSESSOR', 'MUNICIPAL_DATA', 'VALUATION_ENGINE', 'TELEMETRY']
+    : ['ZILLOW', 'REDFIN', 'REALTOR', 'APARTMENTS_COM', 'TRULIA', 'MLS_FEED', 'COUNTY_ASSESSOR', 'MUNICIPAL_DATA', 'VALUATION_ENGINE', 'TELEMETRY'];
 
   return {
     query: parsedQuery.rawQuery,

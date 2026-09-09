@@ -11,7 +11,8 @@ import {
   Camera, 
   Calculator, 
   MapPin,
-  ExternalLink
+  ExternalLink,
+  X
 } from 'lucide-react';
 import { ShikaakPropertyListing } from '../../types/property';
 
@@ -32,6 +33,7 @@ interface LiveCrawlerHUDProps {
   stageMessage?: string;
   discoveredListings?: ShikaakPropertyListing[];
   targetMetro?: string;
+  onClose?: () => void;
 }
 
 export const LiveCrawlerHUD: React.FC<LiveCrawlerHUDProps> = ({
@@ -40,6 +42,7 @@ export const LiveCrawlerHUD: React.FC<LiveCrawlerHUDProps> = ({
   stageMessage = 'Executing neural crawl across active US real estate portals...',
   discoveredListings = [],
   targetMetro = 'Chicago',
+  onClose,
 }) => {
   const [elapsedSeconds, setElapsedSeconds] = React.useState(0);
 
@@ -145,6 +148,15 @@ export const LiveCrawlerHUD: React.FC<LiveCrawlerHUDProps> = ({
           <span className="text-xs font-mono font-bold px-3 py-1 bg-red-50 text-red-700 rounded-xl border border-red-200">
             {isCrawling ? 'Scanning 5 Portals' : `${discoveredListings.length}+ Listings Harvested`}
           </span>
+          {onClose && (
+            <button
+              onClick={onClose}
+              className="p-1 rounded-lg hover:bg-red-100 text-slate-400 hover:text-red-700 transition-colors cursor-pointer"
+              title="Close Live Crawler HUD"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
         </div>
       </div>
 
