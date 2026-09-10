@@ -27,3 +27,4 @@ Thumbs.db
 
 # Scratch and temp test runners
 /scratch/
+*.tsbuildinfo

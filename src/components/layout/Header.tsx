@@ -21,15 +21,14 @@ import {
   ShieldCheck,
   TreePine,
   Bot,
-  Zap,
-  ExternalLink
+  RotateCw,
+  Scan
 } from 'lucide-react';
 import { FilterState, ListingStatus, PropertyType } from '../../types/property';
 import { SupportedLanguageCode } from '../../types/intelligence';
 import { SUPPORTED_LANGUAGES } from '../../lib/speech-translation';
 import { TiledHomeIcon } from '../common/TiledHomeIcon';
 import { parseNlpQuery } from '../../lib/nlp-search-parser';
-import { testExaApiKey } from '../../lib/crawler/exa-client';
 
 interface HeaderProps {
   filters: FilterState;
@@ -101,7 +100,7 @@ export const Header: React.FC<HeaderProps> = ({
           setIsListening(false);
           const nextFilters = { ...filters, searchQuery: transcript };
           onFilterChange(nextFilters);
-          onTriggerLiveCrawl?.(transcript, exaKeyInput.trim() || undefined, nextFilters);
+          onTriggerLiveCrawl?.(transcript, undefined, nextFilters);
         };
         recognition.onerror = () => setIsListening(false);
         recognition.onend = () => setIsListening(false);
@@ -119,26 +118,9 @@ export const Header: React.FC<HeaderProps> = ({
       const voiceSample = '3 bed house in Denver under 800k near top schools';
       const nextFilters = { ...filters, searchQuery: voiceSample };
       onFilterChange(nextFilters);
-      onTriggerLiveCrawl?.(voiceSample, exaKeyInput.trim() || undefined, nextFilters);
+      onTriggerLiveCrawl?.(voiceSample, undefined, nextFilters);
     }, 1500);
   };
-
-  // Exa.ai Live Neural Crawler Modal & Key States
-  const [showExaModal, setShowExaModal] = useState(false);
-  const [exaKeyInput, setExaKeyInput] = useState('');
-  const [hasExaKey, setHasExaKey] = useState(false);
-  const [testingExa, setTestingExa] = useState(false);
-  const [exaTestStatus, setExaTestStatus] = useState<{ valid?: boolean; message?: string } | null>(null);
-
-  React.useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const stored = window.localStorage.getItem('EXA_API_KEY');
-      if (stored && stored.trim()) {
-        setHasExaKey(true);
-        setExaKeyInput(stored.trim());
-      }
-    }
-  }, []);
 
   const toggleDropdown = (name: string) => {
     setOpenDropdown(openDropdown === name ? null : name);
@@ -166,9 +148,9 @@ export const Header: React.FC<HeaderProps> = ({
             </span>
           </div>
 
-          {/* 2. UNIFIED LOCATION & NLP SEARCH INPUT (WITH VOICE SEARCH + INSTANT CRAWL) */}
-          <div className="relative flex-1 min-w-[220px] max-w-sm md:max-w-md lg:max-w-xl">
-            <div className="absolute left-2.5 top-1/2 -translate-y-1/2 flex items-center gap-1 z-10">
+          {/* 2. UNIFIED SEARCH INPUT (ONE SINGLE OPTION - AUTOMATICALLY DOES EVERYTHING AT ONCE) */}
+          <div className="relative flex-1 min-w-[240px] max-w-xl md:max-w-2xl">
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5 z-10">
               <Search className="w-4 h-4 text-red-500 shrink-0" />
               <button
                 type="button"
@@ -178,14 +160,14 @@ export const Header: React.FC<HeaderProps> = ({
                     ? 'bg-red-600 text-white animate-pulse shadow-md' 
                     : 'text-slate-400 hover:text-red-600 hover:bg-red-50'
                 }`}
-                title={isListening ? 'Listening via microphone... speak now' : 'Voice Search (Click to speak)'}
+                title={isListening ? 'Listening via microphone... speak now' : 'Voice Search'}
               >
                 {isListening ? <MicOff className="w-3.5 h-3.5" /> : <Mic className="w-3.5 h-3.5" />}
               </button>
             </div>
             <input
               type="text"
-              placeholder={isListening ? '🎙️ Listening... speak home criteria now' : 'Search US, Chicago, Denver, Austin, 3 bed under 600k...'}
+              placeholder={isListening ? '🎙️ Listening... speak criteria now' : 'Search any city or criteria (e.g. Austin 3 bed under 800k, Denver condo, Miami rentals)...'}
               value={filters.searchQuery}
               onChange={(e) => {
                 const val = e.target.value;
@@ -207,29 +189,29 @@ export const Header: React.FC<HeaderProps> = ({
                 if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
                 if (val.trim().length >= 2) {
                   searchDebounceRef.current = setTimeout(() => {
-                    onTriggerLiveCrawl?.(val.trim(), exaKeyInput.trim() || undefined, nextFilters);
-                  }, 450);
+                    onTriggerLiveCrawl?.(val.trim(), undefined, nextFilters);
+                  }, 400);
                 }
               }}
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
                   e.preventDefault();
                   if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
-                  onTriggerLiveCrawl?.(filters.searchQuery, exaKeyInput.trim() || undefined, filters);
+                  onTriggerLiveCrawl?.(filters.searchQuery, undefined, filters);
                 }
               }}
-              className="w-full pl-16 pr-24 py-2 text-xs bg-red-50/40 border border-red-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white transition-all font-medium"
+              className="w-full pl-16 pr-28 py-2.5 text-xs sm:text-sm bg-red-50/40 border border-red-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white transition-all font-medium"
             />
-            <div className="absolute right-1.5 top-1/2 -translate-y-1/2 flex items-center gap-1">
+            <div className="absolute right-1.5 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
               {filters.searchQuery && (
                 <button
                   type="button"
                   onClick={() => {
                     const reset = { ...filters, searchQuery: '', priceMax: 5000000, priceMin: 0, bedsMin: 0 };
                     onFilterChange(reset);
-                    onTriggerLiveCrawl?.('', exaKeyInput.trim() || undefined, reset);
+                    onTriggerLiveCrawl?.('', undefined, reset);
                   }}
-                  className="text-red-400 hover:text-red-600 p-0.5 cursor-pointer"
+                  className="text-slate-400 hover:text-red-600 p-1 cursor-pointer transition-colors"
                   title="Clear search"
                 >
                   <X className="w-3.5 h-3.5" />
@@ -239,14 +221,18 @@ export const Header: React.FC<HeaderProps> = ({
                 type="button"
                 onClick={() => {
                   if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
-                  onTriggerLiveCrawl?.(filters.searchQuery, exaKeyInput.trim() || undefined, filters);
+                  onTriggerLiveCrawl?.(filters.searchQuery, undefined, filters);
                 }}
                 disabled={isCrawling}
-                title="Press Enter or click to crawl live rental portals in real time"
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-red-600 hover:bg-red-700 disabled:bg-slate-300 text-white rounded-lg text-xs font-black uppercase tracking-wider transition-all shadow-sm cursor-pointer"
+                title="Scan and scrape all rental websites for this criteria"
+                className="flex items-center gap-1.5 px-3.5 py-1.5 bg-red-600 hover:bg-red-700 disabled:bg-slate-300 text-white rounded-lg text-xs font-black uppercase tracking-wider transition-all shadow-sm cursor-pointer"
               >
-                <span>{isCrawling ? '...' : 'Crawl'}</span>
-                <span className="hidden sm:inline opacity-80 font-mono text-[10px]">↵</span>
+                {isCrawling ? (
+                  <RotateCw className="w-3.5 h-3.5 animate-spin" />
+                ) : (
+                  <Scan className="w-3.5 h-3.5" />
+                )}
+                <span>{isCrawling ? 'Scanning...' : 'Scan'}</span>
               </button>
             </div>
           </div>
@@ -263,22 +249,6 @@ export const Header: React.FC<HeaderProps> = ({
               <span className="sm:hidden">Chat</span>
             </button>
           )}
-
-          {/* 2.6. EXA.AI LIVE NEURAL CRAWLER TRIGGER */}
-          <button
-            onClick={() => setShowExaModal(true)}
-            className={`flex items-center gap-1.5 px-3 py-2 text-xs font-bold rounded-xl border transition-all shrink-0 cursor-pointer ${
-              hasExaKey
-                ? 'bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100 shadow-sm'
-                : 'bg-white text-slate-700 border-red-200 hover:border-red-400 hover:bg-red-50/50'
-            }`}
-            title="Configure Exa.ai Neural Search to crawl live listings from Zillow, Redfin, Realtor.com"
-          >
-            <Zap className={`w-3.5 h-3.5 ${hasExaKey ? 'text-emerald-600' : 'text-red-500'}`} />
-            <span className="hidden sm:inline">{hasExaKey ? 'Exa.ai Active' : 'Exa.ai Live Search'}</span>
-            <span className="sm:hidden">Exa</span>
-            {hasExaKey && <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />}
-          </button>
 
           {/* 3. STATUS (FOR SALE / FOR RENT) */}
           <div className="relative hidden md:block">
@@ -308,7 +278,7 @@ export const Header: React.FC<HeaderProps> = ({
                       };
                       onFilterChange(next);
                       closeDropdowns();
-                      onTriggerLiveCrawl?.(undefined, exaKeyInput.trim() || undefined, next);
+                      onTriggerLiveCrawl?.(undefined, undefined, next);
                     }}
                     className={`w-full text-left px-3 py-1.5 text-xs rounded-xl font-bold flex items-center justify-between ${
                       filters.listingStatus === st ? 'bg-red-50 text-red-600' : 'text-slate-700 hover:bg-red-50/60'
@@ -318,19 +288,6 @@ export const Header: React.FC<HeaderProps> = ({
                     {filters.listingStatus === st && <Check className="w-3.5 h-3.5 text-red-600" />}
                   </button>
                 ))}
-                <div className="pt-1 border-t border-red-100">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      closeDropdowns();
-                      onTriggerLiveCrawl?.(undefined, exaKeyInput.trim() || undefined, filters);
-                    }}
-                    className="w-full py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-xl text-[10px] font-bold transition-all flex items-center justify-center gap-1 cursor-pointer shadow-sm"
-                  >
-                    <Globe className="w-3 h-3" />
-                    <span>Crawl Live Portals ↵</span>
-                  </button>
-                </div>
               </div>
             )}
           </div>
@@ -372,7 +329,7 @@ export const Header: React.FC<HeaderProps> = ({
                         priceMax: filters.listingStatus === 'FOR_RENT' ? 10000 : 5000000 
                       };
                       onFilterChange(next);
-                      onTriggerLiveCrawl?.(undefined, exaKeyInput.trim() || undefined, next);
+                      onTriggerLiveCrawl?.(undefined, undefined, next);
                     }}
                     className="text-[11px] text-red-600 font-bold hover:underline cursor-pointer"
                   >
@@ -387,7 +344,7 @@ export const Header: React.FC<HeaderProps> = ({
                       onChange={(e) => {
                         const next = { ...filters, priceMin: Number(e.target.value) };
                         onFilterChange(next);
-                        onTriggerLiveCrawl?.(undefined, exaKeyInput.trim() || undefined, next);
+                        onTriggerLiveCrawl?.(undefined, undefined, next);
                       }}
                       className="w-full text-xs p-2 bg-red-50/40 border border-red-200 rounded-xl font-medium"
                     >
@@ -422,7 +379,7 @@ export const Header: React.FC<HeaderProps> = ({
                       onChange={(e) => {
                         const next = { ...filters, priceMax: Number(e.target.value) };
                         onFilterChange(next);
-                        onTriggerLiveCrawl?.(undefined, exaKeyInput.trim() || undefined, next);
+                        onTriggerLiveCrawl?.(undefined, undefined, next);
                       }}
                       className="w-full text-xs p-2 bg-red-50/40 border border-red-200 rounded-xl font-medium"
                     >
@@ -453,19 +410,6 @@ export const Header: React.FC<HeaderProps> = ({
                     </select>
                   </div>
                 </div>
-
-                {/* Instant Crawl Action */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    closeDropdowns();
-                    onTriggerLiveCrawl?.(undefined, exaKeyInput.trim() || undefined, filters);
-                  }}
-                  className="w-full py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
-                >
-                  <Globe className="w-3.5 h-3.5" />
-                  <span>Apply & Crawl Live Portals (Enter ↵)</span>
-                </button>
               </div>
             )}
           </div>
@@ -498,7 +442,7 @@ export const Header: React.FC<HeaderProps> = ({
                         onClick={() => {
                           const next = { ...filters, bedsMin: b };
                           onFilterChange(next);
-                          onTriggerLiveCrawl?.(undefined, exaKeyInput.trim() || undefined, next);
+                          onTriggerLiveCrawl?.(undefined, undefined, next);
                         }}
                         className={`flex-1 py-1 text-xs font-bold rounded-lg transition-all ${
                           filters.bedsMin === b ? 'bg-red-600 text-white shadow-sm' : 'text-slate-700 hover:text-red-600'
@@ -519,7 +463,7 @@ export const Header: React.FC<HeaderProps> = ({
                         onClick={() => {
                           const next = { ...filters, bathsMin: ba };
                           onFilterChange(next);
-                          onTriggerLiveCrawl?.(undefined, exaKeyInput.trim() || undefined, next);
+                          onTriggerLiveCrawl?.(undefined, undefined, next);
                         }}
                         className={`flex-1 py-1 text-xs font-bold rounded-lg transition-all ${
                           filters.bathsMin === ba ? 'bg-red-600 text-white shadow-sm' : 'text-slate-700 hover:text-red-600'
@@ -530,19 +474,6 @@ export const Header: React.FC<HeaderProps> = ({
                     ))}
                   </div>
                 </div>
-
-                {/* Instant Crawl Action */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    closeDropdowns();
-                    onTriggerLiveCrawl?.(undefined, exaKeyInput.trim() || undefined, filters);
-                  }}
-                  className="w-full py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
-                >
-                  <Globe className="w-3.5 h-3.5" />
-                  <span>Apply & Crawl Live Portals (Enter ↵)</span>
-                </button>
               </div>
             )}
           </div>
@@ -570,7 +501,7 @@ export const Header: React.FC<HeaderProps> = ({
                       const next = { ...filters, propertyType: t };
                       onFilterChange(next);
                       closeDropdowns();
-                      onTriggerLiveCrawl?.(undefined, exaKeyInput.trim() || undefined, next);
+                      onTriggerLiveCrawl?.(undefined, undefined, next);
                     }}
                     className={`w-full text-left px-3 py-1.5 text-xs rounded-xl font-bold flex items-center justify-between ${
                       filters.propertyType === t ? 'bg-red-50 text-red-600' : 'text-slate-700 hover:bg-red-50/60'
@@ -580,21 +511,6 @@ export const Header: React.FC<HeaderProps> = ({
                     {filters.propertyType === t && <Check className="w-3.5 h-3.5 text-red-600" />}
                   </button>
                 ))}
-
-                {/* Instant Crawl Action */}
-                <div className="pt-1 border-t border-red-100">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      closeDropdowns();
-                      onTriggerLiveCrawl?.(undefined, exaKeyInput.trim() || undefined, filters);
-                    }}
-                    className="w-full py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-xl text-[11px] font-bold transition-all flex items-center justify-center gap-1 cursor-pointer shadow-sm"
-                  >
-                    <Globe className="w-3 h-3" />
-                    <span>Crawl Live Portals (Enter ↵)</span>
-                  </button>
-                </div>
               </div>
             )}
           </div>
@@ -606,18 +522,6 @@ export const Header: React.FC<HeaderProps> = ({
           >
             <SlidersHorizontal className="w-3.5 h-3.5 text-red-600" />
             <span className="hidden sm:inline">More Filters</span>
-          </button>
-
-          {/* 7.5. INSTANT LIVE CRAWL BUTTON FOR CURRENT FILTERS */}
-          <button
-            onClick={() => onTriggerLiveCrawl?.()}
-            disabled={isCrawling}
-            title="Scan & Ingest Active Live Listings from Other Rental Websites for Current Filters"
-            className="flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold rounded-xl bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 disabled:bg-slate-300 text-white shadow-sm transition-all shrink-0 cursor-pointer"
-          >
-            <Globe className={`w-3.5 h-3.5 ${isCrawling ? 'animate-spin' : 'animate-pulse'}`} />
-            <span className="hidden md:inline">{isCrawling ? 'Crawling Portals...' : 'Crawl Live Portals'}</span>
-            <span className="md:hidden">{isCrawling ? '...' : 'Crawl'}</span>
           </button>
 
           {/* 8. DRAW / SCRIBBLE BOUNDARY BUTTON (RED & WHITE) */}
@@ -769,165 +673,23 @@ export const Header: React.FC<HeaderProps> = ({
               </select>
             </div>
 
-            {/* Instant Crawl Action inside More Filters */}
+            {/* Scan Action inside More Filters */}
             <div className="sm:col-span-2 lg:col-span-4 pt-2 border-t border-red-200 flex justify-end">
               <button
                 type="button"
                 onClick={() => {
                   setShowMoreModal(false);
-                  onTriggerLiveCrawl?.(undefined, exaKeyInput.trim() || undefined, filters);
+                  onTriggerLiveCrawl?.(undefined, undefined, filters);
                 }}
                 className="px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer shadow-sm"
               >
-                <Globe className="w-4 h-4" />
-                <span>Apply Filters & Crawl Live Portals (Enter ↵)</span>
+                <Scan className="w-4 h-4" />
+                <span>Scan Properties</span>
               </button>
             </div>
           </div>
         )}
       </div>
-
-      {/* EXA.AI LIVE NEURAL CRAWLER CONFIGURATION MODAL */}
-      {showExaModal && (
-        <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
-          <div className="bg-white rounded-3xl shadow-2xl border border-red-200 w-full max-w-lg overflow-hidden flex flex-col">
-            <div className="p-6 border-b border-red-100 flex items-center justify-between bg-red-50/50">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-red-600 text-white flex items-center justify-center shadow-md shadow-red-500/20">
-                  <Zap className="w-5 h-5 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-base font-black text-slate-900">Exa.ai Neural Search Ingestion</h3>
-                  <p className="text-xs text-slate-500 font-medium">Crawl live properties directly from Zillow, Redfin, & Realtor</p>
-                </div>
-              </div>
-              <button
-                onClick={() => {
-                  setShowExaModal(false);
-                  setExaTestStatus(null);
-                }}
-                className="w-8 h-8 rounded-full bg-white hover:bg-red-50 text-slate-400 hover:text-red-600 flex items-center justify-center transition-colors cursor-pointer"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            <div className="p-6 space-y-4 text-xs">
-              <div className="bg-amber-50 border border-amber-200 text-amber-900 p-3.5 rounded-2xl flex items-start gap-2.5">
-                <Sparkles className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-                <p className="leading-relaxed">
-                  Connecting an <strong>Exa.ai API Key</strong> enables real-time neural web searches across <strong>zillow.com, redfin.com, realtor.com, apartments.com, and trulia.com</strong> based on your location and criteria.
-                </p>
-              </div>
-
-              <div>
-                <div className="flex items-center justify-between mb-1.5">
-                  <label className="font-bold text-slate-800">
-                    Exa.ai API Key:
-                  </label>
-                  <a
-                    href="https://exa.ai"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-red-600 hover:underline flex items-center gap-1 font-semibold"
-                  >
-                    <span>Get API key at exa.ai</span>
-                    <ExternalLink className="w-3 h-3" />
-                  </a>
-                </div>
-                <input
-                  type="password"
-                  placeholder="e.g. exa-xxxxxxxxxxxxxxxxxxxxxxxx"
-                  value={exaKeyInput}
-                  onChange={(e) => {
-                    setExaKeyInput(e.target.value);
-                    setExaTestStatus(null);
-                  }}
-                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white font-mono text-xs transition-all"
-                />
-                <p className="text-[11px] text-slate-400 mt-1">
-                  Persists in browser localStorage or can be configured via <code className="bg-slate-100 px-1 py-0.5 rounded text-slate-700">EXA_API_KEY</code> in environment.
-                </p>
-              </div>
-
-              {exaTestStatus && (
-                <div
-                  className={`p-3 rounded-xl border flex items-start gap-2 ${
-                    exaTestStatus.valid
-                      ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
-                      : 'bg-red-50 border-red-200 text-red-800'
-                  }`}
-                >
-                  {exaTestStatus.valid ? (
-                    <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                  ) : (
-                    <X className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
-                  )}
-                  <span className="leading-tight font-medium">{exaTestStatus.message}</span>
-                </div>
-              )}
-
-              <div className="pt-2 flex items-center justify-between gap-2 border-t border-slate-100">
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (typeof window !== 'undefined') {
-                      window.localStorage.removeItem('EXA_API_KEY');
-                    }
-                    setExaKeyInput('');
-                    setHasExaKey(false);
-                    setExaTestStatus({ valid: false, message: 'Exa API key cleared. Standard MLS & public records crawler active.' });
-                  }}
-                  disabled={!hasExaKey && !exaKeyInput}
-                  className="px-3.5 py-2 rounded-xl text-slate-500 hover:text-red-600 hover:bg-red-50 font-bold transition-all disabled:opacity-40 cursor-pointer"
-                >
-                  Clear Key
-                </button>
-
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    disabled={testingExa || !exaKeyInput.trim()}
-                    onClick={async () => {
-                      setTestingExa(true);
-                      setExaTestStatus(null);
-                      const res = await testExaApiKey(exaKeyInput.trim());
-                      setTestingExa(false);
-                      setExaTestStatus(res);
-                      if (res.valid) {
-                        if (typeof window !== 'undefined') {
-                          window.localStorage.setItem('EXA_API_KEY', exaKeyInput.trim());
-                        }
-                        setHasExaKey(true);
-                      }
-                    }}
-                    className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold transition-all disabled:opacity-50 cursor-pointer"
-                  >
-                    {testingExa ? 'Testing...' : 'Test Connection'}
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const trimmed = exaKeyInput.trim();
-                      if (trimmed) {
-                        if (typeof window !== 'undefined') {
-                          window.localStorage.setItem('EXA_API_KEY', trimmed);
-                        }
-                        setHasExaKey(true);
-                      }
-                      setShowExaModal(false);
-                    }}
-                    className="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold transition-all shadow-sm cursor-pointer"
-                  >
-                    Save & Apply
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </header>
   );
 };
