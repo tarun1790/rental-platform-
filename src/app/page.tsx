@@ -8,7 +8,6 @@ import { PropertyCard } from '../components/property/PropertyCard';
 import { PropertyDetailModal } from '../components/property/PropertyDetailModal';
 import { HouseRoiCalculatorModal } from '../components/property/HouseRoiCalculatorModal';
 import { ScribbleMap } from '../components/map/ScribbleMap';
-import { CustomerNlpDialog } from '../components/nlp/CustomerNlpDialog';
 import { resolveUsMetro } from '../lib/geo/us-metro-registry';
 import { CHICAGO_LISTINGS } from '../data/chicago-listings';
 import { ShikaakPropertyListing, FilterState, GeoCoordinate, BuyerPriorityWeights } from '../types/property';
@@ -75,8 +74,7 @@ export default function Home() {
   // Custom ROI Calculator Modal State for any house
   const [roiModalListing, setRoiModalListing] = useState<ShikaakPropertyListing | null>(null);
 
-  // Property Decision Concierge & Multilingual State
-  const [isNlpDialogOpen, setIsNlpDialogOpen] = useState(false);
+  // Multilingual State
   const [currentLanguage, setCurrentLanguage] = useState<SupportedLanguageCode>('en');
 
   // Freehand Scribble / Lasso State
@@ -452,7 +450,6 @@ export default function Home() {
           sortBy={sortBy}
           onSortChange={setSortBy}
           onScrollToTop={handleScrollToTop}
-          onOpenNlpDialog={() => setIsNlpDialogOpen(true)}
           currentLanguage={currentLanguage}
           onLanguageChange={setCurrentLanguage}
           onTriggerLiveCrawl={handleTriggerLiveCrawl}
@@ -853,42 +850,6 @@ export default function Home() {
           onClose={() => setModalListing(null)}
         />
       )}
-
-      {/* Property Decision Concierge (Voice, Multilingual, 1,000 Trained Queries & Self-Correction) */}
-      <CustomerNlpDialog
-        isOpen={isNlpDialogOpen}
-        onClose={() => setIsNlpDialogOpen(false)}
-        allListings={allListings}
-        currentLanguage={currentLanguage}
-        onLanguageChange={setCurrentLanguage}
-        onSelectProperty={(property) => {
-          setSelectedListing(property);
-          const spotlight = document.getElementById('selected-spotlight');
-          if (spotlight) spotlight.scrollIntoView({ behavior: 'smooth' });
-        }}
-        onApplyResultsToDashboard={(matched, parsedQuery) => {
-          setAllListings(prev => {
-            const existingIds = new Set(prev.map(p => p.id));
-            const unique = matched.filter(m => !existingIds.has(m.id));
-            return [...unique, ...prev];
-          });
-          if (parsedQuery) {
-            setFilters(prev => ({
-              ...prev,
-              priceMax: parsedQuery.priceRange?.maxPrice !== undefined ? parsedQuery.priceRange.maxPrice : prev.priceMax,
-              priceMin: parsedQuery.priceRange?.minPrice !== undefined ? parsedQuery.priceRange.minPrice : prev.priceMin,
-              bedsMin: parsedQuery.beds !== undefined ? parsedQuery.beds : prev.bedsMin,
-              searchQuery: parsedQuery.location?.neighborhood || parsedQuery.location?.city || prev.searchQuery,
-            }));
-          }
-          if (matched.length > 0) {
-            setSelectedListing(matched[0]);
-          }
-          setIsNlpDialogOpen(false);
-          const spotlight = document.getElementById('selected-spotlight');
-          if (spotlight) spotlight.scrollIntoView({ behavior: 'smooth' });
-        }}
-      />
     </div>
   );
 }

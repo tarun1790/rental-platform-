@@ -20,7 +20,6 @@ import {
   Filter,
   ShieldCheck,
   TreePine,
-  Bot,
   RotateCw,
   Scan
 } from 'lucide-react';
@@ -44,8 +43,6 @@ interface HeaderProps {
   sortBy: string;
   onSortChange: (sort: any) => void;
   onScrollToTop?: () => void;
-  onOpenVoiceAssistant?: () => void;
-  onOpenNlpDialog?: () => void;
   currentLanguage?: SupportedLanguageCode;
   onLanguageChange?: (lang: SupportedLanguageCode) => void;
   onTriggerLiveCrawl?: (query?: string, exaApiKey?: string, filterOverrides?: Partial<FilterState>) => void;
@@ -66,8 +63,6 @@ export const Header: React.FC<HeaderProps> = ({
   sortBy,
   onSortChange,
   onScrollToTop,
-  onOpenVoiceAssistant,
-  onOpenNlpDialog,
   currentLanguage = 'en',
   onLanguageChange,
   onTriggerLiveCrawl,
@@ -236,19 +231,6 @@ export const Header: React.FC<HeaderProps> = ({
               </button>
             </div>
           </div>
-
-          {/* 2.5. PROPERTY DECISION CONCIERGE TRIGGER (VOICE & NLP) */}
-          {(onOpenNlpDialog || onOpenVoiceAssistant) && (
-            <button
-              onClick={onOpenNlpDialog || onOpenVoiceAssistant}
-              className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold rounded-xl bg-red-600 hover:bg-red-700 text-white shadow-sm transition-all shrink-0 cursor-pointer"
-              title="Open AI Property Advisor Chat (Conversational Needs & Specification Intelligence)"
-            >
-              <Bot className="w-3.5 h-3.5 animate-pulse" />
-              <span className="hidden sm:inline">AI Property Chat</span>
-              <span className="sm:hidden">Chat</span>
-            </button>
-          )}
 
           {/* 3. STATUS (FOR SALE / FOR RENT) */}
           <div className="relative hidden md:block">
