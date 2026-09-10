@@ -17,6 +17,10 @@
       "coordinates": {
         "latitude": 41.9150411,
         "longitude": -87.6892387
+      },
+      "location": {
+        "latitude": 41.9150411,
+        "longitude": -87.6892387
       }
     },
     "specs": {
@@ -215,6 +219,10 @@
       "zipCode": "60620",
       "neighborhood": "Auburn Gresham",
       "coordinates": {
+        "latitude": 41.7425708,
+        "longitude": -87.6477875
+      },
+      "location": {
         "latitude": 41.7425708,
         "longitude": -87.6477875
       }
@@ -417,6 +425,10 @@
       "coordinates": {
         "latitude": 41.7059357,
         "longitude": -87.5355762
+      },
+      "location": {
+        "latitude": 41.7059357,
+        "longitude": -87.5355762
       }
     },
     "specs": {
@@ -615,6 +627,10 @@
       "zipCode": "60614",
       "neighborhood": "Lincoln Park",
       "coordinates": {
+        "latitude": 41.9250212,
+        "longitude": -87.6628435
+      },
+      "location": {
         "latitude": 41.9250212,
         "longitude": -87.6628435
       }
@@ -817,6 +833,10 @@
       "coordinates": {
         "latitude": 41.9414309,
         "longitude": -87.6691469
+      },
+      "location": {
+        "latitude": 41.9414309,
+        "longitude": -87.6691469
       }
     },
     "specs": {
@@ -1015,6 +1035,10 @@
       "zipCode": "60646",
       "neighborhood": "Sauganash",
       "coordinates": {
+        "latitude": 41.9868206,
+        "longitude": -87.739235
+      },
+      "location": {
         "latitude": 41.9868206,
         "longitude": -87.739235
       }
@@ -1217,6 +1241,10 @@
       "coordinates": {
         "latitude": 41.9618073,
         "longitude": -87.6719772
+      },
+      "location": {
+        "latitude": 41.9618073,
+        "longitude": -87.6719772
       }
     },
     "specs": {
@@ -1415,6 +1443,10 @@
       "zipCode": "60631",
       "neighborhood": "Norwood Park East",
       "coordinates": {
+        "latitude": 41.9975875,
+        "longitude": -87.8050623
+      },
+      "location": {
         "latitude": 41.9975875,
         "longitude": -87.8050623
       }
@@ -1617,6 +1649,10 @@
       "coordinates": {
         "latitude": 41.9380124,
         "longitude": -87.6424349
+      },
+      "location": {
+        "latitude": 41.9380124,
+        "longitude": -87.6424349
       }
     },
     "specs": {
@@ -1815,6 +1851,10 @@
       "zipCode": "60642",
       "neighborhood": "River West",
       "coordinates": {
+        "latitude": 41.8986248,
+        "longitude": -87.6583249
+      },
+      "location": {
         "latitude": 41.8986248,
         "longitude": -87.6583249
       }
@@ -2017,6 +2057,10 @@
       "coordinates": {
         "latitude": 41.8707053,
         "longitude": -87.624488
+      },
+      "location": {
+        "latitude": 41.8707053,
+        "longitude": -87.624488
       }
     },
     "specs": {
@@ -2215,6 +2259,10 @@
       "zipCode": "60618",
       "neighborhood": "Bucktown",
       "coordinates": {
+        "latitude": 41.9337333,
+        "longitude": -87.6870907
+      },
+      "location": {
         "latitude": 41.9337333,
         "longitude": -87.6870907
       }
@@ -2417,6 +2465,10 @@
       "coordinates": {
         "latitude": 41.91615,
         "longitude": -87.6505231
+      },
+      "location": {
+        "latitude": 41.91615,
+        "longitude": -87.6505231
       }
     },
     "specs": {
@@ -2615,6 +2667,10 @@
       "zipCode": "60640",
       "neighborhood": "CHI - Uptown",
       "coordinates": {
+        "latitude": 41.9707591,
+        "longitude": -87.6566125
+      },
+      "location": {
         "latitude": 41.9707591,
         "longitude": -87.6566125
       }
@@ -2817,6 +2873,10 @@
       "coordinates": {
         "latitude": 41.9326093,
         "longitude": -87.6700538
+      },
+      "location": {
+        "latitude": 41.9326093,
+        "longitude": -87.6700538
       }
     },
     "specs": {
@@ -3015,6 +3075,10 @@
       "zipCode": "60616",
       "neighborhood": "River South",
       "coordinates": {
+        "latitude": 41.8582864,
+        "longitude": -87.6431345
+      },
+      "location": {
         "latitude": 41.8582864,
         "longitude": -87.6431345
       }
@@ -3217,6 +3281,10 @@
       "coordinates": {
         "latitude": 41.9326156,
         "longitude": -87.670211
+      },
+      "location": {
+        "latitude": 41.9326156,
+        "longitude": -87.670211
       }
     },
     "specs": {
@@ -3415,6 +3483,10 @@
       "zipCode": "60611",
       "neighborhood": "CHI - Near North Side",
       "coordinates": {
+        "latitude": 41.8989354,
+        "longitude": -87.6233428
+      },
+      "location": {
         "latitude": 41.8989354,
         "longitude": -87.6233428
       }
@@ -3617,6 +3689,10 @@
       "coordinates": {
         "latitude": 41.8818689,
         "longitude": -87.6501293
+      },
+      "location": {
+        "latitude": 41.8818689,
+        "longitude": -87.6501293
       }
     },
     "specs": {
@@ -3815,6 +3891,10 @@
       "zipCode": "60611",
       "neighborhood": "Downtown Chicago",
       "coordinates": {
+        "latitude": 41.890229,
+        "longitude": -87.617849
+      },
+      "location": {
         "latitude": 41.890229,
         "longitude": -87.617849
       }
@@ -4017,6 +4097,10 @@
       "coordinates": {
         "latitude": 41.9429883,
         "longitude": -87.7040095
+      },
+      "location": {
+        "latitude": 41.9429883,
+        "longitude": -87.7040095
       }
     },
     "specs": {
@@ -4215,6 +4299,10 @@
       "zipCode": "60661",
       "neighborhood": "CHI - Near West Side",
       "coordinates": {
+        "latitude": 41.88715,
+        "longitude": -87.643829
+      },
+      "location": {
         "latitude": 41.88715,
         "longitude": -87.643829
       }
@@ -4417,6 +4505,10 @@
       "coordinates": {
         "latitude": 41.954387,
         "longitude": -87.676708
+      },
+      "location": {
+        "latitude": 41.954387,
+        "longitude": -87.676708
       }
     },
     "specs": {
@@ -4615,6 +4707,10 @@
       "zipCode": "60647",
       "neighborhood": "CHI - West Town",
       "coordinates": {
+        "latitude": 41.9123689,
+        "longitude": -87.6853552
+      },
+      "location": {
         "latitude": 41.9123689,
         "longitude": -87.6853552
       }
@@ -4817,6 +4913,10 @@
       "coordinates": {
         "latitude": 41.8919386,
         "longitude": -87.6236558
+      },
+      "location": {
+        "latitude": 41.8919386,
+        "longitude": -87.6236558
       }
     },
     "specs": {
@@ -5015,6 +5115,10 @@
       "zipCode": "60660",
       "neighborhood": "Malibu",
       "coordinates": {
+        "latitude": 41.9914622,
+        "longitude": -87.6551763
+      },
+      "location": {
         "latitude": 41.9914622,
         "longitude": -87.6551763
       }
@@ -5217,6 +5321,10 @@
       "coordinates": {
         "latitude": 41.8905415,
         "longitude": -87.6232824
+      },
+      "location": {
+        "latitude": 41.8905415,
+        "longitude": -87.6232824
       }
     },
     "specs": {
@@ -5415,6 +5523,10 @@
       "zipCode": "60618",
       "neighborhood": "Hamlin Park",
       "coordinates": {
+        "latitude": 41.9392925,
+        "longitude": -87.6835501
+      },
+      "location": {
         "latitude": 41.9392925,
         "longitude": -87.6835501
       }
@@ -5617,6 +5729,10 @@
       "coordinates": {
         "latitude": 41.8991343,
         "longitude": -87.6614152
+      },
+      "location": {
+        "latitude": 41.8991343,
+        "longitude": -87.6614152
       }
     },
     "specs": {
@@ -5815,6 +5931,10 @@
       "zipCode": "60622",
       "neighborhood": "CHI - West Town",
       "coordinates": {
+        "latitude": 41.9064304,
+        "longitude": -87.6943452
+      },
+      "location": {
         "latitude": 41.9064304,
         "longitude": -87.6943452
       }
@@ -6017,6 +6137,10 @@
       "coordinates": {
         "latitude": 41.92134,
         "longitude": -87.6711295
+      },
+      "location": {
+        "latitude": 41.92134,
+        "longitude": -87.6711295
       }
     },
     "specs": {
@@ -6215,6 +6339,10 @@
       "zipCode": "60607",
       "neighborhood": "West Loop",
       "coordinates": {
+        "latitude": 41.881441,
+        "longitude": -87.6602547
+      },
+      "location": {
         "latitude": 41.881441,
         "longitude": -87.6602547
       }
@@ -6417,6 +6545,10 @@
       "coordinates": {
         "latitude": 41.981662,
         "longitude": -87.654497
+      },
+      "location": {
+        "latitude": 41.981662,
+        "longitude": -87.654497
       }
     },
     "specs": {
@@ -6615,6 +6747,10 @@
       "zipCode": "60647",
       "neighborhood": "CHI - Logan Square",
       "coordinates": {
+        "latitude": 41.9207132,
+        "longitude": -87.7092045
+      },
+      "location": {
         "latitude": 41.9207132,
         "longitude": -87.7092045
       }
@@ -6817,6 +6953,10 @@
       "coordinates": {
         "latitude": 41.9519106,
         "longitude": -87.7119642
+      },
+      "location": {
+        "latitude": 41.9519106,
+        "longitude": -87.7119642
       }
     },
     "specs": {
@@ -7015,6 +7155,10 @@
       "zipCode": "60611",
       "neighborhood": "Ontario Place",
       "coordinates": {
+        "latitude": 41.8935427,
+        "longitude": -87.6272179
+      },
+      "location": {
         "latitude": 41.8935427,
         "longitude": -87.6272179
       }
@@ -7217,6 +7361,10 @@
       "coordinates": {
         "latitude": 41.8978884,
         "longitude": -87.6251938
+      },
+      "location": {
+        "latitude": 41.8978884,
+        "longitude": -87.6251938
       }
     },
     "specs": {
@@ -7415,6 +7563,10 @@
       "zipCode": "60607",
       "neighborhood": "CHI - Near West Side",
       "coordinates": {
+        "latitude": 41.8804659,
+        "longitude": -87.6622391
+      },
+      "location": {
         "latitude": 41.8804659,
         "longitude": -87.6622391
       }
@@ -7617,6 +7769,10 @@
       "coordinates": {
         "latitude": 41.9960678,
         "longitude": -87.8219449
+      },
+      "location": {
+        "latitude": 41.9960678,
+        "longitude": -87.8219449
       }
     },
     "specs": {
@@ -7815,6 +7971,10 @@
       "zipCode": "60654",
       "neighborhood": "Admirals Pointe",
       "coordinates": {
+        "latitude": 41.8934627,
+        "longitude": -87.6410582
+      },
+      "location": {
         "latitude": 41.8934627,
         "longitude": -87.6410582
       }
@@ -8017,6 +8177,10 @@
       "coordinates": {
         "latitude": 41.9564829,
         "longitude": -87.7519209
+      },
+      "location": {
+        "latitude": 41.9564829,
+        "longitude": -87.7519209
       }
     },
     "specs": {
@@ -8215,6 +8379,10 @@
       "zipCode": "60652",
       "neighborhood": "CHI - Ashburn",
       "coordinates": {
+        "latitude": 41.7521279,
+        "longitude": -87.7266489
+      },
+      "location": {
         "latitude": 41.7521279,
         "longitude": -87.7266489
       }
@@ -8417,6 +8585,10 @@
       "coordinates": {
         "latitude": 41.948167,
         "longitude": -87.6983626
+      },
+      "location": {
+        "latitude": 41.948167,
+        "longitude": -87.6983626
       }
     },
     "specs": {
@@ -8615,6 +8787,10 @@
       "zipCode": "60619",
       "neighborhood": "CHI - Greater Grand Crossing",
       "coordinates": {
+        "latitude": 41.7557403,
+        "longitude": -87.6128725
+      },
+      "location": {
         "latitude": 41.7557403,
         "longitude": -87.6128725
       }
@@ -8817,6 +8993,10 @@
       "coordinates": {
         "latitude": 41.8560691,
         "longitude": -87.6268326
+      },
+      "location": {
+        "latitude": 41.8560691,
+        "longitude": -87.6268326
       }
     },
     "specs": {
@@ -9015,6 +9195,10 @@
       "zipCode": "60714",
       "neighborhood": "Renaissance",
       "coordinates": {
+        "latitude": 42.0101474,
+        "longitude": -87.8036325
+      },
+      "location": {
         "latitude": 42.0101474,
         "longitude": -87.8036325
       }
@@ -9217,6 +9401,10 @@
       "coordinates": {
         "latitude": 41.9099259,
         "longitude": -87.7820478
+      },
+      "location": {
+        "latitude": 41.9099259,
+        "longitude": -87.7820478
       }
     },
     "specs": {
@@ -9415,6 +9603,10 @@
       "zipCode": "60619",
       "neighborhood": "CHI - Greater Grand Crossing",
       "coordinates": {
+        "latitude": 41.7528661,
+        "longitude": -87.6122883
+      },
+      "location": {
         "latitude": 41.7528661,
         "longitude": -87.6122883
       }
@@ -9617,6 +9809,10 @@
       "coordinates": {
         "latitude": 41.8064982,
         "longitude": -87.5866451
+      },
+      "location": {
+        "latitude": 41.8064982,
+        "longitude": -87.5866451
       }
     },
     "specs": {
@@ -9815,6 +10011,10 @@
       "zipCode": "60634",
       "neighborhood": "CHI - Dunning",
       "coordinates": {
+        "latitude": 41.9416828,
+        "longitude": -87.8319246
+      },
+      "location": {
         "latitude": 41.9416828,
         "longitude": -87.8319246
       }
@@ -10017,6 +10217,10 @@
       "coordinates": {
         "latitude": 30.4030079,
         "longitude": -97.7596508
+      },
+      "location": {
+        "latitude": 30.4030079,
+        "longitude": -97.7596508
       }
     },
     "specs": {
@@ -10215,6 +10419,10 @@
       "zipCode": "78746",
       "neighborhood": "Lost Creek",
       "coordinates": {
+        "latitude": 30.285432,
+        "longitude": -97.8451821
+      },
+      "location": {
         "latitude": 30.285432,
         "longitude": -97.8451821
       }
@@ -10417,6 +10625,10 @@
       "coordinates": {
         "latitude": 30.3863606,
         "longitude": -97.9164185
+      },
+      "location": {
+        "latitude": 30.3863606,
+        "longitude": -97.9164185
       }
     },
     "specs": {
@@ -10615,6 +10827,10 @@
       "zipCode": "78750",
       "neighborhood": "Anderson Mill",
       "coordinates": {
+        "latitude": 30.4219267,
+        "longitude": -97.8048261
+      },
+      "location": {
         "latitude": 30.4219267,
         "longitude": -97.8048261
       }
@@ -10817,6 +11033,10 @@
       "coordinates": {
         "latitude": 30.3907634,
         "longitude": -97.7690485
+      },
+      "location": {
+        "latitude": 30.3907634,
+        "longitude": -97.7690485
       }
     },
     "specs": {
@@ -11015,6 +11235,10 @@
       "zipCode": "78703",
       "neighborhood": "Tarrytown",
       "coordinates": {
+        "latitude": 30.2933851,
+        "longitude": -97.7631315
+      },
+      "location": {
         "latitude": 30.2933851,
         "longitude": -97.7631315
       }
@@ -11217,6 +11441,10 @@
       "coordinates": {
         "latitude": 30.3235914,
         "longitude": -97.7445477
+      },
+      "location": {
+        "latitude": 30.3235914,
+        "longitude": -97.7445477
       }
     },
     "specs": {
@@ -11415,6 +11643,10 @@
       "zipCode": "78732",
       "neighborhood": "Bella Mar",
       "coordinates": {
+        "latitude": 30.3420318,
+        "longitude": -97.9089115
+      },
+      "location": {
         "latitude": 30.3420318,
         "longitude": -97.9089115
       }
@@ -11617,6 +11849,10 @@
       "coordinates": {
         "latitude": 30.2677663,
         "longitude": -97.7512618
+      },
+      "location": {
+        "latitude": 30.2677663,
+        "longitude": -97.7512618
       }
     },
     "specs": {
@@ -11815,6 +12051,10 @@
       "zipCode": "78704",
       "neighborhood": "Bouldin Creek",
       "coordinates": {
+        "latitude": 30.2470364,
+        "longitude": -97.7604329
+      },
+      "location": {
         "latitude": 30.2470364,
         "longitude": -97.7604329
       }
@@ -12017,6 +12257,10 @@
       "coordinates": {
         "latitude": 30.3436006,
         "longitude": -97.6730756
+      },
+      "location": {
+        "latitude": 30.3436006,
+        "longitude": -97.6730756
       }
     },
     "specs": {
@@ -12215,6 +12459,10 @@
       "zipCode": "78717",
       "neighborhood": "Meadows of Brushy Creek",
       "coordinates": {
+        "latitude": 30.4952283,
+        "longitude": -97.7458205
+      },
+      "location": {
         "latitude": 30.4952283,
         "longitude": -97.7458205
       }
@@ -12417,6 +12665,10 @@
       "coordinates": {
         "latitude": 30.3159399,
         "longitude": -97.7541725
+      },
+      "location": {
+        "latitude": 30.3159399,
+        "longitude": -97.7541725
       }
     },
     "specs": {
@@ -12615,6 +12867,10 @@
       "zipCode": "78723",
       "neighborhood": "MLK",
       "coordinates": {
+        "latitude": 30.2950171,
+        "longitude": -97.6815033
+      },
+      "location": {
         "latitude": 30.2950171,
         "longitude": -97.6815033
       }
@@ -12817,6 +13073,10 @@
       "coordinates": {
         "latitude": 30.2805833,
         "longitude": -97.7412883
+      },
+      "location": {
+        "latitude": 30.2805833,
+        "longitude": -97.7412883
       }
     },
     "specs": {
@@ -13015,6 +13275,10 @@
       "zipCode": "78731",
       "neighborhood": "Northwest Hills",
       "coordinates": {
+        "latitude": 30.346657,
+        "longitude": -97.752381
+      },
+      "location": {
         "latitude": 30.346657,
         "longitude": -97.752381
       }
@@ -13217,6 +13481,10 @@
       "coordinates": {
         "latitude": 30.2301941,
         "longitude": -97.7635666
+      },
+      "location": {
+        "latitude": 30.2301941,
+        "longitude": -97.7635666
       }
     },
     "specs": {
@@ -13415,6 +13683,10 @@
       "zipCode": "78724",
       "neighborhood": "Rogers Hill",
       "coordinates": {
+        "latitude": 30.3072124,
+        "longitude": -97.6291541
+      },
+      "location": {
         "latitude": 30.3072124,
         "longitude": -97.6291541
       }
@@ -13617,6 +13889,10 @@
       "coordinates": {
         "latitude": 30.1361371,
         "longitude": -97.7887938
+      },
+      "location": {
+        "latitude": 30.1361371,
+        "longitude": -97.7887938
       }
     },
     "specs": {
@@ -13815,6 +14091,10 @@
       "zipCode": "78702",
       "neighborhood": "Glenwood",
       "coordinates": {
+        "latitude": 30.2800795,
+        "longitude": -97.7159705
+      },
+      "location": {
         "latitude": 30.2800795,
         "longitude": -97.7159705
       }
@@ -14017,6 +14297,10 @@
       "coordinates": {
         "latitude": 30.2896262,
         "longitude": -97.7721507
+      },
+      "location": {
+        "latitude": 30.2896262,
+        "longitude": -97.7721507
       }
     },
     "specs": {
@@ -14215,6 +14499,10 @@
       "zipCode": "78747",
       "neighborhood": "Bradshaw Crossing",
       "coordinates": {
+        "latitude": 30.1429347,
+        "longitude": -97.7689811
+      },
+      "location": {
         "latitude": 30.1429347,
         "longitude": -97.7689811
       }
@@ -14417,6 +14705,10 @@
       "coordinates": {
         "latitude": 30.1595446,
         "longitude": -97.9681893
+      },
+      "location": {
+        "latitude": 30.1595446,
+        "longitude": -97.9681893
       }
     },
     "specs": {
@@ -14615,6 +14907,10 @@
       "zipCode": "78748",
       "neighborhood": "Olympic Heights",
       "coordinates": {
+        "latitude": 30.1538611,
+        "longitude": -97.844009
+      },
+      "location": {
         "latitude": 30.1538611,
         "longitude": -97.844009
       }
@@ -14817,6 +15113,10 @@
       "coordinates": {
         "latitude": 30.2981392,
         "longitude": -97.7405111
+      },
+      "location": {
+        "latitude": 30.2981392,
+        "longitude": -97.7405111
       }
     },
     "specs": {
@@ -15015,6 +15315,10 @@
       "zipCode": "78704",
       "neighborhood": "Sherwood Oaks",
       "coordinates": {
+        "latitude": 30.2356332,
+        "longitude": -97.748305
+      },
+      "location": {
         "latitude": 30.2356332,
         "longitude": -97.748305
       }
@@ -15217,6 +15521,10 @@
       "coordinates": {
         "latitude": 30.3367833,
         "longitude": -97.8167997
+      },
+      "location": {
+        "latitude": 30.3367833,
+        "longitude": -97.8167997
       }
     },
     "specs": {
@@ -15415,6 +15723,10 @@
       "zipCode": "78734",
       "neighborhood": "Hudson Bend",
       "coordinates": {
+        "latitude": 30.4021392,
+        "longitude": -97.9120082
+      },
+      "location": {
         "latitude": 30.4021392,
         "longitude": -97.9120082
       }
@@ -15617,6 +15929,10 @@
       "coordinates": {
         "latitude": 30.1632841,
         "longitude": -97.9746417
+      },
+      "location": {
+        "latitude": 30.1632841,
+        "longitude": -97.9746417
       }
     },
     "specs": {
@@ -15815,6 +16131,10 @@
       "zipCode": "78746",
       "neighborhood": "Westlake",
       "coordinates": {
+        "latitude": 30.2740874,
+        "longitude": -97.8163066
+      },
+      "location": {
         "latitude": 30.2740874,
         "longitude": -97.8163066
       }
@@ -16017,6 +16337,10 @@
       "coordinates": {
         "latitude": 30.2235327,
         "longitude": -97.7361811
+      },
+      "location": {
+        "latitude": 30.2235327,
+        "longitude": -97.7361811
       }
     },
     "specs": {
@@ -16215,6 +16539,10 @@
       "zipCode": "78702",
       "neighborhood": "Govalle",
       "coordinates": {
+        "latitude": 30.2572588,
+        "longitude": -97.7058405
+      },
+      "location": {
         "latitude": 30.2572588,
         "longitude": -97.7058405
       }
@@ -16417,6 +16745,10 @@
       "coordinates": {
         "latitude": 30.2794169,
         "longitude": -97.6747338
+      },
+      "location": {
+        "latitude": 30.2794169,
+        "longitude": -97.6747338
       }
     },
     "specs": {
@@ -16615,6 +16947,10 @@
       "zipCode": "78702",
       "neighborhood": "Austin",
       "coordinates": {
+        "latitude": 30.2553556,
+        "longitude": -97.7308739
+      },
+      "location": {
         "latitude": 30.2553556,
         "longitude": -97.7308739
       }
@@ -16817,6 +17153,10 @@
       "coordinates": {
         "latitude": 30.1990908,
         "longitude": -97.8338341
+      },
+      "location": {
+        "latitude": 30.1990908,
+        "longitude": -97.8338341
       }
     },
     "specs": {
@@ -17015,6 +17355,10 @@
       "zipCode": "78701",
       "neighborhood": "Seaholm District",
       "coordinates": {
+        "latitude": 30.2671786,
+        "longitude": -97.7521108
+      },
+      "location": {
         "latitude": 30.2671786,
         "longitude": -97.7521108
       }
@@ -17217,6 +17561,10 @@
       "coordinates": {
         "latitude": 30.1974027,
         "longitude": -97.8200651
+      },
+      "location": {
+        "latitude": 30.1974027,
+        "longitude": -97.8200651
       }
     },
     "specs": {
@@ -17415,6 +17763,10 @@
       "zipCode": "78749",
       "neighborhood": "East Oak Hill",
       "coordinates": {
+        "latitude": 30.2295207,
+        "longitude": -97.844888
+      },
+      "location": {
         "latitude": 30.2295207,
         "longitude": -97.844888
       }
@@ -17617,6 +17969,10 @@
       "coordinates": {
         "latitude": 30.428131,
         "longitude": -97.684809
+      },
+      "location": {
+        "latitude": 30.428131,
+        "longitude": -97.684809
       }
     },
     "specs": {
@@ -17815,6 +18171,10 @@
       "zipCode": "78702",
       "neighborhood": "Govalle",
       "coordinates": {
+        "latitude": 30.2589456,
+        "longitude": -97.6979546
+      },
+      "location": {
         "latitude": 30.2589456,
         "longitude": -97.6979546
       }
@@ -18017,6 +18377,10 @@
       "coordinates": {
         "latitude": 30.2511294,
         "longitude": -97.7232619
+      },
+      "location": {
+        "latitude": 30.2511294,
+        "longitude": -97.7232619
       }
     },
     "specs": {
@@ -18215,6 +18579,10 @@
       "zipCode": "78745",
       "neighborhood": "West Congress",
       "coordinates": {
+        "latitude": 30.222247,
+        "longitude": -97.771211
+      },
+      "location": {
         "latitude": 30.222247,
         "longitude": -97.771211
       }
@@ -18417,6 +18785,10 @@
       "coordinates": {
         "latitude": 30.25537415,
         "longitude": -97.73091548
+      },
+      "location": {
+        "latitude": 30.25537415,
+        "longitude": -97.73091548
       }
     },
     "specs": {
@@ -18615,6 +18987,10 @@
       "zipCode": "78701",
       "neighborhood": "Market District",
       "coordinates": {
+        "latitude": 30.2698257,
+        "longitude": -97.750545
+      },
+      "location": {
         "latitude": 30.2698257,
         "longitude": -97.750545
       }
@@ -18817,6 +19193,10 @@
       "coordinates": {
         "latitude": 30.4044859,
         "longitude": -97.6494633
+      },
+      "location": {
+        "latitude": 30.4044859,
+        "longitude": -97.6494633
       }
     },
     "specs": {
@@ -19015,6 +19395,10 @@
       "zipCode": "78757",
       "neighborhood": "Villas at Pasadena Condominiums",
       "coordinates": {
+        "latitude": 30.3487868,
+        "longitude": -97.733972
+      },
+      "location": {
         "latitude": 30.3487868,
         "longitude": -97.733972
       }
@@ -19217,6 +19601,10 @@
       "coordinates": {
         "latitude": 30.3746489,
         "longitude": -97.6520552
+      },
+      "location": {
+        "latitude": 30.3746489,
+        "longitude": -97.6520552
       }
     },
     "specs": {
@@ -19415,6 +19803,10 @@
       "zipCode": "78753",
       "neighborhood": "North Oaks Sec 02",
       "coordinates": {
+        "latitude": 30.3820094,
+        "longitude": -97.6732146
+      },
+      "location": {
         "latitude": 30.3820094,
         "longitude": -97.6732146
       }
@@ -19617,6 +20009,10 @@
       "coordinates": {
         "latitude": 30.3666987,
         "longitude": -97.7262314
+      },
+      "location": {
+        "latitude": 30.3666987,
+        "longitude": -97.7262314
       }
     },
     "specs": {
@@ -19815,6 +20211,10 @@
       "zipCode": "78734",
       "neighborhood": "Austin",
       "coordinates": {
+        "latitude": 30.3979792,
+        "longitude": -97.9180872
+      },
+      "location": {
         "latitude": 30.3979792,
         "longitude": -97.9180872
       }
@@ -20017,6 +20417,10 @@
       "coordinates": {
         "latitude": 39.6373989,
         "longitude": -104.818504
+      },
+      "location": {
+        "latitude": 39.6373989,
+        "longitude": -104.818504
       }
     },
     "specs": {
@@ -20215,6 +20619,10 @@
       "zipCode": "80014",
       "neighborhood": "Aurora",
       "coordinates": {
+        "latitude": 39.6401265,
+        "longitude": -104.8239927
+      },
+      "location": {
         "latitude": 39.6401265,
         "longitude": -104.8239927
       }
@@ -20417,6 +20825,10 @@
       "coordinates": {
         "latitude": 39.5552434,
         "longitude": -104.7243582
+      },
+      "location": {
+        "latitude": 39.5552434,
+        "longitude": -104.7243582
       }
     },
     "specs": {
@@ -20615,6 +21027,10 @@
       "zipCode": "80011",
       "neighborhood": "Hoffman Town",
       "coordinates": {
+        "latitude": 39.7327436,
+        "longitude": -104.8380093
+      },
+      "location": {
         "latitude": 39.7327436,
         "longitude": -104.8380093
       }
@@ -20817,6 +21233,10 @@
       "coordinates": {
         "latitude": 39.5996911,
         "longitude": -104.6969567
+      },
+      "location": {
+        "latitude": 39.5996911,
+        "longitude": -104.6969567
       }
     },
     "specs": {
@@ -21015,6 +21435,10 @@
       "zipCode": "80015",
       "neighborhood": "Tuscany",
       "coordinates": {
+        "latitude": 39.6124766,
+        "longitude": -104.767659
+      },
+      "location": {
         "latitude": 39.6124766,
         "longitude": -104.767659
       }
@@ -21217,6 +21641,10 @@
       "coordinates": {
         "latitude": 39.6041304,
         "longitude": -104.7809751
+      },
+      "location": {
+        "latitude": 39.6041304,
+        "longitude": -104.7809751
       }
     },
     "specs": {
@@ -21415,6 +21843,10 @@
       "zipCode": "80238",
       "neighborhood": "Central Park",
       "coordinates": {
+        "latitude": 39.7552791,
+        "longitude": -104.8698886
+      },
+      "location": {
         "latitude": 39.7552791,
         "longitude": -104.8698886
       }
@@ -21617,6 +22049,10 @@
       "coordinates": {
         "latitude": 39.6489626,
         "longitude": -104.7654613
+      },
+      "location": {
+        "latitude": 39.6489626,
+        "longitude": -104.7654613
       }
     },
     "specs": {
@@ -21815,6 +22251,10 @@
       "zipCode": "80011",
       "neighborhood": "Cherry Grove East Condominiums",
       "coordinates": {
+        "latitude": 39.7180642,
+        "longitude": -104.8202215
+      },
+      "location": {
         "latitude": 39.7180642,
         "longitude": -104.8202215
       }
@@ -22017,6 +22457,10 @@
       "coordinates": {
         "latitude": 39.6914371,
         "longitude": -104.8570232
+      },
+      "location": {
+        "latitude": 39.6914371,
+        "longitude": -104.8570232
       }
     },
     "specs": {
@@ -22215,6 +22659,10 @@
       "zipCode": "80011",
       "neighborhood": "Cherry Grove East Condominiums",
       "coordinates": {
+        "latitude": 39.7180642,
+        "longitude": -104.8202215
+      },
+      "location": {
         "latitude": 39.7180642,
         "longitude": -104.8202215
       }
@@ -22417,6 +22865,10 @@
       "coordinates": {
         "latitude": 39.6391064,
         "longitude": -104.7486738
+      },
+      "location": {
+        "latitude": 39.6391064,
+        "longitude": -104.7486738
       }
     },
     "specs": {
@@ -22615,6 +23067,10 @@
       "zipCode": "80013",
       "neighborhood": "Country Lane",
       "coordinates": {
+        "latitude": 39.6710346,
+        "longitude": -104.7796149
+      },
+      "location": {
         "latitude": 39.6710346,
         "longitude": -104.7796149
       }
@@ -22817,6 +23273,10 @@
       "coordinates": {
         "latitude": 39.7269684,
         "longitude": -104.837014
+      },
+      "location": {
+        "latitude": 39.7269684,
+        "longitude": -104.837014
       }
     },
     "specs": {
@@ -23015,6 +23475,10 @@
       "zipCode": "80012",
       "neighborhood": "Cobblewood",
       "coordinates": {
+        "latitude": 39.70807,
+        "longitude": -104.8590682
+      },
+      "location": {
         "latitude": 39.70807,
         "longitude": -104.8590682
       }
@@ -23217,6 +23681,10 @@
       "coordinates": {
         "latitude": 39.788119,
         "longitude": -104.7365312
+      },
+      "location": {
+        "latitude": 39.788119,
+        "longitude": -104.7365312
       }
     },
     "specs": {
@@ -23415,6 +23883,10 @@
       "zipCode": "80010",
       "neighborhood": "Central Park",
       "coordinates": {
+        "latitude": 39.7542176,
+        "longitude": -104.8698469
+      },
+      "location": {
         "latitude": 39.7542176,
         "longitude": -104.8698469
       }
@@ -23617,6 +24089,10 @@
       "coordinates": {
         "latitude": 39.7432873,
         "longitude": -104.8209503
+      },
+      "location": {
+        "latitude": 39.7432873,
+        "longitude": -104.8209503
       }
     },
     "specs": {
@@ -23815,6 +24291,10 @@
       "zipCode": "80013",
       "neighborhood": "Victoria Place",
       "coordinates": {
+        "latitude": 39.6441245,
+        "longitude": -104.7826974
+      },
+      "location": {
         "latitude": 39.6441245,
         "longitude": -104.7826974
       }
@@ -24017,6 +24497,10 @@
       "coordinates": {
         "latitude": 39.6416797,
         "longitude": -104.8252126
+      },
+      "location": {
+        "latitude": 39.6416797,
+        "longitude": -104.8252126
       }
     },
     "specs": {
@@ -24215,6 +24699,10 @@
       "zipCode": "80017",
       "neighborhood": "Quail Run 1st Flg Condos Maps 9 Through 14",
       "coordinates": {
+        "latitude": 39.693852,
+        "longitude": -104.776862
+      },
+      "location": {
         "latitude": 39.693852,
         "longitude": -104.776862
       }
@@ -24417,6 +24905,10 @@
       "coordinates": {
         "latitude": 39.6471218,
         "longitude": -104.8266508
+      },
+      "location": {
+        "latitude": 39.6471218,
+        "longitude": -104.8266508
       }
     },
     "specs": {
@@ -24615,6 +25107,10 @@
       "zipCode": "80013",
       "neighborhood": "Hampden Hills At Aurora",
       "coordinates": {
+        "latitude": 39.6496475,
+        "longitude": -104.7612176
+      },
+      "location": {
         "latitude": 39.6496475,
         "longitude": -104.7612176
       }
@@ -24817,6 +25313,10 @@
       "coordinates": {
         "latitude": 39.6700795,
         "longitude": -104.8562822
+      },
+      "location": {
+        "latitude": 39.6700795,
+        "longitude": -104.8562822
       }
     },
     "specs": {
@@ -25015,6 +25515,10 @@
       "zipCode": "80018",
       "neighborhood": "Traditions",
       "coordinates": {
+        "latitude": 39.7113718,
+        "longitude": -104.6887314
+      },
+      "location": {
         "latitude": 39.7113718,
         "longitude": -104.6887314
       }
@@ -25217,6 +25721,10 @@
       "coordinates": {
         "latitude": 39.6785023,
         "longitude": -104.7018888
+      },
+      "location": {
+        "latitude": 39.6785023,
+        "longitude": -104.7018888
       }
     },
     "specs": {
@@ -25415,6 +25923,10 @@
       "zipCode": "80014",
       "neighborhood": "The Timbers",
       "coordinates": {
+        "latitude": 39.6488465,
+        "longitude": -104.8132579
+      },
+      "location": {
         "latitude": 39.6488465,
         "longitude": -104.8132579
       }
@@ -25617,6 +26129,10 @@
       "coordinates": {
         "latitude": 39.6514922,
         "longitude": -104.7587009
+      },
+      "location": {
+        "latitude": 39.6514922,
+        "longitude": -104.7587009
       }
     },
     "specs": {
@@ -25815,6 +26331,10 @@
       "zipCode": "80015",
       "neighborhood": "Piney Creek",
       "coordinates": {
+        "latitude": 39.6129439,
+        "longitude": -104.8091692
+      },
+      "location": {
         "latitude": 39.6129439,
         "longitude": -104.8091692
       }
@@ -26017,6 +26537,10 @@
       "coordinates": {
         "latitude": 39.689681,
         "longitude": -104.769767
+      },
+      "location": {
+        "latitude": 39.689681,
+        "longitude": -104.769767
       }
     },
     "specs": {
@@ -26215,6 +26739,10 @@
       "zipCode": "80015",
       "neighborhood": "Saddleridge",
       "coordinates": {
+        "latitude": 39.6229037,
+        "longitude": -104.7245286
+      },
+      "location": {
         "latitude": 39.6229037,
         "longitude": -104.7245286
       }
@@ -26417,6 +26945,10 @@
       "coordinates": {
         "latitude": 39.6828421,
         "longitude": -104.7881476
+      },
+      "location": {
+        "latitude": 39.6828421,
+        "longitude": -104.7881476
       }
     },
     "specs": {
@@ -26615,6 +27147,10 @@
       "zipCode": "80018",
       "neighborhood": "Waterstone",
       "coordinates": {
+        "latitude": 39.7022854,
+        "longitude": -104.7051395
+      },
+      "location": {
         "latitude": 39.7022854,
         "longitude": -104.7051395
       }
@@ -26817,6 +27353,10 @@
       "coordinates": {
         "latitude": 39.8149367,
         "longitude": -104.7633711
+      },
+      "location": {
+        "latitude": 39.8149367,
+        "longitude": -104.7633711
       }
     },
     "specs": {
@@ -27015,6 +27555,10 @@
       "zipCode": "80239",
       "neighborhood": "Gateway Park",
       "coordinates": {
+        "latitude": 39.7741446,
+        "longitude": -104.8076271
+      },
+      "location": {
         "latitude": 39.7741446,
         "longitude": -104.8076271
       }
@@ -27217,6 +27761,10 @@
       "coordinates": {
         "latitude": 39.6988975,
         "longitude": -104.8208986
+      },
+      "location": {
+        "latitude": 39.6988975,
+        "longitude": -104.8208986
       }
     },
     "specs": {
@@ -27415,6 +27963,10 @@
       "zipCode": "80018",
       "neighborhood": "Traditions",
       "coordinates": {
+        "latitude": 39.7150853,
+        "longitude": -104.6953639
+      },
+      "location": {
         "latitude": 39.7150853,
         "longitude": -104.6953639
       }
@@ -27617,6 +28169,10 @@
       "coordinates": {
         "latitude": 39.6324453,
         "longitude": -104.7455333
+      },
+      "location": {
+        "latitude": 39.6324453,
+        "longitude": -104.7455333
       }
     },
     "specs": {
@@ -27815,6 +28371,10 @@
       "zipCode": "80016",
       "neighborhood": "Sorrel Ranch",
       "coordinates": {
+        "latitude": 39.6140554,
+        "longitude": -104.701696
+      },
+      "location": {
         "latitude": 39.6140554,
         "longitude": -104.701696
       }
@@ -28017,6 +28577,10 @@
       "coordinates": {
         "latitude": 39.6931377,
         "longitude": -104.8416729
+      },
+      "location": {
+        "latitude": 39.6931377,
+        "longitude": -104.8416729
       }
     },
     "specs": {
@@ -28215,6 +28779,10 @@
       "zipCode": "80014",
       "neighborhood": "Heather Gardens",
       "coordinates": {
+        "latitude": 39.6666219,
+        "longitude": -104.825123
+      },
+      "location": {
         "latitude": 39.6666219,
         "longitude": -104.825123
       }
@@ -28417,6 +28985,10 @@
       "coordinates": {
         "latitude": 39.673078,
         "longitude": -104.873578
+      },
+      "location": {
+        "latitude": 39.673078,
+        "longitude": -104.873578
       }
     },
     "specs": {
@@ -28615,6 +29187,10 @@
       "zipCode": "80011",
       "neighborhood": "Chambers Heights multi-family",
       "coordinates": {
+        "latitude": 39.7373304,
+        "longitude": -104.8196934
+      },
+      "location": {
         "latitude": 39.7373304,
         "longitude": -104.8196934
       }
@@ -28817,6 +29393,10 @@
       "coordinates": {
         "latitude": 39.6673678,
         "longitude": -104.8314023
+      },
+      "location": {
+        "latitude": 39.6673678,
+        "longitude": -104.8314023
       }
     },
     "specs": {
@@ -29015,6 +29595,10 @@
       "zipCode": "80017",
       "neighborhood": "Foxdale Condos",
       "coordinates": {
+        "latitude": 39.7025481,
+        "longitude": -104.7735919
+      },
+      "location": {
         "latitude": 39.7025481,
         "longitude": -104.7735919
       }
@@ -29217,6 +29801,10 @@
       "coordinates": {
         "latitude": 39.7025481,
         "longitude": -104.7735919
+      },
+      "location": {
+        "latitude": 39.7025481,
+        "longitude": -104.7735919
       }
     },
     "specs": {
@@ -29415,6 +30003,10 @@
       "zipCode": "80019",
       "neighborhood": "Painted Prairie",
       "coordinates": {
+        "latitude": 39.8091533,
+        "longitude": -104.7427709
+      },
+      "location": {
         "latitude": 39.8091533,
         "longitude": -104.7427709
       }
@@ -29617,6 +30209,10 @@
       "coordinates": {
         "latitude": 39.7262251,
         "longitude": -104.6617011
+      },
+      "location": {
+        "latitude": 39.7262251,
+        "longitude": -104.6617011
       }
     },
     "specs": {
@@ -29815,6 +30411,10 @@
       "zipCode": "80018",
       "neighborhood": "Horizon Midtown",
       "coordinates": {
+        "latitude": 39.7281315,
+        "longitude": -104.7268603
+      },
+      "location": {
         "latitude": 39.7281315,
         "longitude": -104.7268603
       }
@@ -30017,6 +30617,10 @@
       "coordinates": {
         "latitude": 47.6683372,
         "longitude": -122.3295316
+      },
+      "location": {
+        "latitude": 47.6683372,
+        "longitude": -122.3295316
       }
     },
     "specs": {
@@ -30215,6 +30819,10 @@
       "zipCode": "98126",
       "neighborhood": "North Admiral",
       "coordinates": {
+        "latitude": 47.5716041,
+        "longitude": -122.3763807
+      },
+      "location": {
         "latitude": 47.5716041,
         "longitude": -122.3763807
       }
@@ -30417,6 +31025,10 @@
       "coordinates": {
         "latitude": 47.5738799,
         "longitude": -122.2837282
+      },
+      "location": {
+        "latitude": 47.5738799,
+        "longitude": -122.2837282
       }
     },
     "specs": {
@@ -30615,6 +31227,10 @@
       "zipCode": "98121",
       "neighborhood": "Denny Triangle",
       "coordinates": {
+        "latitude": 47.6184194,
+        "longitude": -122.3444346
+      },
+      "location": {
         "latitude": 47.6184194,
         "longitude": -122.3444346
       }
@@ -30817,6 +31433,10 @@
       "coordinates": {
         "latitude": 47.6754345,
         "longitude": -122.388903
+      },
+      "location": {
+        "latitude": 47.6754345,
+        "longitude": -122.388903
       }
     },
     "specs": {
@@ -31015,6 +31635,10 @@
       "zipCode": "98118",
       "neighborhood": "Hillman City",
       "coordinates": {
+        "latitude": 47.5526504,
+        "longitude": -122.2858761
+      },
+      "location": {
         "latitude": 47.5526504,
         "longitude": -122.2858761
       }
@@ -31217,6 +31841,10 @@
       "coordinates": {
         "latitude": 47.6630661,
         "longitude": -122.3516865
+      },
+      "location": {
+        "latitude": 47.6630661,
+        "longitude": -122.3516865
       }
     },
     "specs": {
@@ -31415,6 +32043,10 @@
       "zipCode": "98121",
       "neighborhood": "Belltown",
       "coordinates": {
+        "latitude": 47.6134959,
+        "longitude": -122.3422742
+      },
+      "location": {
         "latitude": 47.6134959,
         "longitude": -122.3422742
       }
@@ -31617,6 +32249,10 @@
       "coordinates": {
         "latitude": 47.5646255,
         "longitude": -122.3138774
+      },
+      "location": {
+        "latitude": 47.5646255,
+        "longitude": -122.3138774
       }
     },
     "specs": {
@@ -31815,6 +32451,10 @@
       "zipCode": "98118",
       "neighborhood": "Columbia",
       "coordinates": {
+        "latitude": 47.559221,
+        "longitude": -122.282472
+      },
+      "location": {
         "latitude": 47.559221,
         "longitude": -122.282472
       }
@@ -32017,6 +32657,10 @@
       "coordinates": {
         "latitude": 47.5532323,
         "longitude": -122.2929566
+      },
+      "location": {
+        "latitude": 47.5532323,
+        "longitude": -122.2929566
       }
     },
     "specs": {
@@ -32215,6 +32859,10 @@
       "zipCode": "98115",
       "neighborhood": "View Ridge",
       "coordinates": {
+        "latitude": 47.6819329,
+        "longitude": -122.2640733
+      },
+      "location": {
         "latitude": 47.6819329,
         "longitude": -122.2640733
       }
@@ -32417,6 +33065,10 @@
       "coordinates": {
         "latitude": 47.5263305,
         "longitude": -122.3264884
+      },
+      "location": {
+        "latitude": 47.5263305,
+        "longitude": -122.3264884
       }
     },
     "specs": {
@@ -32615,6 +33267,10 @@
       "zipCode": "98106",
       "neighborhood": "West Seattle",
       "coordinates": {
+        "latitude": 47.556733,
+        "longitude": -122.3567703
+      },
+      "location": {
         "latitude": 47.556733,
         "longitude": -122.3567703
       }
@@ -32817,6 +33473,10 @@
       "coordinates": {
         "latitude": 47.6972165,
         "longitude": -122.2820221
+      },
+      "location": {
+        "latitude": 47.6972165,
+        "longitude": -122.2820221
       }
     },
     "specs": {
@@ -33015,6 +33675,10 @@
       "zipCode": "98125",
       "neighborhood": "Maple Leaf",
       "coordinates": {
+        "latitude": 47.703275467,
+        "longitude": -122.3169067
+      },
+      "location": {
         "latitude": 47.703275467,
         "longitude": -122.3169067
       }
@@ -33217,6 +33881,10 @@
       "coordinates": {
         "latitude": 47.6188801,
         "longitude": -122.3231432
+      },
+      "location": {
+        "latitude": 47.6188801,
+        "longitude": -122.3231432
       }
     },
     "specs": {
@@ -33415,6 +34083,10 @@
       "zipCode": "98106",
       "neighborhood": "Westwood",
       "coordinates": {
+        "latitude": 47.5255088,
+        "longitude": -122.355429
+      },
+      "location": {
         "latitude": 47.5255088,
         "longitude": -122.355429
       }
@@ -33617,6 +34289,10 @@
       "coordinates": {
         "latitude": 47.6705603,
         "longitude": -122.2648694
+      },
+      "location": {
+        "latitude": 47.6705603,
+        "longitude": -122.2648694
       }
     },
     "specs": {
@@ -33815,6 +34491,10 @@
       "zipCode": "98103",
       "neighborhood": "Greenwood",
       "coordinates": {
+        "latitude": 47.6968757,
+        "longitude": -122.3569723
+      },
+      "location": {
         "latitude": 47.6968757,
         "longitude": -122.3569723
       }
@@ -34017,6 +34697,10 @@
       "coordinates": {
         "latitude": 47.6497289,
         "longitude": -122.3215077
+      },
+      "location": {
+        "latitude": 47.6497289,
+        "longitude": -122.3215077
       }
     },
     "specs": {
@@ -34215,6 +34899,10 @@
       "zipCode": "98118",
       "neighborhood": "Brighton",
       "coordinates": {
+        "latitude": 47.5320153,
+        "longitude": -122.2791101
+      },
+      "location": {
         "latitude": 47.5320153,
         "longitude": -122.2791101
       }
@@ -34417,6 +35105,10 @@
       "coordinates": {
         "latitude": 47.7183982,
         "longitude": -122.2981818
+      },
+      "location": {
+        "latitude": 47.7183982,
+        "longitude": -122.2981818
       }
     },
     "specs": {
@@ -34615,6 +35307,10 @@
       "zipCode": "98115",
       "neighborhood": "Maple Leaf",
       "coordinates": {
+        "latitude": 47.6812695,
+        "longitude": -122.3196006
+      },
+      "location": {
         "latitude": 47.6812695,
         "longitude": -122.3196006
       }
@@ -34817,6 +35513,10 @@
       "coordinates": {
         "latitude": 47.5371412,
         "longitude": -122.2721441
+      },
+      "location": {
+        "latitude": 47.5371412,
+        "longitude": -122.2721441
       }
     },
     "specs": {
@@ -35015,6 +35715,10 @@
       "zipCode": "98103",
       "neighborhood": "Greenwood",
       "coordinates": {
+        "latitude": 47.6975535,
+        "longitude": -122.3556663
+      },
+      "location": {
         "latitude": 47.6975535,
         "longitude": -122.3556663
       }
@@ -35217,6 +35921,10 @@
       "coordinates": {
         "latitude": 47.5817537,
         "longitude": -122.3952496
+      },
+      "location": {
+        "latitude": 47.5817537,
+        "longitude": -122.3952496
       }
     },
     "specs": {
@@ -35415,6 +36123,10 @@
       "zipCode": "98119",
       "neighborhood": "Queen Anne",
       "coordinates": {
+        "latitude": 47.6240414,
+        "longitude": -122.35893
+      },
+      "location": {
         "latitude": 47.6240414,
         "longitude": -122.35893
       }
@@ -35617,6 +36329,10 @@
       "coordinates": {
         "latitude": 47.6236113,
         "longitude": -122.362813
+      },
+      "location": {
+        "latitude": 47.6236113,
+        "longitude": -122.362813
       }
     },
     "specs": {
@@ -35815,6 +36531,10 @@
       "zipCode": "98119",
       "neighborhood": "Queen Anne",
       "coordinates": {
+        "latitude": 47.6371761,
+        "longitude": -122.3708611
+      },
+      "location": {
         "latitude": 47.6371761,
         "longitude": -122.3708611
       }
@@ -36017,6 +36737,10 @@
       "coordinates": {
         "latitude": 47.660166,
         "longitude": -122.3638134
+      },
+      "location": {
+        "latitude": 47.660166,
+        "longitude": -122.3638134
       }
     },
     "specs": {
@@ -36215,6 +36939,10 @@
       "zipCode": "98122",
       "neighborhood": "Central Area",
       "coordinates": {
+        "latitude": 47.6031319,
+        "longitude": -122.3066368
+      },
+      "location": {
         "latitude": 47.6031319,
         "longitude": -122.3066368
       }
@@ -36417,6 +37145,10 @@
       "coordinates": {
         "latitude": 47.6206284,
         "longitude": -122.323822
+      },
+      "location": {
+        "latitude": 47.6206284,
+        "longitude": -122.323822
       }
     },
     "specs": {
@@ -36615,6 +37347,10 @@
       "zipCode": "98102",
       "neighborhood": "Eastlake",
       "coordinates": {
+        "latitude": 47.6439593,
+        "longitude": -122.3256328
+      },
+      "location": {
         "latitude": 47.6439593,
         "longitude": -122.3256328
       }
@@ -36817,6 +37553,10 @@
       "coordinates": {
         "latitude": 47.6262532,
         "longitude": -122.3176782
+      },
+      "location": {
+        "latitude": 47.6262532,
+        "longitude": -122.3176782
       }
     },
     "specs": {
@@ -37015,6 +37755,10 @@
       "zipCode": "98136",
       "neighborhood": "Gatewood",
       "coordinates": {
+        "latitude": 47.5412007,
+        "longitude": -122.3867961
+      },
+      "location": {
         "latitude": 47.5412007,
         "longitude": -122.3867961
       }
@@ -37217,6 +37961,10 @@
       "coordinates": {
         "latitude": 47.667797,
         "longitude": -122.3149466
+      },
+      "location": {
+        "latitude": 47.667797,
+        "longitude": -122.3149466
       }
     },
     "specs": {
@@ -37415,6 +38163,10 @@
       "zipCode": "98125",
       "neighborhood": "Seattle",
       "coordinates": {
+        "latitude": 47.7190684,
+        "longitude": -122.2975526
+      },
+      "location": {
         "latitude": 47.7190684,
         "longitude": -122.2975526
       }
@@ -37617,6 +38369,10 @@
       "coordinates": {
         "latitude": 47.6910797,
         "longitude": -122.3430562
+      },
+      "location": {
+        "latitude": 47.6910797,
+        "longitude": -122.3430562
       }
     },
     "specs": {
@@ -37815,6 +38571,10 @@
       "zipCode": "98103",
       "neighborhood": "Licton Springs",
       "coordinates": {
+        "latitude": 47.695848,
+        "longitude": -122.3432881
+      },
+      "location": {
         "latitude": 47.695848,
         "longitude": -122.3432881
       }
@@ -38017,6 +38777,10 @@
       "coordinates": {
         "latitude": 47.6699601,
         "longitude": -122.3807097
+      },
+      "location": {
+        "latitude": 47.6699601,
+        "longitude": -122.3807097
       }
     },
     "specs": {
@@ -38215,6 +38979,10 @@
       "zipCode": "98105",
       "neighborhood": "Seattle",
       "coordinates": {
+        "latitude": 47.6544239,
+        "longitude": -122.3277041
+      },
+      "location": {
         "latitude": 47.6544239,
         "longitude": -122.3277041
       }
@@ -38417,6 +39185,10 @@
       "coordinates": {
         "latitude": 47.6442685,
         "longitude": -122.3243044
+      },
+      "location": {
+        "latitude": 47.6442685,
+        "longitude": -122.3243044
       }
     },
     "specs": {
@@ -38615,6 +39387,10 @@
       "zipCode": "98116",
       "neighborhood": "Alki",
       "coordinates": {
+        "latitude": 47.5808083,
+        "longitude": -122.4048682
+      },
+      "location": {
         "latitude": 47.5808083,
         "longitude": -122.4048682
       }
@@ -38817,6 +39593,10 @@
       "coordinates": {
         "latitude": 47.6158301,
         "longitude": -122.3519177
+      },
+      "location": {
+        "latitude": 47.6158301,
+        "longitude": -122.3519177
       }
     },
     "specs": {
@@ -39015,6 +39795,10 @@
       "zipCode": "98109",
       "neighborhood": "Queen Anne",
       "coordinates": {
+        "latitude": 47.621607,
+        "longitude": -122.357112
+      },
+      "location": {
         "latitude": 47.621607,
         "longitude": -122.357112
       }
@@ -39217,6 +40001,10 @@
       "coordinates": {
         "latitude": 47.7011792,
         "longitude": -122.355051
+      },
+      "location": {
+        "latitude": 47.7011792,
+        "longitude": -122.355051
       }
     },
     "specs": {
@@ -39415,6 +40203,10 @@
       "zipCode": "98125",
       "neighborhood": "Roosevelt",
       "coordinates": {
+        "latitude": 47.7189294,
+        "longitude": -122.3184689
+      },
+      "location": {
         "latitude": 47.7189294,
         "longitude": -122.3184689
       }
@@ -39617,6 +40409,10 @@
       "coordinates": {
         "latitude": 47.612987,
         "longitude": -122.339306
+      },
+      "location": {
+        "latitude": 47.612987,
+        "longitude": -122.339306
       }
     },
     "specs": {
@@ -39815,6 +40611,10 @@
       "zipCode": "98144",
       "neighborhood": "Seattle",
       "coordinates": {
+        "latitude": 47.587077,
+        "longitude": -122.314512
+      },
+      "location": {
         "latitude": 47.587077,
         "longitude": -122.314512
       }
@@ -40017,6 +40817,10 @@
       "coordinates": {
         "latitude": 25.9593548,
         "longitude": -80.1535414
+      },
+      "location": {
+        "latitude": 25.9593548,
+        "longitude": -80.1535414
       }
     },
     "specs": {
@@ -40203,6 +41007,10 @@
       "zipCode": "33138",
       "neighborhood": "Miami",
       "coordinates": {
+        "latitude": 25.8466562,
+        "longitude": -80.1800424
+      },
+      "location": {
         "latitude": 25.8466562,
         "longitude": -80.1800424
       }
@@ -40393,6 +41201,10 @@
       "coordinates": {
         "latitude": 25.8462018,
         "longitude": -80.1828631
+      },
+      "location": {
+        "latitude": 25.8462018,
+        "longitude": -80.1828631
       }
     },
     "specs": {
@@ -40579,6 +41391,10 @@
       "zipCode": "33138",
       "neighborhood": "Aqua Marine",
       "coordinates": {
+        "latitude": 25.8461307,
+        "longitude": -80.1829467
+      },
+      "location": {
         "latitude": 25.8461307,
         "longitude": -80.1829467
       }
@@ -40769,6 +41585,10 @@
       "coordinates": {
         "latitude": 25.7495036,
         "longitude": -80.2162804
+      },
+      "location": {
+        "latitude": 25.7495036,
+        "longitude": -80.2162804
       }
     },
     "specs": {
@@ -40955,6 +41775,10 @@
       "zipCode": "33172",
       "neighborhood": "Fountainebleau",
       "coordinates": {
+        "latitude": 25.7691614,
+        "longitude": -80.3717067
+      },
+      "location": {
         "latitude": 25.7691614,
         "longitude": -80.3717067
       }
@@ -41145,6 +41969,10 @@
       "coordinates": {
         "latitude": 25.7262614,
         "longitude": -80.3961939
+      },
+      "location": {
+        "latitude": 25.7262614,
+        "longitude": -80.3961939
       }
     },
     "specs": {
@@ -41331,6 +42159,10 @@
       "zipCode": "33145",
       "neighborhood": "Shenandoah",
       "coordinates": {
+        "latitude": 25.7543281,
+        "longitude": -80.2244324
+      },
+      "location": {
         "latitude": 25.7543281,
         "longitude": -80.2244324
       }
@@ -41521,6 +42353,10 @@
       "coordinates": {
         "latitude": 25.7500121,
         "longitude": -80.2007274
+      },
+      "location": {
+        "latitude": 25.7500121,
+        "longitude": -80.2007274
       }
     },
     "specs": {
@@ -41707,6 +42543,10 @@
       "zipCode": "33165",
       "neighborhood": "University Park",
       "coordinates": {
+        "latitude": 25.7527617,
+        "longitude": -80.3632855
+      },
+      "location": {
         "latitude": 25.7527617,
         "longitude": -80.3632855
       }
@@ -41897,6 +42737,10 @@
       "coordinates": {
         "latitude": 25.7668601,
         "longitude": -80.1942845
+      },
+      "location": {
+        "latitude": 25.7668601,
+        "longitude": -80.1942845
       }
     },
     "specs": {
@@ -42083,6 +42927,10 @@
       "zipCode": "33129",
       "neighborhood": "Bristol Tower",
       "coordinates": {
+        "latitude": 25.7522382,
+        "longitude": -80.1993541
+      },
+      "location": {
         "latitude": 25.7522382,
         "longitude": -80.1993541
       }
@@ -42273,6 +43121,10 @@
       "coordinates": {
         "latitude": 25.8069678,
         "longitude": -80.1872681
+      },
+      "location": {
+        "latitude": 25.8069678,
+        "longitude": -80.1872681
       }
     },
     "specs": {
@@ -42459,6 +43311,10 @@
       "zipCode": "33132",
       "neighborhood": "Omni",
       "coordinates": {
+        "latitude": 25.7892281,
+        "longitude": -80.1897732
+      },
+      "location": {
         "latitude": 25.7892281,
         "longitude": -80.1897732
       }
@@ -42649,6 +43505,10 @@
       "coordinates": {
         "latitude": 25.7647098,
         "longitude": -80.194999
+      },
+      "location": {
+        "latitude": 25.7647098,
+        "longitude": -80.194999
       }
     },
     "specs": {
@@ -42835,6 +43695,10 @@
       "zipCode": "33133",
       "neighborhood": "The Grove",
       "coordinates": {
+        "latitude": 25.7308554,
+        "longitude": -80.2360233
+      },
+      "location": {
         "latitude": 25.7308554,
         "longitude": -80.2360233
       }
@@ -43025,6 +43889,10 @@
       "coordinates": {
         "latitude": 25.7716137,
         "longitude": -80.185382
+      },
+      "location": {
+        "latitude": 25.7716137,
+        "longitude": -80.185382
       }
     },
     "specs": {
@@ -43211,6 +44079,10 @@
       "zipCode": "33137",
       "neighborhood": "TWO MIDTOWN MIAMI CONDO",
       "coordinates": {
+        "latitude": 25.809362,
+        "longitude": -80.191939
+      },
+      "location": {
         "latitude": 25.809362,
         "longitude": -80.191939
       }
@@ -43401,6 +44273,10 @@
       "coordinates": {
         "latitude": 25.8392657,
         "longitude": -80.2078251
+      },
+      "location": {
+        "latitude": 25.8392657,
+        "longitude": -80.2078251
       }
     },
     "specs": {
@@ -43587,6 +44463,10 @@
       "zipCode": "33129",
       "neighborhood": "BRISTOL TOWER CONDO",
       "coordinates": {
+        "latitude": 25.7522382,
+        "longitude": -80.1993541
+      },
+      "location": {
         "latitude": 25.7522382,
         "longitude": -80.1993541
       }
@@ -43777,6 +44657,10 @@
       "coordinates": {
         "latitude": 25.7684405,
         "longitude": -80.3410453
+      },
+      "location": {
+        "latitude": 25.7684405,
+        "longitude": -80.3410453
       }
     },
     "specs": {
@@ -43963,6 +44847,10 @@
       "zipCode": "33176",
       "neighborhood": "Kendall",
       "coordinates": {
+        "latitude": 25.6768968,
+        "longitude": -80.3644857
+      },
+      "location": {
         "latitude": 25.6768968,
         "longitude": -80.3644857
       }
@@ -44153,6 +45041,10 @@
       "coordinates": {
         "latitude": 25.7529835,
         "longitude": -80.2006557
+      },
+      "location": {
+        "latitude": 25.7529835,
+        "longitude": -80.2006557
       }
     },
     "specs": {
@@ -44339,6 +45231,10 @@
       "zipCode": "33161",
       "neighborhood": "MIAMI HIGHLANDS SEC A",
       "coordinates": {
+        "latitude": 25.8772298,
+        "longitude": -80.1932019
+      },
+      "location": {
         "latitude": 25.8772298,
         "longitude": -80.1932019
       }
@@ -44529,6 +45425,10 @@
       "coordinates": {
         "latitude": 25.7416505,
         "longitude": -80.2365155
+      },
+      "location": {
+        "latitude": 25.7416505,
+        "longitude": -80.2365155
       }
     },
     "specs": {
@@ -44715,6 +45615,10 @@
       "zipCode": "33143",
       "neighborhood": "SNAPPER CREEK GROVES",
       "coordinates": {
+        "latitude": 25.6914655,
+        "longitude": -80.2989811
+      },
+      "location": {
         "latitude": 25.6914655,
         "longitude": -80.2989811
       }
@@ -44905,6 +45809,10 @@
       "coordinates": {
         "latitude": 25.7086805,
         "longitude": -80.4118608
+      },
+      "location": {
+        "latitude": 25.7086805,
+        "longitude": -80.4118608
       }
     },
     "specs": {
@@ -45091,6 +45999,10 @@
       "zipCode": "33194",
       "neighborhood": "RIEUMONT ESTATES",
       "coordinates": {
+        "latitude": 25.7548445,
+        "longitude": -80.4468697
+      },
+      "location": {
         "latitude": 25.7548445,
         "longitude": -80.4468697
       }
@@ -45281,6 +46193,10 @@
       "coordinates": {
         "latitude": 25.7746343,
         "longitude": -80.3355013
+      },
+      "location": {
+        "latitude": 25.7746343,
+        "longitude": -80.3355013
       }
     },
     "specs": {
@@ -45467,6 +46383,10 @@
       "zipCode": "33132",
       "neighborhood": "QUANTUM ON THE BAY CONDO NO 1",
       "coordinates": {
+        "latitude": 25.7950425,
+        "longitude": -80.1871288
+      },
+      "location": {
         "latitude": 25.7950425,
         "longitude": -80.1871288
       }
@@ -45657,6 +46577,10 @@
       "coordinates": {
         "latitude": 25.8466285,
         "longitude": -80.2032632
+      },
+      "location": {
+        "latitude": 25.8466285,
+        "longitude": -80.2032632
       }
     },
     "specs": {
@@ -45843,6 +46767,10 @@
       "zipCode": "33176",
       "neighborhood": "BRIAR BAY TWNHS ESTATES",
       "coordinates": {
+        "latitude": 25.6451081,
+        "longitude": -80.3418856
+      },
+      "location": {
         "latitude": 25.6451081,
         "longitude": -80.3418856
       }
@@ -46033,6 +46961,10 @@
       "coordinates": {
         "latitude": 25.8846231,
         "longitude": -80.2385944
+      },
+      "location": {
+        "latitude": 25.8846231,
+        "longitude": -80.2385944
       }
     },
     "specs": {
@@ -46219,6 +47151,10 @@
       "zipCode": "33143",
       "neighborhood": "HIDDEN FOREST ESTATES",
       "coordinates": {
+        "latitude": 25.6992411,
+        "longitude": -80.3152305
+      },
+      "location": {
         "latitude": 25.6992411,
         "longitude": -80.3152305
       }
@@ -46409,6 +47345,10 @@
       "coordinates": {
         "latitude": 25.8051143,
         "longitude": -80.1858324
+      },
+      "location": {
+        "latitude": 25.8051143,
+        "longitude": -80.1858324
       }
     },
     "specs": {
@@ -46595,6 +47535,10 @@
       "zipCode": "33177",
       "neighborhood": "SO MIAMI HEIGHTS ADDN E",
       "coordinates": {
+        "latitude": 25.5932173,
+        "longitude": -80.3894084
+      },
+      "location": {
         "latitude": 25.5932173,
         "longitude": -80.3894084
       }
@@ -46785,6 +47729,10 @@
       "coordinates": {
         "latitude": 25.7542419,
         "longitude": -80.1967036
+      },
+      "location": {
+        "latitude": 25.7542419,
+        "longitude": -80.1967036
       }
     },
     "specs": {
@@ -46971,6 +47919,10 @@
       "zipCode": "33138",
       "neighborhood": "SHORECREST",
       "coordinates": {
+        "latitude": 25.850728,
+        "longitude": -80.18154
+      },
+      "location": {
         "latitude": 25.850728,
         "longitude": -80.18154
       }
@@ -47161,6 +48113,10 @@
       "coordinates": {
         "latitude": 25.777516,
         "longitude": -80.325412
+      },
+      "location": {
+        "latitude": 25.777516,
+        "longitude": -80.325412
       }
     },
     "specs": {
@@ -47347,6 +48303,10 @@
       "zipCode": "33126",
       "neighborhood": "WEST FLAGLER PK SEC B",
       "coordinates": {
+        "latitude": 25.7721777,
+        "longitude": -80.2955318
+      },
+      "location": {
         "latitude": 25.7721777,
         "longitude": -80.2955318
       }
@@ -47537,6 +48497,10 @@
       "coordinates": {
         "latitude": 25.9498573,
         "longitude": -80.172472
+      },
+      "location": {
+        "latitude": 25.9498573,
+        "longitude": -80.172472
       }
     },
     "specs": {
@@ -47723,6 +48687,10 @@
       "zipCode": "33184",
       "neighborhood": "SWEETWATER ESTS SUB",
       "coordinates": {
+        "latitude": 25.7661787,
+        "longitude": -80.3985167
+      },
+      "location": {
         "latitude": 25.7661787,
         "longitude": -80.3985167
       }
@@ -47913,6 +48881,10 @@
       "coordinates": {
         "latitude": 25.6948197,
         "longitude": -80.4100189
+      },
+      "location": {
+        "latitude": 25.6948197,
+        "longitude": -80.4100189
       }
     },
     "specs": {
@@ -48099,6 +49071,10 @@
       "zipCode": "33187",
       "neighborhood": "KINGS GROVE",
       "coordinates": {
+        "latitude": 25.6128057,
+        "longitude": -80.4319661
+      },
+      "location": {
         "latitude": 25.6128057,
         "longitude": -80.4319661
       }
@@ -48289,6 +49265,10 @@
       "coordinates": {
         "latitude": 25.7653826,
         "longitude": -80.2641651
+      },
+      "location": {
+        "latitude": 25.7653826,
+        "longitude": -80.2641651
       }
     },
     "specs": {
@@ -48475,6 +49455,10 @@
       "zipCode": "33142",
       "neighborhood": "HOLLEMAN MANOR ADDN",
       "coordinates": {
+        "latitude": 25.8064348,
+        "longitude": -80.2283163
+      },
+      "location": {
         "latitude": 25.8064348,
         "longitude": -80.2283163
       }
@@ -48665,6 +49649,10 @@
       "coordinates": {
         "latitude": 25.8255128,
         "longitude": -80.242356
+      },
+      "location": {
+        "latitude": 25.8255128,
+        "longitude": -80.242356
       }
     },
     "specs": {
@@ -48851,6 +49839,10 @@
       "zipCode": "33141",
       "neighborhood": "BAYSHORE YACHT & TENNIS C",
       "coordinates": {
+        "latitude": 25.849093,
+        "longitude": -80.159933
+      },
+      "location": {
         "latitude": 25.849093,
         "longitude": -80.159933
       }
@@ -49041,6 +50033,10 @@
       "coordinates": {
         "latitude": 25.849093,
         "longitude": -80.159933
+      },
+      "location": {
+        "latitude": 25.849093,
+        "longitude": -80.159933
       }
     },
     "specs": {
@@ -49227,6 +50223,10 @@
       "zipCode": "33150",
       "neighborhood": "HENRY FORD SUB NO 2",
       "coordinates": {
+        "latitude": 25.838075,
+        "longitude": -80.209808
+      },
+      "location": {
         "latitude": 25.838075,
         "longitude": -80.209808
       }
@@ -49417,6 +50417,10 @@
       "coordinates": {
         "latitude": 40.7634822,
         "longitude": -73.9819554
+      },
+      "location": {
+        "latitude": 40.7634822,
+        "longitude": -73.9819554
       }
     },
     "specs": {
@@ -49603,6 +50607,10 @@
       "zipCode": "11238",
       "neighborhood": "Prospect Heights",
       "coordinates": {
+        "latitude": 40.6773148,
+        "longitude": -73.9704814
+      },
+      "location": {
         "latitude": 40.6773148,
         "longitude": -73.9704814
       }
@@ -49793,6 +50801,10 @@
       "coordinates": {
         "latitude": 40.8892845,
         "longitude": -73.9030458
+      },
+      "location": {
+        "latitude": 40.8892845,
+        "longitude": -73.9030458
       }
     },
     "specs": {
@@ -49979,6 +50991,10 @@
       "zipCode": "10011",
       "neighborhood": "Chelsea",
       "coordinates": {
+        "latitude": 40.7407812,
+        "longitude": -73.9977153
+      },
+      "location": {
         "latitude": 40.7407812,
         "longitude": -73.9977153
       }
@@ -50169,6 +51185,10 @@
       "coordinates": {
         "latitude": 40.6944112,
         "longitude": -73.9609864
+      },
+      "location": {
+        "latitude": 40.6944112,
+        "longitude": -73.9609864
       }
     },
     "specs": {
@@ -50355,6 +51375,10 @@
       "zipCode": "11233",
       "neighborhood": "Bedford-Stuyvesant",
       "coordinates": {
+        "latitude": 40.6803141,
+        "longitude": -73.932164
+      },
+      "location": {
         "latitude": 40.6803141,
         "longitude": -73.932164
       }
@@ -50545,6 +51569,10 @@
       "coordinates": {
         "latitude": 40.6737584,
         "longitude": -73.9263691
+      },
+      "location": {
+        "latitude": 40.6737584,
+        "longitude": -73.9263691
       }
     },
     "specs": {
@@ -50731,6 +51759,10 @@
       "zipCode": "11201",
       "neighborhood": "Brooklyn Heights",
       "coordinates": {
+        "latitude": 40.6912307,
+        "longitude": -73.9920612
+      },
+      "location": {
         "latitude": 40.6912307,
         "longitude": -73.9920612
       }
@@ -50921,6 +51953,10 @@
       "coordinates": {
         "latitude": 40.7657861,
         "longitude": -73.9842196
+      },
+      "location": {
+        "latitude": 40.7657861,
+        "longitude": -73.9842196
       }
     },
     "specs": {
@@ -51107,6 +52143,10 @@
       "zipCode": "10011",
       "neighborhood": "Chelsea",
       "coordinates": {
+        "latitude": 40.7409204,
+        "longitude": -73.9961936
+      },
+      "location": {
         "latitude": 40.7409204,
         "longitude": -73.9961936
       }
@@ -51297,6 +52337,10 @@
       "coordinates": {
         "latitude": 40.7834283,
         "longitude": -73.9496451
+      },
+      "location": {
+        "latitude": 40.7834283,
+        "longitude": -73.9496451
       }
     },
     "specs": {
@@ -51483,6 +52527,10 @@
       "zipCode": "10017",
       "neighborhood": "Midtown East",
       "coordinates": {
+        "latitude": 40.7540743,
+        "longitude": -73.9710422
+      },
+      "location": {
         "latitude": 40.7540743,
         "longitude": -73.9710422
       }
@@ -51673,6 +52721,10 @@
       "coordinates": {
         "latitude": 40.7014579,
         "longitude": -73.9954951
+      },
+      "location": {
+        "latitude": 40.7014579,
+        "longitude": -73.9954951
       }
     },
     "specs": {
@@ -51859,6 +52911,10 @@
       "zipCode": "10022",
       "neighborhood": "Midtown East",
       "coordinates": {
+        "latitude": 40.7556273,
+        "longitude": -73.9698316
+      },
+      "location": {
         "latitude": 40.7556273,
         "longitude": -73.9698316
       }
@@ -52049,6 +53105,10 @@
       "coordinates": {
         "latitude": 40.6722455,
         "longitude": -73.9815754
+      },
+      "location": {
+        "latitude": 40.6722455,
+        "longitude": -73.9815754
       }
     },
     "specs": {
@@ -52235,6 +53295,10 @@
       "zipCode": "11232",
       "neighborhood": "Greenwood Heights",
       "coordinates": {
+        "latitude": 40.6619112,
+        "longitude": -73.995516
+      },
+      "location": {
         "latitude": 40.6619112,
         "longitude": -73.995516
       }
@@ -52425,6 +53489,10 @@
       "coordinates": {
         "latitude": 40.5889219,
         "longitude": -73.9228661
+      },
+      "location": {
+        "latitude": 40.5889219,
+        "longitude": -73.9228661
       }
     },
     "specs": {
@@ -52611,6 +53679,10 @@
       "zipCode": "10019",
       "neighborhood": "Central Park South",
       "coordinates": {
+        "latitude": 40.7658213,
+        "longitude": -73.9771963
+      },
+      "location": {
         "latitude": 40.7658213,
         "longitude": -73.9771963
       }
@@ -52801,6 +53873,10 @@
       "coordinates": {
         "latitude": 40.7726182,
         "longitude": -73.9539397
+      },
+      "location": {
+        "latitude": 40.7726182,
+        "longitude": -73.9539397
       }
     },
     "specs": {
@@ -52987,6 +54063,10 @@
       "zipCode": "10075",
       "neighborhood": "Upper East Side",
       "coordinates": {
+        "latitude": 40.7700806,
+        "longitude": -73.9497454
+      },
+      "location": {
         "latitude": 40.7700806,
         "longitude": -73.9497454
       }
@@ -53177,6 +54257,10 @@
       "coordinates": {
         "latitude": 40.5498731,
         "longitude": -74.1629283
+      },
+      "location": {
+        "latitude": 40.5498731,
+        "longitude": -74.1629283
       }
     },
     "specs": {
@@ -53363,6 +54447,10 @@
       "zipCode": "10301",
       "neighborhood": "Grymes Hill",
       "coordinates": {
+        "latitude": 40.6116189,
+        "longitude": -74.0927681
+      },
+      "location": {
         "latitude": 40.6116189,
         "longitude": -74.0927681
       }
@@ -53553,6 +54641,10 @@
       "coordinates": {
         "latitude": 40.5587864,
         "longitude": -74.1749989
+      },
+      "location": {
+        "latitude": 40.5587864,
+        "longitude": -74.1749989
       }
     },
     "specs": {
@@ -53739,6 +54831,10 @@
       "zipCode": "11212",
       "neighborhood": "Brooklyn",
       "coordinates": {
+        "latitude": 40.6597986,
+        "longitude": -73.9255169
+      },
+      "location": {
         "latitude": 40.6597986,
         "longitude": -73.9255169
       }
@@ -53929,6 +55025,10 @@
       "coordinates": {
         "latitude": 40.7104093,
         "longitude": -73.7983488
+      },
+      "location": {
+        "latitude": 40.7104093,
+        "longitude": -73.7983488
       }
     },
     "specs": {
@@ -54115,6 +55215,10 @@
       "zipCode": "10306",
       "neighborhood": "Oakwood - New Dorp Beach",
       "coordinates": {
+        "latitude": 40.5639822,
+        "longitude": -74.0992745
+      },
+      "location": {
         "latitude": 40.5639822,
         "longitude": -74.0992745
       }
@@ -54305,6 +55409,10 @@
       "coordinates": {
         "latitude": 40.7729497,
         "longitude": -73.82603
+      },
+      "location": {
+        "latitude": 40.7729497,
+        "longitude": -73.82603
       }
     },
     "specs": {
@@ -54491,6 +55599,10 @@
       "zipCode": "11234",
       "neighborhood": "Brooklyn",
       "coordinates": {
+        "latitude": 40.614557,
+        "longitude": -73.9031491
+      },
+      "location": {
         "latitude": 40.614557,
         "longitude": -73.9031491
       }
@@ -54681,6 +55793,10 @@
       "coordinates": {
         "latitude": 40.768661,
         "longitude": -73.8955241
+      },
+      "location": {
+        "latitude": 40.768661,
+        "longitude": -73.8955241
       }
     },
     "specs": {
@@ -54867,6 +55983,10 @@
       "zipCode": "11201",
       "neighborhood": "Brooklyn",
       "coordinates": {
+        "latitude": 40.6977074,
+        "longitude": -73.9882268
+      },
+      "location": {
         "latitude": 40.6977074,
         "longitude": -73.9882268
       }
@@ -55057,6 +56177,10 @@
       "coordinates": {
         "latitude": 40.7698386,
         "longitude": -73.9919875
+      },
+      "location": {
+        "latitude": 40.7698386,
+        "longitude": -73.9919875
       }
     },
     "specs": {
@@ -55243,6 +56367,10 @@
       "zipCode": "10014",
       "neighborhood": "New York (Manhattan)",
       "coordinates": {
+        "latitude": 40.7368196,
+        "longitude": -74.0051777
+      },
+      "location": {
         "latitude": 40.7368196,
         "longitude": -74.0051777
       }
@@ -55433,6 +56561,10 @@
       "coordinates": {
         "latitude": 40.713569,
         "longitude": -73.9777409
+      },
+      "location": {
+        "latitude": 40.713569,
+        "longitude": -73.9777409
       }
     },
     "specs": {
@@ -55619,6 +56751,10 @@
       "zipCode": "10308",
       "neighborhood": "Great Kills",
       "coordinates": {
+        "latitude": 40.5454233,
+        "longitude": -74.1578621
+      },
+      "location": {
         "latitude": 40.5454233,
         "longitude": -74.1578621
       }
@@ -55809,6 +56945,10 @@
       "coordinates": {
         "latitude": 40.7851456,
         "longitude": -73.7757784
+      },
+      "location": {
+        "latitude": 40.7851456,
+        "longitude": -73.7757784
       }
     },
     "specs": {
@@ -55995,6 +57135,10 @@
       "zipCode": "10301",
       "neighborhood": "Grymes Hill",
       "coordinates": {
+        "latitude": 40.6187019,
+        "longitude": -74.0943676
+      },
+      "location": {
         "latitude": 40.6187019,
         "longitude": -74.0943676
       }
@@ -56185,6 +57329,10 @@
       "coordinates": {
         "latitude": 40.7265284,
         "longitude": -73.8467209
+      },
+      "location": {
+        "latitude": 40.7265284,
+        "longitude": -73.8467209
       }
     },
     "specs": {
@@ -56371,6 +57519,10 @@
       "zipCode": "11365",
       "neighborhood": "Fresh Meadows",
       "coordinates": {
+        "latitude": 40.7388423,
+        "longitude": -73.8006838
+      },
+      "location": {
         "latitude": 40.7388423,
         "longitude": -73.8006838
       }
@@ -56561,6 +57713,10 @@
       "coordinates": {
         "latitude": 40.6963116,
         "longitude": -73.913582
+      },
+      "location": {
+        "latitude": 40.6963116,
+        "longitude": -73.913582
       }
     },
     "specs": {
@@ -56747,6 +57903,10 @@
       "zipCode": "10304",
       "neighborhood": "Grymes Hill",
       "coordinates": {
+        "latitude": 40.6317824,
+        "longitude": -74.0860064
+      },
+      "location": {
         "latitude": 40.6317824,
         "longitude": -74.0860064
       }
@@ -56937,6 +58097,10 @@
       "coordinates": {
         "latitude": 40.648446,
         "longitude": -73.918493
+      },
+      "location": {
+        "latitude": 40.648446,
+        "longitude": -73.918493
       }
     },
     "specs": {
@@ -57123,6 +58287,10 @@
       "zipCode": "11435",
       "neighborhood": "Jamaica",
       "coordinates": {
+        "latitude": 40.6908187,
+        "longitude": -73.801452
+      },
+      "location": {
         "latitude": 40.6908187,
         "longitude": -73.801452
       }
@@ -57313,6 +58481,10 @@
       "coordinates": {
         "latitude": 40.6926629,
         "longitude": -73.9452609
+      },
+      "location": {
+        "latitude": 40.6926629,
+        "longitude": -73.9452609
       }
     },
     "specs": {
@@ -57499,6 +58671,10 @@
       "zipCode": "11236",
       "neighborhood": "Brooklyn",
       "coordinates": {
+        "latitude": 40.6484352,
+        "longitude": -73.9184792
+      },
+      "location": {
         "latitude": 40.6484352,
         "longitude": -73.9184792
       }
@@ -57689,6 +58865,10 @@
       "coordinates": {
         "latitude": 40.6241797,
         "longitude": -74.1574027
+      },
+      "location": {
+        "latitude": 40.6241797,
+        "longitude": -74.1574027
       }
     },
     "specs": {
@@ -57875,6 +59055,10 @@
       "zipCode": "10038",
       "neighborhood": "Financial District",
       "coordinates": {
+        "latitude": 40.7094787,
+        "longitude": -74.0086591
+      },
+      "location": {
         "latitude": 40.7094787,
         "longitude": -74.0086591
       }
@@ -58065,6 +59249,10 @@
       "coordinates": {
         "latitude": 40.5958849,
         "longitude": -73.7788457
+      },
+      "location": {
+        "latitude": 40.5958849,
+        "longitude": -73.7788457
       }
     },
     "specs": {
@@ -58251,6 +59439,10 @@
       "zipCode": "10309",
       "neighborhood": "Charleston",
       "coordinates": {
+        "latitude": 40.529849,
+        "longitude": -74.241404
+      },
+      "location": {
         "latitude": 40.529849,
         "longitude": -74.241404
       }
@@ -58441,6 +59633,10 @@
       "coordinates": {
         "latitude": 40.5939667,
         "longitude": -73.7597323
+      },
+      "location": {
+        "latitude": 40.5939667,
+        "longitude": -73.7597323
       }
     },
     "specs": {
@@ -58627,6 +59823,10 @@
       "zipCode": "10304",
       "neighborhood": "Dongan Hills-Above Hylan",
       "coordinates": {
+        "latitude": 40.5918599,
+        "longitude": -74.09885
+      },
+      "location": {
         "latitude": 40.5918599,
         "longitude": -74.09885
       }
@@ -58817,6 +60017,10 @@
       "coordinates": {
         "latitude": 34.1163971,
         "longitude": -118.1714878
+      },
+      "location": {
+        "latitude": 34.1163971,
+        "longitude": -118.1714878
       }
     },
     "specs": {
@@ -59003,6 +60207,10 @@
       "zipCode": "90066",
       "neighborhood": "Mar Vista",
       "coordinates": {
+        "latitude": 33.9882424,
+        "longitude": -118.41711
+      },
+      "location": {
         "latitude": 33.9882424,
         "longitude": -118.41711
       }
@@ -59193,6 +60401,10 @@
       "coordinates": {
         "latitude": 34.0170088,
         "longitude": -118.3577271
+      },
+      "location": {
+        "latitude": 34.0170088,
+        "longitude": -118.3577271
       }
     },
     "specs": {
@@ -59379,6 +60591,10 @@
       "zipCode": "90732",
       "neighborhood": "Los Angeles South Shores",
       "coordinates": {
+        "latitude": 33.7268663,
+        "longitude": -118.32564
+      },
+      "location": {
         "latitude": 33.7268663,
         "longitude": -118.32564
       }
@@ -59569,6 +60785,10 @@
       "coordinates": {
         "latitude": 34.1077064,
         "longitude": -118.3058042
+      },
+      "location": {
+        "latitude": 34.1077064,
+        "longitude": -118.3058042
       }
     },
     "specs": {
@@ -59755,6 +60975,10 @@
       "zipCode": "90049",
       "neighborhood": "Brentwood",
       "coordinates": {
+        "latitude": 34.0551085,
+        "longitude": -118.4686486
+      },
+      "location": {
         "latitude": 34.0551085,
         "longitude": -118.4686486
       }
@@ -59945,6 +61169,10 @@
       "coordinates": {
         "latitude": 34.0935361,
         "longitude": -118.3170945
+      },
+      "location": {
+        "latitude": 34.0935361,
+        "longitude": -118.3170945
       }
     },
     "specs": {
@@ -60131,6 +61359,10 @@
       "zipCode": "90029",
       "neighborhood": "Silver Lake",
       "coordinates": {
+        "latitude": 34.09403,
+        "longitude": -118.286261
+      },
+      "location": {
         "latitude": 34.09403,
         "longitude": -118.286261
       }
@@ -60321,6 +61553,10 @@
       "coordinates": {
         "latitude": 34.0550336,
         "longitude": -118.3712508
+      },
+      "location": {
+        "latitude": 34.0550336,
+        "longitude": -118.3712508
       }
     },
     "specs": {
@@ -60507,6 +61743,10 @@
       "zipCode": "91403",
       "neighborhood": "Sherman Oaks",
       "coordinates": {
+        "latitude": 34.1495896,
+        "longitude": -118.4505228
+      },
+      "location": {
         "latitude": 34.1495896,
         "longitude": -118.4505228
       }
@@ -60697,6 +61937,10 @@
       "coordinates": {
         "latitude": 34.0435687,
         "longitude": -118.4695803
+      },
+      "location": {
+        "latitude": 34.0435687,
+        "longitude": -118.4695803
       }
     },
     "specs": {
@@ -60883,6 +62127,10 @@
       "zipCode": "90046",
       "neighborhood": "Hollywood",
       "coordinates": {
+        "latitude": 34.1009275,
+        "longitude": -118.3531839
+      },
+      "location": {
         "latitude": 34.1009275,
         "longitude": -118.3531839
       }
@@ -61073,6 +62321,10 @@
       "coordinates": {
         "latitude": 34.148238,
         "longitude": -118.361138
+      },
+      "location": {
+        "latitude": 34.148238,
+        "longitude": -118.361138
       }
     },
     "specs": {
@@ -61259,6 +62511,10 @@
       "zipCode": "90068",
       "neighborhood": "Los Angeles",
       "coordinates": {
+        "latitude": 34.135386,
+        "longitude": -118.3418345
+      },
+      "location": {
         "latitude": 34.135386,
         "longitude": -118.3418345
       }
@@ -61449,6 +62705,10 @@
       "coordinates": {
         "latitude": 33.9980735,
         "longitude": -118.2764978
+      },
+      "location": {
+        "latitude": 33.9980735,
+        "longitude": -118.2764978
       }
     },
     "specs": {
@@ -61635,6 +62895,10 @@
       "zipCode": "90291",
       "neighborhood": "Venice",
       "coordinates": {
+        "latitude": 33.9908046,
+        "longitude": -118.4552438
+      },
+      "location": {
         "latitude": 33.9908046,
         "longitude": -118.4552438
       }
@@ -61825,6 +63089,10 @@
       "coordinates": {
         "latitude": 34.1493179,
         "longitude": -118.3619901
+      },
+      "location": {
+        "latitude": 34.1493179,
+        "longitude": -118.3619901
       }
     },
     "specs": {
@@ -62011,6 +63279,10 @@
       "zipCode": "90039",
       "neighborhood": "Silver Lake",
       "coordinates": {
+        "latitude": 34.1090039,
+        "longitude": -118.2627693
+      },
+      "location": {
         "latitude": 34.1090039,
         "longitude": -118.2627693
       }
@@ -62201,6 +63473,10 @@
       "coordinates": {
         "latitude": 34.106098,
         "longitude": -118.326272
+      },
+      "location": {
+        "latitude": 34.106098,
+        "longitude": -118.326272
       }
     },
     "specs": {
@@ -62387,6 +63663,10 @@
       "zipCode": "91602",
       "neighborhood": "Los Angeles",
       "coordinates": {
+        "latitude": 34.1491457,
+        "longitude": -118.3626319
+      },
+      "location": {
         "latitude": 34.1491457,
         "longitude": -118.3626319
       }
@@ -62577,6 +63857,10 @@
       "coordinates": {
         "latitude": 34.0224446,
         "longitude": -118.4089453
+      },
+      "location": {
+        "latitude": 34.0224446,
+        "longitude": -118.4089453
       }
     },
     "specs": {
@@ -62763,6 +64047,10 @@
       "zipCode": "91602",
       "neighborhood": "STUD - Studio City",
       "coordinates": {
+        "latitude": 34.1444527,
+        "longitude": -118.3706308
+      },
+      "location": {
         "latitude": 34.1444527,
         "longitude": -118.3706308
       }
@@ -62953,6 +64241,10 @@
       "coordinates": {
         "latitude": 34.028906,
         "longitude": -118.1911846
+      },
+      "location": {
+        "latitude": 34.028906,
+        "longitude": -118.1911846
       }
     },
     "specs": {
@@ -63139,6 +64431,10 @@
       "zipCode": "90744",
       "neighborhood": "195 - West Wilmington",
       "coordinates": {
+        "latitude": 33.773136,
+        "longitude": -118.2770351
+      },
+      "location": {
         "latitude": 33.773136,
         "longitude": -118.2770351
       }
@@ -63329,6 +64625,10 @@
       "coordinates": {
         "latitude": 34.0510447,
         "longitude": -118.4154029
+      },
+      "location": {
+        "latitude": 34.0510447,
+        "longitude": -118.4154029
       }
     },
     "specs": {
@@ -63515,6 +64815,10 @@
       "zipCode": "90043",
       "neighborhood": "PHHT - Park Hills Heights",
       "coordinates": {
+        "latitude": 33.9721036,
+        "longitude": -118.3206335
+      },
+      "location": {
         "latitude": 33.9721036,
         "longitude": -118.3206335
       }
@@ -63705,6 +65009,10 @@
       "coordinates": {
         "latitude": 34.1041108,
         "longitude": -118.3663029
+      },
+      "location": {
+        "latitude": 34.1041108,
+        "longitude": -118.3663029
       }
     },
     "specs": {
@@ -63891,6 +65199,10 @@
       "zipCode": "90032",
       "neighborhood": "621 - El Sereno",
       "coordinates": {
+        "latitude": 34.0904918,
+        "longitude": -118.174839
+      },
+      "location": {
         "latitude": 34.0904918,
         "longitude": -118.174839
       }
@@ -64081,6 +65393,10 @@
       "coordinates": {
         "latitude": 34.2023531,
         "longitude": -118.4403624
+      },
+      "location": {
+        "latitude": 34.2023531,
+        "longitude": -118.4403624
       }
     },
     "specs": {
@@ -64267,6 +65583,10 @@
       "zipCode": "90068",
       "neighborhood": "C30 - Hollywood Hills East",
       "coordinates": {
+        "latitude": 34.122048,
+        "longitude": -118.3240898
+      },
+      "location": {
         "latitude": 34.122048,
         "longitude": -118.3240898
       }
@@ -64457,6 +65777,10 @@
       "coordinates": {
         "latitude": 34.0681141,
         "longitude": -118.2390025
+      },
+      "location": {
+        "latitude": 34.0681141,
+        "longitude": -118.2390025
       }
     },
     "specs": {
@@ -64643,6 +65967,10 @@
       "zipCode": "91311",
       "neighborhood": "CHT - Chatsworth",
       "coordinates": {
+        "latitude": 34.2502133,
+        "longitude": -118.5824298
+      },
+      "location": {
         "latitude": 34.2502133,
         "longitude": -118.5824298
       }
@@ -64833,6 +66161,10 @@
       "coordinates": {
         "latitude": 34.012394,
         "longitude": -118.4201118
+      },
+      "location": {
+        "latitude": 34.012394,
+        "longitude": -118.4201118
       }
     },
     "specs": {
@@ -65019,6 +66351,10 @@
       "zipCode": "91342",
       "neighborhood": "SYL - Sylmar",
       "coordinates": {
+        "latitude": 34.2857327,
+        "longitude": -118.3984975
+      },
+      "location": {
         "latitude": 34.2857327,
         "longitude": -118.3984975
       }
@@ -65209,6 +66545,10 @@
       "coordinates": {
         "latitude": 34.1704318,
         "longitude": -118.5286024
+      },
+      "location": {
+        "latitude": 34.1704318,
+        "longitude": -118.5286024
       }
     },
     "specs": {
@@ -65395,6 +66735,10 @@
       "zipCode": "91042",
       "neighborhood": "659 - Sunland/Tujunga",
       "coordinates": {
+        "latitude": 34.2390707,
+        "longitude": -118.2712548
+      },
+      "location": {
         "latitude": 34.2390707,
         "longitude": -118.2712548
       }
@@ -65585,6 +66929,10 @@
       "coordinates": {
         "latitude": 34.1175698,
         "longitude": -118.275674
+      },
+      "location": {
+        "latitude": 34.1175698,
+        "longitude": -118.275674
       }
     },
     "specs": {
@@ -65771,6 +67119,10 @@
       "zipCode": "91436",
       "neighborhood": "ENC - Encino",
       "coordinates": {
+        "latitude": 34.1671041,
+        "longitude": -118.5008419
+      },
+      "location": {
         "latitude": 34.1671041,
         "longitude": -118.5008419
       }
@@ -65961,6 +67313,10 @@
       "coordinates": {
         "latitude": 34.0503538,
         "longitude": -118.415016
+      },
+      "location": {
+        "latitude": 34.0503538,
+        "longitude": -118.415016
       }
     },
     "specs": {
@@ -66147,6 +67503,10 @@
       "zipCode": "91605",
       "neighborhood": "699 - Not Defined",
       "coordinates": {
+        "latitude": 34.2118554,
+        "longitude": -118.4061527
+      },
+      "location": {
         "latitude": 34.2118554,
         "longitude": -118.4061527
       }
@@ -66337,6 +67697,10 @@
       "coordinates": {
         "latitude": 33.9608967,
         "longitude": -118.3972895
+      },
+      "location": {
+        "latitude": 33.9608967,
+        "longitude": -118.3972895
       }
     },
     "specs": {
@@ -66523,6 +67887,10 @@
       "zipCode": "90035",
       "neighborhood": "C09 - Beverlywood Vicinity",
       "coordinates": {
+        "latitude": 34.0520328,
+        "longitude": -118.3957172
+      },
+      "location": {
         "latitude": 34.0520328,
         "longitude": -118.3957172
       }
@@ -66713,6 +68081,10 @@
       "coordinates": {
         "latitude": 33.98336,
         "longitude": -118.42352
+      },
+      "location": {
+        "latitude": 33.98336,
+        "longitude": -118.42352
       }
     },
     "specs": {
@@ -66899,6 +68271,10 @@
       "zipCode": "90404",
       "neighborhood": "C14 - Santa Monica",
       "coordinates": {
+        "latitude": 34.0395292,
+        "longitude": -118.4711183
+      },
+      "location": {
         "latitude": 34.0395292,
         "longitude": -118.4711183
       }
@@ -67089,6 +68465,10 @@
       "coordinates": {
         "latitude": 34.0490924,
         "longitude": -118.443212
+      },
+      "location": {
+        "latitude": 34.0490924,
+        "longitude": -118.443212
       }
     },
     "specs": {
@@ -67275,6 +68655,10 @@
       "zipCode": "90062",
       "neighborhood": "Park Hills Heights",
       "coordinates": {
+        "latitude": 34.0148781,
+        "longitude": -118.3125347
+      },
+      "location": {
         "latitude": 34.0148781,
         "longitude": -118.3125347
       }
@@ -67465,6 +68849,10 @@
       "coordinates": {
         "latitude": 34.1341187,
         "longitude": -118.2707641
+      },
+      "location": {
+        "latitude": 34.1341187,
+        "longitude": -118.2707641
       }
     },
     "specs": {
@@ -67651,6 +69039,10 @@
       "zipCode": "90025",
       "neighborhood": "C05 - Westwood - Century City",
       "coordinates": {
+        "latitude": 34.0482785,
+        "longitude": -118.436634
+      },
+      "location": {
         "latitude": 34.0482785,
         "longitude": -118.436634
       }
@@ -67841,6 +69233,10 @@
       "coordinates": {
         "latitude": 34.2351351,
         "longitude": -118.4614528
+      },
+      "location": {
+        "latitude": 34.2351351,
+        "longitude": -118.4614528
       }
     },
     "specs": {
@@ -68027,6 +69423,10 @@
       "zipCode": "90049",
       "neighborhood": "C04 - Bel Air - Holmby Hills",
       "coordinates": {
+        "latitude": 34.092735,
+        "longitude": -118.465256
+      },
+      "location": {
         "latitude": 34.092735,
         "longitude": -118.465256
       }
@@ -68217,6 +69617,10 @@
       "coordinates": {
         "latitude": 37.7317585,
         "longitude": -122.4525366
+      },
+      "location": {
+        "latitude": 37.7317585,
+        "longitude": -122.4525366
       }
     },
     "specs": {
@@ -68403,6 +69807,10 @@
       "zipCode": "94107",
       "neighborhood": "San Francisco",
       "coordinates": {
+        "latitude": 37.783175,
+        "longitude": -122.399084
+      },
+      "location": {
         "latitude": 37.783175,
         "longitude": -122.399084
       }
@@ -68593,6 +70001,10 @@
       "coordinates": {
         "latitude": 37.7566055,
         "longitude": -122.4968032
+      },
+      "location": {
+        "latitude": 37.7566055,
+        "longitude": -122.4968032
       }
     },
     "specs": {
@@ -68779,6 +70191,10 @@
       "zipCode": "94131",
       "neighborhood": "Noe Valley",
       "coordinates": {
+        "latitude": 37.7460698,
+        "longitude": -122.4340392
+      },
+      "location": {
         "latitude": 37.7460698,
         "longitude": -122.4340392
       }
@@ -68969,6 +70385,10 @@
       "coordinates": {
         "latitude": 37.7192236,
         "longitude": -122.3911654
+      },
+      "location": {
+        "latitude": 37.7192236,
+        "longitude": -122.3911654
       }
     },
     "specs": {
@@ -69155,6 +70575,10 @@
       "zipCode": "94105",
       "neighborhood": "South Beach",
       "coordinates": {
+        "latitude": 37.7864229,
+        "longitude": -122.3938961
+      },
+      "location": {
         "latitude": 37.7864229,
         "longitude": -122.3938961
       }
@@ -69345,6 +70769,10 @@
       "coordinates": {
         "latitude": 37.786824,
         "longitude": -122.446512
+      },
+      "location": {
+        "latitude": 37.786824,
+        "longitude": -122.446512
       }
     },
     "specs": {
@@ -69531,6 +70959,10 @@
       "zipCode": "94132",
       "neighborhood": "Lakeshore",
       "coordinates": {
+        "latitude": 37.7341509,
+        "longitude": -122.4831435
+      },
+      "location": {
         "latitude": 37.7341509,
         "longitude": -122.4831435
       }
@@ -69721,6 +71153,10 @@
       "coordinates": {
         "latitude": 37.7875063,
         "longitude": -122.4400822
+      },
+      "location": {
+        "latitude": 37.7875063,
+        "longitude": -122.4400822
       }
     },
     "specs": {
@@ -69907,6 +71343,10 @@
       "zipCode": "94133",
       "neighborhood": "Telegraph Hill",
       "coordinates": {
+        "latitude": 37.7988202,
+        "longitude": -122.4048259
+      },
+      "location": {
         "latitude": 37.7988202,
         "longitude": -122.4048259
       }
@@ -70097,6 +71537,10 @@
       "coordinates": {
         "latitude": 37.786993,
         "longitude": -122.438246
+      },
+      "location": {
+        "latitude": 37.786993,
+        "longitude": -122.438246
       }
     },
     "specs": {
@@ -70283,6 +71727,10 @@
       "zipCode": "94114",
       "neighborhood": "Eureka Valley",
       "coordinates": {
+        "latitude": 37.7589184,
+        "longitude": -122.4345178
+      },
+      "location": {
         "latitude": 37.7589184,
         "longitude": -122.4345178
       }
@@ -70473,6 +71921,10 @@
       "coordinates": {
         "latitude": 37.7642183,
         "longitude": -122.3974565
+      },
+      "location": {
+        "latitude": 37.7642183,
+        "longitude": -122.3974565
       }
     },
     "specs": {
@@ -70659,6 +72111,10 @@
       "zipCode": "94112",
       "neighborhood": "Oceanview",
       "coordinates": {
+        "latitude": 37.7138974,
+        "longitude": -122.4573641
+      },
+      "location": {
         "latitude": 37.7138974,
         "longitude": -122.4573641
       }
@@ -70849,6 +72305,10 @@
       "coordinates": {
         "latitude": 37.773892,
         "longitude": -122.396231
+      },
+      "location": {
+        "latitude": 37.773892,
+        "longitude": -122.396231
       }
     },
     "specs": {
@@ -71035,6 +72495,10 @@
       "zipCode": "94112",
       "neighborhood": "San Francisco",
       "coordinates": {
+        "latitude": 37.7245214,
+        "longitude": -122.4579246
+      },
+      "location": {
         "latitude": 37.7245214,
         "longitude": -122.4579246
       }
@@ -71225,6 +72689,10 @@
       "coordinates": {
         "latitude": 37.7866132,
         "longitude": -122.4698773
+      },
+      "location": {
+        "latitude": 37.7866132,
+        "longitude": -122.4698773
       }
     },
     "specs": {
@@ -71411,6 +72879,10 @@
       "zipCode": "94131",
       "neighborhood": "Noe Valley",
       "coordinates": {
+        "latitude": 37.7450869,
+        "longitude": -122.4284601
+      },
+      "location": {
         "latitude": 37.7450869,
         "longitude": -122.4284601
       }
@@ -71601,6 +73073,10 @@
       "coordinates": {
         "latitude": 37.7565968,
         "longitude": -122.4296165
+      },
+      "location": {
+        "latitude": 37.7565968,
+        "longitude": -122.4296165
       }
     },
     "specs": {
@@ -71787,6 +73263,10 @@
       "zipCode": "94131",
       "neighborhood": "Twin Peaks",
       "coordinates": {
+        "latitude": 37.7533107,
+        "longitude": -122.4441361
+      },
+      "location": {
         "latitude": 37.7533107,
         "longitude": -122.4441361
       }
@@ -71977,6 +73457,10 @@
       "coordinates": {
         "latitude": 37.7987349,
         "longitude": -122.4132863
+      },
+      "location": {
+        "latitude": 37.7987349,
+        "longitude": -122.4132863
       }
     },
     "specs": {
@@ -72163,6 +73647,10 @@
       "zipCode": "94107",
       "neighborhood": "Potrero Hill",
       "coordinates": {
+        "latitude": 37.7630503,
+        "longitude": -122.3968605
+      },
+      "location": {
         "latitude": 37.7630503,
         "longitude": -122.3968605
       }
@@ -72353,6 +73841,10 @@
       "coordinates": {
         "latitude": 37.7600296,
         "longitude": -122.4120441
+      },
+      "location": {
+        "latitude": 37.7600296,
+        "longitude": -122.4120441
       }
     },
     "specs": {
@@ -72539,6 +74031,10 @@
       "zipCode": "94123",
       "neighborhood": "Cow Hollow",
       "coordinates": {
+        "latitude": 37.798304,
+        "longitude": -122.4243186
+      },
+      "location": {
         "latitude": 37.798304,
         "longitude": -122.4243186
       }
@@ -72729,6 +74225,10 @@
       "coordinates": {
         "latitude": 37.756949,
         "longitude": -122.423655
+      },
+      "location": {
+        "latitude": 37.756949,
+        "longitude": -122.423655
       }
     },
     "specs": {
@@ -72915,6 +74415,10 @@
       "zipCode": "94105",
       "neighborhood": "South Beach",
       "coordinates": {
+        "latitude": 37.7886733,
+        "longitude": -122.3914178
+      },
+      "location": {
         "latitude": 37.7886733,
         "longitude": -122.3914178
       }
@@ -73105,6 +74609,10 @@
       "coordinates": {
         "latitude": 37.7362134,
         "longitude": -122.423892
+      },
+      "location": {
+        "latitude": 37.7362134,
+        "longitude": -122.423892
       }
     },
     "specs": {
@@ -73291,6 +74799,10 @@
       "zipCode": "94122",
       "neighborhood": "SAN FRANCISCO",
       "coordinates": {
+        "latitude": 37.764225,
+        "longitude": -122.47908
+      },
+      "location": {
         "latitude": 37.764225,
         "longitude": -122.47908
       }
@@ -73481,6 +74993,10 @@
       "coordinates": {
         "latitude": 37.7550216,
         "longitude": -122.3906295
+      },
+      "location": {
+        "latitude": 37.7550216,
+        "longitude": -122.3906295
       }
     },
     "specs": {
@@ -73667,6 +75183,10 @@
       "zipCode": "94109",
       "neighborhood": "SF District 8",
       "coordinates": {
+        "latitude": 37.7879551,
+        "longitude": -122.4129153
+      },
+      "location": {
         "latitude": 37.7879551,
         "longitude": -122.4129153
       }
@@ -73857,6 +75377,10 @@
       "coordinates": {
         "latitude": 37.785555,
         "longitude": -122.481629
+      },
+      "location": {
+        "latitude": 37.785555,
+        "longitude": -122.481629
       }
     },
     "specs": {
@@ -74043,6 +75567,10 @@
       "zipCode": "94105",
       "neighborhood": "SF District 9",
       "coordinates": {
+        "latitude": 37.7881762,
+        "longitude": -122.3925217
+      },
+      "location": {
         "latitude": 37.7881762,
         "longitude": -122.3925217
       }
@@ -74233,6 +75761,10 @@
       "coordinates": {
         "latitude": 37.7623302,
         "longitude": -122.3989284
+      },
+      "location": {
+        "latitude": 37.7623302,
+        "longitude": -122.3989284
       }
     },
     "specs": {
@@ -74419,6 +75951,10 @@
       "zipCode": "94102",
       "neighborhood": "SF District 6",
       "coordinates": {
+        "latitude": 37.778916,
+        "longitude": -122.4231303
+      },
+      "location": {
         "latitude": 37.778916,
         "longitude": -122.4231303
       }
@@ -74609,6 +76145,10 @@
       "coordinates": {
         "latitude": 37.7987349,
         "longitude": -122.4132863
+      },
+      "location": {
+        "latitude": 37.7987349,
+        "longitude": -122.4132863
       }
     },
     "specs": {
@@ -74795,6 +76335,10 @@
       "zipCode": "94105",
       "neighborhood": "SF District 9",
       "coordinates": {
+        "latitude": 37.786289,
+        "longitude": -122.401376
+      },
+      "location": {
         "latitude": 37.786289,
         "longitude": -122.401376
       }
@@ -74985,6 +76529,10 @@
       "coordinates": {
         "latitude": 37.7967946,
         "longitude": -122.4280527
+      },
+      "location": {
+        "latitude": 37.7967946,
+        "longitude": -122.4280527
       }
     },
     "specs": {
@@ -75171,6 +76719,10 @@
       "zipCode": "94122",
       "neighborhood": "SF District 2",
       "coordinates": {
+        "latitude": 37.7611866,
+        "longitude": -122.463653
+      },
+      "location": {
         "latitude": 37.7611866,
         "longitude": -122.463653
       }
@@ -75361,6 +76913,10 @@
       "coordinates": {
         "latitude": 37.7449639,
         "longitude": -122.4199999
+      },
+      "location": {
+        "latitude": 37.7449639,
+        "longitude": -122.4199999
       }
     },
     "specs": {
@@ -75547,6 +77103,10 @@
       "zipCode": "94117",
       "neighborhood": "SF District 6",
       "coordinates": {
+        "latitude": 37.7740796,
+        "longitude": -122.4367793
+      },
+      "location": {
         "latitude": 37.7740796,
         "longitude": -122.4367793
       }
@@ -75737,6 +77297,10 @@
       "coordinates": {
         "latitude": 37.7857079,
         "longitude": -122.434543
+      },
+      "location": {
+        "latitude": 37.7857079,
+        "longitude": -122.434543
       }
     },
     "specs": {
@@ -75923,6 +77487,10 @@
       "zipCode": "94118",
       "neighborhood": "SF District 7",
       "coordinates": {
+        "latitude": 37.7894766,
+        "longitude": -122.4531205
+      },
+      "location": {
         "latitude": 37.7894766,
         "longitude": -122.4531205
       }
@@ -76113,6 +77681,10 @@
       "coordinates": {
         "latitude": 37.7730287,
         "longitude": -122.425826
+      },
+      "location": {
+        "latitude": 37.7730287,
+        "longitude": -122.425826
       }
     },
     "specs": {
@@ -76299,6 +77871,10 @@
       "zipCode": "94117",
       "neighborhood": "SF District 6",
       "coordinates": {
+        "latitude": 37.7718202,
+        "longitude": -122.43469
+      },
+      "location": {
         "latitude": 37.7718202,
         "longitude": -122.43469
       }
@@ -76489,6 +78065,10 @@
       "coordinates": {
         "latitude": 37.7447491,
         "longitude": -122.4879054
+      },
+      "location": {
+        "latitude": 37.7447491,
+        "longitude": -122.4879054
       }
     },
     "specs": {
@@ -76675,6 +78255,10 @@
       "zipCode": "94121",
       "neighborhood": "Central Richmond",
       "coordinates": {
+        "latitude": 37.7736019,
+        "longitude": -122.475339
+      },
+      "location": {
         "latitude": 37.7736019,
         "longitude": -122.475339
       }
@@ -76865,6 +78449,10 @@
       "coordinates": {
         "latitude": 37.7743917,
         "longitude": -122.3996135
+      },
+      "location": {
+        "latitude": 37.7743917,
+        "longitude": -122.3996135
       }
     },
     "specs": {
@@ -77051,6 +78639,10 @@
       "zipCode": "94112",
       "neighborhood": "SF District 10",
       "coordinates": {
+        "latitude": 37.7309937,
+        "longitude": -122.4278882
+      },
+      "location": {
         "latitude": 37.7309937,
         "longitude": -122.4278882
       }
@@ -77241,6 +78833,10 @@
       "coordinates": {
         "latitude": 37.7492739,
         "longitude": -122.4195613
+      },
+      "location": {
+        "latitude": 37.7492739,
+        "longitude": -122.4195613
       }
     },
     "specs": {
@@ -77427,6 +79023,10 @@
       "zipCode": "94124",
       "neighborhood": "SF District 10",
       "coordinates": {
+        "latitude": 37.7288108,
+        "longitude": -122.3721323
+      },
+      "location": {
         "latitude": 37.7288108,
         "longitude": -122.3721323
       }
@@ -77617,6 +79217,10 @@
       "coordinates": {
         "latitude": 42.3308057,
         "longitude": -71.0560102
+      },
+      "location": {
+        "latitude": 42.3308057,
+        "longitude": -71.0560102
       }
     },
     "specs": {
@@ -77803,6 +79407,10 @@
       "zipCode": "02116",
       "neighborhood": "Back Bay",
       "coordinates": {
+        "latitude": 42.345034,
+        "longitude": -71.079434
+      },
+      "location": {
         "latitude": 42.345034,
         "longitude": -71.079434
       }
@@ -77993,6 +79601,10 @@
       "coordinates": {
         "latitude": 42.2915476,
         "longitude": -71.1158162
+      },
+      "location": {
+        "latitude": 42.2915476,
+        "longitude": -71.1158162
       }
     },
     "specs": {
@@ -78179,6 +79791,10 @@
       "zipCode": "02127",
       "neighborhood": "South Boston",
       "coordinates": {
+        "latitude": 42.330618,
+        "longitude": -71.0470379
+      },
+      "location": {
         "latitude": 42.330618,
         "longitude": -71.0470379
       }
@@ -78369,6 +79985,10 @@
       "coordinates": {
         "latitude": 42.344256,
         "longitude": -71.072442
+      },
+      "location": {
+        "latitude": 42.344256,
+        "longitude": -71.072442
       }
     },
     "specs": {
@@ -78555,6 +80175,10 @@
       "zipCode": "02109",
       "neighborhood": "North End",
       "coordinates": {
+        "latitude": 42.3650294,
+        "longitude": -71.0515875
+      },
+      "location": {
         "latitude": 42.3650294,
         "longitude": -71.0515875
       }
@@ -78745,6 +80369,10 @@
       "coordinates": {
         "latitude": 42.3029479,
         "longitude": -71.0761871
+      },
+      "location": {
+        "latitude": 42.3029479,
+        "longitude": -71.0761871
       }
     },
     "specs": {
@@ -78931,6 +80559,10 @@
       "zipCode": "02124",
       "neighborhood": "Dorchester",
       "coordinates": {
+        "latitude": 42.2885084,
+        "longitude": -71.0698754
+      },
+      "location": {
         "latitude": 42.2885084,
         "longitude": -71.0698754
       }
@@ -79121,6 +80753,10 @@
       "coordinates": {
         "latitude": 42.3736531,
         "longitude": -71.0665914
+      },
+      "location": {
+        "latitude": 42.3736531,
+        "longitude": -71.0665914
       }
     },
     "specs": {
@@ -79307,6 +80943,10 @@
       "zipCode": "02120",
       "neighborhood": "Mission Hill",
       "coordinates": {
+        "latitude": 42.3275523,
+        "longitude": -71.102259
+      },
+      "location": {
         "latitude": 42.3275523,
         "longitude": -71.102259
       }
@@ -79497,6 +81137,10 @@
       "coordinates": {
         "latitude": 42.2531188,
         "longitude": -71.129095
+      },
+      "location": {
+        "latitude": 42.2531188,
+        "longitude": -71.129095
       }
     },
     "specs": {
@@ -79683,6 +81327,10 @@
       "zipCode": "02210",
       "neighborhood": "South Boston Waterfront",
       "coordinates": {
+        "latitude": 42.3471032,
+        "longitude": -71.0501345
+      },
+      "location": {
         "latitude": 42.3471032,
         "longitude": -71.0501345
       }
@@ -79873,6 +81521,10 @@
       "coordinates": {
         "latitude": 42.3507123,
         "longitude": -71.0571537
+      },
+      "location": {
+        "latitude": 42.3507123,
+        "longitude": -71.0571537
       }
     },
     "specs": {
@@ -80059,6 +81711,10 @@
       "zipCode": "02115",
       "neighborhood": "Fenway",
       "coordinates": {
+        "latitude": 42.345835,
+        "longitude": -71.0886193
+      },
+      "location": {
         "latitude": 42.345835,
         "longitude": -71.0886193
       }
@@ -80249,6 +81905,10 @@
       "coordinates": {
         "latitude": 42.3656871,
         "longitude": -71.146102
+      },
+      "location": {
+        "latitude": 42.3656871,
+        "longitude": -71.146102
       }
     },
     "specs": {
@@ -80435,6 +82095,10 @@
       "zipCode": "02128",
       "neighborhood": "East Boston",
       "coordinates": {
+        "latitude": 42.3825046,
+        "longitude": -71.0384676
+      },
+      "location": {
         "latitude": 42.3825046,
         "longitude": -71.0384676
       }
@@ -80625,6 +82289,10 @@
       "coordinates": {
         "latitude": 42.3161675,
         "longitude": -71.1067667
+      },
+      "location": {
+        "latitude": 42.3161675,
+        "longitude": -71.1067667
       }
     },
     "specs": {
@@ -80811,6 +82479,10 @@
       "zipCode": "02127",
       "neighborhood": "South Boston",
       "coordinates": {
+        "latitude": 42.3335766,
+        "longitude": -71.0492428
+      },
+      "location": {
         "latitude": 42.3335766,
         "longitude": -71.0492428
       }
@@ -81001,6 +82673,10 @@
       "coordinates": {
         "latitude": 42.3211121,
         "longitude": -71.1045255
+      },
+      "location": {
+        "latitude": 42.3211121,
+        "longitude": -71.1045255
       }
     },
     "specs": {
@@ -81187,6 +82863,10 @@
       "zipCode": "02118",
       "neighborhood": "South End",
       "coordinates": {
+        "latitude": 42.3394536,
+        "longitude": -71.0765304
+      },
+      "location": {
         "latitude": 42.3394536,
         "longitude": -71.0765304
       }
@@ -81377,6 +83057,10 @@
       "coordinates": {
         "latitude": 42.3115308,
         "longitude": -71.0606665
+      },
+      "location": {
+        "latitude": 42.3115308,
+        "longitude": -71.0606665
       }
     },
     "specs": {
@@ -81563,6 +83247,10 @@
       "zipCode": "02130",
       "neighborhood": "Boston",
       "coordinates": {
+        "latitude": 42.3144613,
+        "longitude": -71.1013244
+      },
+      "location": {
         "latitude": 42.3144613,
         "longitude": -71.1013244
       }
@@ -81753,6 +83441,10 @@
       "coordinates": {
         "latitude": 42.3444959,
         "longitude": -71.0696362
+      },
+      "location": {
+        "latitude": 42.3444959,
+        "longitude": -71.0696362
       }
     },
     "specs": {
@@ -81939,6 +83631,10 @@
       "zipCode": "02130",
       "neighborhood": "Boston",
       "coordinates": {
+        "latitude": 42.3163058,
+        "longitude": -71.1080304
+      },
+      "location": {
         "latitude": 42.3163058,
         "longitude": -71.1080304
       }
@@ -82129,6 +83825,10 @@
       "coordinates": {
         "latitude": 42.3378727,
         "longitude": -71.0395159
+      },
+      "location": {
+        "latitude": 42.3378727,
+        "longitude": -71.0395159
       }
     },
     "specs": {
@@ -82315,6 +84015,10 @@
       "zipCode": "02128",
       "neighborhood": "East Boston",
       "coordinates": {
+        "latitude": 42.3825046,
+        "longitude": -71.0384676
+      },
+      "location": {
         "latitude": 42.3825046,
         "longitude": -71.0384676
       }
@@ -82505,6 +84209,10 @@
       "coordinates": {
         "latitude": 42.340815,
         "longitude": -71.151367
+      },
+      "location": {
+        "latitude": 42.340815,
+        "longitude": -71.151367
       }
     },
     "specs": {
@@ -82691,6 +84399,10 @@
       "zipCode": "02116",
       "neighborhood": "Back Bay",
       "coordinates": {
+        "latitude": 42.3523683,
+        "longitude": -71.0847132
+      },
+      "location": {
         "latitude": 42.3523683,
         "longitude": -71.0847132
       }
@@ -82881,6 +84593,10 @@
       "coordinates": {
         "latitude": 42.3250012,
         "longitude": -71.0590392
+      },
+      "location": {
+        "latitude": 42.3250012,
+        "longitude": -71.0590392
       }
     },
     "specs": {
@@ -83067,6 +84783,10 @@
       "zipCode": "02128",
       "neighborhood": "East Boston",
       "coordinates": {
+        "latitude": 42.3748496,
+        "longitude": -71.0321472
+      },
+      "location": {
         "latitude": 42.3748496,
         "longitude": -71.0321472
       }
@@ -83257,6 +84977,10 @@
       "coordinates": {
         "latitude": 42.3186929,
         "longitude": -71.0534214
+      },
+      "location": {
+        "latitude": 42.3186929,
+        "longitude": -71.0534214
       }
     },
     "specs": {
@@ -83443,6 +85167,10 @@
       "zipCode": "02116",
       "neighborhood": "Back Bay",
       "coordinates": {
+        "latitude": 42.3486982,
+        "longitude": -71.0782134
+      },
+      "location": {
         "latitude": 42.3486982,
         "longitude": -71.0782134
       }
@@ -83633,6 +85361,10 @@
       "coordinates": {
         "latitude": 42.3593696,
         "longitude": -71.0669677
+      },
+      "location": {
+        "latitude": 42.3593696,
+        "longitude": -71.0669677
       }
     },
     "specs": {
@@ -83819,6 +85551,10 @@
       "zipCode": "02118",
       "neighborhood": "South End",
       "coordinates": {
+        "latitude": 42.3374661,
+        "longitude": -71.0772157
+      },
+      "location": {
         "latitude": 42.3374661,
         "longitude": -71.0772157
       }
@@ -84009,6 +85745,10 @@
       "coordinates": {
         "latitude": 42.3804149,
         "longitude": -71.0620806
+      },
+      "location": {
+        "latitude": 42.3804149,
+        "longitude": -71.0620806
       }
     },
     "specs": {
@@ -84195,6 +85935,10 @@
       "zipCode": "02127",
       "neighborhood": "Boston",
       "coordinates": {
+        "latitude": 42.3372619,
+        "longitude": -71.028559
+      },
+      "location": {
         "latitude": 42.3372619,
         "longitude": -71.028559
       }
@@ -84385,6 +86129,10 @@
       "coordinates": {
         "latitude": 42.343914,
         "longitude": -71.0635659
+      },
+      "location": {
+        "latitude": 42.343914,
+        "longitude": -71.0635659
       }
     },
     "specs": {
@@ -84571,6 +86319,10 @@
       "zipCode": "02116",
       "neighborhood": "Midtown Boston",
       "coordinates": {
+        "latitude": 42.3509348,
+        "longitude": -71.0655937
+      },
+      "location": {
         "latitude": 42.3509348,
         "longitude": -71.0655937
       }
@@ -84761,6 +86513,10 @@
       "coordinates": {
         "latitude": 42.3510275,
         "longitude": -71.1349698
+      },
+      "location": {
+        "latitude": 42.3510275,
+        "longitude": -71.1349698
       }
     },
     "specs": {
@@ -84947,6 +86703,10 @@
       "zipCode": "02116",
       "neighborhood": "Boston",
       "coordinates": {
+        "latitude": 42.3442088,
+        "longitude": -71.0782099
+      },
+      "location": {
         "latitude": 42.3442088,
         "longitude": -71.0782099
       }
@@ -85137,6 +86897,10 @@
       "coordinates": {
         "latitude": 42.3607583,
         "longitude": -71.062671
+      },
+      "location": {
+        "latitude": 42.3607583,
+        "longitude": -71.062671
       }
     },
     "specs": {
@@ -85323,6 +87087,10 @@
       "zipCode": "02130",
       "neighborhood": "Jamaica Plain",
       "coordinates": {
+        "latitude": 42.3129716,
+        "longitude": -71.1089492
+      },
+      "location": {
         "latitude": 42.3129716,
         "longitude": -71.1089492
       }
@@ -85513,6 +87281,10 @@
       "coordinates": {
         "latitude": 42.3460478,
         "longitude": -71.0782077
+      },
+      "location": {
+        "latitude": 42.3460478,
+        "longitude": -71.0782077
       }
     },
     "specs": {
@@ -85699,6 +87471,10 @@
       "zipCode": "02130",
       "neighborhood": "Jamaica Plain",
       "coordinates": {
+        "latitude": 42.3305069,
+        "longitude": -71.1121228
+      },
+      "location": {
         "latitude": 42.3305069,
         "longitude": -71.1121228
       }
@@ -85889,6 +87665,10 @@
       "coordinates": {
         "latitude": 42.2546042,
         "longitude": -71.1417184
+      },
+      "location": {
+        "latitude": 42.2546042,
+        "longitude": -71.1417184
       }
     },
     "specs": {
@@ -86075,6 +87855,10 @@
       "zipCode": "02122",
       "neighborhood": "Dorchester's Meeting House Hill",
       "coordinates": {
+        "latitude": 42.3071776,
+        "longitude": -71.0619895
+      },
+      "location": {
         "latitude": 42.3071776,
         "longitude": -71.0619895
       }
@@ -86265,6 +88049,10 @@
       "coordinates": {
         "latitude": 42.3398913,
         "longitude": -71.0813433
+      },
+      "location": {
+        "latitude": 42.3398913,
+        "longitude": -71.0813433
       }
     },
     "specs": {
@@ -86451,6 +88239,10 @@
       "zipCode": "02467",
       "neighborhood": "West Roxbury's Chestnut Hill",
       "coordinates": {
+        "latitude": 42.3008465,
+        "longitude": -71.1656006
+      },
+      "location": {
         "latitude": 42.3008465,
         "longitude": -71.1656006
       }
@@ -86641,6 +88433,10 @@
       "coordinates": {
         "latitude": 42.3150129,
         "longitude": -71.0943443
+      },
+      "location": {
+        "latitude": 42.3150129,
+        "longitude": -71.0943443
       }
     },
     "specs": {
@@ -86827,6 +88623,10 @@
       "zipCode": "02445",
       "neighborhood": "Brookline",
       "coordinates": {
+        "latitude": 42.3375229,
+        "longitude": -71.1449487
+      },
+      "location": {
         "latitude": 42.3375229,
         "longitude": -71.1449487
       }
@@ -87017,6 +88817,10 @@
       "coordinates": {
         "latitude": 32.8577396,
         "longitude": -96.7757406
+      },
+      "location": {
+        "latitude": 32.8577396,
+        "longitude": -96.7757406
       }
     },
     "specs": {
@@ -87203,6 +89007,10 @@
       "zipCode": "75231",
       "neighborhood": "Dallas",
       "coordinates": {
+        "latitude": 32.8813515,
+        "longitude": -96.7366259
+      },
+      "location": {
         "latitude": 32.8813515,
         "longitude": -96.7366259
       }
@@ -87393,6 +89201,10 @@
       "coordinates": {
         "latitude": 32.8172788,
         "longitude": -96.8074939
+      },
+      "location": {
+        "latitude": 32.8172788,
+        "longitude": -96.8074939
       }
     },
     "specs": {
@@ -87579,6 +89391,10 @@
       "zipCode": "75205",
       "neighborhood": "Park Cities",
       "coordinates": {
+        "latitude": 32.8327102,
+        "longitude": -96.7899702
+      },
+      "location": {
         "latitude": 32.8327102,
         "longitude": -96.7899702
       }
@@ -87769,6 +89585,10 @@
       "coordinates": {
         "latitude": 32.7313691,
         "longitude": -96.8437391
+      },
+      "location": {
+        "latitude": 32.7313691,
+        "longitude": -96.8437391
       }
     },
     "specs": {
@@ -87955,6 +89775,10 @@
       "zipCode": "75201",
       "neighborhood": "Turtle Creek",
       "coordinates": {
+        "latitude": 32.8013331,
+        "longitude": -96.8085447
+      },
+      "location": {
         "latitude": 32.8013331,
         "longitude": -96.8085447
       }
@@ -88145,6 +89969,10 @@
       "coordinates": {
         "latitude": 32.6561139,
         "longitude": -96.9974354
+      },
+      "location": {
+        "latitude": 32.6561139,
+        "longitude": -96.9974354
       }
     },
     "specs": {
@@ -88331,6 +90159,10 @@
       "zipCode": "75204",
       "neighborhood": "Manett Condo",
       "coordinates": {
+        "latitude": 32.811605,
+        "longitude": -96.7847693
+      },
+      "location": {
         "latitude": 32.811605,
         "longitude": -96.7847693
       }
@@ -88521,6 +90353,10 @@
       "coordinates": {
         "latitude": 32.8035542,
         "longitude": -96.8068766
+      },
+      "location": {
+        "latitude": 32.8035542,
+        "longitude": -96.8068766
       }
     },
     "specs": {
@@ -88707,6 +90543,10 @@
       "zipCode": "75214",
       "neighborhood": "Lakewood",
       "coordinates": {
+        "latitude": 32.8241624,
+        "longitude": -96.7407382
+      },
+      "location": {
         "latitude": 32.8241624,
         "longitude": -96.7407382
       }
@@ -88897,6 +90737,10 @@
       "coordinates": {
         "latitude": 32.839086,
         "longitude": -96.7642313
+      },
+      "location": {
+        "latitude": 32.839086,
+        "longitude": -96.7642313
       }
     },
     "specs": {
@@ -89083,6 +90927,10 @@
       "zipCode": "75219",
       "neighborhood": "Lovers Lane",
       "coordinates": {
+        "latitude": 32.8126909,
+        "longitude": -96.815446
+      },
+      "location": {
         "latitude": 32.8126909,
         "longitude": -96.815446
       }
@@ -89273,6 +91121,10 @@
       "coordinates": {
         "latitude": 32.8135511,
         "longitude": -96.8102629
+      },
+      "location": {
+        "latitude": 32.8135511,
+        "longitude": -96.8102629
       }
     },
     "specs": {
@@ -89459,6 +91311,10 @@
       "zipCode": "75227",
       "neighborhood": "Village By The Creek",
       "coordinates": {
+        "latitude": 32.7509976,
+        "longitude": -96.6600923
+      },
+      "location": {
         "latitude": 32.7509976,
         "longitude": -96.6600923
       }
@@ -89649,6 +91505,10 @@
       "coordinates": {
         "latitude": 32.8300231,
         "longitude": -96.6657474
+      },
+      "location": {
+        "latitude": 32.8300231,
+        "longitude": -96.6657474
       }
     },
     "specs": {
@@ -89835,6 +91695,10 @@
       "zipCode": "75214",
       "neighborhood": "Junius Heights",
       "coordinates": {
+        "latitude": 32.8024477,
+        "longitude": -96.7573391
+      },
+      "location": {
         "latitude": 32.8024477,
         "longitude": -96.7573391
       }
@@ -90025,6 +91889,10 @@
       "coordinates": {
         "latitude": 32.965458,
         "longitude": -96.8182
+      },
+      "location": {
+        "latitude": 32.965458,
+        "longitude": -96.8182
       }
     },
     "specs": {
@@ -90211,6 +92079,10 @@
       "zipCode": "75287",
       "neighborhood": "Country Brook Sec One",
       "coordinates": {
+        "latitude": 32.999088,
+        "longitude": -96.8375332
+      },
+      "location": {
         "latitude": 32.999088,
         "longitude": -96.8375332
       }
@@ -90401,6 +92273,10 @@
       "coordinates": {
         "latitude": 32.778393,
         "longitude": -96.801314
+      },
+      "location": {
+        "latitude": 32.778393,
+        "longitude": -96.801314
       }
     },
     "specs": {
@@ -90587,6 +92463,10 @@
       "zipCode": "75231",
       "neighborhood": "Ridge Condos",
       "coordinates": {
+        "latitude": 32.866628,
+        "longitude": -96.751328
+      },
+      "location": {
         "latitude": 32.866628,
         "longitude": -96.751328
       }
@@ -90777,6 +92657,10 @@
       "coordinates": {
         "latitude": 32.9169622,
         "longitude": -96.7381684
+      },
+      "location": {
+        "latitude": 32.9169622,
+        "longitude": -96.7381684
       }
     },
     "specs": {
@@ -90963,6 +92847,10 @@
       "zipCode": "75228",
       "neighborhood": "Cloverdale 02",
       "coordinates": {
+        "latitude": 32.8207963,
+        "longitude": -96.672471
+      },
+      "location": {
         "latitude": 32.8207963,
         "longitude": -96.672471
       }
@@ -91153,6 +93041,10 @@
       "coordinates": {
         "latitude": 32.866038,
         "longitude": -96.8550731
+      },
+      "location": {
+        "latitude": 32.866038,
+        "longitude": -96.8550731
       }
     },
     "specs": {
@@ -91339,6 +93231,10 @@
       "zipCode": "75224",
       "neighborhood": "Southern Hills",
       "coordinates": {
+        "latitude": 32.6938043,
+        "longitude": -96.8354027
+      },
+      "location": {
         "latitude": 32.6938043,
         "longitude": -96.8354027
       }
@@ -91529,6 +93425,10 @@
       "coordinates": {
         "latitude": 32.793404,
         "longitude": -96.811421
+      },
+      "location": {
+        "latitude": 32.793404,
+        "longitude": -96.811421
       }
     },
     "specs": {
@@ -91715,6 +93615,10 @@
       "zipCode": "75228",
       "neighborhood": "Claremont 01 Inst",
       "coordinates": {
+        "latitude": 32.7976846,
+        "longitude": -96.7072092
+      },
+      "location": {
         "latitude": 32.7976846,
         "longitude": -96.7072092
       }
@@ -91905,6 +93809,10 @@
       "coordinates": {
         "latitude": 32.7661389,
         "longitude": -96.7630881
+      },
+      "location": {
+        "latitude": 32.7661389,
+        "longitude": -96.7630881
       }
     },
     "specs": {
@@ -92091,6 +93999,10 @@
       "zipCode": "75126",
       "neighborhood": "Travis Ranch Ph 2k",
       "coordinates": {
+        "latitude": 32.8050314,
+        "longitude": -96.4833621
+      },
+      "location": {
         "latitude": 32.8050314,
         "longitude": -96.4833621
       }
@@ -92281,6 +94193,10 @@
       "coordinates": {
         "latitude": 32.8474993,
         "longitude": -96.7454761
+      },
+      "location": {
+        "latitude": 32.8474993,
+        "longitude": -96.7454761
       }
     },
     "specs": {
@@ -92467,6 +94383,10 @@
       "zipCode": "75240",
       "neighborhood": "CITTA URBAN TOWNHOMES",
       "coordinates": {
+        "latitude": 32.936622,
+        "longitude": -96.816948
+      },
+      "location": {
         "latitude": 32.936622,
         "longitude": -96.816948
       }
@@ -92657,6 +94577,10 @@
       "coordinates": {
         "latitude": 32.9539593,
         "longitude": -96.7938181
+      },
+      "location": {
+        "latitude": 32.9539593,
+        "longitude": -96.7938181
       }
     },
     "specs": {
@@ -92843,6 +94767,10 @@
       "zipCode": "75206",
       "neighborhood": "Munger Place Condo",
       "coordinates": {
+        "latitude": 32.8063684,
+        "longitude": -96.7724642
+      },
+      "location": {
         "latitude": 32.8063684,
         "longitude": -96.7724642
       }
@@ -93033,6 +94961,10 @@
       "coordinates": {
         "latitude": 32.9321078,
         "longitude": -96.7038762
+      },
+      "location": {
+        "latitude": 32.9321078,
+        "longitude": -96.7038762
       }
     },
     "specs": {
@@ -93219,6 +95151,10 @@
       "zipCode": "75088",
       "neighborhood": "Vue Du Lac Rep",
       "coordinates": {
+        "latitude": 32.8844662,
+        "longitude": -96.5391251
+      },
+      "location": {
         "latitude": 32.8844662,
         "longitude": -96.5391251
       }
@@ -93409,6 +95345,10 @@
       "coordinates": {
         "latitude": 32.751523,
         "longitude": -96.8501563
+      },
+      "location": {
+        "latitude": 32.751523,
+        "longitude": -96.8501563
       }
     },
     "specs": {
@@ -93595,6 +95535,10 @@
       "zipCode": "75218",
       "neighborhood": "Lake Highlands Estates 8",
       "coordinates": {
+        "latitude": 32.8611727,
+        "longitude": -96.7103526
+      },
+      "location": {
         "latitude": 32.8611727,
         "longitude": -96.7103526
       }
@@ -93785,6 +95729,10 @@
       "coordinates": {
         "latitude": 32.8947977,
         "longitude": -96.8609235
+      },
+      "location": {
+        "latitude": 32.8947977,
+        "longitude": -96.8609235
       }
     },
     "specs": {
@@ -93971,6 +95919,10 @@
       "zipCode": "75211",
       "neighborhood": "Loupot Heights",
       "coordinates": {
+        "latitude": 32.722479,
+        "longitude": -96.8707978
+      },
+      "location": {
         "latitude": 32.722479,
         "longitude": -96.8707978
       }
@@ -94161,6 +96113,10 @@
       "coordinates": {
         "latitude": 32.7022528,
         "longitude": -96.8557243
+      },
+      "location": {
+        "latitude": 32.7022528,
+        "longitude": -96.8557243
       }
     },
     "specs": {
@@ -94347,6 +96303,10 @@
       "zipCode": "75211",
       "neighborhood": "Irwindell",
       "coordinates": {
+        "latitude": 32.7380944,
+        "longitude": -96.8765772
+      },
+      "location": {
         "latitude": 32.7380944,
         "longitude": -96.8765772
       }
@@ -94537,6 +96497,10 @@
       "coordinates": {
         "latitude": 32.8547773,
         "longitude": -96.7546472
+      },
+      "location": {
+        "latitude": 32.8547773,
+        "longitude": -96.7546472
       }
     },
     "specs": {
@@ -94723,6 +96687,10 @@
       "zipCode": "75052",
       "neighborhood": "Woodcrest Twnhms Rep",
       "coordinates": {
+        "latitude": 32.6889894,
+        "longitude": -96.9933082
+      },
+      "location": {
         "latitude": 32.6889894,
         "longitude": -96.9933082
       }
@@ -94913,6 +96881,10 @@
       "coordinates": {
         "latitude": 32.8071611,
         "longitude": -96.7868015
+      },
+      "location": {
+        "latitude": 32.8071611,
+        "longitude": -96.7868015
       }
     },
     "specs": {
@@ -95099,6 +97071,10 @@
       "zipCode": "75219",
       "neighborhood": "South Tower Residences",
       "coordinates": {
+        "latitude": 32.787789,
+        "longitude": -96.808977
+      },
+      "location": {
         "latitude": 32.787789,
         "longitude": -96.808977
       }
@@ -95289,6 +97265,10 @@
       "coordinates": {
         "latitude": 32.7084889,
         "longitude": -96.7441602
+      },
+      "location": {
+        "latitude": 32.7084889,
+        "longitude": -96.7441602
       }
     },
     "specs": {
@@ -95475,6 +97455,10 @@
       "zipCode": "75206",
       "neighborhood": "Monticello Crossroads Condo Ph 01-03",
       "coordinates": {
+        "latitude": 32.831307,
+        "longitude": -96.778953
+      },
+      "location": {
         "latitude": 32.831307,
         "longitude": -96.778953
       }
@@ -95665,6 +97649,10 @@
       "coordinates": {
         "latitude": 32.777011,
         "longitude": -96.915805
+      },
+      "location": {
+        "latitude": 32.777011,
+        "longitude": -96.915805
       }
     },
     "specs": {
@@ -95851,6 +97839,10 @@
       "zipCode": "75212",
       "neighborhood": "Homestead",
       "coordinates": {
+        "latitude": 32.780844955,
+        "longitude": -96.84788967
+      },
+      "location": {
         "latitude": 32.780844955,
         "longitude": -96.84788967
       }
@@ -96041,6 +98033,10 @@
       "coordinates": {
         "latitude": 32.697672,
         "longitude": -96.786223
+      },
+      "location": {
+        "latitude": 32.697672,
+        "longitude": -96.786223
       }
     },
     "specs": {
@@ -96227,6 +98223,10 @@
       "zipCode": "75212",
       "neighborhood": "Joe Irwin Edition 6a Edition",
       "coordinates": {
+        "latitude": 32.7768809,
+        "longitude": -96.9157826
+      },
+      "location": {
         "latitude": 32.7768809,
         "longitude": -96.9157826
       }
@@ -96417,6 +98417,10 @@
       "coordinates": {
         "latitude": 33.7729859,
         "longitude": -84.4746093
+      },
+      "location": {
+        "latitude": 33.7729859,
+        "longitude": -84.4746093
       }
     },
     "specs": {
@@ -96603,6 +98607,10 @@
       "zipCode": "30318",
       "neighborhood": "Atlanta",
       "coordinates": {
+        "latitude": 33.7911197,
+        "longitude": -84.426359
+      },
+      "location": {
         "latitude": 33.7911197,
         "longitude": -84.426359
       }
@@ -96793,6 +98801,10 @@
       "coordinates": {
         "latitude": 33.7469293,
         "longitude": -84.4012603
+      },
+      "location": {
+        "latitude": 33.7469293,
+        "longitude": -84.4012603
       }
     },
     "specs": {
@@ -96979,6 +98991,10 @@
       "zipCode": "30341",
       "neighborhood": "Henderson Hills",
       "coordinates": {
+        "latitude": 33.8635314,
+        "longitude": -84.2525315
+      },
+      "location": {
         "latitude": 33.8635314,
         "longitude": -84.2525315
       }
@@ -97169,6 +99185,10 @@
       "coordinates": {
         "latitude": 33.8368932,
         "longitude": -84.3569796
+      },
+      "location": {
+        "latitude": 33.8368932,
+        "longitude": -84.3569796
       }
     },
     "specs": {
@@ -97355,6 +99375,10 @@
       "zipCode": "30327",
       "neighborhood": "Cross Creek",
       "coordinates": {
+        "latitude": 33.8192993,
+        "longitude": -84.425714
+      },
+      "location": {
         "latitude": 33.8192993,
         "longitude": -84.425714
       }
@@ -97545,6 +99569,10 @@
       "coordinates": {
         "latitude": 33.7753868,
         "longitude": -84.4625077
+      },
+      "location": {
+        "latitude": 33.7753868,
+        "longitude": -84.4625077
       }
     },
     "specs": {
@@ -97731,6 +99759,10 @@
       "zipCode": "30327",
       "neighborhood": "Sandy Springs",
       "coordinates": {
+        "latitude": 33.8884126,
+        "longitude": -84.4274758
+      },
+      "location": {
         "latitude": 33.8884126,
         "longitude": -84.4274758
       }
@@ -97921,6 +99953,10 @@
       "coordinates": {
         "latitude": 33.7536884,
         "longitude": -84.3423205
+      },
+      "location": {
+        "latitude": 33.7536884,
+        "longitude": -84.3423205
       }
     },
     "specs": {
@@ -98107,6 +100143,10 @@
       "zipCode": "30327",
       "neighborhood": "Peachtree Battle/Buckhead",
       "coordinates": {
+        "latitude": 33.825881,
+        "longitude": -84.432672
+      },
+      "location": {
         "latitude": 33.825881,
         "longitude": -84.432672
       }
@@ -98297,6 +100337,10 @@
       "coordinates": {
         "latitude": 33.733248,
         "longitude": -84.3650978
+      },
+      "location": {
+        "latitude": 33.733248,
+        "longitude": -84.3650978
       }
     },
     "specs": {
@@ -98483,6 +100527,10 @@
       "zipCode": "30306",
       "neighborhood": "Virginia Highland",
       "coordinates": {
+        "latitude": 33.7855254,
+        "longitude": -84.3477133
+      },
+      "location": {
         "latitude": 33.7855254,
         "longitude": -84.3477133
       }
@@ -98673,6 +100721,10 @@
       "coordinates": {
         "latitude": 33.8948226,
         "longitude": -84.4379046
+      },
+      "location": {
+        "latitude": 33.8948226,
+        "longitude": -84.4379046
       }
     },
     "specs": {
@@ -98859,6 +100911,10 @@
       "zipCode": "30306",
       "neighborhood": "BRIARPARK",
       "coordinates": {
+        "latitude": 33.7989072,
+        "longitude": -84.3349889
+      },
+      "location": {
         "latitude": 33.7989072,
         "longitude": -84.3349889
       }
@@ -99049,6 +101105,10 @@
       "coordinates": {
         "latitude": 33.8093407,
         "longitude": -84.3897882
+      },
+      "location": {
+        "latitude": 33.8093407,
+        "longitude": -84.3897882
       }
     },
     "specs": {
@@ -99235,6 +101295,10 @@
       "zipCode": "30318",
       "neighborhood": "Wildwood",
       "coordinates": {
+        "latitude": 33.8162689,
+        "longitude": -84.4182609
+      },
+      "location": {
         "latitude": 33.8162689,
         "longitude": -84.4182609
       }
@@ -99425,6 +101489,10 @@
       "coordinates": {
         "latitude": 33.816462,
         "longitude": -84.3557995
+      },
+      "location": {
+        "latitude": 33.816462,
+        "longitude": -84.3557995
       }
     },
     "specs": {
@@ -99611,6 +101679,10 @@
       "zipCode": "30306",
       "neighborhood": "Virginia Highland",
       "coordinates": {
+        "latitude": 33.7769118,
+        "longitude": -84.3508174
+      },
+      "location": {
         "latitude": 33.7769118,
         "longitude": -84.3508174
       }
@@ -99801,6 +101873,10 @@
       "coordinates": {
         "latitude": 33.790846,
         "longitude": -84.397557
+      },
+      "location": {
+        "latitude": 33.790846,
+        "longitude": -84.397557
       }
     },
     "specs": {
@@ -99987,6 +102063,10 @@
       "zipCode": "30341",
       "neighborhood": "D H Dillard",
       "coordinates": {
+        "latitude": 33.8682569,
+        "longitude": -84.2832578
+      },
+      "location": {
         "latitude": 33.8682569,
         "longitude": -84.2832578
       }
@@ -100177,6 +102257,10 @@
       "coordinates": {
         "latitude": 33.717484,
         "longitude": -84.4367995
+      },
+      "location": {
+        "latitude": 33.717484,
+        "longitude": -84.4367995
       }
     },
     "specs": {
@@ -100363,6 +102447,10 @@
       "zipCode": "30341",
       "neighborhood": "Embry Hills",
       "coordinates": {
+        "latitude": 33.8768923,
+        "longitude": -84.2545987
+      },
+      "location": {
         "latitude": 33.8768923,
         "longitude": -84.2545987
       }
@@ -100553,6 +102641,10 @@
       "coordinates": {
         "latitude": 33.8372891,
         "longitude": -84.3785965
+      },
+      "location": {
+        "latitude": 33.8372891,
+        "longitude": -84.3785965
       }
     },
     "specs": {
@@ -100739,6 +102831,10 @@
       "zipCode": "30349",
       "neighborhood": "Cherry Hills",
       "coordinates": {
+        "latitude": 33.6102025,
+        "longitude": -84.4322377
+      },
+      "location": {
         "latitude": 33.6102025,
         "longitude": -84.4322377
       }
@@ -100929,6 +103025,10 @@
       "coordinates": {
         "latitude": 33.909886,
         "longitude": -84.423266
+      },
+      "location": {
+        "latitude": 33.909886,
+        "longitude": -84.423266
       }
     },
     "specs": {
@@ -101115,6 +103215,10 @@
       "zipCode": "30316",
       "neighborhood": "Village Creek Landing",
       "coordinates": {
+        "latitude": 33.7204261,
+        "longitude": -84.3472899
+      },
+      "location": {
         "latitude": 33.7204261,
         "longitude": -84.3472899
       }
@@ -101305,6 +103409,10 @@
       "coordinates": {
         "latitude": 33.847502,
         "longitude": -84.3373679
+      },
+      "location": {
+        "latitude": 33.847502,
+        "longitude": -84.3373679
       }
     },
     "specs": {
@@ -101491,6 +103599,10 @@
       "zipCode": "30340",
       "neighborhood": "Washington Square",
       "coordinates": {
+        "latitude": 33.8932619,
+        "longitude": -84.226193
+      },
+      "location": {
         "latitude": 33.8932619,
         "longitude": -84.226193
       }
@@ -101681,6 +103793,10 @@
       "coordinates": {
         "latitude": 33.760139,
         "longitude": -84.381642
+      },
+      "location": {
+        "latitude": 33.760139,
+        "longitude": -84.381642
       }
     },
     "specs": {
@@ -101867,6 +103983,10 @@
       "zipCode": "30305",
       "neighborhood": "Habersham Oaks",
       "coordinates": {
+        "latitude": 33.853314,
+        "longitude": -84.384251
+      },
+      "location": {
         "latitude": 33.853314,
         "longitude": -84.384251
       }
@@ -102057,6 +104177,10 @@
       "coordinates": {
         "latitude": 33.9161336,
         "longitude": -84.2959513
+      },
+      "location": {
+        "latitude": 33.9161336,
+        "longitude": -84.2959513
       }
     },
     "specs": {
@@ -102243,6 +104367,10 @@
       "zipCode": "30363",
       "neighborhood": "Atlantic",
       "coordinates": {
+        "latitude": 33.790846,
+        "longitude": -84.397557
+      },
+      "location": {
         "latitude": 33.790846,
         "longitude": -84.397557
       }
@@ -102433,6 +104561,10 @@
       "coordinates": {
         "latitude": 33.7894972,
         "longitude": -84.3891358
+      },
+      "location": {
+        "latitude": 33.7894972,
+        "longitude": -84.3891358
       }
     },
     "specs": {
@@ -102619,6 +104751,10 @@
       "zipCode": "30349",
       "neighborhood": "Woodward Hills",
       "coordinates": {
+        "latitude": 33.5833901,
+        "longitude": -84.4737121
+      },
+      "location": {
         "latitude": 33.5833901,
         "longitude": -84.4737121
       }
@@ -102809,6 +104945,10 @@
       "coordinates": {
         "latitude": 33.7615743,
         "longitude": -84.3435414
+      },
+      "location": {
+        "latitude": 33.7615743,
+        "longitude": -84.3435414
       }
     },
     "specs": {
@@ -102995,6 +105135,10 @@
       "zipCode": "30309",
       "neighborhood": "Piedmont Crest Condos",
       "coordinates": {
+        "latitude": 33.7834171,
+        "longitude": -84.3787879
+      },
+      "location": {
         "latitude": 33.7834171,
         "longitude": -84.3787879
       }
@@ -103185,6 +105329,10 @@
       "coordinates": {
         "latitude": 33.8092782,
         "longitude": -84.4671341
+      },
+      "location": {
+        "latitude": 33.8092782,
+        "longitude": -84.4671341
       }
     },
     "specs": {
@@ -103371,6 +105519,10 @@
       "zipCode": "30309",
       "neighborhood": "Loring Heights",
       "coordinates": {
+        "latitude": 33.7948799,
+        "longitude": -84.403816
+      },
+      "location": {
         "latitude": 33.7948799,
         "longitude": -84.403816
       }
@@ -103561,6 +105713,10 @@
       "coordinates": {
         "latitude": 33.9542841,
         "longitude": -84.3552877
+      },
+      "location": {
+        "latitude": 33.9542841,
+        "longitude": -84.3552877
       }
     },
     "specs": {
@@ -103747,6 +105903,10 @@
       "zipCode": "30324",
       "neighborhood": "Morningside Towns",
       "coordinates": {
+        "latitude": 33.8092322,
+        "longitude": -84.3645316
+      },
+      "location": {
         "latitude": 33.8092322,
         "longitude": -84.3645316
       }
@@ -103937,6 +106097,10 @@
       "coordinates": {
         "latitude": 33.810064,
         "longitude": -84.424092
+      },
+      "location": {
+        "latitude": 33.810064,
+        "longitude": -84.424092
       }
     },
     "specs": {
@@ -104123,6 +106287,10 @@
       "zipCode": "30342",
       "neighborhood": "Lakemoore Colony",
       "coordinates": {
+        "latitude": 33.8659149,
+        "longitude": -84.3783507
+      },
+      "location": {
         "latitude": 33.8659149,
         "longitude": -84.3783507
       }
@@ -104313,6 +106481,10 @@
       "coordinates": {
         "latitude": 33.7356484,
         "longitude": -84.4174728
+      },
+      "location": {
+        "latitude": 33.7356484,
+        "longitude": -84.4174728
       }
     },
     "specs": {
@@ -104499,6 +106671,10 @@
       "zipCode": "30349",
       "neighborhood": "Heritage Park",
       "coordinates": {
+        "latitude": 33.6330792,
+        "longitude": -84.5106316
+      },
+      "location": {
         "latitude": 33.6330792,
         "longitude": -84.5106316
       }
@@ -104689,6 +106865,10 @@
       "coordinates": {
         "latitude": 33.83582,
         "longitude": -84.354491
+      },
+      "location": {
+        "latitude": 33.83582,
+        "longitude": -84.354491
       }
     },
     "specs": {
@@ -104875,6 +107055,10 @@
       "zipCode": "30317",
       "neighborhood": "Pullman Flats",
       "coordinates": {
+        "latitude": 33.756686,
+        "longitude": -84.329702
+      },
+      "location": {
         "latitude": 33.756686,
         "longitude": -84.329702
       }
@@ -105065,6 +107249,10 @@
       "coordinates": {
         "latitude": 33.854673,
         "longitude": -84.358322
+      },
+      "location": {
+        "latitude": 33.854673,
+        "longitude": -84.358322
       }
     },
     "specs": {
@@ -105251,6 +107439,10 @@
       "zipCode": "30305",
       "neighborhood": "The Dillon Buckhead",
       "coordinates": {
+        "latitude": 33.8209506,
+        "longitude": -84.3876016
+      },
+      "location": {
         "latitude": 33.8209506,
         "longitude": -84.3876016
       }
@@ -105441,6 +107633,10 @@
       "coordinates": {
         "latitude": 33.790371,
         "longitude": -84.421743
+      },
+      "location": {
+        "latitude": 33.790371,
+        "longitude": -84.421743
       }
     },
     "specs": {
@@ -105627,6 +107823,10 @@
       "zipCode": "30339",
       "neighborhood": "One Vinings Mountain",
       "coordinates": {
+        "latitude": 33.8693099,
+        "longitude": -84.4677164
+      },
+      "location": {
         "latitude": 33.8693099,
         "longitude": -84.4677164
       }

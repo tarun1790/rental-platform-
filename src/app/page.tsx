@@ -366,7 +366,9 @@ export default function Home() {
 
         // 8. Hand-Drawn Scribble Polygon Spatial Filter
         if (scribblePolygon && scribblePolygon.length >= 3) {
-          const isInside = isPointInsidePolygon(listing.propertyAddress.location, scribblePolygon);
+          const loc = listing.propertyAddress?.location || (listing.propertyAddress as any)?.coordinates;
+          if (!loc) return false;
+          const isInside = isPointInsidePolygon(loc, scribblePolygon);
           if (!isInside) return false;
         }
 

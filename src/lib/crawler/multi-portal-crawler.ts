@@ -645,6 +645,11 @@ export async function crawlUsPropertyPortals(
         ? `https://www.apartments.com/${city.toLowerCase()}-${stateCode.toLowerCase()}/`
         : `https://www.trulia.com/${stateCode}/${encodeURIComponent(city)}/`;
 
+      const candidateLoc = baseCandidate.propertyAddress?.location || (baseCandidate.propertyAddress as any)?.coordinates || {
+        latitude: metro.centerCoordinates.latitude,
+        longitude: metro.centerCoordinates.longitude,
+      };
+
       const realListing: ShikaakPropertyListing = {
         ...baseCandidate,
         id: `prop_live_${metro.city.toLowerCase()}_${baseCandidate.id}_${i + 1}`,
@@ -654,6 +659,10 @@ export async function crawlUsPropertyPortals(
         externalUrl,
         isLiveCrawled: true,
         crawlVerifiedAt: new Date().toISOString(),
+        propertyAddress: {
+          ...baseCandidate.propertyAddress,
+          location: candidateLoc,
+        },
         specs: {
           ...baseCandidate.specs,
           beds: houseBeds,
