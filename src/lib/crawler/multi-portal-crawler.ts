@@ -407,8 +407,8 @@ export async function crawlUsPropertyPortals(
   // Attempt to query live backend crawler endpoint if running in browser
   if (typeof window !== 'undefined') {
     try {
-      const countMatch = parsedQuery.rawQuery.match(/\b(?:top\s*|give\s*me\s*|show\s*me\s*)?(\d{1,2})\s*(?:houses?|homes?|properties|condos?|apartments?|listings?|results)\b/i);
-      const requestedLimit = options?.limit || (countMatch ? Math.min(30, Math.max(16, parseInt(countMatch[1], 10))) : 16);
+      const countMatch = parsedQuery.rawQuery.match(/\b(?:top\s*|give\s*me\s*|show\s*me\s*)?(\d{1,3})\s*(?:houses?|homes?|properties|condos?|apartments?|listings?|results)\b/i);
+      const requestedLimit = options?.limit || (countMatch ? Math.min(500, Math.max(16, parseInt(countMatch[1], 10))) : 100);
 
       const isGhPages = window.location.pathname.startsWith('/rental-platform-');
       const crawlEndpoint = isGhPages ? '/rental-platform-/api/crawl' : '/api/crawl';

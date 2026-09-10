@@ -113,11 +113,22 @@ nextApp.prepare().then(() => {
     try {
       const payload = req.method === 'POST' ? (req.body || {}) : req.query;
       const query = (payload.query || payload.q || '').trim();
-      const rawLimit = payload.limit ? parseInt(payload.limit, 10) : 16;
-      const limit = Math.min(50, Math.max(1, isNaN(rawLimit) ? 16 : rawLimit));
-      const listingStatus = payload.listingStatus || 'ALL';
+      const rawLimit = payload.limit ? parseInt(payload.limit, 10) : 100;
+      const limit = Math.min(550, Math.max(1, isNaN(rawLimit) ? 100 : rawLimit));
+      let listingStatus = payload.listingStatus || 'ALL';
       const propertyType = payload.propertyType || 'ALL';
-      const portal = payload.portal || 'ALL';
+      let portal = payload.portal || 'ALL';
+
+      // Detect portal from query if not specified
+      const qLower = query.toLowerCase();
+      if (portal === 'ALL') {
+        if (qLower.includes('zillow')) portal = 'ZILLOW';
+        else if (qLower.includes('redfin')) portal = 'REDFIN';
+        else if (qLower.includes('realtor')) portal = 'REALTOR';
+        else if (qLower.includes('apartments') || qLower.includes('apartment')) portal = 'APARTMENTS_COM';
+        else if (qLower.includes('trulia')) portal = 'TRULIA';
+      }
+
       const priceMin = payload.priceMin !== undefined ? Number(payload.priceMin) : undefined;
       const priceMax = payload.priceMax !== undefined ? Number(payload.priceMax) : undefined;
       const bedsMin = payload.bedsMin !== undefined ? Number(payload.bedsMin) : undefined;
@@ -128,26 +139,29 @@ nextApp.prepare().then(() => {
 
       // 1. Text & Location search
       if (query) {
-        const qLower = query.toLowerCase();
-        const tokens = qLower.split(/\s+/).filter(t => 
-          t.length > 2 && !['house', 'home', 'homes', 'under', 'below', 'for', 'sale', 'rent', 'near', 'with', 'and', 'the', 'top'].includes(t) && !/\d/.test(t)
-        );
+        const isBroad = /take all|all homes|all properties|from zillow|from redfin|from realtor|using scraper|crawling|crawler/i.test(qLower);
+        if (!isBroad) {
+          const tokens = qLower.split(/\s+/).filter(t => 
+            t.length > 2 && !['house', 'home', 'homes', 'under', 'below', 'for', 'sale', 'rent', 'near', 'with', 'and', 'the', 'top', 'from', 'other', 'websites', 'using', 'scraper', 'crawling', 'take', 'all'].includes(t) && !/\d/.test(t)
+          );
 
-        const strictMatches = candidates.filter(p => {
-          const street = (p.propertyAddress?.street || '').toLowerCase();
-          const city = (p.propertyAddress?.city || '').toLowerCase();
-          const state = (p.propertyAddress?.state || '').toLowerCase();
-          const neighborhood = (p.propertyAddress?.neighborhood || '').toLowerCase();
-          const title = (p.title || '').toLowerCase();
+          const strictMatches = candidates.filter(p => {
+            const street = (p.propertyAddress?.street || '').toLowerCase();
+            const city = (p.propertyAddress?.city || '').toLowerCase();
+            const state = (p.propertyAddress?.state || '').toLowerCase();
+            const neighborhood = (p.propertyAddress?.neighborhood || '').toLowerCase();
+            const title = (p.title || '').toLowerCase();
+            const pPortal = (p.sourcePortal || '').toLowerCase();
 
-          if (street.includes(qLower) || city.includes(qLower) || state.includes(qLower) || neighborhood.includes(qLower) || title.includes(qLower)) {
-            return true;
+            if (street.includes(qLower) || city.includes(qLower) || state.includes(qLower) || neighborhood.includes(qLower) || title.includes(qLower) || pPortal.includes(qLower)) {
+              return true;
+            }
+            return tokens.length > 0 && tokens.some(t => city.includes(t) || neighborhood.includes(t) || street.includes(t) || pPortal.includes(t));
+          });
+
+          if (strictMatches.length > 0) {
+            candidates = strictMatches;
           }
-          return tokens.length > 0 && tokens.some(t => city.includes(t) || neighborhood.includes(t) || street.includes(t));
-        });
-
-        if (strictMatches.length > 0) {
-          candidates = strictMatches;
         }
       }
 

@@ -21,10 +21,14 @@ import { parseNlpQuery } from '../lib/nlp-search-parser';
 import LIVE_CRAWLED_DATA from '../data/live-crawled-portals.json';
 import { LiveCrawlerHUD } from '../components/crawler/LiveCrawlerHUD';
 
-const INITIAL_REAL_LISTINGS: ShikaakPropertyListing[] = [
-  ...((LIVE_CRAWLED_DATA as unknown as ShikaakPropertyListing[]).slice(0, 50)),
-  ...CHICAGO_LISTINGS,
-];
+const INITIAL_REAL_LISTINGS: ShikaakPropertyListing[] = (() => {
+  const crawled = LIVE_CRAWLED_DATA as unknown as ShikaakPropertyListing[];
+  const existingIds = new Set(crawled.map(p => p.id));
+  return [
+    ...crawled,
+    ...CHICAGO_LISTINGS.filter(p => !existingIds.has(p.id)),
+  ];
+})();
 import { 
   Sparkles, 
   ArrowUpDown, 
@@ -226,6 +230,20 @@ export default function Home() {
       queryParts.push(activeFilters.propertyType.toLowerCase().replace(/_/g, ' '));
     }
 
+    // Detect if user query mentions a specific portal
+    const lowerBase = baseText.toLowerCase();
+    if (lowerBase.includes('zillow')) {
+      setSelectedPortal('ZILLOW');
+    } else if (lowerBase.includes('redfin')) {
+      setSelectedPortal('REDFIN');
+    } else if (lowerBase.includes('realtor')) {
+      setSelectedPortal('REALTOR');
+    } else if (lowerBase.includes('apartments') || lowerBase.includes('apartment')) {
+      setSelectedPortal('APARTMENTS_COM');
+    } else if (lowerBase.includes('trulia')) {
+      setSelectedPortal('TRULIA');
+    }
+
     const finalCrawlQuery = queryParts.join(' ');
     const storedExaKey = explicitExaKey || (typeof window !== 'undefined' ? window.localStorage.getItem('EXA_API_KEY') : null) || undefined;
 
@@ -241,7 +259,7 @@ export default function Home() {
         bedsMin: activeFilters.bedsMin,
         bathsMin: activeFilters.bathsMin,
         propertyType: activeFilters.propertyType,
-        limit: 16,
+        limit: 200,
       });
 
       if (result.properties && result.properties.length > 0) {
@@ -294,29 +312,38 @@ export default function Home() {
           return false;
         }
 
-        // 1. Text Search Filter (Street, City, State, or Neighborhood)
+        // 1. Text Search Filter (Street, City, State, Neighborhood, or Portal)
         if (filters.searchQuery) {
           const query = filters.searchQuery.toLowerCase().trim();
-          const matchStreet = listing.propertyAddress.street.toLowerCase().includes(query);
-          const matchCity = listing.propertyAddress.city.toLowerCase().includes(query);
-          const matchState = listing.propertyAddress.state.toLowerCase().includes(query);
-          const matchNeighborhood = listing.propertyAddress.neighborhood.toLowerCase().includes(query);
-          const matchTitle = listing.title.toLowerCase().includes(query);
+          
+          // Broad scan commands that should show all crawled inventory (or filtered portal inventory)
+          const isBroadScanQuery = /take all|all homes|all properties|from zillow|from redfin|from realtor|using scraper|crawling|crawler/i.test(query);
 
-          if (!matchStreet && !matchCity && !matchState && !matchNeighborhood && !matchTitle) {
-            // Also check individual tokens (ignoring common stop words)
-            const tokens = query.split(/\s+/).filter(t => 
-              t.length > 2 && 
-              !['house', 'home', 'under', 'below', 'for', 'sale', 'rent', 'near', 'with', 'and', 'the'].includes(t) &&
-              !/\d/.test(t)
-            );
-            const tokenMatch = tokens.length > 0 && tokens.some(t =>
-              listing.propertyAddress.city.toLowerCase().includes(t) ||
-              listing.propertyAddress.neighborhood.toLowerCase().includes(t) ||
-              listing.propertyAddress.street.toLowerCase().includes(t)
-            );
-            // Live crawled properties belong to current search context
-            if (!tokenMatch && !listing.isLiveCrawled) return false;
+          if (!isBroadScanQuery) {
+            const matchStreet = listing.propertyAddress.street.toLowerCase().includes(query);
+            const matchCity = listing.propertyAddress.city.toLowerCase().includes(query);
+            const matchState = listing.propertyAddress.state.toLowerCase().includes(query);
+            const matchNeighborhood = listing.propertyAddress.neighborhood.toLowerCase().includes(query);
+            const matchTitle = listing.title.toLowerCase().includes(query);
+            const matchPortal = (listing.sourcePortal || '').toLowerCase().includes(query);
+
+            if (!matchStreet && !matchCity && !matchState && !matchNeighborhood && !matchTitle && !matchPortal) {
+              const tokens = query.split(/\s+/).filter(t => 
+                t.length > 2 && 
+                !['house', 'home', 'homes', 'under', 'below', 'for', 'sale', 'rent', 'near', 'with', 'and', 'the', 'from', 'other', 'websites', 'using', 'scraper', 'crawling', 'take', 'all'].includes(t) &&
+                !/\d/.test(t)
+              );
+              if (tokens.length > 0) {
+                const tokenMatch = tokens.some(t =>
+                  listing.propertyAddress.city.toLowerCase().includes(t) ||
+                  listing.propertyAddress.neighborhood.toLowerCase().includes(t) ||
+                  listing.propertyAddress.street.toLowerCase().includes(t) ||
+                  listing.propertyAddress.state.toLowerCase().includes(t) ||
+                  (listing.sourcePortal || '').toLowerCase().includes(t)
+                );
+                if (!tokenMatch && !listing.isLiveCrawled) return false;
+              }
+            }
           }
         }
 
@@ -328,16 +355,16 @@ export default function Home() {
         // 3. Price Min & Max (Distinguish monthly rent vs purchase price)
         if (listing.listingStatus === 'FOR_RENT') {
           const rent = listing.financials.inputs.monthlyGrossRent;
-          if (filters.priceMax <= 30000) {
+          if (filters.priceMax < 10000) {
             if (rent < filters.priceMin || rent > filters.priceMax) return false;
-          } else if (filters.priceMin > 0 && filters.priceMin <= 30000) {
+          } else if (filters.priceMin > 0) {
             if (rent < filters.priceMin) return false;
           }
         } else {
-          if (
-            listing.financials.inputs.purchasePrice < filters.priceMin ||
-            (filters.priceMax > 30000 && listing.financials.inputs.purchasePrice > filters.priceMax)
-          ) {
+          if (listing.financials.inputs.purchasePrice < filters.priceMin) {
+            return false;
+          }
+          if (filters.priceMax < 5000000 && listing.financials.inputs.purchasePrice > filters.priceMax) {
             return false;
           }
         }
