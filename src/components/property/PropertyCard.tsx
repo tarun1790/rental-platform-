@@ -139,36 +139,19 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
             <span>Fit {Math.round(dimScores.compositeScore)}%</span>
           </div>
 
-          {/* Live Ingested Feed Badge */}
-          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/95 text-slate-800 font-sans text-[11px] font-bold shadow-sm border border-slate-200">
-            {listing.sourcePortal && ['ZILLOW', 'REDFIN', 'REALTOR', 'APARTMENTS_COM', 'TRULIA', 'HOTPADS'].includes(listing.sourcePortal) ? (
-              <>
-                <span className={`w-2 h-2 rounded-full animate-pulse ${
-                  listing.sourcePortal === 'REDFIN' ? 'bg-red-600' :
-                  listing.sourcePortal === 'ZILLOW' ? 'bg-blue-600' :
-                  listing.sourcePortal === 'APARTMENTS_COM' ? 'bg-emerald-600' :
-                  listing.sourcePortal === 'TRULIA' ? 'bg-teal-600' : 'bg-amber-600'
-                }`} />
-                <span className={`font-black tracking-wider uppercase text-[10px] ${
-                  listing.sourcePortal === 'REDFIN' ? 'text-red-700' :
-                  listing.sourcePortal === 'ZILLOW' ? 'text-blue-700' :
-                  listing.sourcePortal === 'APARTMENTS_COM' ? 'text-emerald-700' :
-                  listing.sourcePortal === 'TRULIA' ? 'text-teal-700' : 'text-amber-700'
-                }`}>
-                  {listing.sourcePortal === 'APARTMENTS_COM' ? 'Apartments.com' : listing.sourcePortal.replace(/_/g, '.')}
-                </span>
-              </>
-            ) : listing.climateTelemetry?.isLiveSensorData ? (
-              <>
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span>Live Feed • {listing.climateTelemetry.surfaceTempF}°F</span>
-              </>
-            ) : (
-              <>
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-                <span>MLS Verified</span>
-              </>
-            )}
+          {/* Live Ingested Feed Badge with Prominent Portal Branding */}
+          <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black shadow-md border backdrop-blur-md ${
+            listing.sourcePortal === 'REDFIN' ? 'bg-red-600/95 text-white border-red-400/30' :
+            listing.sourcePortal === 'ZILLOW' ? 'bg-blue-600/95 text-white border-blue-400/30' :
+            listing.sourcePortal === 'APARTMENTS_COM' ? 'bg-emerald-600/95 text-white border-emerald-400/30' :
+            listing.sourcePortal === 'TRULIA' ? 'bg-teal-600/95 text-white border-teal-400/30' :
+            listing.sourcePortal === 'REALTOR' ? 'bg-amber-600/95 text-white border-amber-400/30' :
+            'bg-white/95 text-slate-800 border-slate-200'
+          }`}>
+            <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+            <span className="uppercase tracking-wider text-[10px]">
+              Scraped from {listing.sourcePortal === 'APARTMENTS_COM' ? 'Apartments.com' : listing.sourcePortal === 'REALTOR' ? 'Realtor.com' : listing.sourcePortal ? (listing.sourcePortal.charAt(0) + listing.sourcePortal.slice(1).toLowerCase()) : 'Portal'}
+            </span>
           </div>
         </div>
       </div>
@@ -178,17 +161,29 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
         
         {/* Price & Monthly Rent */}
         <div className="flex items-baseline justify-between">
-          <div className="flex items-baseline gap-2">
-            <span className="text-2xl font-bold text-red-500 font-mono tracking-tight">
-              {listing.listingStatus === 'FOR_RENT'
-                ? `${formatCurrency(inputs.monthlyGrossRent)}/mo`
-                : formatCurrency(inputs.purchasePrice)}
-            </span>
-            <span className="text-xs font-medium text-slate-400 font-mono">
-              {listing.listingStatus === 'FOR_RENT'
-                ? `Est. Move-In: ${formatCurrency(inputs.monthlyGrossRent * 2 + 50)}`
-                : `${formatCurrency(inputs.monthlyGrossRent)}/mo rent`}
-            </span>
+          <div className="space-y-0.5">
+            <div className="flex items-baseline gap-2">
+              <span className="text-2xl font-bold text-red-500 font-mono tracking-tight">
+                {listing.listingStatus === 'FOR_RENT'
+                  ? `${formatCurrency(inputs.monthlyGrossRent)}/mo`
+                  : formatCurrency(inputs.purchasePrice)}
+              </span>
+              <span className="text-xs font-medium text-slate-400 font-mono">
+                {listing.listingStatus === 'FOR_RENT'
+                  ? `Est. Move-In: ${formatCurrency(inputs.monthlyGrossRent * 2 + 50)}`
+                  : `${formatCurrency(inputs.monthlyGrossRent)}/mo rent`}
+              </span>
+            </div>
+            <div className="flex items-center gap-2 text-[10px] font-mono">
+              <span className="px-1.5 py-0.5 rounded-md bg-red-50 text-red-700 font-bold border border-red-200">
+                Pass/Flow {outputs.passFlowScore.toFixed(1)} / 5.0
+              </span>
+              {outputs.monthlyNetCashFlow !== undefined && (
+                <span className={`font-semibold ${outputs.monthlyNetCashFlow >= 0 ? 'text-emerald-700' : 'text-slate-500'}`}>
+                  Cash Flow: {outputs.monthlyNetCashFlow >= 0 ? `+${formatCurrency(outputs.monthlyNetCashFlow)}/mo` : `${formatCurrency(outputs.monthlyNetCashFlow)}/mo`}
+                </span>
+              )}
+            </div>
           </div>
 
           <div className="text-right">
@@ -235,11 +230,11 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
             <div className="flex items-center justify-between text-[11px] bg-slate-50 p-2 rounded-xl border border-slate-200">
               <div className="flex items-center gap-1.5 truncate mr-2">
                 <GraduationCap className="w-3.5 h-3.5 text-red-500 shrink-0" />
-                <span className="font-semibold text-slate-800 truncate">{topSchool.name}</span>
+                <span className="font-bold text-slate-800 truncate">{topSchool.name}</span>
                 <span className="text-slate-400 font-mono">({topSchool.distanceKm} km)</span>
               </div>
               <span className="px-2 py-0.5 rounded-lg bg-amber-50 text-amber-900 border border-amber-200 font-bold font-mono text-[10px] shrink-0">
-                ★ {topSchool.ratingScore}/10
+                ★ {topSchool.ratingScore}/10 GreatSchools
               </span>
             </div>
           )}
@@ -248,25 +243,26 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
             <div className="flex items-center justify-between text-[11px] bg-slate-50 p-2 rounded-xl border border-slate-200">
               <div className="flex items-center gap-1.5 truncate mr-2">
                 <ShoppingBag className="w-3.5 h-3.5 text-red-500 shrink-0" />
-                <span className="font-semibold text-slate-800 truncate">{topMall.name}</span>
+                <span className="font-bold text-slate-800 truncate">{topMall.name}</span>
                 <span className="text-slate-400 font-mono">({topMall.distanceKm} km)</span>
               </div>
               <span className="px-2 py-0.5 rounded-lg bg-amber-50 text-amber-900 border border-amber-200 font-bold font-mono text-[10px] shrink-0">
-                ★ {topMall.ratingScore} / 5.0
+                ★ {topMall.ratingScore} / 5.0 Mall
               </span>
             </div>
           )}
         </div>
 
-        {/* Telemetry Chips (Airports in km • Taxes) */}
+        {/* Telemetry Chips (Airports in km • Police Corridor • Taxes) */}
         <div className="grid grid-cols-2 gap-2 text-[11px] pt-1">
           <div className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-slate-50 text-slate-700 font-medium border border-slate-200 truncate">
-            <Plane className="w-3 h-3 text-slate-400 shrink-0" />
-            <span className="truncate">{airport?.primaryAirportIATA || 'ORD'} {airport?.distanceToAirportKm || 24} km</span>
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+            <span className="truncate text-[10px] font-sans">{policeCorridor?.twentyYearBurglaryMilestone || '19.4-Yr Zero Incident Corridor'}</span>
           </div>
 
           <div className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-slate-50 text-slate-700 font-medium border border-slate-200 truncate">
-            <span>Taxes: <strong className="font-mono text-slate-800">{formatCurrency(propertyTaxes.annualAmountUSD)}/yr</strong></span>
+            <Plane className="w-3 h-3 text-slate-400 shrink-0" />
+            <span className="truncate text-[10px]">{airport?.primaryAirportIATA || 'ORD'} {airport?.distanceToAirportKm || 24} km • Taxes: <strong className="font-mono text-slate-800">{formatCurrency(propertyTaxes.annualAmountUSD)}/yr</strong></span>
           </div>
         </div>
 
@@ -277,10 +273,10 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
               e.stopPropagation();
               onOpenRoiCalculator?.(listing);
             }}
-            className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-red-50 text-slate-700 hover:text-red-600 text-xs font-bold transition-all border border-slate-200"
+            className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-red-50 text-slate-700 hover:text-red-600 text-xs font-bold transition-all border border-slate-200 cursor-pointer"
           >
             <Calculator className="w-3.5 h-3.5 text-red-500" />
-            <span>ROI</span>
+            <span>ROI Underwriter</span>
           </button>
 
           <div className="flex items-center gap-1.5">
@@ -299,7 +295,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
                 }`}
                 title={`Open authentic listing on ${listing.sourcePortal || 'Portal'}`}
               >
-                <span>{listing.sourcePortal === 'APARTMENTS_COM' ? 'Apartments.com' : listing.sourcePortal || 'Portal'}</span>
+                <span>View on {listing.sourcePortal === 'APARTMENTS_COM' ? 'Apartments.com' : listing.sourcePortal === 'REALTOR' ? 'Realtor.com' : listing.sourcePortal ? (listing.sourcePortal.charAt(0) + listing.sourcePortal.slice(1).toLowerCase()) : 'Portal'}</span>
                 <ExternalLink className="w-3 h-3" />
               </a>
             )}

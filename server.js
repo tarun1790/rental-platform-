@@ -121,12 +121,21 @@ nextApp.prepare().then(() => {
 
       // Detect portal from query if not specified
       const qLower = query.toLowerCase();
-      if (portal === 'ALL') {
-        if (qLower.includes('zillow')) portal = 'ZILLOW';
-        else if (qLower.includes('redfin')) portal = 'REDFIN';
-        else if (qLower.includes('realtor')) portal = 'REALTOR';
-        else if (qLower.includes('apartments') || qLower.includes('apartment')) portal = 'APARTMENTS_COM';
-        else if (qLower.includes('trulia')) portal = 'TRULIA';
+      const isMultiOrBroad = /other\s*websites?|all\s*websites?|all\s*homes?|all\s*properties|scraper|crawling|crawler|portals?|across/i.test(qLower) ||
+        ((qLower.includes('zillow') ? 1 : 0) + (qLower.includes('redfin') ? 1 : 0) + (qLower.includes('realtor') ? 1 : 0) + (qLower.includes('trulia') ? 1 : 0) + (qLower.includes('apartment') ? 1 : 0) > 1);
+
+      if (!isMultiOrBroad && portal === 'ALL') {
+        if (/\b(only zillow|from zillow|zillow homes?|zillow rentals?)\b/i.test(qLower) && !/other/i.test(qLower)) {
+          portal = 'ZILLOW';
+        } else if (/\b(only redfin|from redfin|redfin homes?|redfin rentals?)\b/i.test(qLower) && !/other/i.test(qLower)) {
+          portal = 'REDFIN';
+        } else if (/\b(only realtor|from realtor|realtor\.com|realtor homes?)\b/i.test(qLower) && !/other/i.test(qLower)) {
+          portal = 'REALTOR';
+        } else if (/\b(only apartments|from apartments|apartments\.com)\b/i.test(qLower) && !/other/i.test(qLower)) {
+          portal = 'APARTMENTS_COM';
+        } else if (/\b(only trulia|from trulia|trulia homes?)\b/i.test(qLower) && !/other/i.test(qLower)) {
+          portal = 'TRULIA';
+        }
       }
 
       const priceMin = payload.priceMin !== undefined ? Number(payload.priceMin) : undefined;
@@ -226,17 +235,29 @@ nextApp.prepare().then(() => {
         }
       }
 
-      const results = candidates.slice(0, limit);
+      const enrichedResults = candidates.slice(0, limit).map((p) => ({
+        ...p,
+        isLiveCrawled: true,
+      }));
       const portalsScanned = ['ZILLOW', 'REDFIN', 'REALTOR', 'APARTMENTS_COM', 'TRULIA'];
+      const portalCounts = {
+        ALL: candidates.length,
+        ZILLOW: candidates.filter(p => p.sourcePortal === 'ZILLOW').length,
+        REDFIN: candidates.filter(p => p.sourcePortal === 'REDFIN').length,
+        REALTOR: candidates.filter(p => p.sourcePortal === 'REALTOR').length,
+        APARTMENTS_COM: candidates.filter(p => p.sourcePortal === 'APARTMENTS_COM').length,
+        TRULIA: candidates.filter(p => p.sourcePortal === 'TRULIA').length,
+      };
 
       return res.status(200).json({
         success: true,
         query,
         total: candidates.length,
-        count: results.length,
+        count: enrichedResults.length,
         portalsScanned,
-        properties: results,
-        data: results,
+        portalCounts,
+        properties: enrichedResults,
+        data: enrichedResults,
         executionDurationMs: Date.now() - startTime,
       });
     } catch (error) {

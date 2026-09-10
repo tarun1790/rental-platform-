@@ -408,7 +408,7 @@ export async function crawlUsPropertyPortals(
   if (typeof window !== 'undefined') {
     try {
       const countMatch = parsedQuery.rawQuery.match(/\b(?:top\s*|give\s*me\s*|show\s*me\s*)?(\d{1,3})\s*(?:houses?|homes?|properties|condos?|apartments?|listings?|results)\b/i);
-      const requestedLimit = options?.limit || (countMatch ? Math.min(500, Math.max(16, parseInt(countMatch[1], 10))) : 100);
+      const requestedLimit = options?.limit || (countMatch ? Math.min(550, Math.max(16, parseInt(countMatch[1], 10))) : 550);
 
       const isGhPages = window.location.pathname.startsWith('/rental-platform-');
       const crawlEndpoint = isGhPages ? '/rental-platform-/api/crawl' : '/api/crawl';
@@ -519,8 +519,8 @@ export async function crawlUsPropertyPortals(
   const targetType: PropertyType = (options?.propertyType && options.propertyType !== 'ALL') ? options.propertyType : (parsedQuery.propertyType || 'SINGLE_FAMILY');
 
   // Generate real-time candidates matching the specific constraints (16 by default or custom requested for 15+ options)
-  const countMatch = parsedQuery.rawQuery.match(/\b(?:top\s*|give\s*me\s*|show\s*me\s*)?(\d{1,2})\s*(?:houses?|homes?|properties|condos?|apartments?|listings?|results)\b/i);
-  const candidateCount = options?.limit || (countMatch ? Math.min(30, Math.max(16, parseInt(countMatch[1], 10))) : 16);
+  const countMatch = parsedQuery.rawQuery.match(/\b(?:top\s*|give\s*me\s*|show\s*me\s*)?(\d{1,3})\s*(?:houses?|homes?|properties|condos?|apartments?|listings?|results)\b/i);
+  const candidateCount = options?.limit || (countMatch ? Math.min(550, Math.max(16, parseInt(countMatch[1], 10))) : 550);
   const portalList: PortalSource[] = ['ZILLOW', 'REDFIN', 'REALTOR', 'APARTMENTS_COM', 'TRULIA'];
 
   // 1. Ingest real-time portal listings discovered via Exa.ai Neural Search

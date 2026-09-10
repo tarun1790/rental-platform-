@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:export": "node -e \"const cp = require('child_process'); cp.spawnSync(process.platform === 'win32' ? 'npx.cmd' : 'npx', ['next', 'build'], { stdio: 'inherit', env: { ...process.env, GITHUB_PAGES: 'true' } });\"",
     "start": "next start",
     "server": "node server.js",
     "docker:build": "docker build -t rental-platform:latest .",
