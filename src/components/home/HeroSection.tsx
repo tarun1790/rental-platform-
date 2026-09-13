@@ -30,7 +30,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
       {/* 2. TRANSPARENT ARCHITECTURAL HOME BLUEPRINT / WIREFRAME BACKSIDE */}
       <div 
-        className="absolute inset-0 pointer-events-none opacity-25 z-10 flex items-center justify-center scale-105"
+        className="absolute inset-0 pointer-events-none opacity-25 z-10 flex items-center justify-center overflow-hidden"
         aria-hidden="true"
       >
         <svg viewBox="0 0 1200 800" className="w-full h-full text-amber-400/80 stroke-current fill-none">

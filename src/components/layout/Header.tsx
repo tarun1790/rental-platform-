@@ -268,7 +268,7 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
 
           {/* 4. PRICE RANGE POPOVER */}
-          <div className="relative hidden sm:block">
+          <div className="relative hidden lg:block">
             <button
               onClick={() => toggleDropdown('price')}
               className={`flex items-center gap-1.5 px-3 py-2 text-xs font-bold rounded-xl border transition-all ${
@@ -390,7 +390,7 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
 
           {/* 5. BEDS & BATHS SELECTOR */}
-          <div className="relative hidden lg:block">
+          <div className="relative hidden xl:block">
             <button
               onClick={() => toggleDropdown('beds')}
               className={`flex items-center gap-1.5 px-3 py-2 text-xs font-bold rounded-xl border transition-all ${
@@ -454,7 +454,7 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
 
           {/* 6. HOME TYPE SELECTOR */}
-          <div className="relative hidden xl:block">
+          <div className="relative hidden 2xl:block">
             <button
               onClick={() => toggleDropdown('type')}
               className={`flex items-center gap-1.5 px-3 py-2 text-xs font-bold rounded-xl border transition-all ${
@@ -524,49 +524,6 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
           )}
 
-          {/* 9. VIEW & SORT SWITCHER (WHITE & RED) */}
-          <div className="flex items-center gap-2 shrink-0">
-            {/* View Switcher */}
-            <div className="hidden sm:flex items-center bg-red-50 p-1 rounded-xl border border-red-200">
-              <button
-                onClick={() => onViewChange('split')}
-                className={`px-2.5 py-1 text-xs font-bold rounded-lg transition-all ${
-                  activeView === 'split' ? 'bg-red-600 text-white shadow-sm' : 'text-slate-700 hover:text-red-600'
-                }`}
-              >
-                Split
-              </button>
-              <button
-                onClick={() => onViewChange('map')}
-                className={`px-2.5 py-1 text-xs font-bold rounded-lg transition-all ${
-                  activeView === 'map' ? 'bg-red-600 text-white shadow-sm' : 'text-slate-700 hover:text-red-600'
-                }`}
-              >
-                Map
-              </button>
-              <button
-                onClick={() => onViewChange('list')}
-                className={`px-2.5 py-1 text-xs font-bold rounded-lg transition-all ${
-                  activeView === 'list' ? 'bg-red-600 text-white shadow-sm' : 'text-slate-700 hover:text-red-600'
-                }`}
-              >
-                List
-              </button>
-            </div>
-
-            {/* Sort Dropdown */}
-            <select
-              value={sortBy}
-              onChange={(e) => onSortChange(e.target.value)}
-              className="text-xs font-bold bg-white border border-red-200 rounded-xl p-2 text-slate-800 focus:ring-1 focus:ring-red-500 cursor-pointer hidden md:block"
-            >
-              <option value="SCORE_DESC">Pass/Flow Score (High to Low)</option>
-              <option value="PRICE_ASC">Price: Low to High</option>
-              <option value="PRICE_DESC">Price: High to Low</option>
-              <option value="SQFT_DESC">Largest Finished Area</option>
-              <option value="CAPRATE_DESC">Highest Cap Rate (%)</option>
-            </select>
-          </div>
         </div>
 
         {/* MORE FILTERS EXPANDED MODAL (WHITE & RED) */}

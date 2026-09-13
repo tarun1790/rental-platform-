@@ -25,8 +25,8 @@ nextApp.prepare().then(() => {
     allowedHeaders: ['Content-Type', 'Authorization'],
   }));
 
-  // Serve static assets directly from out directory if available (guarantees 100% CSS/JS delivery with 200 OK)
-  if (fs.existsSync(path.join(__dirname, 'out'))) {
+  // Serve static assets directly from out directory only in production export mode
+  if (!dev && fs.existsSync(path.join(__dirname, 'out'))) {
     server.use('/_next', express.static(path.join(__dirname, 'out/_next'), { maxAge: '30d' }));
     server.use('/rental-platform-/_next', express.static(path.join(__dirname, 'out/_next'), { maxAge: '30d' }));
     server.use('/rental-platform-', express.static(path.join(__dirname, 'out')));

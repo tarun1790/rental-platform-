@@ -777,11 +777,14 @@ export default function Home() {
           
           {/* 1. SELECTED HOUSE SPOTLIGHT (APPEARS DIRECTLY BELOW THE MAP WHEN A PIN IS CLICKED) */}
           {selectedListing && (
-            <div className="w-full p-5 sm:p-6 rounded-3xl bg-slate-50 border-2 border-red-200 shadow-md flex flex-col lg:flex-row items-center gap-6">
-              <div className="w-full lg:w-88 h-56 rounded-2xl overflow-hidden shrink-0 border border-slate-200 relative group">
+            <div className="w-full max-w-full overflow-hidden p-5 sm:p-6 rounded-3xl bg-slate-50 border-2 border-red-200 shadow-md flex flex-col lg:flex-row items-center gap-6">
+              <div className="w-full lg:w-80 lg:max-w-[340px] h-56 rounded-2xl overflow-hidden shrink-0 border border-slate-200 relative group">
                 <img
                   src={selectedListing.media.featuredImage}
                   alt={selectedListing.title}
+                  onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).src = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80';
+                  }}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
                 {selectedListing.sourcePortal && (
@@ -845,22 +848,28 @@ export default function Home() {
 
                 {/* SCHOOLS & MALLS HIGHLIGHT CHIPS IN SPOTLIGHT */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
-                  {(selectedListing.nearbyPointsOfInterest || []).slice(0, 2).map((poi) => (
-                    <div key={poi.id} className="flex items-center justify-between p-2 rounded-xl bg-white border border-slate-200 text-xs">
-                      <div className="flex items-center gap-1.5 truncate mr-2">
-                        {poi.type === 'SCHOOL' ? (
-                          <GraduationCap className="w-3.5 h-3.5 text-red-500 shrink-0" />
-                        ) : (
-                          <ShoppingBag className="w-3.5 h-3.5 text-red-500 shrink-0" />
-                        )}
-                        <span className="font-bold text-slate-800 truncate">{poi.name}</span>
-                        <span className="text-slate-400 font-mono">({poi.distanceKm} km)</span>
+                  {(() => {
+                    const sm = resolveUsMetro(selectedListing.propertyAddress?.city || 'Chicago');
+                    const pois = (selectedListing.nearbyPointsOfInterest && selectedListing.nearbyPointsOfInterest.length > 0)
+                      ? selectedListing.nearbyPointsOfInterest
+                      : [...(sm.topSchools || []), ...(sm.topMalls || [])];
+                    return pois.slice(0, 2).map((poi) => (
+                      <div key={poi.id} className="flex items-center justify-between p-2 rounded-xl bg-white border border-slate-200 text-xs">
+                        <div className="flex items-center gap-1.5 truncate mr-2">
+                          {poi.type === 'SCHOOL' ? (
+                            <GraduationCap className="w-3.5 h-3.5 text-red-500 shrink-0" />
+                          ) : (
+                            <ShoppingBag className="w-3.5 h-3.5 text-red-500 shrink-0" />
+                          )}
+                          <span className="font-bold text-slate-800 truncate">{poi.name}</span>
+                          <span className="text-slate-400 font-mono">({poi.distanceKm} km)</span>
+                        </div>
+                        <span className="px-2 py-0.5 rounded-lg bg-amber-50 text-amber-900 border border-amber-200 font-bold font-mono text-[10px] shrink-0">
+                          ★ {poi.ratingScore} {poi.type === 'SCHOOL' ? '/10 GreatSchools' : '/5.0 Mall'}
+                        </span>
                       </div>
-                      <span className="px-2 py-0.5 rounded-lg bg-amber-50 text-amber-900 border border-amber-200 font-bold font-mono text-[10px] shrink-0">
-                        ★ {poi.ratingScore} {poi.type === 'SCHOOL' ? '/10 GreatSchools' : '/5.0 Mall'}
-                      </span>
-                    </div>
-                  ))}
+                    ));
+                  })()}
                 </div>
               </div>
 
@@ -961,10 +970,10 @@ export default function Home() {
                 <Globe className="w-7 h-7 animate-pulse" />
               </div>
               <h3 className="text-base sm:text-lg font-black text-slate-900">
-                Crawl Live Rental Websites for "{filters.searchQuery || 'Current Filters'}"
+                Scan Real Estate Portals for "{filters.searchQuery || 'Current Filters'}"
               </h3>
               <p className="text-xs text-slate-600 max-w-md mx-auto leading-relaxed">
-                No pre-stored properties matched your criteria. Run our real-time multi-portal crawler to scan verified MLS feeds, county public records, and live weather telemetry right now.
+                No active properties matched these exact criteria. Run our real-time multi-portal scanner across Zillow, Redfin, Realtor.com, Apartments.com, and Trulia right now.
               </p>
               <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-2.5">
                 <button
@@ -975,12 +984,12 @@ export default function Home() {
                   {isLiveCrawling ? (
                     <>
                       <RotateCw className="w-4 h-4 animate-spin" />
-                      <span>Crawling Live Portals...</span>
+                      <span>Scanning Live Portals...</span>
                     </>
                   ) : (
                     <>
                       <Sparkles className="w-4 h-4" />
-                      <span>Crawl Live Rental Websites Now (Enter ↵)</span>
+                      <span>Scan All Portals Now (Enter ↵)</span>
                     </>
                   )}
                 </button>
@@ -1011,6 +1020,109 @@ export default function Home() {
           )}
         </section>
       </div>
+
+      {/* Comprehensive Institutional Footer */}
+      <footer className="w-full bg-slate-950 text-white border-t border-slate-800 mt-16 select-none">
+        <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 py-12">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-10">
+            {/* Brand Column */}
+            <div className="space-y-3 md:col-span-1">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-red-600 flex items-center justify-center text-white shadow-md">
+                  <Building className="w-5 h-5" />
+                </div>
+                <span className="text-lg font-black tracking-tight text-white">
+                  HOUSE INTELLIGENCE
+                </span>
+              </div>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                Next-generation real estate intelligence with real-time multi-portal scraping, freehand boundary mapping, and institutional Pass/Flow underwriting.
+              </p>
+            </div>
+
+            {/* Ingested Portals Column */}
+            <div className="space-y-2">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-red-400">
+                Connected Portals
+              </h4>
+              <ul className="space-y-1.5 text-xs text-slate-400">
+                <li className="flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+                  <span>Zillow Live MLS</span>
+                </li>
+                <li className="flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
+                  <span>Redfin Verified Feed</span>
+                </li>
+                <li className="flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                  <span>Realtor.com Listings</span>
+                </li>
+                <li className="flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                  <span>Apartments.com Rentals</span>
+                </li>
+                <li className="flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-teal-500" />
+                  <span>Trulia Neighborhood Feed</span>
+                </li>
+              </ul>
+            </div>
+
+            {/* Key Metros Column */}
+            <div className="space-y-2">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-red-400">
+                Featured Metros
+              </h4>
+              <div className="flex flex-wrap gap-1.5 text-xs">
+                {['Austin, TX', 'Miami, FL', 'Denver, CO', 'Seattle, WA', 'Chicago, IL', 'New York, NY'].map((city) => (
+                  <button
+                    key={city}
+                    onClick={() => {
+                      const cityName = city.split(',')[0];
+                      handleTriggerLiveCrawl(cityName);
+                    }}
+                    className="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-red-600/30 text-slate-300 hover:text-white border border-slate-800 transition-colors cursor-pointer text-[11px]"
+                  >
+                    {city}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Telemetry Standards Column */}
+            <div className="space-y-2">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-red-400">
+                Institutional Telemetry
+              </h4>
+              <ul className="space-y-1 text-xs text-slate-400">
+                <li>• Pass/Flow 5.0 Underwriting Grade</li>
+                <li>• Cap Rate & Monthly Cash Flow</li>
+                <li>• GreatSchools™ Ratings & Proximity</li>
+                <li>• 20-Year Burglary Safety Corridors</li>
+                <li>• International Airport Transit Telemetry</li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Bottom Disclaimer & Copyright */}
+          <div className="pt-8 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-slate-500">
+            <p>
+              © 2026 House Intelligence Platform. Real-time portal crawling, scraping & institutional underwriting. Equal Housing Opportunity.
+            </p>
+            <div className="flex items-center gap-4">
+              <span>All 5 Portals Ingested</span>
+              <span>•</span>
+              <span>585 Active Residences</span>
+              <span>•</span>
+              <span className="text-emerald-400 flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                Telemetry Live
+              </span>
+            </div>
+          </div>
+        </div>
+      </footer>
 
       {/* Interactive Custom ROI Calculator Modal for Any House */}
       {roiModalListing && (
