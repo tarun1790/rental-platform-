@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Home, 
   Search, 
@@ -23,8 +23,7 @@ import {
   RotateCw,
   Scan,
   RotateCcw,
-  Bot,
-  Cpu
+  Key
 } from 'lucide-react';
 import { FilterState, ListingStatus, PropertyType } from '../../types/property';
 import { SupportedLanguageCode } from '../../types/intelligence';
@@ -32,6 +31,7 @@ import { SUPPORTED_LANGUAGES } from '../../lib/speech-translation';
 import { TiledHomeIcon } from '../common/TiledHomeIcon';
 import { parseNlpQuery } from '../../lib/nlp-search-parser';
 import { ExaConnectModal } from '../crawler/ExaConnectModal';
+import { getExaApiKey } from '../../lib/crawler/exa-client';
 
 interface HeaderProps {
   filters: FilterState;
@@ -76,8 +76,13 @@ export const Header: React.FC<HeaderProps> = ({
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [showMoreModal, setShowMoreModal] = useState(false);
   const [showExaModal, setShowExaModal] = useState(false);
+  const [hasExaKey, setHasExaKey] = useState(false);
   const searchDebounceRef = React.useRef<NodeJS.Timeout | null>(null);
   const [isListening, setIsListening] = useState(false);
+
+  useEffect(() => {
+    setHasExaKey(!!getExaApiKey());
+  }, [showExaModal]);
 
   // Voice speech recognition handler
   const handleToggleVoiceSearch = () => {
@@ -192,27 +197,27 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="flex items-center gap-3">
             <button
               type="button"
-              onClick={() => {
-                const el = document.getElementById('agentic-workflow-section');
-                if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-              }}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-red-200 bg-red-50 hover:bg-red-100 text-red-900 text-xs font-bold transition-all shadow-2xs cursor-pointer"
-              title="View live autonomous multi-agent swarm workflow"
-            >
-              <Bot className="w-3.5 h-3.5 text-red-600 animate-pulse" />
-              <span className="hidden sm:inline">🤖 Agent Swarm (6 Active)</span>
-              <span className="sm:hidden">🤖 Agents</span>
-            </button>
-
-            <button
-              type="button"
               onClick={() => setShowExaModal(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-amber-300 bg-amber-50 hover:bg-amber-100 text-amber-900 text-xs font-bold transition-all shadow-2xs cursor-pointer"
-              title="Connect Exa.ai for real-time neural search across Zillow, Redfin, Realtor, Apartments.com & Trulia"
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-bold transition-all shadow-2xs cursor-pointer ${
+                hasExaKey
+                  ? 'border-emerald-300 bg-emerald-50 hover:bg-emerald-100 text-emerald-900'
+                  : 'border-slate-300 bg-slate-100 hover:bg-slate-200 text-slate-700'
+              }`}
+              title={hasExaKey ? 'Exa.ai connected for real-time neural search across portals' : 'Enter Exa.ai API key to enable live web search'}
             >
-              <Sparkles className="w-3.5 h-3.5 text-amber-600 animate-pulse" />
-              <span className="hidden sm:inline">⚡ Exa.ai Neural Search</span>
-              <span className="sm:hidden">⚡ Exa.ai</span>
+              {hasExaKey ? (
+                <>
+                  <Sparkles className="w-3.5 h-3.5 text-emerald-600 animate-pulse" />
+                  <span className="hidden sm:inline">⚡ Exa.ai Connected</span>
+                  <span className="sm:hidden">Exa Active</span>
+                </>
+              ) : (
+                <>
+                  <Key className="w-3.5 h-3.5 text-slate-500" />
+                  <span className="hidden sm:inline">Connect Exa API Key</span>
+                  <span className="sm:hidden">Exa Key</span>
+                </>
+              )}
             </button>
 
             <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-50 border border-slate-200 text-xs font-mono text-slate-600">
@@ -326,16 +331,6 @@ export const Header: React.FC<HeaderProps> = ({
               </button>
             )}
 
-            {/* Exa.ai Neural Search Modal Trigger */}
-            <button
-              type="button"
-              onClick={() => setShowExaModal(true)}
-              title="Open Exa.ai Neural Real-Time Web Crawler"
-              className="hidden sm:flex items-center gap-1.5 px-3 py-2.5 sm:py-3 bg-amber-50 hover:bg-amber-100 border border-amber-300 text-amber-900 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 shadow-2xs"
-            >
-              <Sparkles className="w-3.5 h-3.5 text-amber-600" />
-              <span>⚡ Exa.ai</span>
-            </button>
 
             {/* Prominent Scan Verified MLS Action Button */}
             <button
