@@ -189,6 +189,29 @@ export default function Home() {
     const resolvedMetro = resolveUsMetro(baseText || activeMetroPill || 'Chicago');
     const metroCity = resolvedMetro.city;
 
+    // Detect if user query mentions a broad multi-portal scan
+    const lowerBase = baseText.toLowerCase();
+    const isMultiOrBroad = /other\s*websites?|all\s*websites?|all\s*homes?|all\s*properties|scraper|crawling|crawler|portals?|across|take all/i.test(lowerBase) ||
+      ((lowerBase.includes('zillow') ? 1 : 0) + (lowerBase.includes('redfin') ? 1 : 0) + (lowerBase.includes('realtor') ? 1 : 0) + (lowerBase.includes('trulia') ? 1 : 0) + (lowerBase.includes('apartment') ? 1 : 0) > 1);
+
+    if (isMultiOrBroad) {
+      filterOverrides = {
+        ...filterOverrides,
+        priceMin: 0,
+        priceMax: 5000000,
+        bedsMin: 0,
+        bathsMin: 0,
+        propertyType: 'ALL',
+        listingStatus: 'ALL',
+      };
+      activeFilters.priceMin = 0;
+      activeFilters.priceMax = 5000000;
+      activeFilters.bedsMin = 0;
+      activeFilters.bathsMin = 0;
+      activeFilters.propertyType = 'ALL';
+      activeFilters.listingStatus = 'ALL';
+    }
+
     // 2. Build full NLP query incorporating active filters
     const queryParts: string[] = [];
     if (baseText) {
@@ -199,43 +222,40 @@ export default function Home() {
 
     const currentQueryLower = queryParts.join(' ').toLowerCase();
 
-    // Listing status (Buy vs Rent)
-    if (activeFilters.listingStatus === 'FOR_RENT' && !/rent|rental|lease|apartment/i.test(currentQueryLower)) {
-      queryParts.push('for rent');
-    } else if (activeFilters.listingStatus === 'FOR_SALE' && !/sale|buy/i.test(currentQueryLower)) {
-      queryParts.push('for sale');
-    }
-
-    // Beds
-    if (activeFilters.bedsMin > 0 && !/\b\d+\s*beds?\b/i.test(currentQueryLower)) {
-      queryParts.push(`${activeFilters.bedsMin}+ bed`);
-    }
-
-    // Baths
-    if (activeFilters.bathsMin > 0 && !/\b\d+\s*baths?\b/i.test(currentQueryLower)) {
-      queryParts.push(`${activeFilters.bathsMin}+ bath`);
-    }
-
-    // Price Max
-    if (activeFilters.listingStatus === 'FOR_RENT') {
-      if (activeFilters.priceMax < 10000 && !/under|below|\$|max/i.test(currentQueryLower)) {
-        queryParts.push(`under $${activeFilters.priceMax.toLocaleString()}/mo`);
+    if (!isMultiOrBroad) {
+      // Listing status (Buy vs Rent)
+      if (activeFilters.listingStatus === 'FOR_RENT' && !/rent|rental|lease|apartment/i.test(currentQueryLower)) {
+        queryParts.push('for rent');
+      } else if (activeFilters.listingStatus === 'FOR_SALE' && !/sale|buy/i.test(currentQueryLower)) {
+        queryParts.push('for sale');
       }
-    } else {
-      if (activeFilters.priceMax < 5000000 && !/under|below|\$|max/i.test(currentQueryLower)) {
-        queryParts.push(`under $${activeFilters.priceMax.toLocaleString()}`);
+
+      // Beds
+      if (activeFilters.bedsMin > 0 && !/\b\d+\s*beds?\b/i.test(currentQueryLower)) {
+        queryParts.push(`${activeFilters.bedsMin}+ bed`);
+      }
+
+      // Baths
+      if (activeFilters.bathsMin > 0 && !/\b\d+\s*baths?\b/i.test(currentQueryLower)) {
+        queryParts.push(`${activeFilters.bathsMin}+ bath`);
+      }
+
+      // Price Max
+      if (activeFilters.listingStatus === 'FOR_RENT') {
+        if (activeFilters.priceMax < 10000 && !/under|below|\$|max/i.test(currentQueryLower)) {
+          queryParts.push(`under $${activeFilters.priceMax.toLocaleString()}/mo`);
+        }
+      } else {
+        if (activeFilters.priceMax < 5000000 && !/under|below|\$|max/i.test(currentQueryLower)) {
+          queryParts.push(`under $${activeFilters.priceMax.toLocaleString()}`);
+        }
+      }
+
+      // Property Type
+      if (activeFilters.propertyType !== 'ALL' && !currentQueryLower.includes(activeFilters.propertyType.toLowerCase().replace(/_/g, ' '))) {
+        queryParts.push(activeFilters.propertyType.toLowerCase().replace(/_/g, ' '));
       }
     }
-
-    // Property Type
-    if (activeFilters.propertyType !== 'ALL' && !currentQueryLower.includes(activeFilters.propertyType.toLowerCase().replace(/_/g, ' '))) {
-      queryParts.push(activeFilters.propertyType.toLowerCase().replace(/_/g, ' '));
-    }
-
-    // Detect if user query mentions a specific portal (only if not multi-portal or broad)
-    const lowerBase = baseText.toLowerCase();
-    const isMultiOrBroad = /other\s*websites?|all\s*websites?|all\s*homes?|all\s*properties|scraper|crawling|crawler|portals?|across/i.test(lowerBase) ||
-      ((lowerBase.includes('zillow') ? 1 : 0) + (lowerBase.includes('redfin') ? 1 : 0) + (lowerBase.includes('realtor') ? 1 : 0) + (lowerBase.includes('trulia') ? 1 : 0) + (lowerBase.includes('apartment') ? 1 : 0) > 1);
 
     if (!isMultiOrBroad) {
       if (/\b(only zillow|from zillow|zillow homes?|zillow rentals?)\b/i.test(lowerBase) && !/other/i.test(lowerBase)) {
@@ -278,6 +298,7 @@ export default function Home() {
           return [...result.properties, ...filteredOld];
         });
         setSelectedListing(result.properties[0]);
+        setActiveMetroPill(metroCity);
         setLiveCrawlQuery(finalCrawlQuery);
         setLiveCrawlCount(result.properties.length);
         const hasExa = result.portalsScanned.includes('EXA_AI_NEURAL') || result.properties.some(p => p.sourcePortal && ['ZILLOW', 'REDFIN', 'REALTOR', 'APARTMENTS_COM', 'TRULIA'].includes(p.sourcePortal));
@@ -350,7 +371,7 @@ export default function Home() {
                   listing.propertyAddress.state.toLowerCase().includes(t) ||
                   (listing.sourcePortal || '').toLowerCase().includes(t)
                 );
-                if (!tokenMatch && !listing.isLiveCrawled) return false;
+                if (!tokenMatch) return false;
               }
             }
           }
@@ -824,7 +845,7 @@ export default function Home() {
 
                 {/* SCHOOLS & MALLS HIGHLIGHT CHIPS IN SPOTLIGHT */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
-                  {selectedListing.nearbyPointsOfInterest.slice(0, 2).map((poi) => (
+                  {(selectedListing.nearbyPointsOfInterest || []).slice(0, 2).map((poi) => (
                     <div key={poi.id} className="flex items-center justify-between p-2 rounded-xl bg-white border border-slate-200 text-xs">
                       <div className="flex items-center gap-1.5 truncate mr-2">
                         {poi.type === 'SCHOOL' ? (

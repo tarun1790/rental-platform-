@@ -24,6 +24,7 @@ import {
   ExternalLink
 } from 'lucide-react';
 import { ShikaakPropertyListing, BuyerPriorityWeights } from '../../types/property';
+import { resolveUsMetro } from '../../lib/geo/us-metro-registry';
 import { formatCurrency, formatPercent } from '../../lib/roi-engine';
 import { scorePropertyDimensions, DEFAULT_PRIORITY_WEIGHTS } from '../../lib/scoring/property-scoring-engine';
 
@@ -70,9 +71,13 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
     return scorePropertyDimensions(listing, buyerWeights || DEFAULT_PRIORITY_WEIGHTS);
   }, [listing, buyerWeights]);
 
-  const pois = nearbyPointsOfInterest || [];
-  const topSchool = pois.find(p => p.type === 'SCHOOL' || (p.categoryLabel && p.categoryLabel.toLowerCase().includes('school'))) || pois[0];
-  const topMall = pois.find(p => p.type === 'MALL' || (p.categoryLabel && (p.categoryLabel.toLowerCase().includes('mall') || p.categoryLabel.toLowerCase().includes('retail')))) || pois[1];
+  const metroInfo = useMemo(() => resolveUsMetro(propertyAddress?.city || 'Chicago'), [propertyAddress?.city]);
+  const airportCode = airport?.primaryAirportIATA || metroInfo.primaryAirport.iata;
+  const airportDist = airport?.distanceToAirportKm || metroInfo.primaryAirport.distanceKm;
+
+  const pois = nearbyPointsOfInterest && nearbyPointsOfInterest.length > 0 ? nearbyPointsOfInterest : [...(metroInfo.topSchools || []), ...(metroInfo.topMalls || [])];
+  const topSchool = pois.find(p => p.type === 'SCHOOL' || (p.categoryLabel && p.categoryLabel.toLowerCase().includes('school'))) || pois[0] || (metroInfo.topSchools && metroInfo.topSchools[0]);
+  const topMall = pois.find(p => p.type === 'MALL' || (p.categoryLabel && (p.categoryLabel.toLowerCase().includes('mall') || p.categoryLabel.toLowerCase().includes('retail')))) || pois[1] || (metroInfo.topMalls && metroInfo.topMalls[0]);
 
   return (
     <div
@@ -262,7 +267,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
 
           <div className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-slate-50 text-slate-700 font-medium border border-slate-200 truncate">
             <Plane className="w-3 h-3 text-slate-400 shrink-0" />
-            <span className="truncate text-[10px]">{airport?.primaryAirportIATA || 'ORD'} {airport?.distanceToAirportKm || 24} km • Taxes: <strong className="font-mono text-slate-800">{formatCurrency(propertyTaxes.annualAmountUSD)}/yr</strong></span>
+            <span className="truncate text-[10px]">{airportCode} {airportDist} km • Taxes: <strong className="font-mono text-slate-800">{formatCurrency(propertyTaxes.annualAmountUSD)}/yr</strong></span>
           </div>
         </div>
 

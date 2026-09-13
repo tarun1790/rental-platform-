@@ -273,18 +273,48 @@ export const ScribbleMap: React.FC<ScribbleMapProps> = ({
     }
   }, [listings, selectedListing]);
 
-  // 4. Fly to selected listing smoothly
+  // 4. Center map smoothly on listings cluster or selected listing
   useEffect(() => {
-    if (selectedListing && mapInstanceRef.current) {
+    if (!mapInstanceRef.current || !listings || listings.length === 0) return;
+
+    if (selectedListing) {
       const selLoc = selectedListing.propertyAddress?.location || (selectedListing.propertyAddress as any)?.coordinates;
       if (selLoc && typeof selLoc.latitude === 'number' && typeof selLoc.longitude === 'number') {
-        mapInstanceRef.current.flyTo([selLoc.latitude, selLoc.longitude], 15, {
-          duration: 0.8,
+        mapInstanceRef.current.flyTo([selLoc.latitude, selLoc.longitude], 14, {
+          duration: 1.0,
+          easeLinearity: 0.25,
+        });
+        return;
+      }
+    }
+
+    const validCoords = listings
+      .map(l => l.propertyAddress?.location || (l.propertyAddress as any)?.coordinates)
+      .filter(loc => loc && typeof loc.latitude === 'number' && typeof loc.longitude === 'number') as { latitude: number; longitude: number }[];
+
+    if (validCoords.length > 0) {
+      const lats = validCoords.map(c => c.latitude);
+      const lngs = validCoords.map(c => c.longitude);
+      const minLat = Math.min(...lats);
+      const maxLat = Math.max(...lats);
+      const minLng = Math.min(...lngs);
+      const maxLng = Math.max(...lngs);
+
+      if (maxLat - minLat < 4 && maxLng - minLng < 4) {
+        const centerLat = (minLat + maxLat) / 2;
+        const centerLng = (minLng + maxLng) / 2;
+        mapInstanceRef.current.flyTo([centerLat, centerLng], 12.5, {
+          duration: 1.2,
+          easeLinearity: 0.25,
+        });
+      } else {
+        mapInstanceRef.current.flyTo([39.8283, -98.5795], 4.5, {
+          duration: 1.2,
           easeLinearity: 0.25,
         });
       }
     }
-  }, [selectedListing]);
+  }, [listings, selectedListing]);
 
   // 5. Render Saved Scribble Polygon on Map
   useEffect(() => {

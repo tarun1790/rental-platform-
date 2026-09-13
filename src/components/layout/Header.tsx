@@ -180,13 +180,6 @@ export const Header: React.FC<HeaderProps> = ({
                   }
                 }
                 onFilterChange(nextFilters);
-
-                if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
-                if (val.trim().length >= 2) {
-                  searchDebounceRef.current = setTimeout(() => {
-                    onTriggerLiveCrawl?.(val.trim(), undefined, nextFilters);
-                  }, 400);
-                }
               }}
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
