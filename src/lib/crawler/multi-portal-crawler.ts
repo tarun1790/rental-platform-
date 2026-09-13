@@ -418,12 +418,12 @@ export async function crawlUsPropertyPortals(
         body: JSON.stringify({
           query: parsedQuery.rawQuery,
           limit: requestedLimit,
-          listingStatus: options?.listingStatus || parsedQuery.listingStatus,
+          listingStatus: (options?.listingStatus && options.listingStatus !== 'ALL') ? options.listingStatus : parsedQuery.listingStatus,
           priceMin: options?.priceMin !== undefined ? options.priceMin : parsedQuery.priceRange?.minPrice,
           priceMax: options?.priceMax !== undefined ? options.priceMax : parsedQuery.priceRange?.maxPrice,
-          bedsMin: options?.bedsMin !== undefined ? options.bedsMin : parsedQuery.beds,
-          bathsMin: options?.bathsMin !== undefined ? options.bathsMin : parsedQuery.baths,
-          propertyType: options?.propertyType || parsedQuery.propertyType,
+          bedsMin: (options?.bedsMin !== undefined && Number(options.bedsMin) > 0) ? options.bedsMin : parsedQuery.beds,
+          bathsMin: (options?.bathsMin !== undefined && Number(options.bathsMin) > 0) ? options.bathsMin : parsedQuery.baths,
+          propertyType: (options?.propertyType && options.propertyType !== 'ALL') ? options.propertyType : parsedQuery.propertyType,
           exaApiKey: effectiveExaKey,
         }),
       });
@@ -490,7 +490,7 @@ export async function crawlUsPropertyPortals(
   const normalizedProperties: ShikaakPropertyListing[] = [];
 
   // Determine base pricing based on query and filter options (handling both sale & rental budgets)
-  let targetStatus: ListingStatus = options?.listingStatus || parsedQuery.listingStatus || 'FOR_SALE';
+  let targetStatus: ListingStatus = (options?.listingStatus && options.listingStatus !== 'ALL') ? options.listingStatus : (parsedQuery.listingStatus || 'FOR_SALE');
   let basePrice = 725000;
   let baseRent = 3500;
 
@@ -514,9 +514,9 @@ export async function crawlUsPropertyPortals(
     }
   }
 
-  const bedsCount = options?.bedsMin !== undefined && Number(options.bedsMin) > 0 ? Number(options.bedsMin) : (parsedQuery.beds || 3);
-  const bathsCount = options?.bathsMin !== undefined && Number(options.bathsMin) > 0 ? Number(options.bathsMin) : (parsedQuery.baths || 2.5);
-  const targetType: PropertyType = (options?.propertyType && options.propertyType !== 'ALL') ? options.propertyType : (parsedQuery.propertyType || 'SINGLE_FAMILY');
+  const bedsCount = (options?.bedsMin !== undefined && Number(options.bedsMin) > 0) ? Number(options.bedsMin) : (parsedQuery.beds || 3);
+  const bathsCount = (options?.bathsMin !== undefined && Number(options.bathsMin) > 0) ? Number(options.bathsMin) : (parsedQuery.baths || 2.5);
+  const targetType: PropertyType = (options?.propertyType && options.propertyType !== 'ALL') ? options.propertyType : (parsedQuery.propertyType || (targetStatus === 'FOR_RENT' ? 'CONDO' : 'SINGLE_FAMILY'));
 
   // Generate real-time candidates matching the specific constraints (16 by default or custom requested for 15+ options)
   const countMatch = parsedQuery.rawQuery.match(/\b(?:top\s*|give\s*me\s*|show\s*me\s*)?(\d{1,3})\s*(?:houses?|homes?|properties|condos?|apartments?|listings?|results)\b/i);
@@ -617,14 +617,8 @@ export async function crawlUsPropertyPortals(
         rentRate = Math.max(rentRate, Math.round(targetAnnualRent / 12));
       }
 
-      let houseBeds = baseCandidate.specs.beds;
-      if (options?.bedsMin && Number(options.bedsMin) > 0) {
-        houseBeds = Math.max(Number(options.bedsMin), houseBeds);
-      }
-      let houseBaths = baseCandidate.specs.baths;
-      if (options?.bathsMin && Number(options.bathsMin) > 0) {
-        houseBaths = Math.max(Number(options.bathsMin), houseBaths);
-      }
+      let houseBeds = bedsCount;
+      let houseBaths = bathsCount;
 
       const annualPropertyTax = Math.round(price * (taxRate / 100));
       const inputs = {

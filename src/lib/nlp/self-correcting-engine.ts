@@ -94,6 +94,17 @@ const MISTAKE_REMEDIATION_MAP: Record<string, { corrected: string; category: Sel
   '4br': { corrected: '4 bedrooms', category: 'SLANG_SHORTHAND', rule: 'Shorthand expansion: "4br" -> "4 bedrooms"' },
   '2ba': { corrected: '2 bathrooms', category: 'SLANG_SHORTHAND', rule: 'Shorthand expansion: "2ba" -> "2 bathrooms"' },
   '3ba': { corrected: '3 bathrooms', category: 'SLANG_SHORTHAND', rule: 'Shorthand expansion: "3ba" -> "3 bathrooms"' },
+  '1bhk': { corrected: '1 bedroom apartment for rent', category: 'SLANG_SHORTHAND', rule: 'Indian real estate shorthand: "1bhk" -> "1 bedroom apartment for rent"' },
+  '2bhk': { corrected: '2 bedrooms apartment for rent', category: 'SLANG_SHORTHAND', rule: 'Indian real estate shorthand: "2bhk" -> "2 bedrooms apartment for rent"' },
+  '3bhk': { corrected: '3 bedrooms apartment for rent', category: 'SLANG_SHORTHAND', rule: 'Indian real estate shorthand: "3bhk" -> "3 bedrooms apartment for rent"' },
+  '4bhk': { corrected: '4 bedrooms apartment for rent', category: 'SLANG_SHORTHAND', rule: 'Indian real estate shorthand: "4bhk" -> "4 bedrooms apartment for rent"' },
+  '5bhk': { corrected: '5 bedrooms apartment for rent', category: 'SLANG_SHORTHAND', rule: 'Indian real estate shorthand: "5bhk" -> "5 bedrooms apartment for rent"' },
+  '1 bhk': { corrected: '1 bedroom apartment for rent', category: 'SLANG_SHORTHAND', rule: 'Indian real estate shorthand: "1 bhk" -> "1 bedroom apartment for rent"' },
+  '2 bhk': { corrected: '2 bedrooms apartment for rent', category: 'SLANG_SHORTHAND', rule: 'Indian real estate shorthand: "2 bhk" -> "2 bedrooms apartment for rent"' },
+  '3 bhk': { corrected: '3 bedrooms apartment for rent', category: 'SLANG_SHORTHAND', rule: 'Indian real estate shorthand: "3 bhk" -> "3 bedrooms apartment for rent"' },
+  '4 bhk': { corrected: '4 bedrooms apartment for rent', category: 'SLANG_SHORTHAND', rule: 'Indian real estate shorthand: "4 bhk" -> "4 bedrooms apartment for rent"' },
+  '1rk': { corrected: 'studio apartment for rent', category: 'SLANG_SHORTHAND', rule: 'Shorthand: "1rk" -> "studio apartment for rent"' },
+  '2rk': { corrected: '1 bedroom apartment for rent', category: 'SLANG_SHORTHAND', rule: 'Shorthand: "2rk" -> "1 bedroom apartment for rent"' },
 };
 
 /**

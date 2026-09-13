@@ -29,6 +29,7 @@ import { SupportedLanguageCode } from '../../types/intelligence';
 import { SUPPORTED_LANGUAGES } from '../../lib/speech-translation';
 import { TiledHomeIcon } from '../common/TiledHomeIcon';
 import { parseNlpQuery } from '../../lib/nlp-search-parser';
+import { ExaConnectModal } from '../crawler/ExaConnectModal';
 
 interface HeaderProps {
   filters: FilterState;
@@ -72,6 +73,7 @@ export const Header: React.FC<HeaderProps> = ({
   // Dropdown Popover States
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [showMoreModal, setShowMoreModal] = useState(false);
+  const [showExaModal, setShowExaModal] = useState(false);
   const searchDebounceRef = React.useRef<NodeJS.Timeout | null>(null);
   const [isListening, setIsListening] = useState(false);
 
@@ -186,6 +188,17 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* Right Live Status Telemetry Indicator */}
           <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setShowExaModal(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-amber-300 bg-amber-50 hover:bg-amber-100 text-amber-900 text-xs font-bold transition-all shadow-2xs cursor-pointer"
+              title="Connect Exa.ai for real-time neural search across Zillow, Redfin, Realtor, Apartments.com & Trulia"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-amber-600 animate-pulse" />
+              <span className="hidden sm:inline">⚡ Exa.ai Neural Search</span>
+              <span className="sm:hidden">⚡ Exa.ai</span>
+            </button>
+
             <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-50 border border-slate-200 text-xs font-mono text-slate-600">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               <span className="font-bold text-slate-900">{listingCount}</span>
@@ -242,7 +255,7 @@ export const Header: React.FC<HeaderProps> = ({
               onChange={(e) => {
                 const val = e.target.value;
                 const nextFilters = { ...filters, searchQuery: val };
-                if (/(under|below|max|budget|\$|\d+k|beds?|bath)/i.test(val)) {
+                if (/(under|below|max|budget|\$|\d+k|beds?|bath|bhk|rk|rent)/i.test(val)) {
                   const parsed = parseNlpQuery(val);
                   if (parsed.priceRange?.maxPrice) {
                     nextFilters.priceMax = parsed.priceRange.maxPrice;
@@ -253,8 +266,22 @@ export const Header: React.FC<HeaderProps> = ({
                   if (parsed.beds !== undefined) {
                     nextFilters.bedsMin = parsed.beds;
                   }
+                  if (parsed.listingStatus) {
+                    nextFilters.listingStatus = parsed.listingStatus;
+                  }
+                  if (parsed.propertyType) {
+                    nextFilters.propertyType = parsed.propertyType;
+                  }
                 }
                 onFilterChange(nextFilters);
+
+                // Auto-debounce live multi-portal crawl after 500ms of inactivity
+                if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
+                if (val.trim().length >= 3) {
+                  searchDebounceRef.current = setTimeout(() => {
+                    onTriggerLiveCrawl?.(val, undefined, nextFilters);
+                  }, 500);
+                }
               }}
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
@@ -271,6 +298,7 @@ export const Header: React.FC<HeaderProps> = ({
               <button
                 type="button"
                 onClick={() => {
+                  if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
                   const reset = { ...filters, searchQuery: '', priceMax: 5000000, priceMin: 0, bedsMin: 0 };
                   onFilterChange(reset);
                   onTriggerLiveCrawl?.('', undefined, reset);
@@ -281,6 +309,17 @@ export const Header: React.FC<HeaderProps> = ({
                 <X className="w-4 h-4" />
               </button>
             )}
+
+            {/* Exa.ai Neural Search Modal Trigger */}
+            <button
+              type="button"
+              onClick={() => setShowExaModal(true)}
+              title="Open Exa.ai Neural Real-Time Web Crawler"
+              className="hidden sm:flex items-center gap-1.5 px-3 py-2.5 sm:py-3 bg-amber-50 hover:bg-amber-100 border border-amber-300 text-amber-900 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 shadow-2xs"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+              <span>⚡ Exa.ai</span>
+            </button>
 
             {/* Prominent Scan Verified MLS Action Button */}
             <button
@@ -732,6 +771,16 @@ export const Header: React.FC<HeaderProps> = ({
 
         </div>
       </div>
+
+      {/* Exa.ai Live Search Neural Connector Modal */}
+      <ExaConnectModal
+        isOpen={showExaModal}
+        onClose={() => setShowExaModal(false)}
+        currentQuery={filters.searchQuery}
+        onSearchWithExa={(q, key) => {
+          onTriggerLiveCrawl?.(q, key, filters);
+        }}
+      />
 
     </header>
   );

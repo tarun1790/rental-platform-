@@ -267,14 +267,18 @@ export default function Home() {
     setShowCrawlerHUD(true);
     try {
       const parsed = parseNlpQuery(finalCrawlQuery);
+      const effectiveListingStatus = (activeFilters.listingStatus && activeFilters.listingStatus !== 'ALL') ? activeFilters.listingStatus : (parsed.listingStatus || 'FOR_RENT');
+      const effectiveBeds = (activeFilters.bedsMin !== undefined && Number(activeFilters.bedsMin) > 0) ? Number(activeFilters.bedsMin) : (parsed.beds || 3);
+      const effectiveType = (activeFilters.propertyType && activeFilters.propertyType !== 'ALL') ? activeFilters.propertyType : parsed.propertyType;
+
       const result = await crawlUsPropertyPortals(parsed, {
         exaApiKey: storedExaKey || undefined,
-        listingStatus: activeFilters.listingStatus,
+        listingStatus: effectiveListingStatus,
         priceMin: activeFilters.priceMin,
         priceMax: activeFilters.priceMax,
-        bedsMin: activeFilters.bedsMin,
+        bedsMin: effectiveBeds,
         bathsMin: activeFilters.bathsMin,
-        propertyType: activeFilters.propertyType,
+        propertyType: effectiveType,
         limit: 550,
       });
 
@@ -344,23 +348,29 @@ export default function Home() {
             const matchTitle = listing.title.toLowerCase().includes(query);
             const matchPortal = (listing.sourcePortal || '').toLowerCase().includes(query);
 
-            if (!matchStreet && !matchCity && !matchState && !matchNeighborhood && !matchTitle && !matchPortal) {
+              const stopWords = new Set([
+                'house', 'home', 'homes', 'under', 'below', 'for', 'sale', 'rent', 'rental', 'rentals',
+                'near', 'with', 'and', 'the', 'from', 'other', 'website', 'websites', 'using', 'scraper',
+                'crawling', 'take', 'all', 'scanned', 'scan', 'now', 'bed', 'beds', 'bedroom', 'bedrooms',
+                'bath', 'baths', 'bathroom', 'bathrooms', 'bhk', 'rk', 'apartment', 'apartments', 'condo',
+                'condos', 'flat', 'flats', 'property', 'properties', 'in'
+              ]);
+
               const tokens = query.split(/\s+/).filter(t => 
-                t.length > 2 && 
-                !['house', 'home', 'homes', 'under', 'below', 'for', 'sale', 'rent', 'near', 'with', 'and', 'the', 'from', 'other', 'website', 'websites', 'using', 'scraper', 'crawling', 'take', 'all', 'scanned', 'scan', 'now'].includes(t) &&
-                !/\d/.test(t)
+                t.length >= 2 && !stopWords.has(t) && !/^\d+$/.test(t) && !/^\d+(?:bhk|rk|bed|br)$/i.test(t)
               );
+
               if (tokens.length > 0) {
                 const tokenMatch = tokens.some(t =>
                   listing.propertyAddress.city.toLowerCase().includes(t) ||
                   listing.propertyAddress.neighborhood.toLowerCase().includes(t) ||
                   listing.propertyAddress.street.toLowerCase().includes(t) ||
                   listing.propertyAddress.state.toLowerCase().includes(t) ||
+                  (listing.propertyTaxes?.countyName || '').toLowerCase().includes(t) ||
                   (listing.sourcePortal || '').toLowerCase().includes(t)
                 );
                 if (!tokenMatch) return false;
               }
-            }
           }
         }
 

@@ -286,7 +286,7 @@ export function parseNlpQuery(query: string): ParsedNlpQuery {
 
   // 3. Detect Bedrooms
   let beds: number | undefined;
-  const bedsMatch = normalized.match(/(\d+)\s*(?:\+)?\s*(?:bed|bedroom|bds|br)s?\b/i);
+  const bedsMatch = normalized.match(/(\d+)\s*(?:\+)?\s*(?:bed|bedroom|bds|br|bhk|rk)s?\b/i);
   if (bedsMatch) {
     beds = parseInt(bedsMatch[1], 10);
     chips.push({
@@ -317,9 +317,9 @@ export function parseNlpQuery(query: string): ParsedNlpQuery {
 
   // 5. Detect Property Type
   let propertyType: PropertyType | undefined;
-  if (/\b(?:condo|condominium|apartment|apt)\b/i.test(normalized)) {
+  if (/\b(?:condo|condominium|apartment|apt|bhk|rk|flat)\b/i.test(normalized)) {
     propertyType = 'CONDO';
-    chips.push({ category: 'TYPE', label: 'Property Type', value: 'Condo' });
+    chips.push({ category: 'TYPE', label: 'Property Type', value: 'Condo / Apartment' });
   } else if (/\b(?:townhouse|townhome)\b/i.test(normalized)) {
     propertyType = 'TOWNHOUSE';
     chips.push({ category: 'TYPE', label: 'Property Type', value: 'Townhouse' });
@@ -336,10 +336,10 @@ export function parseNlpQuery(query: string): ParsedNlpQuery {
 
   // 6. Detect Listing Status (Rent vs Sale)
   let listingStatus: ListingStatus | undefined;
-  if (/\b(?:rent|for rent|rental|lease|tenant)\b/i.test(normalized)) {
+  if (/\b(?:rent|for rent|rental|lease|tenant|renting|bhk|rk)\b/i.test(normalized) && !/\b(?:buy|for sale|purchase|invest|sale)\b/i.test(normalized)) {
     listingStatus = 'FOR_RENT';
     chips.push({ category: 'TYPE', label: 'Status', value: 'For Rent' });
-  } else if (/\b(?:buy|for sale|purchase|invest)\b/i.test(normalized)) {
+  } else if (/\b(?:buy|for sale|purchase|invest|sale|buying)\b/i.test(normalized)) {
     listingStatus = 'FOR_SALE';
     chips.push({ category: 'TYPE', label: 'Status', value: 'For Sale' });
   }
