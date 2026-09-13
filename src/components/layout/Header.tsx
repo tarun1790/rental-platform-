@@ -22,7 +22,9 @@ import {
   TreePine,
   RotateCw,
   Scan,
-  RotateCcw
+  RotateCcw,
+  Bot,
+  Cpu
 } from 'lucide-react';
 import { FilterState, ListingStatus, PropertyType } from '../../types/property';
 import { SupportedLanguageCode } from '../../types/intelligence';
@@ -188,6 +190,20 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* Right Live Status Telemetry Indicator */}
           <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => {
+                const el = document.getElementById('agentic-workflow-section');
+                if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-red-200 bg-red-50 hover:bg-red-100 text-red-900 text-xs font-bold transition-all shadow-2xs cursor-pointer"
+              title="View live autonomous multi-agent swarm workflow"
+            >
+              <Bot className="w-3.5 h-3.5 text-red-600 animate-pulse" />
+              <span className="hidden sm:inline">🤖 Agent Swarm (6 Active)</span>
+              <span className="sm:hidden">🤖 Agents</span>
+            </button>
+
             <button
               type="button"
               onClick={() => setShowExaModal(true)}

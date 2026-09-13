@@ -20,6 +20,7 @@ import { crawlUsPropertyPortals } from '../lib/crawler/multi-portal-crawler';
 import { parseNlpQuery } from '../lib/nlp-search-parser';
 import LIVE_CRAWLED_DATA from '../data/live-crawled-portals.json';
 import { LiveCrawlerHUD } from '../components/crawler/LiveCrawlerHUD';
+import { AgenticWorkflowConsole } from '../components/agentic/AgenticWorkflowConsole';
 
 const INITIAL_REAL_LISTINGS: ShikaakPropertyListing[] = (() => {
   const crawled = LIVE_CRAWLED_DATA as unknown as ShikaakPropertyListing[];
@@ -582,6 +583,19 @@ export default function Home() {
         {/* ============================================================ */}
         <main className="w-full bg-slate-50/50 py-6 sm:py-8">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+
+            {/* AUTONOMOUS MULTI-AGENT WORKFLOW SWARM CONSOLE */}
+            <div id="agentic-workflow-section">
+              <AgenticWorkflowConsole
+                currentQuery={filters.searchQuery || `${activeMetroPill} residences`}
+                activeMetro={activeMetroPill}
+                listingCount={filteredListings.length}
+                isCrawling={isLiveCrawling}
+                selectedListing={selectedListing}
+                onTriggerCrawl={handleTriggerLiveCrawl}
+                isOpenDefault={true}
+              />
+            </div>
 
             {/* REDUCED MAP CONSOLE (SLEEK, FRAMED & ELEVATED) */}
             <section className="w-full h-[460px] sm:h-[500px] lg:h-[520px] relative rounded-3xl border-2 border-slate-200/90 shadow-xl overflow-hidden bg-slate-100">
