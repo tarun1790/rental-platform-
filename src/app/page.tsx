@@ -461,6 +461,17 @@ export default function Home() {
       });
   }, [allListings, filters, selectedPortal, scribblePolygon, sortBy, buyerWeights]);
 
+  // Progressive Pagination for Clean, Classy Browsing (Avoids Endless 585-House Scroll)
+  const [visibleCount, setVisibleCount] = useState(16);
+
+  useEffect(() => {
+    setVisibleCount(16);
+  }, [filters, selectedPortal, scribblePolygon]);
+
+  const displayedListings = useMemo(() => {
+    return filteredListings.slice(0, visibleCount);
+  }, [filteredListings, visibleCount]);
+
   // Real-Time Aggregate Telemetry for Scanned Multi-Portal Properties
   const scannedMetrics = useMemo(() => {
     if (filteredListings.length === 0) {
@@ -592,323 +603,148 @@ export default function Home() {
           id="houses-section"
           className="w-full px-4 sm:px-8 lg:px-12 py-8 sm:py-10 space-y-8"
         >
-          {/* Interactive Live Real-Time Multi-Portal Scanning HUD */}
-          {(isLiveCrawling || showCrawlerHUD) && (
-            <LiveCrawlerHUD
-              query={liveCrawlQuery || filters.searchQuery || 'Active Criteria'}
-              isCrawling={isLiveCrawling}
-              targetMetro={activeMetroPill || 'Chicago'}
-              discoveredListings={allListings.filter(p => p.isLiveCrawled)}
-              stageMessage="Parallel scrape active across Zillow, Redfin, Realtor.com, Apartments.com, & Trulia"
-              onClose={() => setShowCrawlerHUD(false)}
-            />
-          )}
-
-          {/* Interactive Multi-Portal Live Ingestion & Scanned Houses Showcase HUD */}
-          <div className="w-full rounded-3xl bg-gradient-to-b from-slate-900 to-slate-950 text-white p-5 sm:p-7 shadow-xl border-2 border-red-500/30 space-y-5">
-            {/* 1. Header & Live Query Bar */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-white/10">
-              <div className="space-y-1">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-red-600 text-white text-[10px] font-black uppercase tracking-wider shadow-sm">
-                    <Globe className="w-3 h-3 animate-spin" />
-                    <span>Real-Time Ingestion Active</span>
-                  </div>
-                  <span className="text-[10px] font-bold text-slate-300 font-mono">
-                    Scraped across Zillow, Redfin, Realtor.com, Apartments.com & Trulia
-                  </span>
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+          {/* Clean Classy Loading State when Scanning */}
+          {isLiveCrawling ? (
+            <div className="py-20 flex flex-col items-center justify-center text-center space-y-4">
+              <div className="relative">
+                <div className="w-14 h-14 rounded-full border-4 border-red-200 border-t-red-600 animate-spin" />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <Building className="w-5 h-5 text-red-600 animate-pulse" />
                 </div>
-                <h2 className="text-xl sm:text-2xl font-black tracking-tight text-white flex items-center gap-2">
-                  <span>Scanned Properties for:</span>
-                  <span className="text-red-400 font-mono">
-                    "{filters.searchQuery || liveCrawlQuery || 'Verified Multi-Portal Inventory'}"
-                  </span>
-                </h2>
-                <p className="text-xs text-slate-400 font-medium">
-                  Displaying <strong className="text-white">{filteredListings.length}</strong> authenticated residences normalized with real-time CDN photos, GreatSchools ratings, shopping malls, and institutional underwriting.
+              </div>
+              <div className="space-y-1">
+                <h3 className="text-lg font-bold text-slate-900 tracking-tight">
+                  Scanning Luxury Residences...
+                </h3>
+                <p className="text-xs text-slate-500 max-w-sm mx-auto">
+                  Retrieving verified property telemetry, school ratings, and valuation metrics for your criteria.
                 </p>
               </div>
-
-              {/* Quick Actions */}
-              <div className="flex items-center gap-2 self-start md:self-center shrink-0">
-                <button
-                  onClick={() => setShowCrawlerHUD((prev) => !prev)}
-                  className="px-3.5 py-2 bg-white/10 hover:bg-white/20 text-white rounded-xl text-xs font-bold transition-all border border-white/15 flex items-center gap-1.5 cursor-pointer"
-                  title="Toggle Live Scraper Pipeline HUD"
-                >
-                  <Activity className="w-3.5 h-3.5 text-red-400" />
-                  <span>{showCrawlerHUD ? 'Hide HUD' : 'Scraper Latency HUD'}</span>
-                </button>
-                <button
-                  onClick={() => handleTriggerLiveCrawl()}
-                  disabled={isLiveCrawling}
-                  className="px-4 py-2 bg-red-600 hover:bg-red-500 disabled:bg-slate-700 text-white rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
-                >
-                  <RotateCw className={`w-3.5 h-3.5 ${isLiveCrawling ? 'animate-spin' : ''}`} />
-                  <span>Re-Scan ↵</span>
-                </button>
-                {(filters.searchQuery || selectedPortal !== 'ALL') && (
-                  <button
-                    onClick={() => {
-                      setLiveCrawlQuery(null);
-                      setSelectedPortal('ALL');
-                      setFilters((prev) => ({
-                        ...prev,
-                        searchQuery: '',
-                        listingStatus: 'ALL',
-                        priceMin: 0,
-                        priceMax: 5000000,
-                        bedsMin: 0,
-                      }));
-                    }}
-                    className="px-3.5 py-2 bg-white/5 hover:bg-white/15 text-slate-300 rounded-xl text-xs font-bold transition-all border border-white/10 cursor-pointer"
-                  >
-                    Reset
-                  </button>
-                )}
-              </div>
             </div>
-
-            {/* 2. Interactive Portal Filter Cards (Direct Filtering by Website) */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                <span>Filter by Origin Portal ({filteredListings.length} matched):</span>
-                <span className="text-slate-500 font-mono">1-Click Portal Switch</span>
-              </div>
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
-                {[
-                  { id: 'ALL', label: 'All Portals', count: portalCounts.ALL, sub: 'Composite Feed', color: 'border-slate-600 hover:border-white', activeBg: 'bg-white text-slate-950 font-black shadow-md' },
-                  { id: 'ZILLOW', label: 'Zillow', count: portalCounts.ZILLOW, sub: 'Live Scraped', color: 'border-blue-500/40 hover:border-blue-400', activeBg: 'bg-blue-600 text-white font-black shadow-lg shadow-blue-600/30' },
-                  { id: 'REDFIN', label: 'Redfin', count: portalCounts.REDFIN, sub: 'Live Scraped', color: 'border-red-500/40 hover:border-red-400', activeBg: 'bg-red-600 text-white font-black shadow-lg shadow-red-600/30' },
-                  { id: 'REALTOR', label: 'Realtor.com', count: portalCounts.REALTOR, sub: 'Live Scraped', color: 'border-amber-500/40 hover:border-amber-400', activeBg: 'bg-amber-600 text-white font-black shadow-lg shadow-amber-600/30' },
-                  { id: 'APARTMENTS_COM', label: 'Apartments.com', count: portalCounts.APARTMENTS_COM, sub: 'Live Scraped', color: 'border-emerald-500/40 hover:border-emerald-400', activeBg: 'bg-emerald-600 text-white font-black shadow-lg shadow-emerald-600/30' },
-                  { id: 'TRULIA', label: 'Trulia', count: portalCounts.TRULIA, sub: 'Live Scraped', color: 'border-teal-500/40 hover:border-teal-400', activeBg: 'bg-teal-600 text-white font-black shadow-lg shadow-teal-600/30' },
-                ].map((p) => {
-                  const isSelected = selectedPortal === p.id;
-                  return (
-                    <button
-                      key={p.id}
-                      id={`portal-tab-${p.id}`}
-                      onClick={() => setSelectedPortal(p.id as any)}
-                      className={`p-3 rounded-2xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-1.5 ${
-                        isSelected
-                          ? p.activeBg
-                          : `bg-white/5 text-slate-200 hover:bg-white/10 ${p.color}`
-                      }`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-black tracking-tight">{p.label}</span>
-                        <span className={`w-2 h-2 rounded-full ${isSelected ? 'bg-white animate-pulse' : 'bg-emerald-400'}`} />
-                      </div>
-                      <div className="flex items-baseline justify-between">
-                        <span className={`text-lg font-black font-mono ${isSelected ? 'text-inherit' : 'text-white'}`}>
-                          {p.count}
-                        </span>
-                        <span className={`text-[9px] uppercase tracking-wider font-mono ${isSelected ? 'text-inherit opacity-80' : 'text-slate-400'}`}>
-                          {p.sub}
-                        </span>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* 3. Aggregated Market Intelligence Telemetry Strip */}
-            <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3 text-center">
-              <div className="space-y-0.5">
-                <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400 block">Avg Purchase Price</span>
-                <span className="text-sm sm:text-base font-black font-mono text-red-400">
-                  {scannedMetrics.avgPrice > 0 ? formatCurrency(scannedMetrics.avgPrice) : 'N/A'}
-                </span>
-              </div>
-
-              <div className="space-y-0.5">
-                <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400 block">Avg Monthly Rent</span>
-                <span className="text-sm sm:text-base font-black font-mono text-white">
-                  {scannedMetrics.avgRent > 0 ? `${formatCurrency(scannedMetrics.avgRent)}/mo` : 'N/A'}
-                </span>
-              </div>
-
-              <div className="space-y-0.5">
-                <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400 block">Avg Cap Rate</span>
-                <span className="text-sm sm:text-base font-black font-mono text-emerald-400">
-                  {scannedMetrics.avgCapRate > 0 ? `${scannedMetrics.avgCapRate}%` : '5.8%'}
-                </span>
-              </div>
-
-              <div className="space-y-0.5">
-                <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400 block">Pass/Flow Score</span>
-                <span className="text-sm sm:text-base font-black font-mono text-amber-300">
-                  4.8 / 5.0
-                </span>
-              </div>
-
-              <div className="space-y-0.5">
-                <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400 block">Top School Rating</span>
-                <span className="text-sm sm:text-base font-black font-mono text-amber-400">
-                  ★ 10/10 GreatSchools
-                </span>
-              </div>
-
-              <div className="space-y-0.5">
-                <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400 block">Premier Mall Prox.</span>
-                <span className="text-sm sm:text-base font-black font-mono text-white">
-                  1.2 km avg
-                </span>
-              </div>
-
-              <div className="space-y-0.5 col-span-2 sm:col-span-4 lg:col-span-1 border-t sm:border-t-0 sm:border-l border-white/10 pt-2 sm:pt-0 sm:pl-2">
-                <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400 block">Live Scrape Latency</span>
-                <span className="text-xs font-mono font-bold text-emerald-400 flex items-center justify-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                  <span>~98ms (CDN Cached)</span>
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Buyer Priority Weighting & Decision Engine Tuning */}
-          <PriorityWeightSliders
-            weights={buyerWeights}
-            onChange={setBuyerWeights}
-          />
-          
-          {/* 1. SELECTED HOUSE SPOTLIGHT (APPEARS DIRECTLY BELOW THE MAP WHEN A PIN IS CLICKED) */}
-          {selectedListing && (
-            <div className="w-full max-w-full overflow-hidden p-5 sm:p-6 rounded-3xl bg-slate-50 border-2 border-red-200 shadow-md flex flex-col lg:flex-row items-center gap-6">
-              <div className="w-full lg:w-80 lg:max-w-[340px] h-56 rounded-2xl overflow-hidden shrink-0 border border-slate-200 relative group">
-                <img
-                  src={selectedListing.media.featuredImage}
-                  alt={selectedListing.title}
-                  onError={(e) => {
-                    (e.currentTarget as HTMLImageElement).src = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80';
-                  }}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-                {selectedListing.sourcePortal && (
-                  <div className={`absolute top-3 left-3 flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black shadow-md border ${
-                    selectedListing.sourcePortal === 'REDFIN' ? 'bg-red-600 text-white border-red-400/30' :
-                    selectedListing.sourcePortal === 'ZILLOW' ? 'bg-blue-600 text-white border-blue-400/30' :
-                    selectedListing.sourcePortal === 'APARTMENTS_COM' ? 'bg-emerald-600 text-white border-emerald-400/30' :
-                    selectedListing.sourcePortal === 'TRULIA' ? 'bg-teal-600 text-white border-teal-400/30' :
-                    'bg-amber-600 text-white border-amber-400/30'
-                  }`}>
-                    <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
-                    <span className="uppercase tracking-wider text-[10px]">
-                      Scraped from {selectedListing.sourcePortal === 'APARTMENTS_COM' ? 'Apartments.com' : selectedListing.sourcePortal === 'REALTOR' ? 'Realtor.com' : selectedListing.sourcePortal}
-                    </span>
+          ) : (
+            <>
+              {/* 1. SELECTED HOUSE SPOTLIGHT (APPEARS DIRECTLY BELOW THE MAP WHEN A PIN IS CLICKED) */}
+              {selectedListing && (
+                <div className="w-full max-w-full overflow-hidden p-5 sm:p-6 rounded-3xl bg-slate-50 border-2 border-red-200 shadow-md flex flex-col lg:flex-row items-center gap-6">
+                  <div className="w-full lg:w-80 lg:max-w-[340px] h-56 rounded-2xl overflow-hidden shrink-0 border border-slate-200 relative group">
+                    <img
+                      src={selectedListing.media.featuredImage}
+                      alt={selectedListing.title}
+                      onError={(e) => {
+                        (e.currentTarget as HTMLImageElement).src = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80';
+                      }}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <div className="absolute top-3 left-3 flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold shadow-md border bg-white/95 text-slate-900 border-slate-200">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                      <span className="uppercase tracking-wider text-[10px] font-mono text-slate-800">
+                        Verified MLS Residence
+                      </span>
+                    </div>
                   </div>
-                )}
-              </div>
 
-              <div className="flex-1 min-w-0 space-y-2.5">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="px-3 py-0.5 bg-red-600 text-white rounded-full text-xs font-bold font-mono shadow-sm">
-                    Pass/Flow {selectedListing.financials.outputs.passFlowScore.toFixed(1)} / 5.0
-                  </span>
-                  <span className="px-3 py-0.5 bg-emerald-100 text-emerald-800 rounded-full text-xs font-bold font-mono border border-emerald-200">
-                    Cap Rate: {selectedListing.financials.outputs.capRatePercent.toFixed(2)}%
-                  </span>
-                  {selectedListing.financials.outputs.monthlyNetCashFlow !== undefined && (
-                    <span className="px-3 py-0.5 bg-white text-slate-700 rounded-full text-xs font-bold font-mono border border-slate-200">
-                      Cash Flow: {selectedListing.financials.outputs.monthlyNetCashFlow >= 0 ? `+${formatCurrency(selectedListing.financials.outputs.monthlyNetCashFlow)}/mo` : `${formatCurrency(selectedListing.financials.outputs.monthlyNetCashFlow)}/mo`}
-                    </span>
-                  )}
-                  <span className="px-3 py-0.5 bg-white text-slate-700 rounded-full text-xs font-medium border border-slate-200">
-                    {selectedListing.propertyAddress.city}, {selectedListing.propertyAddress.state} ({selectedListing.timezone?.timeZoneCode || 'CST'})
-                  </span>
-                </div>
-
-                <div>
-                  <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-                    {selectedListing.title}
-                  </h3>
-                  <p className="text-xs text-slate-500 font-normal">
-                    {selectedListing.propertyAddress.street}, {selectedListing.propertyAddress.neighborhood}
-                  </p>
-                </div>
-
-                <div className="flex flex-wrap items-baseline gap-3">
-                  <span className="text-2xl font-bold text-red-600 font-mono">
-                    {selectedListing.listingStatus === 'FOR_RENT'
-                      ? `${formatCurrency(selectedListing.financials.inputs.monthlyGrossRent)}/mo`
-                      : formatCurrency(selectedListing.financials.inputs.purchasePrice)}
-                  </span>
-                  <span className="text-xs font-medium text-slate-400 font-mono">
-                    {selectedListing.listingStatus === 'FOR_RENT'
-                      ? `Est. Move-In: ${formatCurrency(selectedListing.financials.inputs.monthlyGrossRent * 2 + 50)}`
-                      : `${formatCurrency(selectedListing.financials.inputs.monthlyGrossRent)}/mo rent`}
-                  </span>
-                  <span className="text-xs font-medium text-slate-600">
-                    • {selectedListing.specs.beds} Beds • {selectedListing.specs.baths} Baths • {(selectedListing.specs.finishedSqFt || 1800).toLocaleString()} sq ft
-                  </span>
-                </div>
-
-                {/* SCHOOLS & MALLS HIGHLIGHT CHIPS IN SPOTLIGHT */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
-                  {(() => {
-                    const sm = resolveUsMetro(selectedListing.propertyAddress?.city || 'Chicago');
-                    const pois = (selectedListing.nearbyPointsOfInterest && selectedListing.nearbyPointsOfInterest.length > 0)
-                      ? selectedListing.nearbyPointsOfInterest
-                      : [...(sm.topSchools || []), ...(sm.topMalls || [])];
-                    return pois.slice(0, 2).map((poi) => (
-                      <div key={poi.id} className="flex items-center justify-between p-2 rounded-xl bg-white border border-slate-200 text-xs">
-                        <div className="flex items-center gap-1.5 truncate mr-2">
-                          {poi.type === 'SCHOOL' ? (
-                            <GraduationCap className="w-3.5 h-3.5 text-red-500 shrink-0" />
-                          ) : (
-                            <ShoppingBag className="w-3.5 h-3.5 text-red-500 shrink-0" />
-                          )}
-                          <span className="font-bold text-slate-800 truncate">{poi.name}</span>
-                          <span className="text-slate-400 font-mono">({poi.distanceKm} km)</span>
-                        </div>
-                        <span className="px-2 py-0.5 rounded-lg bg-amber-50 text-amber-900 border border-amber-200 font-bold font-mono text-[10px] shrink-0">
-                          ★ {poi.ratingScore} {poi.type === 'SCHOOL' ? '/10 GreatSchools' : '/5.0 Mall'}
+                  <div className="flex-1 min-w-0 space-y-2.5">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="px-3 py-0.5 bg-red-600 text-white rounded-full text-xs font-bold font-mono shadow-sm">
+                        Pass/Flow {selectedListing.financials.outputs.passFlowScore.toFixed(1)} / 5.0
+                      </span>
+                      <span className="px-3 py-0.5 bg-emerald-100 text-emerald-800 rounded-full text-xs font-bold font-mono border border-emerald-200">
+                        Cap Rate: {selectedListing.financials.outputs.capRatePercent.toFixed(2)}%
+                      </span>
+                      {selectedListing.financials.outputs.monthlyNetCashFlow !== undefined && (
+                        <span className="px-3 py-0.5 bg-white text-slate-700 rounded-full text-xs font-bold font-mono border border-slate-200">
+                          Cash Flow: {selectedListing.financials.outputs.monthlyNetCashFlow >= 0 ? `+${formatCurrency(selectedListing.financials.outputs.monthlyNetCashFlow)}/mo` : `${formatCurrency(selectedListing.financials.outputs.monthlyNetCashFlow)}/mo`}
                         </span>
-                      </div>
-                    ));
-                  })()}
+                      )}
+                      <span className="px-3 py-0.5 bg-white text-slate-700 rounded-full text-xs font-medium border border-slate-200">
+                        {selectedListing.propertyAddress.city}, {selectedListing.propertyAddress.state} ({selectedListing.timezone?.timeZoneCode || 'CST'})
+                      </span>
+                    </div>
+
+                    <div>
+                      <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                        {selectedListing.title}
+                      </h3>
+                      <p className="text-xs text-slate-500 font-normal">
+                        {selectedListing.propertyAddress.street}, {selectedListing.propertyAddress.neighborhood}
+                      </p>
+                    </div>
+
+                    <div className="flex flex-wrap items-baseline gap-3">
+                      <span className="text-2xl font-bold text-red-600 font-mono">
+                        {selectedListing.listingStatus === 'FOR_RENT'
+                          ? `${formatCurrency(selectedListing.financials.inputs.monthlyGrossRent)}/mo`
+                          : formatCurrency(selectedListing.financials.inputs.purchasePrice)}
+                      </span>
+                      <span className="text-xs font-medium text-slate-400 font-mono">
+                        {selectedListing.listingStatus === 'FOR_RENT'
+                          ? `Est. Move-In: ${formatCurrency(selectedListing.financials.inputs.monthlyGrossRent * 2 + 50)}`
+                          : `${formatCurrency(selectedListing.financials.inputs.monthlyGrossRent)}/mo rent`}
+                      </span>
+                      <span className="text-xs font-medium text-slate-600">
+                        • {selectedListing.specs.beds} Beds • {selectedListing.specs.baths} Baths • {(selectedListing.specs.finishedSqFt || 1800).toLocaleString()} sq ft
+                      </span>
+                    </div>
+
+                    {/* SCHOOLS & MALLS HIGHLIGHT CHIPS IN SPOTLIGHT */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                      {(() => {
+                        const sm = resolveUsMetro(selectedListing.propertyAddress?.city || 'Chicago');
+                        const pois = (selectedListing.nearbyPointsOfInterest && selectedListing.nearbyPointsOfInterest.length > 0)
+                          ? selectedListing.nearbyPointsOfInterest
+                          : [...(sm.topSchools || []), ...(sm.topMalls || [])];
+                        return pois.slice(0, 2).map((poi) => (
+                          <div key={poi.id} className="flex items-center justify-between p-2 rounded-xl bg-white border border-slate-200 text-xs">
+                            <div className="flex items-center gap-1.5 truncate mr-2">
+                              {poi.type === 'SCHOOL' ? (
+                                <GraduationCap className="w-3.5 h-3.5 text-red-500 shrink-0" />
+                              ) : (
+                                <ShoppingBag className="w-3.5 h-3.5 text-red-500 shrink-0" />
+                              )}
+                              <span className="font-bold text-slate-800 truncate">{poi.name}</span>
+                              <span className="text-slate-400 font-mono">({poi.distanceKm} km)</span>
+                            </div>
+                            <span className="px-2 py-0.5 rounded-lg bg-amber-50 text-amber-900 border border-amber-200 font-bold font-mono text-[10px] shrink-0">
+                              ★ {poi.ratingScore} {poi.type === 'SCHOOL' ? '/10 GreatSchools' : '/5.0 Mall'}
+                            </span>
+                          </div>
+                        ));
+                      })()}
+                    </div>
+                  </div>
+
+                  <div className="shrink-0 flex flex-col sm:flex-row lg:flex-col gap-2.5 w-full lg:w-auto">
+                    {selectedListing.externalUrl && (
+                      <a
+                        href={selectedListing.externalUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 shadow-sm flex items-center justify-center gap-1.5 cursor-pointer"
+                        title="View Official Verified Listing"
+                      >
+                        <span>View Official Listing</span>
+                        <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
+                      </a>
+                    )}
+
+                    <button
+                      onClick={() => setRoiModalListing(selectedListing)}
+                      className="px-5 py-2.5 bg-white border border-red-200 hover:bg-red-50 text-red-500 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                    >
+                      <Calculator className="w-4 h-4 text-red-500" />
+                      <span>ROI Underwriter</span>
+                    </button>
+
+                    <button
+                      onClick={() => handleOpenProperty(selectedListing)}
+                      className="px-5 py-2.5 bg-red-500 hover:bg-red-600 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all text-center cursor-pointer"
+                    >
+                      Open Full Intelligence →
+                    </button>
+                  </div>
                 </div>
-              </div>
-
-              <div className="shrink-0 flex flex-col sm:flex-row lg:flex-col gap-2.5 w-full lg:w-auto">
-                {selectedListing.externalUrl && (
-                  <a
-                    href={selectedListing.externalUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all border shadow-sm flex items-center justify-center gap-1.5 cursor-pointer ${
-                      selectedListing.sourcePortal === 'REDFIN' ? 'bg-red-50 hover:bg-red-100 text-red-700 border-red-200' :
-                      selectedListing.sourcePortal === 'ZILLOW' ? 'bg-blue-50 hover:bg-blue-100 text-blue-700 border-blue-200' :
-                      selectedListing.sourcePortal === 'APARTMENTS_COM' ? 'bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border-emerald-200' :
-                      selectedListing.sourcePortal === 'TRULIA' ? 'bg-teal-50 hover:bg-teal-100 text-teal-800 border-teal-200' :
-                      'bg-amber-50 hover:bg-amber-100 text-amber-800 border-amber-200'
-                    }`}
-                    title={`View authentic listing on ${selectedListing.sourcePortal || 'Portal'}`}
-                  >
-                    <span>View on {selectedListing.sourcePortal === 'APARTMENTS_COM' ? 'Apartments.com' : selectedListing.sourcePortal === 'REALTOR' ? 'Realtor.com' : selectedListing.sourcePortal ? (selectedListing.sourcePortal.charAt(0) + selectedListing.sourcePortal.slice(1).toLowerCase()) : 'Portal'}</span>
-                    <ExternalLink className="w-3.5 h-3.5" />
-                  </a>
-                )}
-
-                <button
-                  onClick={() => setRoiModalListing(selectedListing)}
-                  className="px-5 py-2.5 bg-white border border-red-200 hover:bg-red-50 text-red-500 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-                >
-                  <Calculator className="w-4 h-4 text-red-500" />
-                  <span>ROI Underwriter</span>
-                </button>
-
-                <button
-                  onClick={() => handleOpenProperty(selectedListing)}
-                  className="px-5 py-2.5 bg-red-500 hover:bg-red-600 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all text-center cursor-pointer"
-                >
-                  Open Full Intelligence →
-                </button>
-              </div>
-            </div>
+              )}
+            </>
           )}
 
           {/* 2. Feed Title & Quick Controls Bar */}
@@ -951,18 +787,36 @@ export default function Home() {
 
           {/* 3. FULL-WIDTH RESPONSIVE HOUSE DETAILS GRID */}
           {filteredListings.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {filteredListings.map((listing) => (
-                <PropertyCard
-                  key={listing.id}
-                  listing={listing}
-                  buyerWeights={buyerWeights}
-                  isSelected={selectedListing?.id === listing.id}
-                  onSelect={(item) => setSelectedListing(item)}
-                  onOpenDetail={(item) => handleOpenProperty(item)}
-                  onOpenRoiCalculator={(item) => setRoiModalListing(item)}
-                />
-              ))}
+            <div className="space-y-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {displayedListings.map((listing) => (
+                  <PropertyCard
+                    key={listing.id}
+                    listing={listing}
+                    buyerWeights={buyerWeights}
+                    isSelected={selectedListing?.id === listing.id}
+                    onSelect={(item) => setSelectedListing(item)}
+                    onOpenDetail={(item) => handleOpenProperty(item)}
+                    onOpenRoiCalculator={(item) => setRoiModalListing(item)}
+                  />
+                ))}
+              </div>
+
+              {/* Progressive Pagination (Load More Residences) */}
+              {visibleCount < filteredListings.length && (
+                <div className="pt-6 pb-2 flex flex-col items-center justify-center gap-3">
+                  <p className="text-xs text-slate-500 font-medium">
+                    Showing {displayedListings.length} of {filteredListings.length} verified residences
+                  </p>
+                  <button
+                    onClick={() => setVisibleCount((prev) => Math.min(prev + 16, filteredListings.length))}
+                    className="px-8 py-3.5 bg-white hover:bg-slate-50 text-slate-800 font-bold rounded-2xl text-xs uppercase tracking-wider border border-slate-300 shadow-sm hover:shadow transition-all cursor-pointer flex items-center gap-2"
+                  >
+                    <span>Load More Residences (+16)</span>
+                    <ChevronDown className="w-4 h-4 text-slate-400" />
+                  </button>
+                </div>
+              )}
             </div>
           ) : (
             <div className="py-14 text-center bg-red-50/40 rounded-3xl border-2 border-red-200 p-8 space-y-4 max-w-xl mx-auto shadow-sm">
@@ -970,10 +824,10 @@ export default function Home() {
                 <Globe className="w-7 h-7 animate-pulse" />
               </div>
               <h3 className="text-base sm:text-lg font-black text-slate-900">
-                Scan Real Estate Portals for "{filters.searchQuery || 'Current Filters'}"
+                No Residences Found for "{filters.searchQuery || 'Current Filters'}"
               </h3>
               <p className="text-xs text-slate-600 max-w-md mx-auto leading-relaxed">
-                No active properties matched these exact criteria. Run our real-time multi-portal scanner across Zillow, Redfin, Realtor.com, Apartments.com, and Trulia right now.
+                No properties matched these exact criteria. Scan verified real-time MLS inventory or reset your search filters to explore available luxury residences.
               </p>
               <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-2.5">
                 <button
@@ -984,12 +838,12 @@ export default function Home() {
                   {isLiveCrawling ? (
                     <>
                       <RotateCw className="w-4 h-4 animate-spin" />
-                      <span>Scanning Live Portals...</span>
+                      <span>Scanning Inventory...</span>
                     </>
                   ) : (
                     <>
                       <Sparkles className="w-4 h-4" />
-                      <span>Scan All Portals Now (Enter ↵)</span>
+                      <span>Scan Verified MLS (Enter ↵)</span>
                     </>
                   )}
                 </button>
@@ -1036,35 +890,35 @@ export default function Home() {
                 </span>
               </div>
               <p className="text-xs text-slate-400 leading-relaxed">
-                Next-generation real estate intelligence with real-time multi-portal scraping, freehand boundary mapping, and institutional Pass/Flow underwriting.
+                Next-generation real estate intelligence with real-time property ingestion, freehand boundary mapping, and institutional Pass/Flow underwriting.
               </p>
             </div>
 
-            {/* Ingested Portals Column */}
+            {/* Residence Portfolios Column */}
             <div className="space-y-2">
               <h4 className="text-xs font-bold uppercase tracking-wider text-red-400">
-                Connected Portals
+                Curated Portfolios
               </h4>
               <ul className="space-y-1.5 text-xs text-slate-400">
                 <li className="flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
-                  <span>Zillow Live MLS</span>
-                </li>
-                <li className="flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
-                  <span>Redfin Verified Feed</span>
+                  <span>Luxury Single-Family Estates</span>
                 </li>
                 <li className="flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                  <span>Realtor.com Listings</span>
+                  <span>Architectural Penthouses</span>
                 </li>
                 <li className="flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                  <span>Apartments.com Rentals</span>
+                  <span>Contemporary Condominiums</span>
                 </li>
                 <li className="flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-teal-500" />
-                  <span>Trulia Neighborhood Feed</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+                  <span>Waterfront & Lakefront Residences</span>
+                </li>
+                <li className="flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-purple-500" />
+                  <span>Historic Brownstones & Townhomes</span>
                 </li>
               </ul>
             </div>
@@ -1108,12 +962,12 @@ export default function Home() {
           {/* Bottom Disclaimer & Copyright */}
           <div className="pt-8 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-slate-500">
             <p>
-              © 2026 House Intelligence Platform. Real-time portal crawling, scraping & institutional underwriting. Equal Housing Opportunity.
+              © 2026 House Intelligence Platform. Real-time MLS ingestion & institutional underwriting. Equal Housing Opportunity.
             </p>
             <div className="flex items-center gap-4">
-              <span>All 5 Portals Ingested</span>
+              <span>Verified MLS Telemetry</span>
               <span>•</span>
-              <span>585 Active Residences</span>
+              <span>{allListings.length} Active Residences</span>
               <span>•</span>
               <span className="text-emerald-400 flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />

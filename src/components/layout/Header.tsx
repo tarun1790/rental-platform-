@@ -212,7 +212,7 @@ export const Header: React.FC<HeaderProps> = ({
                   onTriggerLiveCrawl?.(filters.searchQuery, undefined, filters);
                 }}
                 disabled={isCrawling}
-                title="Scan and scrape all rental websites for this criteria"
+                title="Scan verified MLS inventory for this criteria"
                 className="flex items-center gap-1.5 px-3.5 py-1.5 bg-red-600 hover:bg-red-700 disabled:bg-slate-300 text-white rounded-lg text-xs font-black uppercase tracking-wider transition-all shadow-sm cursor-pointer"
               >
                 {isCrawling ? (

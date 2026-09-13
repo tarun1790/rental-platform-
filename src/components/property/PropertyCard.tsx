@@ -147,18 +147,11 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
             <span>Fit {Math.round(dimScores.compositeScore)}%</span>
           </div>
 
-          {/* Live Ingested Feed Badge with Prominent Portal Branding */}
-          <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black shadow-md border backdrop-blur-md ${
-            listing.sourcePortal === 'REDFIN' ? 'bg-red-600/95 text-white border-red-400/30' :
-            listing.sourcePortal === 'ZILLOW' ? 'bg-blue-600/95 text-white border-blue-400/30' :
-            listing.sourcePortal === 'APARTMENTS_COM' ? 'bg-emerald-600/95 text-white border-emerald-400/30' :
-            listing.sourcePortal === 'TRULIA' ? 'bg-teal-600/95 text-white border-teal-400/30' :
-            listing.sourcePortal === 'REALTOR' ? 'bg-amber-600/95 text-white border-amber-400/30' :
-            'bg-white/95 text-slate-800 border-slate-200'
-          }`}>
-            <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
-            <span className="uppercase tracking-wider text-[10px]">
-              Scraped from {listing.sourcePortal === 'APARTMENTS_COM' ? 'Apartments.com' : listing.sourcePortal === 'REALTOR' ? 'Realtor.com' : listing.sourcePortal ? (listing.sourcePortal.charAt(0) + listing.sourcePortal.slice(1).toLowerCase()) : 'Portal'}
+          {/* Clean Classy Verified MLS Badge */}
+          <div className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold shadow-md border backdrop-blur-md bg-white/95 text-slate-850 border-slate-200">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="uppercase tracking-wider text-[10px] font-mono text-slate-800">
+              Verified MLS
             </span>
           </div>
         </div>
@@ -294,17 +287,11 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className={`flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-[11px] font-black uppercase tracking-wider transition-all border shadow-sm ${
-                  listing.sourcePortal === 'REDFIN' ? 'bg-red-50 hover:bg-red-100 text-red-700 border-red-200' :
-                  listing.sourcePortal === 'ZILLOW' ? 'bg-blue-50 hover:bg-blue-100 text-blue-700 border-blue-200' :
-                  listing.sourcePortal === 'APARTMENTS_COM' ? 'bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border-emerald-200' :
-                  listing.sourcePortal === 'TRULIA' ? 'bg-teal-50 hover:bg-teal-100 text-teal-800 border-teal-200' :
-                  'bg-amber-50 hover:bg-amber-100 text-amber-800 border-amber-200'
-                }`}
-                title={`Open authentic listing on ${listing.sourcePortal || 'Portal'}`}
+                className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 shadow-sm"
+                title="View Official Verified Listing"
               >
-                <span>{listing.sourcePortal === 'APARTMENTS_COM' ? 'Apartments' : listing.sourcePortal === 'REALTOR' ? 'Realtor' : listing.sourcePortal ? (listing.sourcePortal.charAt(0) + listing.sourcePortal.slice(1).toLowerCase()) : 'Portal'}</span>
-                <ExternalLink className="w-3 h-3" />
+                <span>View Listing</span>
+                <ExternalLink className="w-3 h-3 text-slate-400" />
               </a>
             )}
 
