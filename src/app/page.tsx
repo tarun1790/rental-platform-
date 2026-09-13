@@ -59,7 +59,8 @@ import {
   CheckCircle2,
   Activity,
   ExternalLink,
-  TrendingUp
+  TrendingUp,
+  X
 } from 'lucide-react';
 
 export default function Home() {
@@ -139,7 +140,6 @@ export default function Home() {
   }, [allListings]);
 
   const dashboardRef = useRef<HTMLDivElement>(null);
-  const housesSectionRef = useRef<HTMLDivElement>(null);
 
   const handleScrollToDashboard = () => {
     const el = document.getElementById('dashboard-section');
@@ -152,13 +152,6 @@ export default function Home() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleScrollToHouses = () => {
-    const el = document.getElementById('houses-section');
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  };
-
   const handleOpenProperty = (listing: ShikaakPropertyListing) => {
     if (typeof window !== 'undefined' && window.location.pathname.startsWith('/rental-platform-')) {
       window.location.href = `/rental-platform-/property/${listing.id}/`;
@@ -169,13 +162,6 @@ export default function Home() {
 
   const handleSelectPropertyFromMap = (listing: ShikaakPropertyListing) => {
     setSelectedListing(listing);
-    // Smoothly scroll down to that selected house card below the map
-    setTimeout(() => {
-      const cardEl = document.getElementById(`house-${listing.id}`);
-      if (cardEl) {
-        cardEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-    }, 150);
   };
 
   // Live Real-Time Multi-Portal Crawler Trigger
@@ -543,37 +529,45 @@ export default function Home() {
         />
 
         {/* Instant US Metro Quick-Switcher Strip */}
-        <div className="w-full px-4 sm:px-8 lg:px-12 py-2.5 bg-white border-b border-slate-100 flex items-center gap-2 overflow-x-auto text-xs scrollbar-none">
-          <div className="flex items-center gap-1.5 text-slate-400 font-bold uppercase tracking-wider text-[10px] shrink-0 mr-1">
-            <MapPin className="w-3.5 h-3.5 text-red-500" />
-            <span>Top Metros:</span>
+        <div className="w-full px-4 sm:px-8 lg:px-12 py-2 bg-white border-b border-slate-100 flex items-center justify-between gap-4 overflow-x-auto text-xs scrollbar-none">
+          <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none">
+            <div className="flex items-center gap-1.5 text-slate-400 font-bold uppercase tracking-wider text-[10px] shrink-0 mr-1">
+              <MapPin className="w-3.5 h-3.5 text-red-500" />
+              <span>Top Metros:</span>
+            </div>
+            {US_METRO_PILLS.map((m) => {
+              const isActive = activeMetroPill === m.name || (filters.searchQuery && filters.searchQuery.toLowerCase().includes(m.name.toLowerCase()));
+              return (
+                <button
+                  key={m.name}
+                  onClick={() => {
+                    setActiveMetroPill(m.name);
+                    handleTriggerLiveCrawl(`${m.name} homes`, undefined, { searchQuery: m.name });
+                  }}
+                  className={`flex items-center gap-1.5 px-3 py-1 rounded-full font-bold text-xs whitespace-nowrap transition-all cursor-pointer ${
+                    isActive
+                      ? 'bg-red-600 text-white shadow-sm shadow-red-200'
+                      : 'bg-slate-50 text-slate-700 hover:bg-red-50 hover:text-red-600 border border-slate-200/80'
+                  }`}
+                >
+                  <span>{m.emoji}</span>
+                  <span>{m.name}, {m.state}</span>
+                </button>
+              );
+            })}
           </div>
-          {US_METRO_PILLS.map((m) => {
-            const isActive = activeMetroPill === m.name || (filters.searchQuery && filters.searchQuery.toLowerCase().includes(m.name.toLowerCase()));
-            return (
-              <button
-                key={m.name}
-                onClick={() => {
-                  setActiveMetroPill(m.name);
-                  handleTriggerLiveCrawl(`${m.name} homes`, undefined, { searchQuery: m.name });
-                }}
-                className={`flex items-center gap-1.5 px-3 py-1 rounded-full font-bold text-xs whitespace-nowrap transition-all cursor-pointer ${
-                  isActive
-                    ? 'bg-red-600 text-white shadow-sm shadow-red-200'
-                    : 'bg-slate-50 text-slate-700 hover:bg-red-50 hover:text-red-600 border border-slate-200/80'
-                }`}
-              >
-                <span>{m.emoji}</span>
-                <span>{m.name}, {m.state}</span>
-              </button>
-            );
-          })}
+
+          <div className="hidden sm:flex items-center gap-2 shrink-0 text-xs font-mono text-slate-600 bg-slate-50 border border-slate-200 px-3 py-1 rounded-full">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="font-bold text-slate-900">{filteredListings.length}</span>
+            <span>Homes on Map</span>
+          </div>
         </div>
 
         {/* ============================================================ */}
-        {/* SECTION UP: FULL-WIDTH INTERACTIVE SATELLITE MAP ON TOP     */}
+        {/* EXPANSIVE INTERACTIVE COMMAND DASHBOARD MAP                   */}
         {/* ============================================================ */}
-        <section className="w-full h-[48vh] sm:h-[55vh] lg:h-[58vh] relative bg-slate-100 border-b border-slate-200 z-10">
+        <section className="w-full h-[calc(100vh-140px)] min-h-[620px] relative bg-slate-100 overflow-hidden z-10">
           <ScribbleMap
             listings={filteredListings}
             selectedListing={selectedListing}
@@ -585,267 +579,140 @@ export default function Home() {
             onOpenFullDetail={handleOpenProperty}
           />
 
-          {/* Quick Glide Down Button */}
-          <button
-            onClick={handleScrollToHouses}
-            className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 px-4 py-2 bg-white/95 text-red-500 border border-slate-300 rounded-full shadow-sm text-xs font-bold uppercase tracking-wider hover:bg-red-500 hover:text-white transition-all"
-          >
-            <span>View {filteredListings.length} Houses Below</span>
-            <ArrowDown className="w-3.5 h-3.5" />
-          </button>
-        </section>
-
-        {/* ============================================================ */}
-        {/* SECTION DOWN: SPACIOUS HOUSE DETAILS GRID UNDERNEATH THE MAP */}
-        {/* ============================================================ */}
-        <section 
-          ref={housesSectionRef}
-          id="houses-section"
-          className="w-full px-4 sm:px-8 lg:px-12 py-8 sm:py-10 space-y-8"
-        >
-          {/* Clean Classy Loading State when Scanning */}
-          {isLiveCrawling ? (
-            <div className="py-20 flex flex-col items-center justify-center text-center space-y-4">
-              <div className="relative">
-                <div className="w-14 h-14 rounded-full border-4 border-red-200 border-t-red-600 animate-spin" />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <Building className="w-5 h-5 text-red-600 animate-pulse" />
-                </div>
-              </div>
-              <div className="space-y-1">
-                <h3 className="text-lg font-bold text-slate-900 tracking-tight">
-                  Scanning Luxury Residences...
-                </h3>
-                <p className="text-xs text-slate-500 max-w-sm mx-auto">
-                  Retrieving verified property telemetry, school ratings, and valuation metrics for your criteria.
-                </p>
-              </div>
+          {/* Real-time Scanning Floating HUD Indicator */}
+          {isLiveCrawling && (
+            <div className="absolute top-4 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2.5 px-5 py-2.5 bg-slate-950/90 text-white rounded-full shadow-2xl border border-red-500/40 backdrop-blur-md animate-in fade-in">
+              <RotateCw className="w-4 h-4 text-red-500 animate-spin" />
+              <span className="text-xs font-bold tracking-wide">
+                Scanning Verified MLS Inventory for "{filters.searchQuery || 'Criteria'}"...
+              </span>
             </div>
-          ) : (
-            <>
-              {/* 1. SELECTED HOUSE SPOTLIGHT (APPEARS DIRECTLY BELOW THE MAP WHEN A PIN IS CLICKED) */}
-              {selectedListing && (
-                <div className="w-full max-w-full overflow-hidden p-5 sm:p-6 rounded-3xl bg-slate-50 border-2 border-red-200 shadow-md flex flex-col lg:flex-row items-center gap-6">
-                  <div className="w-full lg:w-80 lg:max-w-[340px] h-56 rounded-2xl overflow-hidden shrink-0 border border-slate-200 relative group">
-                    <img
-                      src={selectedListing.media.featuredImage}
-                      alt={selectedListing.title}
-                      onError={(e) => {
-                        (e.currentTarget as HTMLImageElement).src = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80';
-                      }}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                    <div className="absolute top-3 left-3 flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold shadow-md border bg-white/95 text-slate-900 border-slate-200">
-                      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                      <span className="uppercase tracking-wider text-[10px] font-mono text-slate-800">
-                        Verified MLS Residence
-                      </span>
-                    </div>
+          )}
+
+          {/* FLOATING LUXURY SELECTED RESIDENCE PREVIEW CARD */}
+          {selectedListing && (
+            <div className="absolute bottom-4 left-4 sm:bottom-6 sm:left-6 z-30 max-w-xl w-[calc(100%-2rem)] sm:w-[500px] bg-white/95 backdrop-blur-md rounded-3xl border border-slate-200 shadow-2xl p-4 sm:p-5 transition-all duration-300 animate-in fade-in slide-in-from-bottom-4">
+              <div className="flex items-start justify-between gap-2 mb-3">
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span className="uppercase tracking-wider text-[10px] font-mono text-slate-800 font-bold mr-1">
+                    Verified MLS
+                  </span>
+                  <span className="px-2 py-0.5 bg-red-600 text-white rounded-full text-[10px] font-bold font-mono shadow-sm">
+                    Pass/Flow {selectedListing.financials.outputs.passFlowScore.toFixed(1)} / 5.0
+                  </span>
+                  <span className="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded-full text-[10px] font-bold font-mono border border-emerald-200">
+                    Cap {selectedListing.financials.outputs.capRatePercent.toFixed(1)}%
+                  </span>
+                </div>
+                <button
+                  onClick={() => setSelectedListing(null)}
+                  className="p-1.5 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer shrink-0"
+                  title="Close preview"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-3.5 items-center">
+                <div className="w-full sm:w-36 h-28 rounded-2xl overflow-hidden shrink-0 border border-slate-200 relative group">
+                  <img
+                    src={selectedListing.media.featuredImage}
+                    alt={selectedListing.title}
+                    onError={(e) => {
+                      (e.currentTarget as HTMLImageElement).src = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80';
+                    }}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
+
+                <div className="flex-1 min-w-0 space-y-1 w-full">
+                  <h4 className="text-base font-black text-slate-900 truncate tracking-tight">
+                    {selectedListing.title}
+                  </h4>
+                  <p className="text-xs text-slate-500 truncate">
+                    {selectedListing.propertyAddress.street}, {selectedListing.propertyAddress.city}, {selectedListing.propertyAddress.state}
+                  </p>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-lg font-bold text-red-600 font-mono">
+                      {selectedListing.listingStatus === 'FOR_RENT'
+                        ? `${formatCurrency(selectedListing.financials.inputs.monthlyGrossRent)}/mo`
+                        : formatCurrency(selectedListing.financials.inputs.purchasePrice)}
+                    </span>
+                    <span className="text-[11px] text-slate-500">
+                      • {selectedListing.specs.beds} Beds • {selectedListing.specs.baths} Baths • {(selectedListing.specs.finishedSqFt || 1800).toLocaleString()} sqft
+                    </span>
                   </div>
 
-                  <div className="flex-1 min-w-0 space-y-2.5">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="px-3 py-0.5 bg-red-600 text-white rounded-full text-xs font-bold font-mono shadow-sm">
-                        Pass/Flow {selectedListing.financials.outputs.passFlowScore.toFixed(1)} / 5.0
-                      </span>
-                      <span className="px-3 py-0.5 bg-emerald-100 text-emerald-800 rounded-full text-xs font-bold font-mono border border-emerald-200">
-                        Cap Rate: {selectedListing.financials.outputs.capRatePercent.toFixed(2)}%
-                      </span>
-                      {selectedListing.financials.outputs.monthlyNetCashFlow !== undefined && (
-                        <span className="px-3 py-0.5 bg-white text-slate-700 rounded-full text-xs font-bold font-mono border border-slate-200">
-                          Cash Flow: {selectedListing.financials.outputs.monthlyNetCashFlow >= 0 ? `+${formatCurrency(selectedListing.financials.outputs.monthlyNetCashFlow)}/mo` : `${formatCurrency(selectedListing.financials.outputs.monthlyNetCashFlow)}/mo`}
+                  {/* Nearby Highlights */}
+                  {(() => {
+                    const sm = resolveUsMetro(selectedListing.propertyAddress?.city || 'Chicago');
+                    const pois = (selectedListing.nearbyPointsOfInterest && selectedListing.nearbyPointsOfInterest.length > 0)
+                      ? selectedListing.nearbyPointsOfInterest
+                      : [...(sm.topSchools || []), ...(sm.topMalls || [])];
+                    const firstPoi = pois[0];
+                    if (!firstPoi) return null;
+                    return (
+                      <div className="flex items-center gap-1.5 text-[11px] text-slate-600 pt-0.5">
+                        <span className="font-semibold truncate max-w-[200px]">{firstPoi.name}</span>
+                        <span className="px-1.5 py-0.2 rounded bg-amber-50 text-amber-900 border border-amber-200 text-[10px] font-mono font-bold shrink-0">
+                          ★ {firstPoi.ratingScore} {firstPoi.type === 'SCHOOL' ? 'GreatSchools' : 'Mall'}
                         </span>
-                      )}
-                      <span className="px-3 py-0.5 bg-white text-slate-700 rounded-full text-xs font-medium border border-slate-200">
-                        {selectedListing.propertyAddress.city}, {selectedListing.propertyAddress.state} ({selectedListing.timezone?.timeZoneCode || 'CST'})
-                      </span>
-                    </div>
+                      </div>
+                    );
+                  })()}
 
-                    <div>
-                      <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-                        {selectedListing.title}
-                      </h3>
-                      <p className="text-xs text-slate-500 font-normal">
-                        {selectedListing.propertyAddress.street}, {selectedListing.propertyAddress.neighborhood}
-                      </p>
-                    </div>
-
-                    <div className="flex flex-wrap items-baseline gap-3">
-                      <span className="text-2xl font-bold text-red-600 font-mono">
-                        {selectedListing.listingStatus === 'FOR_RENT'
-                          ? `${formatCurrency(selectedListing.financials.inputs.monthlyGrossRent)}/mo`
-                          : formatCurrency(selectedListing.financials.inputs.purchasePrice)}
-                      </span>
-                      <span className="text-xs font-medium text-slate-400 font-mono">
-                        {selectedListing.listingStatus === 'FOR_RENT'
-                          ? `Est. Move-In: ${formatCurrency(selectedListing.financials.inputs.monthlyGrossRent * 2 + 50)}`
-                          : `${formatCurrency(selectedListing.financials.inputs.monthlyGrossRent)}/mo rent`}
-                      </span>
-                      <span className="text-xs font-medium text-slate-600">
-                        • {selectedListing.specs.beds} Beds • {selectedListing.specs.baths} Baths • {(selectedListing.specs.finishedSqFt || 1800).toLocaleString()} sq ft
-                      </span>
-                    </div>
-
-                    {/* SCHOOLS & MALLS HIGHLIGHT CHIPS IN SPOTLIGHT */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
-                      {(() => {
-                        const sm = resolveUsMetro(selectedListing.propertyAddress?.city || 'Chicago');
-                        const pois = (selectedListing.nearbyPointsOfInterest && selectedListing.nearbyPointsOfInterest.length > 0)
-                          ? selectedListing.nearbyPointsOfInterest
-                          : [...(sm.topSchools || []), ...(sm.topMalls || [])];
-                        return pois.slice(0, 2).map((poi) => (
-                          <div key={poi.id} className="flex items-center justify-between p-2 rounded-xl bg-white border border-slate-200 text-xs">
-                            <div className="flex items-center gap-1.5 truncate mr-2">
-                              {poi.type === 'SCHOOL' ? (
-                                <GraduationCap className="w-3.5 h-3.5 text-red-500 shrink-0" />
-                              ) : (
-                                <ShoppingBag className="w-3.5 h-3.5 text-red-500 shrink-0" />
-                              )}
-                              <span className="font-bold text-slate-800 truncate">{poi.name}</span>
-                              <span className="text-slate-400 font-mono">({poi.distanceKm} km)</span>
-                            </div>
-                            <span className="px-2 py-0.5 rounded-lg bg-amber-50 text-amber-900 border border-amber-200 font-bold font-mono text-[10px] shrink-0">
-                              ★ {poi.ratingScore} {poi.type === 'SCHOOL' ? '/10 GreatSchools' : '/5.0 Mall'}
-                            </span>
-                          </div>
-                        ));
-                      })()}
-                    </div>
-                  </div>
-
-                  <div className="shrink-0 flex flex-col sm:flex-row lg:flex-col gap-2.5 w-full lg:w-auto">
+                  {/* Action buttons */}
+                  <div className="flex items-center gap-2 pt-1.5 flex-wrap">
+                    <button
+                      onClick={() => handleOpenProperty(selectedListing)}
+                      className="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold transition-all cursor-pointer shadow-sm"
+                    >
+                      Open Full Intelligence →
+                    </button>
+                    <button
+                      onClick={() => setRoiModalListing(selectedListing)}
+                      className="px-2.5 py-1.5 bg-white border border-red-200 hover:bg-red-50 text-red-600 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1"
+                    >
+                      <Calculator className="w-3.5 h-3.5" />
+                      <span>ROI</span>
+                    </button>
                     {selectedListing.externalUrl && (
                       <a
                         href={selectedListing.externalUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 shadow-sm flex items-center justify-center gap-1.5 cursor-pointer"
+                        className="px-2.5 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
                         title="View Official Verified Listing"
                       >
-                        <span>View Official Listing</span>
-                        <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
+                        <span>Listing</span>
+                        <ExternalLink className="w-3 h-3 text-slate-400" />
                       </a>
                     )}
-
-                    <button
-                      onClick={() => setRoiModalListing(selectedListing)}
-                      className="px-5 py-2.5 bg-white border border-red-200 hover:bg-red-50 text-red-500 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-                    >
-                      <Calculator className="w-4 h-4 text-red-500" />
-                      <span>ROI Underwriter</span>
-                    </button>
-
-                    <button
-                      onClick={() => handleOpenProperty(selectedListing)}
-                      className="px-5 py-2.5 bg-red-500 hover:bg-red-600 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all text-center cursor-pointer"
-                    >
-                      Open Full Intelligence →
-                    </button>
                   </div>
                 </div>
-              )}
-            </>
+              </div>
+            </div>
           )}
 
-          {/* 2. Feed Title & Quick Controls Bar */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4 pt-2">
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <span className="text-xs font-bold uppercase tracking-wider text-red-500">
-                  Verified Real Estate Telemetry
-                </span>
-                {scribblePolygon && (
-                  <span className="px-2.5 py-0.5 text-[10px] font-medium bg-red-50 text-red-700 border border-red-200 rounded-full">
-                    Boundary Scan Active
-                  </span>
-                )}
+          {/* Empty Match Floating Notification */}
+          {filteredListings.length === 0 && !isLiveCrawling && (
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 max-w-md w-[calc(100%-2rem)] bg-white/95 backdrop-blur-md rounded-3xl border border-red-200 shadow-2xl p-6 text-center space-y-3 animate-in fade-in">
+              <div className="w-12 h-12 rounded-2xl bg-red-600 text-white flex items-center justify-center mx-auto shadow-md">
+                <Globe className="w-6 h-6 animate-pulse" />
               </div>
-              <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">
-                {filteredListings.length} Luxury Residences Available
-              </h2>
-              <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
-                Every residence features complete nearby school ratings (GreatSchools), premier shopping malls (★ ratings), neighborhood safety, parks, and interactive custom ROI underwriting.
-              </p>
-            </div>
-
-            {/* Sort Dropdown */}
-            <div className="flex items-center gap-3 shrink-0">
-              <span className="text-xs font-medium text-slate-500 hidden sm:inline">Sort By:</span>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as any)}
-                className="text-xs font-medium bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-800 focus:outline-none focus:border-red-400 shadow-sm cursor-pointer transition-all"
-              >
-                <option value="SCORE_DESC">Decision Fit Score (Personalized)</option>
-                <option value="PRICE_ASC">Price: Low to High</option>
-                <option value="PRICE_DESC">Price: High to Low</option>
-                <option value="SQFT_DESC">Largest Finished Area</option>
-                <option value="CAPRATE_DESC">Highest Cap Rate (%)</option>
-              </select>
-            </div>
-          </div>
-
-          {/* 3. FULL-WIDTH RESPONSIVE HOUSE DETAILS GRID */}
-          {filteredListings.length > 0 ? (
-            <div className="space-y-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {displayedListings.map((listing) => (
-                  <PropertyCard
-                    key={listing.id}
-                    listing={listing}
-                    buyerWeights={buyerWeights}
-                    isSelected={selectedListing?.id === listing.id}
-                    onSelect={(item) => setSelectedListing(item)}
-                    onOpenDetail={(item) => handleOpenProperty(item)}
-                    onOpenRoiCalculator={(item) => setRoiModalListing(item)}
-                  />
-                ))}
-              </div>
-
-              {/* Progressive Pagination (Load More Residences) */}
-              {visibleCount < filteredListings.length && (
-                <div className="pt-6 pb-2 flex flex-col items-center justify-center gap-3">
-                  <p className="text-xs text-slate-500 font-medium">
-                    Showing {displayedListings.length} of {filteredListings.length} verified residences
-                  </p>
-                  <button
-                    onClick={() => setVisibleCount((prev) => Math.min(prev + 16, filteredListings.length))}
-                    className="px-8 py-3.5 bg-white hover:bg-slate-50 text-slate-800 font-bold rounded-2xl text-xs uppercase tracking-wider border border-slate-300 shadow-sm hover:shadow transition-all cursor-pointer flex items-center gap-2"
-                  >
-                    <span>Load More Residences (+16)</span>
-                    <ChevronDown className="w-4 h-4 text-slate-400" />
-                  </button>
-                </div>
-              )}
-            </div>
-          ) : (
-            <div className="py-14 text-center bg-red-50/40 rounded-3xl border-2 border-red-200 p-8 space-y-4 max-w-xl mx-auto shadow-sm">
-              <div className="w-14 h-14 rounded-2xl bg-red-600 text-white flex items-center justify-center mx-auto shadow-md shadow-red-200">
-                <Globe className="w-7 h-7 animate-pulse" />
-              </div>
-              <h3 className="text-base sm:text-lg font-black text-slate-900">
+              <h3 className="text-base font-black text-slate-900">
                 No Residences Found for "{filters.searchQuery || 'Current Filters'}"
               </h3>
-              <p className="text-xs text-slate-600 max-w-md mx-auto leading-relaxed">
-                No properties matched these exact criteria. Scan verified real-time MLS inventory or reset your search filters to explore available luxury residences.
+              <p className="text-xs text-slate-500">
+                Scan verified real-time MLS inventory or reset your criteria to view active homes on the map.
               </p>
-              <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-2.5">
+              <div className="flex items-center justify-center gap-2 pt-1">
                 <button
                   onClick={() => handleTriggerLiveCrawl(filters.searchQuery)}
-                  disabled={isLiveCrawling}
-                  className="px-6 py-3 bg-red-600 hover:bg-red-700 disabled:bg-slate-300 text-white font-bold rounded-2xl text-xs uppercase tracking-wider transition-all shadow-md flex items-center gap-2 cursor-pointer"
+                  className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-all shadow-md cursor-pointer"
                 >
-                  {isLiveCrawling ? (
-                    <>
-                      <RotateCw className="w-4 h-4 animate-spin" />
-                      <span>Scanning Inventory...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles className="w-4 h-4" />
-                      <span>Scan Verified MLS (Enter ↵)</span>
-                    </>
-                  )}
+                  Scan Verified MLS
                 </button>
                 <button
                   onClick={() => {
@@ -865,7 +732,7 @@ export default function Home() {
                       maxDistanceToSchoolKm: 10,
                     });
                   }}
-                  className="px-4 py-3 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 font-bold rounded-2xl text-xs transition-all cursor-pointer"
+                  className="px-4 py-2 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 font-bold rounded-xl text-xs transition-all cursor-pointer"
                 >
                   Reset Filters
                 </button>
@@ -873,10 +740,31 @@ export default function Home() {
             </div>
           )}
         </section>
+
+        {/* Sleek Institutional Bottom Status Bar */}
+        <div className="w-full bg-slate-950 text-slate-400 text-[11px] px-4 sm:px-8 py-2.5 flex flex-col sm:flex-row items-center justify-between gap-2 border-t border-slate-800 select-none z-20 shrink-0">
+          <div className="flex items-center gap-2">
+            <span className="font-bold text-white tracking-wider text-xs">HOUSE INTELLIGENCE</span>
+            <span>•</span>
+            <span>Verified Real-Time MLS Telemetry</span>
+            <span>•</span>
+            <span className="text-emerald-400 flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              Telemetry Live
+            </span>
+          </div>
+          <div className="flex items-center gap-4 text-slate-400">
+            <span>{filteredListings.length} Active Residences on Map</span>
+            <span>•</span>
+            <span>Equal Housing Opportunity</span>
+            <span>•</span>
+            <span>© 2026</span>
+          </div>
+        </div>
       </div>
 
       {/* Comprehensive Institutional Footer */}
-      <footer className="w-full bg-slate-950 text-white border-t border-slate-800 mt-16 select-none">
+      <footer className="w-full bg-slate-950 text-white border-t border-slate-800 select-none">
         <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 py-12">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-10">
             {/* Brand Column */}
