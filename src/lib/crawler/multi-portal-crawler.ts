@@ -26,6 +26,7 @@ export type PortalSource =
   | 'VALUATION_ENGINE'
   | 'TELEMETRY'
   | 'EXA_AI_NEURAL'
+  | 'N8N_AUTOMATION'
   | 'ZILLOW'
   | 'REDFIN'
   | 'REALTOR'

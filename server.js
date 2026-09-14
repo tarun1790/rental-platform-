@@ -83,12 +83,26 @@ nextApp.prepare().then(() => {
     });
   });
 
-  // Unified property dataset loader (550+ authentic multi-portal listings + benchmark listings)
+  // In-memory dynamic pool of n8n ingested listings
+  const n8nDynamicListings = [];
+  const n8nIngestTelemetry = {
+    configuredWebhookUrl: process.env.N8N_WEBHOOK_URL || null,
+    totalIngestedCount: 0,
+    lastIngestedAt: null,
+    lastIngestStatus: 'IDLE',
+  };
+
+  // Unified property dataset loader (550+ authentic multi-portal listings + dynamic n8n listings)
   function getAllPropertiesDataset() {
-    let dataset = [];
+    let dataset = [...n8nDynamicListings];
     try {
       const liveData = require('./src/data/live-crawled-portals.json');
-      if (Array.isArray(liveData)) dataset.push(...liveData);
+      if (Array.isArray(liveData)) {
+        const existingIds = new Set(dataset.map(p => p.id));
+        for (const p of liveData) {
+          if (!existingIds.has(p.id)) dataset.push(p);
+        }
+      }
     } catch (e) {}
 
     try {
@@ -454,7 +468,62 @@ nextApp.prepare().then(() => {
       let candidates = [];
       let exaResults = [];
 
-      // 1. Live Exa.ai neural search across portals
+      // Retrieve n8n webhook URL from headers, body, or environment
+      const n8nWebhookUrl = (
+        payload.n8nWebhookUrl ||
+        req.headers['x-n8n-webhook-url'] ||
+        process.env.N8N_WEBHOOK_URL ||
+        ''
+      ).trim();
+
+      let n8nTriggered = false;
+      // 1. Live n8n automated scraper pipeline across portals
+      if (n8nWebhookUrl) {
+        try {
+          console.log(`[n8n] Dispatching live search to n8n webhook: ${n8nWebhookUrl} for "${query}" (${metro.city})...`);
+          const n8nController = new AbortController();
+          const n8nTimeout = setTimeout(() => n8nController.abort(), 6000);
+          const n8nRes = await fetch(n8nWebhookUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'User-Agent': 'RentalPlatform-Backend/1.0',
+            },
+            body: JSON.stringify({
+              query,
+              metro: metro.city,
+              state: metro.stateCode,
+              bedsMin,
+              listingStatus,
+              propertyType,
+              limit: Math.min(limit, 50),
+            }),
+            signal: n8nController.signal,
+          });
+          clearTimeout(n8nTimeout);
+
+          if (n8nRes.ok) {
+            const n8nData = await n8nRes.json();
+            const n8nListings = Array.isArray(n8nData) 
+              ? n8nData 
+              : (n8nData.listings || n8nData.data || []);
+
+            if (Array.isArray(n8nListings) && n8nListings.length > 0) {
+              console.log(`[n8n] Successfully received ${n8nListings.length} normalized listings from n8n automation!`);
+              n8nTriggered = true;
+              for (const item of n8nListings) {
+                if (item && item.id && !candidates.some(c => c.id === item.id)) {
+                  candidates.push(item);
+                }
+              }
+            }
+          }
+        } catch (n8nErr) {
+          console.warn(`[n8n] Webhook execution skipped/failed: ${n8nErr.message}. Proceeding with resilient fallback.`);
+        }
+      }
+
+      // 2. Live Exa.ai neural search across portals
       if (exaApiKey) {
         console.log(`[EXA_AI] Executing live neural search for: "${query}" across Zillow, Redfin, Realtor...`);
         exaResults = await callExaSearch(query, exaApiKey, 20);
@@ -638,9 +707,11 @@ nextApp.prepare().then(() => {
         if (portalMatches.length > 0) candidates = portalMatches;
       }
 
-      const portalsScanned = exaResults.length > 0
-        ? ['EXA_AI_NEURAL', 'ZILLOW', 'REDFIN', 'REALTOR', 'APARTMENTS_COM', 'TRULIA']
-        : ['ZILLOW', 'REDFIN', 'REALTOR', 'APARTMENTS_COM', 'TRULIA'];
+      const portalsScanned = [
+        ...(n8nTriggered ? ['N8N_AUTOMATION'] : []),
+        ...(exaResults.length > 0 ? ['EXA_AI_NEURAL'] : []),
+        'ZILLOW', 'REDFIN', 'REALTOR', 'APARTMENTS_COM', 'TRULIA'
+      ];
 
       const portalCounts = {
         ALL: candidates.length,
@@ -675,6 +746,88 @@ nextApp.prepare().then(() => {
 
   server.get('/api/crawl', handleCrawl);
   server.post('/api/crawl', handleCrawl);
+
+  // =========================================================================
+  // API ROUTE: /api/n8n/ingest (POST Webhook Ingest from n8n Automation)
+  // Allows n8n workflows to push crawled & normalized listings directly into the platform
+  // =========================================================================
+  server.post('/api/n8n/ingest', (req, res) => {
+    try {
+      const payload = req.body || {};
+      const expectedSecret = process.env.N8N_INGEST_SECRET;
+      
+      if (expectedSecret) {
+        const receivedSecret = req.headers['x-n8n-secret'] || payload.secret;
+        if (receivedSecret !== expectedSecret) {
+          return res.status(401).json({ success: false, error: 'Unauthorized: Invalid n8n ingest secret' });
+        }
+      }
+
+      const rawListings = Array.isArray(payload) ? payload : (payload.listings || payload.data || []);
+      if (!Array.isArray(rawListings) || rawListings.length === 0) {
+        return res.status(400).json({ success: false, error: 'Bad Request: No listings provided in payload' });
+      }
+
+      let ingestedCount = 0;
+      for (const item of rawListings) {
+        if (!item || !item.id) continue;
+        
+        // Ensure property has full coordinates, address, and specs
+        const city = item.propertyAddress?.city || 'Denver';
+        const metro = resolveServerMetro(city);
+        
+        if (!item.propertyAddress) item.propertyAddress = {};
+        if (!item.propertyAddress.city) item.propertyAddress.city = metro.city;
+        if (!item.propertyAddress.state) item.propertyAddress.state = metro.stateCode;
+        if (!item.propertyAddress.location || !item.propertyAddress.location.latitude) {
+          item.propertyAddress.location = {
+            latitude: metro.centerCoordinates.latitude + (Math.random() * 0.02 - 0.01),
+            longitude: metro.centerCoordinates.longitude + (Math.random() * 0.02 - 0.01),
+          };
+        }
+
+        // Add or update in dynamic listings pool
+        const existingIdx = n8nDynamicListings.findIndex(p => p.id === item.id);
+        if (existingIdx >= 0) {
+          n8nDynamicListings[existingIdx] = item;
+        } else {
+          n8nDynamicListings.unshift(item);
+        }
+        ingestedCount++;
+      }
+
+      n8nIngestTelemetry.totalIngestedCount += ingestedCount;
+      n8nIngestTelemetry.lastIngestedAt = new Date().toISOString();
+      n8nIngestTelemetry.lastIngestStatus = 'SUCCESS';
+
+      console.log(`[n8n] Ingested ${ingestedCount} properties via webhook. Total in memory: ${n8nDynamicListings.length}`);
+
+      return res.status(200).json({
+        success: true,
+        message: `Successfully ingested ${ingestedCount} listings into platform`,
+        totalIngestedCount: n8nIngestTelemetry.totalIngestedCount,
+        lastIngestedAt: n8nIngestTelemetry.lastIngestedAt,
+      });
+    } catch (err) {
+      console.error('[n8n_INGEST_ERROR]', err);
+      return res.status(500).json({ success: false, error: 'Ingestion failed', details: err.message });
+    }
+  });
+
+  // =========================================================================
+  // API ROUTE: /api/n8n/status (GET Connectivity & Telemetry Status)
+  // =========================================================================
+  server.get('/api/n8n/status', (req, res) => {
+    const webhookUrl = process.env.N8N_WEBHOOK_URL || null;
+    return res.status(200).json({
+      status: 'operational',
+      n8nConfigured: !!webhookUrl,
+      webhookUrl: webhookUrl,
+      dynamicListingsCount: n8nDynamicListings.length,
+      telemetry: n8nIngestTelemetry,
+      timestamp: new Date().toISOString(),
+    });
+  });
 
   // =========================================================================
   // API ROUTE: /api/properties
