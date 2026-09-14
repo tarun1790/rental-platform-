@@ -25,6 +25,18 @@ nextApp.prepare().then(() => {
     allowedHeaders: ['Content-Type', 'Authorization'],
   }));
 
+  // Production Security Headers
+  server.use((req, res, nextMiddleware) => {
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+    res.setHeader('X-XSS-Protection', '1; mode=block');
+    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    if (!dev) {
+      res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+    }
+    nextMiddleware();
+  });
+
   // Serve static assets directly from out directory only in production export mode
   if (!dev && fs.existsSync(path.join(__dirname, 'out'))) {
     server.use('/_next', express.static(path.join(__dirname, 'out/_next'), { maxAge: '30d' }));

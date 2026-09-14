@@ -1,0 +1,31 @@
+{{- if and .Values.redis.enabled .Values.redis.persistence.enabled -}}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "rental-platform.fullname" . }}-redis-data
+  labels:
+    {{- include "rental-platform.labels" . | nindent 4 }}
+    app.kubernetes.io/component: redis
+spec:
+  accessModes:
+    - {{ .Values.redis.persistence.accessMode }}
+  resources:
+    requests:
+      storage: {{ .Values.redis.persistence.size }}
+---
+{{- end }}
+{{- if and .Values.n8n.enabled .Values.n8n.persistence.enabled -}}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "rental-platform.fullname" . }}-n8n-data
+  labels:
+    {{- include "rental-platform.labels" . | nindent 4 }}
+    app.kubernetes.io/component: n8n
+spec:
+  accessModes:
+    - {{ .Values.n8n.persistence.accessMode }}
+  resources:
+    requests:
+      storage: {{ .Values.n8n.persistence.size }}
+{{- end }}

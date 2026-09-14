@@ -1,0 +1,15 @@
+{{- if .Values.pdb.enabled }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "rental-platform.fullname" . }}-web
+  labels:
+    {{- include "rental-platform.labels" . | nindent 4 }}
+    app.kubernetes.io/component: web
+spec:
+  minAvailable: {{ .Values.pdb.minAvailable }}
+  selector:
+    matchLabels:
+      {{- include "rental-platform.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: web
+{{- end }}

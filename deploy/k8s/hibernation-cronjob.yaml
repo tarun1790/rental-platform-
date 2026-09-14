@@ -1,0 +1,110 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: rental-hibernation-sa
+  namespace: rental-platform
+  labels:
+    app.kubernetes.io/name: rental-platform
+    app.kubernetes.io/component: hibernation
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: rental-hibernation-role
+  namespace: rental-platform
+  labels:
+    app.kubernetes.io/name: rental-platform
+    app.kubernetes.io/component: hibernation
+rules:
+  - apiGroups: ["apps"]
+    resources: ["deployments", "deployments/scale"]
+    verbs: ["get", "list", "watch", "update", "patch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: rental-hibernation-rolebinding
+  namespace: rental-platform
+  labels:
+    app.kubernetes.io/name: rental-platform
+    app.kubernetes.io/component: hibernation
+subjects:
+  - kind: ServiceAccount
+    name: rental-hibernation-sa
+    namespace: rental-platform
+roleRef:
+  kind: Role
+  name: rental-hibernation-role
+  apiGroup: rbac.authorization.k8s.io
+---
+# Nightly Sleep CronJob: Scales down workloads to 0 replicas during off-peak hours
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: rental-platform-hibernate-sleep
+  namespace: rental-platform
+  labels:
+    app.kubernetes.io/name: rental-platform
+    app.kubernetes.io/component: hibernation
+spec:
+  schedule: "0 22 * * *" # Every night at 22:00 UTC
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: rental-platform
+            app.kubernetes.io/component: hibernation-sleep
+        spec:
+          serviceAccountName: rental-hibernation-sa
+          restartPolicy: OnFailure
+          containers:
+            - name: hibernate
+              image: bitnami/kubectl:latest
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  echo "[HIBERNATION] Scaling down rental platform workloads for cloud cost optimization..."
+                  kubectl scale deployment rental-platform-web --replicas=0 -n rental-platform
+                  kubectl scale deployment rental-platform-n8n --replicas=0 -n rental-platform
+                  echo "[HIBERNATION] Sleep mode successfully activated."
+---
+# Morning Wake CronJob: Restores high-availability production workloads before peak hours
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: rental-platform-hibernate-wake
+  namespace: rental-platform
+  labels:
+    app.kubernetes.io/name: rental-platform
+    app.kubernetes.io/component: hibernation
+spec:
+  schedule: "0 6 * * 1-5" # Monday to Friday at 06:00 UTC
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: rental-platform
+            app.kubernetes.io/component: hibernation-wake
+        spec:
+          serviceAccountName: rental-hibernation-sa
+          restartPolicy: OnFailure
+          containers:
+            - name: wake
+              image: bitnami/kubectl:latest
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  echo "[HIBERNATION] Restoring rental platform workloads to production capacity..."
+                  kubectl scale deployment rental-platform-web --replicas=3 -n rental-platform
+                  kubectl scale deployment rental-platform-n8n --replicas=1 -n rental-platform
+                  echo "[HIBERNATION] Production capacity successfully restored."

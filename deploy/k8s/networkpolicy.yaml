@@ -1,0 +1,56 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: rental-platform-network-policy
+  namespace: rental-platform
+  labels:
+    app.kubernetes.io/name: rental-platform
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: rental-platform
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    # Allow traffic within the namespace
+    - from:
+        - podSelector: {}
+      ports:
+        - protocol: TCP
+          port: 3000
+        - protocol: TCP
+          port: 6379
+        - protocol: TCP
+          port: 5678
+    # Allow incoming traffic from ingress controllers
+    - from:
+        - namespaceSelector: {}
+      ports:
+        - protocol: TCP
+          port: 3000
+        - protocol: TCP
+          port: 5678
+  egress:
+    # Allow DNS resolution
+    - ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+    # Allow communication within namespace
+    - to:
+        - podSelector: {}
+    # Allow outbound HTTPS/HTTP for web crawlers, Exa, and external rental APIs
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+            except:
+              - 10.0.0.0/8
+              - 172.16.0.0/12
+              - 192.168.0.0/16
+      ports:
+        - protocol: TCP
+          port: 443
+        - protocol: TCP
+          port: 80

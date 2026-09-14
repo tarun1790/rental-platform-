@@ -1,0 +1,19 @@
+{{- if .Values.n8n.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "rental-platform.fullname" . }}-n8n
+  labels:
+    {{- include "rental-platform.labels" . | nindent 4 }}
+    app.kubernetes.io/component: n8n
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .Values.n8n.port }}
+      targetPort: {{ .Values.n8n.port }}
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "rental-platform.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: n8n
+{{- end }}

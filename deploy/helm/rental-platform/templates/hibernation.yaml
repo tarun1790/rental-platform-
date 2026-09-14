@@ -1,0 +1,111 @@
+{{- if .Values.hibernation.enabled }}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "rental-platform.fullname" . }}-hibernation-sa
+  labels:
+    {{- include "rental-platform.labels" . | nindent 4 }}
+    app.kubernetes.io/component: hibernation
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ include "rental-platform.fullname" . }}-hibernation-role
+  labels:
+    {{- include "rental-platform.labels" . | nindent 4 }}
+    app.kubernetes.io/component: hibernation
+rules:
+  - apiGroups: ["apps"]
+    resources: ["deployments", "deployments/scale"]
+    verbs: ["get", "list", "watch", "update", "patch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ include "rental-platform.fullname" . }}-hibernation-rb
+  labels:
+    {{- include "rental-platform.labels" . | nindent 4 }}
+    app.kubernetes.io/component: hibernation
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "rental-platform.fullname" . }}-hibernation-sa
+    namespace: {{ .Release.Namespace }}
+roleRef:
+  kind: Role
+  name: {{ include "rental-platform.fullname" . }}-hibernation-role
+  apiGroup: rbac.authorization.k8s.io
+---
+# Nightly Sleep CronJob
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "rental-platform.fullname" . }}-sleep
+  labels:
+    {{- include "rental-platform.labels" . | nindent 4 }}
+    app.kubernetes.io/component: hibernation-sleep
+spec:
+  schedule: {{ .Values.hibernation.sleepSchedule | quote }}
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            {{- include "rental-platform.selectorLabels" . | nindent 12 }}
+            app.kubernetes.io/component: hibernation-sleep
+        spec:
+          serviceAccountName: {{ include "rental-platform.fullname" . }}-hibernation-sa
+          restartPolicy: OnFailure
+          containers:
+            - name: hibernate
+              image: "{{ .Values.hibernation.image.repository }}:{{ .Values.hibernation.image.tag }}"
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  echo "[HIBERNATION] Scaling down workloads for scheduled sleep cycle..."
+                  kubectl scale deployment {{ include "rental-platform.fullname" . }}-web --replicas=0 -n {{ .Release.Namespace }}
+                  {{- if .Values.n8n.enabled }}
+                  kubectl scale deployment {{ include "rental-platform.fullname" . }}-n8n --replicas=0 -n {{ .Release.Namespace }}
+                  {{- end }}
+                  echo "[HIBERNATION] Sleep mode activated."
+---
+# Morning Wake CronJob
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "rental-platform.fullname" . }}-wake
+  labels:
+    {{- include "rental-platform.labels" . | nindent 4 }}
+    app.kubernetes.io/component: hibernation-wake
+spec:
+  schedule: {{ .Values.hibernation.wakeSchedule | quote }}
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            {{- include "rental-platform.selectorLabels" . | nindent 12 }}
+            app.kubernetes.io/component: hibernation-wake
+        spec:
+          serviceAccountName: {{ include "rental-platform.fullname" . }}-hibernation-sa
+          restartPolicy: OnFailure
+          containers:
+            - name: wake
+              image: "{{ .Values.hibernation.image.repository }}:{{ .Values.hibernation.image.tag }}"
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  echo "[HIBERNATION] Restoring workloads to active production capacity..."
+                  kubectl scale deployment {{ include "rental-platform.fullname" . }}-web --replicas={{ .Values.hibernation.wakeWebReplicas }} -n {{ .Release.Namespace }}
+                  {{- if .Values.n8n.enabled }}
+                  kubectl scale deployment {{ include "rental-platform.fullname" . }}-n8n --replicas={{ .Values.hibernation.waken8nReplicas }} -n {{ .Release.Namespace }}
+                  {{- end }}
+                  echo "[HIBERNATION] Active production capacity restored."
+{{- end }}

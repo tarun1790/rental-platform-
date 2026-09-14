@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rental-platform-config
+  namespace: rental-platform
+  labels:
+    app.kubernetes.io/name: rental-platform
+    app.kubernetes.io/component: config
+data:
+  NODE_ENV: "production"
+  PORT: "3000"
+  HOSTNAME: "0.0.0.0"
+  REDIS_URL: "redis://rental-platform-redis:6379"
+  N8N_WEBHOOK_URL: "http://rental-platform-n8n:5678/webhook/scrape-rentals"
+  GENERIC_TIMEZONE: "America/Denver"

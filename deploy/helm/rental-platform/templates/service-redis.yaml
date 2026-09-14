@@ -1,0 +1,19 @@
+{{- if .Values.redis.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "rental-platform.fullname" . }}-redis
+  labels:
+    {{- include "rental-platform.labels" . | nindent 4 }}
+    app.kubernetes.io/component: redis
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .Values.redis.port }}
+      targetPort: {{ .Values.redis.port }}
+      protocol: TCP
+      name: redis
+  selector:
+    {{- include "rental-platform.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: redis
+{{- end }}

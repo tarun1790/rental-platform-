@@ -1,0 +1,14 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: rental-platform-web-pdb
+  namespace: rental-platform
+  labels:
+    app.kubernetes.io/name: rental-platform
+    app.kubernetes.io/component: web
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: rental-platform
+      app.kubernetes.io/component: web

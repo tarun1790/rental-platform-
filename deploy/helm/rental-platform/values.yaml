@@ -1,0 +1,147 @@
+# Default values for rental-platform Helm Chart.
+# Declare variables to be passed into your templates.
+
+global:
+  environment: production
+  timezone: America/Denver
+
+replicaCount: 3
+
+image:
+  repository: ghcr.io/tarun1790/rental-platform
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1001
+  runAsGroup: 1001
+  fsGroup: 1001
+
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: false
+  capabilities:
+    drop:
+      - ALL
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 3000
+
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: 25m
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "120"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "120"
+  hosts:
+    - host: rentals.production.local
+      paths:
+        - path: /
+          pathType: Prefix
+          backend: web
+        - path: /webhook
+          pathType: Prefix
+          backend: n8n
+  tls:
+    - secretName: rental-platform-tls
+      hosts:
+        - rentals.production.local
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 256Mi
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 75
+  targetMemoryUtilizationPercentage: 80
+
+pdb:
+  enabled: true
+  minAvailable: 2
+
+env:
+  NODE_ENV: "production"
+  PORT: "3000"
+  HOSTNAME: "0.0.0.0"
+
+secrets:
+  n8nEncryptionKey: "prod-rental-n8n-secure-encryption-key-32chars"
+  exaApiKey: ""
+  nextauthSecret: "prod-rental-jwt-nextauth-session-key-random64"
+
+redis:
+  enabled: true
+  image:
+    repository: redis
+    tag: 7-alpine
+    pullPolicy: IfNotPresent
+  port: 6379
+  maxMemory: 384mb
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  persistence:
+    enabled: true
+    size: 5Gi
+    accessMode: ReadWriteOnce
+
+n8n:
+  enabled: true
+  image:
+    repository: n8nio/n8n
+    tag: latest
+    pullPolicy: IfNotPresent
+  port: 5678
+  resources:
+    requests:
+      cpu: 200m
+      memory: 512Mi
+    limits:
+      cpu: 1000m
+      memory: 1536Mi
+  persistence:
+    enabled: true
+    size: 10Gi
+    accessMode: ReadWriteOnce
+
+hibernation:
+  enabled: true
+  image:
+    repository: bitnami/kubectl
+    tag: latest
+  sleepSchedule: "0 22 * * *"
+  wakeSchedule: "0 6 * * 1-5"
+  wakeWebReplicas: 3
+  waken8nReplicas: 1
+
+networkPolicy:
+  enabled: true

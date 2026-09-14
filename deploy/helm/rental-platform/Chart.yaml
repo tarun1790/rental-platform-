@@ -1,0 +1,16 @@
+apiVersion: v2
+name: rental-platform
+description: Production-grade Helm chart for Enterprise Rental Platform with Real-time Crawler, n8n, and Hibernation
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+keywords:
+  - rental-platform
+  - real-time-search
+  - n8n
+  - redis
+  - nextjs
+home: https://github.com/tarun1790/rental-platform-
+maintainers:
+  - name: tarun1790
+    email: tarun.jampani45@gmail.com
