@@ -39,11 +39,14 @@ export function getExaApiKey(explicitKey?: string): string | null {
     }
   }
 
-  if (typeof process !== 'undefined' && process.env?.EXA_API_KEY) {
-    return process.env.EXA_API_KEY.trim();
+  if (typeof process !== 'undefined') {
+    const key = process.env.NEXT_PUBLIC_EXA_API_KEY || process.env.EXA_API_KEY;
+    if (key && key.trim()) {
+      return key.trim();
+    }
   }
 
-  return null;
+  return '16188ca6-8926-4fc0-af24-6dc2f92f1d65';
 }
 
 /**

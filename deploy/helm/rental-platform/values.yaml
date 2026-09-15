@@ -91,7 +91,7 @@ env:
 
 secrets:
   n8nEncryptionKey: "prod-rental-n8n-secure-encryption-key-32chars"
-  exaApiKey: ""
+  exaApiKey: "16188ca6-8926-4fc0-af24-6dc2f92f1d65"
   nextauthSecret: "prod-rental-jwt-nextauth-session-key-random64"
 
 redis:

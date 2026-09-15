@@ -5,8 +5,34 @@ delete process.env.DEPLOY_TARGET;
 const express = require('express');
 const next = require('next');
 const cors = require('cors');
-const path = require('path');
 const fs = require('fs');
+const path = require('path');
+
+// Automatically load environment variables from .env and .env.local
+['.env', '.env.local'].forEach((envFile) => {
+  const envPath = path.join(__dirname, envFile);
+  if (fs.existsSync(envPath)) {
+    try {
+      const lines = fs.readFileSync(envPath, 'utf8').split(/\r?\n/);
+      lines.forEach((line) => {
+        const trimmed = line.trim();
+        if (trimmed && !trimmed.startsWith('#')) {
+          const match = trimmed.match(/^([\w.-]+)\s*=\s*(.*)$/);
+          if (match) {
+            const key = match[1];
+            let val = (match[2] || '').trim();
+            if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
+              val = val.slice(1, -1);
+            }
+            if (!process.env[key]) {
+              process.env[key] = val;
+            }
+          }
+        }
+      });
+    } catch (e) {}
+  }
+});
 
 const dev = process.env.NODE_ENV !== 'production';
 const hostname = process.env.HOSTNAME || '0.0.0.0';
@@ -92,6 +118,19 @@ nextApp.prepare().then(() => {
         multiAgentSwarm: 'synchronized',
       },
       version: '1.0.0',
+    });
+  });
+
+  // =========================================================================
+  // API ROUTE: /api/exa/status
+  // =========================================================================
+  server.get('/api/exa/status', (req, res) => {
+    const key = (process.env.EXA_API_KEY || '').trim();
+    res.status(200).json({
+      status: key ? 'active' : 'inactive',
+      connected: !!key,
+      provider: 'Exa.ai Neural Search',
+      domainsCovered: ['zillow.com', 'redfin.com', 'realtor.com', 'apartments.com', 'trulia.com', 'hotpads.com'],
     });
   });
 
@@ -252,6 +291,7 @@ nextApp.prepare().then(() => {
     else if (urlLower.includes('realtor.com')) portal = 'REALTOR';
     else if (urlLower.includes('apartments.com')) portal = 'APARTMENTS_COM';
     else if (urlLower.includes('trulia.com')) portal = 'TRULIA';
+    else if (urlLower.includes('hotpads.com')) portal = 'HOTPADS';
 
     const fullSnippet = `${result.title || ''} ${result.text || ''} ${(result.highlights || []).join(' ')}`;
     const isRental = queryStatus === 'FOR_RENT' || /rent|\/mo|\bmonth\b|apartment|lease|for rent/i.test(fullSnippet) || /for-rent|apartments/i.test(urlLower);
@@ -286,13 +326,43 @@ nextApp.prepare().then(() => {
     const baths = Math.max(1.5, Math.round(beds * 0.75 * 2) / 2);
     const finishedSqFt = beds * 580 + 400;
 
-    const neighList = metro.neighborhoods && metro.neighborhoods.length > 0 ? metro.neighborhoods : [metro.city];
-    const streetList = metro.streetNames && metro.streetNames.length > 0 ? metro.streetNames : ['Main St', 'Grand Ave'];
-    const neighborhood = neighList[index % neighList.length];
-    const street = `${1200 + index * 45} ${streetList[index % streetList.length]}`;
+    let street = '';
+    let neighborhood = metro.neighborhoods && metro.neighborhoods.length > 0 ? metro.neighborhoods[index % metro.neighborhoods.length] : metro.city;
+    let zipCode = metro.primaryZip;
+
+    const titleClean = (result.title || '').replace(/\|.*$/, '').replace(/-.*$/, '').trim();
+    const addrParts = titleClean.split(',').map(s => s.trim());
+    if (addrParts.length >= 1 && /^\d+\s+[A-Za-z]/.test(addrParts[0])) {
+      street = addrParts[0];
+      if (addrParts.length >= 2 && addrParts[1].length > 2 && !/^[A-Z]{2}$/.test(addrParts[1])) {
+        if (metro.neighborhoods && metro.neighborhoods.some(n => n.toLowerCase() === addrParts[1].toLowerCase())) {
+          neighborhood = addrParts[1];
+        }
+      }
+      if (addrParts.length >= 3) {
+        const zipMatch = addrParts[2].match(/\b(\d{5})\b/);
+        if (zipMatch) zipCode = zipMatch[1];
+      }
+    } else {
+      const textStreetMatch = fullSnippet.match(/#?\s*(\d+\s+[A-Za-z0-9\.\s]+(?:St|Street|Ave|Avenue|Blvd|Boulevard|Way|Dr|Drive|Rd|Road|Ln|Lane|Ct|Court|Pl|Place|Pkwy|Parkway))/i);
+      if (textStreetMatch) {
+        street = textStreetMatch[1].trim();
+      } else {
+        const streetList = metro.streetNames && metro.streetNames.length > 0 ? metro.streetNames : ['Main St', 'Grand Ave'];
+        street = `${1200 + index * 45} ${streetList[index % streetList.length]}`;
+      }
+    }
+
+    const globalZipMatch = fullSnippet.match(/\b(6\d{4}|7\d{4}|8\d{4}|9\d{4}|0\d{4}|1\d{4}|2\d{4}|3\d{4}|4\d{4}|5\d{4})\b/);
+    if (globalZipMatch && (!zipCode || zipCode === metro.primaryZip)) {
+      zipCode = globalZipMatch[1];
+    }
 
     const propType = targetType && targetType !== 'ALL' ? targetType : (isRental ? 'CONDO' : 'SINGLE_FAMILY');
     const imageIndex = index % CURATED_PROPERTY_IMAGES.length;
+
+    const latOffset = ((index % 5) - 2) * 0.008 + (index * 0.001);
+    const lngOffset = (Math.floor(index / 5) - 1) * 0.0085 + (index * 0.0012);
 
     return {
       id: `prop_live_exa_${(result.id || String(index)).replace(/[^a-zA-Z0-9]/g, '_').slice(0, 24)}_${Date.now()}`,
@@ -308,10 +378,10 @@ nextApp.prepare().then(() => {
         neighborhood,
         city: metro.city,
         state: metro.stateCode,
-        zipCode: metro.primaryZip,
+        zipCode,
         location: {
-          latitude: Number((metro.centerCoordinates.latitude + (index * 0.0025 - 0.008)).toFixed(4)),
-          longitude: Number((metro.centerCoordinates.longitude + (index * 0.0025 - 0.008)).toFixed(4)),
+          latitude: Number((metro.centerCoordinates.latitude + latOffset).toFixed(4)),
+          longitude: Number((metro.centerCoordinates.longitude + lngOffset).toFixed(4)),
         },
       },
       specs: {
