@@ -2,12 +2,12 @@
 
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { HeroSection } from '../components/home/HeroSection';
 import { Header } from '../components/layout/Header';
 import { PropertyCard } from '../components/property/PropertyCard';
 import { PropertyDetailModal } from '../components/property/PropertyDetailModal';
 import { HouseRoiCalculatorModal } from '../components/property/HouseRoiCalculatorModal';
 import { DatabaseExplorerModal } from '../components/spatial/DatabaseExplorerModal';
+import { OkfExtractionModal } from '../components/okf/OkfExtractionModal';
 import { ScribbleMap } from '../components/map/ScribbleMap';
 import { resolveUsMetro } from '../lib/geo/us-metro-registry';
 import { CHICAGO_LISTINGS } from '../data/chicago-listings';
@@ -33,7 +33,10 @@ import {
   Download, 
   Sparkles,
   TrendingUp,
-  RotateCcw
+  RotateCcw,
+  FileCode,
+  ExternalLink,
+  Compass
 } from 'lucide-react';
 
 const INITIAL_REAL_LISTINGS: ShikaakPropertyListing[] = (() => {
@@ -69,6 +72,9 @@ export default function Home() {
   const [modalListing, setModalListing] = useState<ShikaakPropertyListing | null>(null);
   const [roiModalListing, setRoiModalListing] = useState<ShikaakPropertyListing | null>(null);
   const [showDbModal, setShowDbModal] = useState(false);
+  const [showOkfModal, setShowOkfModal] = useState(false);
+  const [okfModalListing, setOkfModalListing] = useState<ShikaakPropertyListing | null>(null);
+  const [activeView, setActiveView] = useState<'split' | 'list' | 'map'>('split');
 
   // Live Crawler State
   const [isLiveCrawling, setIsLiveCrawling] = useState(false);
@@ -140,13 +146,6 @@ export default function Home() {
 
   const dashboardRef = useRef<HTMLDivElement>(null);
 
-  const handleScrollToDashboard = () => {
-    const el = document.getElementById('dashboard-section');
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  };
-
   const handleScrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -159,15 +158,14 @@ export default function Home() {
     setSelectedListing(listing);
   };
 
-  // Live Multi-Portal Search Trigger
-  const handleTriggerLiveCrawl = async (customQuery?: string, explicitExaKey?: string, filterOverrides?: Partial<FilterState>) => {
-    const activeFilters = { ...filters, ...filterOverrides };
-    const baseText = (customQuery !== undefined ? customQuery : activeFilters.searchQuery || '').trim();
-    const resolvedMetro = resolveUsMetro(baseText || activeMetroPill || 'Chicago');
-    const metroCity = resolvedMetro.city;
-
-    setIsLiveCrawling(true);
+  // Live Multi-Portal Search Execution
+  const handleTriggerLiveCrawl = async (explicitQuery?: string, explicitExaKey?: string, filterOverrides?: Partial<FilterState>) => {
     try {
+      setIsLiveCrawling(true);
+      const activeFilters = { ...filters, ...(filterOverrides || {}) };
+      const baseText = explicitQuery !== undefined ? explicitQuery : activeFilters.searchQuery;
+      const metroCity = activeMetroPill || 'Chicago';
+
       const parsed = parseNlpQuery(baseText || `${metroCity} homes`);
       const effectiveListingStatus = (activeFilters.listingStatus && activeFilters.listingStatus !== 'ALL') ? activeFilters.listingStatus : (parsed.listingStatus || 'FOR_RENT');
       const effectiveBeds = (activeFilters.bedsMin !== undefined && Number(activeFilters.bedsMin) > 0) ? Number(activeFilters.bedsMin) : (parsed.beds || 3);
@@ -305,193 +303,283 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen w-full bg-white text-slate-900 select-none">
       
-      {/* 1. DARK AESTHETIC HERO LANDING PAGE */}
-      <HeroSection
-        onExploreClick={handleScrollToDashboard}
-        totalListingsCount={allListings.length}
+      {/* 1. TOP HEADER & NAVIGATION COMMAND CENTER */}
+      <Header
+        filters={filters}
+        onFilterChange={setFilters}
+        listingCount={filteredListings.length}
+        totalCount={allListings.length}
+        isScribbleActive={isScribbleActive}
+        onToggleScribble={handleToggleScribble}
+        onClearScribble={handleClearScribble}
+        hasScribbleBoundary={!!scribblePolygon}
+        activeView={activeView}
+        onViewChange={setActiveView}
+        sortBy={sortBy}
+        onSortChange={setSortBy}
+        onScrollToTop={handleScrollToTop}
+        currentLanguage={currentLanguage}
+        onLanguageChange={setCurrentLanguage}
+        onTriggerLiveCrawl={handleTriggerLiveCrawl}
+        isCrawling={isLiveCrawling}
+        onOpenDatabase={() => setShowDbModal(true)}
+        onOpenOkfStudio={() => setShowOkfModal(true)}
       />
 
-      {/* 2. MAIN EXECUTIVE DASHBOARD (CLEAN WHITE & RED PALETTE, NO GLITTERS) */}
-      <div 
-        ref={dashboardRef} 
-        id="dashboard-section" 
-        className="flex flex-col min-h-screen w-full bg-white"
-      >
-        
-        {/* Top Header & Search Controls */}
-        <Header
-          filters={filters}
-          onFilterChange={setFilters}
-          listingCount={filteredListings.length}
-          totalCount={allListings.length}
-          isScribbleActive={isScribbleActive}
-          onToggleScribble={handleToggleScribble}
-          onClearScribble={handleClearScribble}
-          hasScribbleBoundary={!!scribblePolygon}
-          activeView="split"
-          onViewChange={() => {}}
-          sortBy={sortBy}
-          onSortChange={setSortBy}
-          onScrollToTop={handleScrollToTop}
-          currentLanguage={currentLanguage}
-          onLanguageChange={setCurrentLanguage}
-          onTriggerLiveCrawl={handleTriggerLiveCrawl}
-          isCrawling={isLiveCrawling}
-          onOpenDatabase={() => setShowDbModal(true)}
-        />
-
-        {/* US Metros Strip */}
-        <div className="w-full bg-white border-b border-slate-200 shadow-2xs">
-          <div className="max-w-[1780px] mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex items-center justify-between gap-4 overflow-x-auto text-xs scrollbar-none">
-            <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none">
-              <div className="flex items-center gap-1.5 text-slate-400 font-bold uppercase tracking-wider text-[10px] shrink-0 mr-1">
-                <MapPin className="w-3.5 h-3.5 text-red-600" />
-                <span>US Metros:</span>
-              </div>
-              {US_METRO_PILLS.map((m) => {
-                const isActive = activeMetroPill === m.name || (filters.searchQuery && filters.searchQuery.toLowerCase().includes(m.name.toLowerCase()));
-                return (
-                  <button
-                    key={m.name}
-                    onClick={() => {
-                      setActiveMetroPill(m.name);
-                      setFilters((prev) => ({ ...prev, searchQuery: m.name }));
-                    }}
-                    className={`flex items-center gap-1.5 px-3 py-1 rounded-full font-bold text-xs whitespace-nowrap transition-all cursor-pointer ${
-                      isActive
-                        ? 'bg-red-600 text-white shadow-sm shadow-red-200'
-                        : 'bg-slate-50 text-slate-700 hover:bg-red-50 hover:text-red-600 border border-slate-200'
-                    }`}
-                  >
-                    <span>{m.emoji}</span>
-                    <span>{m.name}, {m.state}</span>
-                  </button>
-                );
-              })}
+      {/* 2. US METROS QUICK SELECTOR STRIP */}
+      <div className="w-full bg-white border-b border-slate-200 shadow-2xs">
+        <div className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex items-center justify-between gap-4 overflow-x-auto text-xs scrollbar-none">
+          <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none">
+            <div className="flex items-center gap-1.5 text-slate-400 font-bold uppercase tracking-wider text-[10px] shrink-0 mr-1">
+              <MapPin className="w-3.5 h-3.5 text-red-600" />
+              <span>US Metros:</span>
             </div>
+            {US_METRO_PILLS.map((m) => {
+              const isActive = activeMetroPill === m.name || (filters.searchQuery && filters.searchQuery.toLowerCase().includes(m.name.toLowerCase()));
+              return (
+                <button
+                  key={m.name}
+                  onClick={() => {
+                    setActiveMetroPill(m.name);
+                    setFilters((prev) => ({ ...prev, searchQuery: m.name }));
+                  }}
+                  className={`flex items-center gap-1.5 px-3 py-1 rounded-full font-bold text-xs whitespace-nowrap transition-all cursor-pointer ${
+                    isActive
+                      ? 'bg-red-600 text-white shadow-sm shadow-red-200'
+                      : 'bg-slate-50 text-slate-700 hover:bg-red-50 hover:text-red-600 border border-slate-200'
+                  }`}
+                >
+                  <span>{m.emoji}</span>
+                  <span>{m.name}, {m.state}</span>
+                </button>
+              );
+            })}
+          </div>
 
-            <div className="hidden sm:flex items-center gap-2 shrink-0 text-xs font-mono text-slate-600 bg-slate-50 border border-slate-200 px-3.5 py-1 rounded-full">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="font-bold text-slate-900">{filteredListings.length}</span>
-              <span>Homes Ingested</span>
-            </div>
+          <div className="hidden sm:flex items-center gap-2 shrink-0 text-xs font-mono text-slate-600 bg-slate-50 border border-slate-200 px-3.5 py-1 rounded-full">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="font-bold text-slate-900">{filteredListings.length}</span>
+            <span>Homes Ingested</span>
           </div>
         </div>
+      </div>
 
-        {/* ============================================================ */}
-        {/* EXECUTIVE DASHBOARD (MAP UP, HOUSE DETAILS DOWN, FULL WIDTH) */}
-        {/* ============================================================ */}
-        <main className="w-full bg-slate-50/50 py-6 sm:py-8 flex-1">
-          <div className="max-w-[1780px] mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+      {/* 3. MAIN WORKSPACE (SPLIT VIEW / GRID VIEW / MAP VIEW) */}
+      <main className="w-full bg-slate-50/50 py-5 sm:py-6 flex-1">
+        <div className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
 
-            {/* 1. INTERACTIVE GOOGLE EARTH / SATELLITE MAP CONSOLE (UP) */}
-            <section className="w-full h-[460px] sm:h-[500px] relative rounded-3xl border-2 border-slate-200 shadow-md overflow-hidden bg-slate-100">
-              <ScribbleMap
-                listings={filteredListings}
-                selectedListing={selectedListing}
-                onSelectListing={handleSelectPropertyFromMap}
-                isScribbleActive={isScribbleActive}
-                onScribbleComplete={handleScribbleComplete}
-                scribblePolygon={scribblePolygon}
-                onClearScribble={handleClearScribble}
-                onOpenFullDetail={handleOpenProperty}
-              />
-
-              {/* Map Console HUD Overlay Badge: Top Left */}
-              <div className="absolute top-4 left-4 z-20 hidden sm:flex items-center gap-2 px-3.5 py-1.5 bg-white/95 backdrop-blur-md rounded-2xl border border-slate-200 shadow-md text-xs font-medium text-slate-700">
-                <MapPin className="w-3.5 h-3.5 text-red-600" />
-                <span className="font-bold text-slate-900">{activeMetroPill} Metro</span>
-                <span className="text-slate-400">•</span>
-                <span className="font-mono text-red-600 font-bold">{filteredListings.length} Verified Pins</span>
+          {/* 4-CARD INSTITUTIONAL TELEMETRY STRIP */}
+          <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            
+            {/* Telemetry 1 */}
+            <div className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-2xs flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-red-50 border border-red-200 flex items-center justify-center text-red-600 shrink-0">
+                <Building className="w-6 h-6" />
               </div>
-            </section>
+              <div className="min-w-0 flex-1">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block font-mono">
+                  Verified Residences
+                </span>
+                <div className="text-xl sm:text-2xl font-black text-slate-900 truncate">
+                  {filteredListings.length} Active
+                </div>
+                <span className="text-[11px] text-emerald-600 font-medium flex items-center gap-1 mt-0.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  Multi-Portal Live Feed
+                </span>
+              </div>
+            </div>
 
-            {/* 2. 4-CARD INSTITUTIONAL TELEMETRY STRIP */}
-            <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* Telemetry 2 */}
+            <div className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-2xs flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 shrink-0">
+                <DollarSign className="w-6 h-6" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block font-mono">
+                  {filters.listingStatus === 'FOR_RENT' ? 'Avg Monthly Rent' : 'Avg Purchase Price'}
+                </span>
+                <div className="text-xl sm:text-2xl font-black text-slate-900 truncate">
+                  {filters.listingStatus === 'FOR_RENT'
+                    ? `${formatCurrency(metrics.avgRent)}/mo`
+                    : formatCurrency(metrics.avgPrice)}
+                </div>
+                <span className="text-[11px] text-slate-500 font-medium truncate block mt-0.5">
+                  Rent Yield: ~{formatCurrency(metrics.avgRent)}/mo
+                </span>
+              </div>
+            </div>
+
+            {/* Telemetry 3 */}
+            <div className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-2xs flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-600 shrink-0">
+                <TrendingUp className="w-6 h-6" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block font-mono">
+                  Institutional Cap Rate
+                </span>
+                <div className="text-xl sm:text-2xl font-black text-slate-900 truncate">
+                  {metrics.avgCapRate}%
+                </div>
+                <span className="text-[11px] text-red-600 font-medium truncate block mt-0.5">
+                  Pass/Flow 5.0 Rating
+                </span>
+              </div>
+            </div>
+
+            {/* Telemetry 4 */}
+            <div className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-2xs flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600 shrink-0">
+                <Sparkles className="w-6 h-6" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block font-mono">
+                  Top District Rating
+                </span>
+                <div className="text-xl sm:text-2xl font-black text-slate-900 truncate">
+                  ★ 10/10 GreatSchools
+                </div>
+                <span className="text-[11px] text-slate-500 font-medium truncate block mt-0.5">
+                  ~1.2 km Premier Amenities
+                </span>
+              </div>
+            </div>
+          </section>
+
+          {/* VIEW MODE 1: SPLIT SCREEN (MAP LEFT, HOUSES RIGHT - USES FULL SPACE OF THE SCREEN) */}
+          {activeView === 'split' && (
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
               
-              {/* Telemetry 1 */}
-              <div className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-2xs flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-red-50 border border-red-200 flex items-center justify-center text-red-600 shrink-0">
-                  <Building className="w-6 h-6" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block font-mono">
-                    Verified Residences
-                  </span>
-                  <div className="text-xl sm:text-2xl font-black text-slate-900 truncate">
-                    {filteredListings.length} Active
+              {/* Left Column: Sticky Google Earth Satellite Map Console (5 of 12 cols) */}
+              <div className="lg:col-span-5 xl:col-span-6 lg:sticky lg:top-20 z-10">
+                <div className="h-[520px] lg:h-[calc(100vh-140px)] w-full rounded-3xl border-2 border-slate-200 shadow-md overflow-hidden bg-slate-100 relative">
+                  <ScribbleMap
+                    listings={filteredListings}
+                    selectedListing={selectedListing}
+                    onSelectListing={handleSelectPropertyFromMap}
+                    isScribbleActive={isScribbleActive}
+                    onScribbleComplete={handleScribbleComplete}
+                    scribblePolygon={scribblePolygon}
+                    onClearScribble={handleClearScribble}
+                    onOpenFullDetail={handleOpenProperty}
+                  />
+
+                  {/* Overlay Badge */}
+                  <div className="absolute top-4 left-4 z-20 flex items-center gap-2 px-3.5 py-1.5 bg-white/95 backdrop-blur-md rounded-2xl border border-slate-200 shadow-md text-xs font-medium text-slate-700">
+                    <MapPin className="w-3.5 h-3.5 text-red-600" />
+                    <span className="font-bold text-slate-900">{activeMetroPill} Metro</span>
+                    <span className="text-slate-400">•</span>
+                    <span className="font-mono text-red-600 font-bold">{filteredListings.length} Verified Pins</span>
                   </div>
-                  <span className="text-[11px] text-emerald-600 font-medium flex items-center gap-1 mt-0.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    Multi-Portal Live Feed
-                  </span>
                 </div>
               </div>
 
-              {/* Telemetry 2 */}
-              <div className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-2xs flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 shrink-0">
-                  <DollarSign className="w-6 h-6" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block font-mono">
-                    {filters.listingStatus === 'FOR_RENT' ? 'Avg Monthly Rent' : 'Avg Purchase Price'}
-                  </span>
-                  <div className="text-xl sm:text-2xl font-black text-slate-900 truncate">
-                    {filters.listingStatus === 'FOR_RENT'
-                      ? `${formatCurrency(metrics.avgRent)}/mo`
-                      : formatCurrency(metrics.avgPrice)}
-                  </div>
-                  <span className="text-[11px] text-slate-500 font-medium truncate block mt-0.5">
-                    Rent Yield: ~{formatCurrency(metrics.avgRent)}/mo
-                  </span>
-                </div>
-              </div>
-
-              {/* Telemetry 3 */}
-              <div className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-2xs flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-600 shrink-0">
-                  <TrendingUp className="w-6 h-6" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block font-mono">
-                    Institutional Cap Rate
-                  </span>
-                  <div className="text-xl sm:text-2xl font-black text-slate-900 truncate">
-                    {metrics.avgCapRate}%
-                  </div>
-                  <span className="text-[11px] text-red-600 font-medium truncate block mt-0.5">
-                    Pass/Flow 5.0 Rating
-                  </span>
-                </div>
-              </div>
-
-              {/* Telemetry 4 */}
-              <div className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-2xs flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600 shrink-0">
-                  <Sparkles className="w-6 h-6" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block font-mono">
-                    Top District Rating
-                  </span>
-                  <div className="text-xl sm:text-2xl font-black text-slate-900 truncate">
-                    ★ 10/10 GreatSchools
-                  </div>
-                  <span className="text-[11px] text-slate-500 font-medium truncate block mt-0.5">
-                    ~1.2 km Premier Amenities
-                  </span>
-                </div>
-              </div>
-            </section>
-
-            {/* 3. HOUSE DETAILS INVENTORY (DOWN) */}
-            <section id="houses-section" className="space-y-4 pt-2">
-              
-              {/* Controls Header: Portal Tabs & Sort */}
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 bg-white rounded-2xl border border-slate-200 shadow-2xs">
+              {/* Right Column: Portal Filters & Scrollable Property Cards (7 of 12 cols) */}
+              <div className="lg:col-span-7 xl:col-span-6 space-y-4">
                 
-                {/* Portal Tabs */}
+                {/* Portal Tabs Bar */}
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3.5 bg-white rounded-2xl border border-slate-200 shadow-2xs">
+                  <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto scrollbar-none">
+                    {[
+                      { id: 'ALL', label: 'All Portals' },
+                      { id: 'ZILLOW', label: 'Zillow' },
+                      { id: 'REDFIN', label: 'Redfin' },
+                      { id: 'REALTOR', label: 'Realtor' },
+                      { id: 'APARTMENTS_COM', label: 'Apartments.com' },
+                      { id: 'TRULIA', label: 'Trulia' },
+                      { id: 'HOTPADS', label: 'HotPads' },
+                    ].map((p) => {
+                      const count = portalCounts[p.id] || 0;
+                      const isSelected = selectedPortal === p.id;
+                      return (
+                        <button
+                          key={p.id}
+                          onClick={() => setSelectedPortal(p.id as any)}
+                          className={`px-3 py-1.5 rounded-xl font-bold text-xs whitespace-nowrap transition-all cursor-pointer ${
+                            isSelected
+                              ? 'bg-red-600 text-white shadow-xs'
+                              : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200'
+                          }`}
+                        >
+                          <span>{p.label}</span>
+                          <span className="ml-1.5 opacity-75 font-mono">({count})</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
+                    <span className="text-xs text-slate-400 font-medium hidden md:inline">Sort:</span>
+                    <select
+                      value={sortBy}
+                      onChange={(e) => setSortBy(e.target.value as any)}
+                      className="px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-800 focus:outline-none focus:border-red-500 cursor-pointer"
+                    >
+                      <option value="SCORE_DESC">Highest Pass Score</option>
+                      <option value="PRICE_ASC">Price: Low to High</option>
+                      <option value="PRICE_DESC">Price: High to Low</option>
+                      <option value="SQFT_DESC">Largest SqFt</option>
+                      <option value="CAPRATE_DESC">Highest Cap Rate</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* 2-Column Responsive Card Grid in Split View */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {displayedListings.map((listing) => (
+                    <PropertyCard
+                      key={listing.id}
+                      listing={listing}
+                      isSelected={selectedListing?.id === listing.id}
+                      onSelect={(l) => setSelectedListing(l)}
+                      onOpenDetail={(l) => handleOpenProperty(l)}
+                      onOpenRoiCalculator={(l) => setRoiModalListing(l)}
+                      onOpenOkf={(l) => {
+                        setOkfModalListing(l);
+                        setShowOkfModal(true);
+                      }}
+                    />
+                  ))}
+                </div>
+
+                {/* Load More Button */}
+                {displayedListings.length < filteredListings.length && (
+                  <div className="pt-4 pb-2 flex justify-center">
+                    <button
+                      onClick={() => setVisibleCount((prev) => prev + 24)}
+                      className="px-8 py-3 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-bold text-sm uppercase tracking-wider transition-all shadow-md hover:shadow-lg cursor-pointer flex items-center gap-2"
+                    >
+                      <span>Load More ({filteredListings.length - displayedListings.length} remaining)</span>
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
+              </div>
+
+            </div>
+          )}
+
+          {/* VIEW MODE 2: HIGH-DENSITY GRID VIEW (4-COLUMN) */}
+          {activeView === 'list' && (
+            <div className="space-y-6">
+              
+              {/* Compact Map Preview Banner */}
+              <div className="h-[280px] w-full rounded-3xl border-2 border-slate-200 shadow-sm overflow-hidden bg-slate-100 relative">
+                <ScribbleMap
+                  listings={filteredListings}
+                  selectedListing={selectedListing}
+                  onSelectListing={handleSelectPropertyFromMap}
+                  isScribbleActive={isScribbleActive}
+                  onScribbleComplete={handleScribbleComplete}
+                  scribblePolygon={scribblePolygon}
+                  onClearScribble={handleClearScribble}
+                  onOpenFullDetail={handleOpenProperty}
+                />
+              </div>
+
+              {/* Portal Tabs Bar */}
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 bg-white rounded-2xl border border-slate-200 shadow-2xs">
                 <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto scrollbar-none">
                   {[
                     { id: 'ALL', label: 'All Portals' },
@@ -521,26 +609,23 @@ export default function Home() {
                   })}
                 </div>
 
-                {/* Sort Dropdown */}
                 <div className="flex items-center gap-2 self-end sm:self-auto">
                   <span className="text-xs text-slate-400 font-medium hidden md:inline">Sort:</span>
-                  <div className="relative">
-                    <select
-                      value={sortBy}
-                      onChange={(e) => setSortBy(e.target.value as any)}
-                      className="px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-800 focus:outline-none focus:border-red-500 cursor-pointer"
-                    >
-                      <option value="SCORE_DESC">Highest Pass/Flow Score</option>
-                      <option value="PRICE_ASC">Price: Low to High</option>
-                      <option value="PRICE_DESC">Price: High to Low</option>
-                      <option value="SQFT_DESC">Largest Square Footage</option>
-                      <option value="CAPRATE_DESC">Highest Cap Rate</option>
-                    </select>
-                  </div>
+                  <select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value as any)}
+                    className="px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-800 focus:outline-none focus:border-red-500 cursor-pointer"
+                  >
+                    <option value="SCORE_DESC">Highest Pass Score</option>
+                    <option value="PRICE_ASC">Price: Low to High</option>
+                    <option value="PRICE_DESC">Price: High to Low</option>
+                    <option value="SQFT_DESC">Largest Square Footage</option>
+                    <option value="CAPRATE_DESC">Highest Cap Rate</option>
+                  </select>
                 </div>
               </div>
 
-              {/* 4-COLUMN HIGH-EFFICIENCY PROPERTY GRID */}
+              {/* 4-Column Card Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {displayedListings.map((listing) => (
                   <PropertyCard
@@ -550,6 +635,10 @@ export default function Home() {
                     onSelect={(l) => setSelectedListing(l)}
                     onOpenDetail={(l) => handleOpenProperty(l)}
                     onOpenRoiCalculator={(l) => setRoiModalListing(l)}
+                    onOpenOkf={(l) => {
+                      setOkfModalListing(l);
+                      setShowOkfModal(true);
+                    }}
                   />
                 ))}
               </div>
@@ -566,79 +655,155 @@ export default function Home() {
                   </button>
                 </div>
               )}
-            </section>
+            </div>
+          )}
 
-          </div>
-        </main>
+          {/* VIEW MODE 3: FULL SCREEN INTERACTIVE MAP VIEW */}
+          {activeView === 'map' && (
+            <div className="space-y-4">
+              <div className="h-[calc(100vh-210px)] min-h-[600px] w-full rounded-3xl border-2 border-slate-200 shadow-md overflow-hidden bg-slate-100 relative">
+                <ScribbleMap
+                  listings={filteredListings}
+                  selectedListing={selectedListing}
+                  onSelectListing={handleSelectPropertyFromMap}
+                  isScribbleActive={isScribbleActive}
+                  onScribbleComplete={handleScribbleComplete}
+                  scribblePolygon={scribblePolygon}
+                  onClearScribble={handleClearScribble}
+                  onOpenFullDetail={handleOpenProperty}
+                />
 
-        {/* CLEAN INSTITUTIONAL FOOTER */}
-        <footer className="w-full bg-slate-900 text-slate-400 py-12 border-t border-slate-800">
-          <div className="max-w-[1780px] mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8 pb-8 border-b border-slate-800 text-xs">
-              
-              <div className="space-y-3">
-                <span className="text-base font-black text-white tracking-tight">
-                  HOUSE INTELLIGENCE
-                </span>
-                <p className="text-slate-400 leading-relaxed">
-                  Institutional property underwriting and real-time housing database indexing across Zillow, Redfin, Realtor, Apartments.com, and Trulia.
-                </p>
+                {/* Floating Bottom Card Preview */}
+                {selectedListing && (
+                  <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 w-[calc(100%-2rem)] max-w-xl bg-white/95 backdrop-blur-md rounded-3xl border border-slate-200 shadow-2xl p-4 flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-14 h-14 rounded-2xl bg-slate-100 overflow-hidden shrink-0 border border-slate-200">
+                        <img
+                          src={selectedListing.media?.featuredImage || selectedListing.media?.gallery?.[0] || 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80'}
+                          alt={selectedListing.title}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="min-w-0">
+                        <h4 className="font-black text-slate-900 text-sm truncate">{selectedListing.title}</h4>
+                        <p className="text-xs text-slate-500 truncate">{selectedListing.propertyAddress.street}, {selectedListing.propertyAddress.city}</p>
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="text-xs font-black text-red-600 font-mono">
+                            {selectedListing.listingStatus === 'FOR_RENT'
+                              ? `${formatCurrency(selectedListing.financials.inputs.monthlyGrossRent)}/mo`
+                              : formatCurrency(selectedListing.financials.inputs.purchasePrice)}
+                          </span>
+                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 font-bold text-slate-700">
+                            {selectedListing.specs.beds}b / {selectedListing.specs.baths}ba
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setOkfModalListing(selectedListing);
+                          setShowOkfModal(true);
+                        }}
+                        className="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition-all cursor-pointer"
+                        title="OKF Extraction"
+                      >
+                        OKF
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleOpenProperty(selectedListing)}
+                        className="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-black uppercase tracking-wider transition-all shadow-md cursor-pointer"
+                      >
+                        Inspect
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
+            </div>
+          )}
 
-              <div className="space-y-2">
-                <h4 className="text-xs font-bold uppercase text-red-500 tracking-wider">Curated Metros</h4>
-                <div className="flex flex-wrap gap-1.5">
-                  {['Chicago', 'Denver', 'Austin', 'Seattle', 'Miami', 'New York'].map((c) => (
-                    <button
-                      key={c}
-                      onClick={() => {
-                        setActiveMetroPill(c);
-                        setFilters((prev) => ({ ...prev, searchQuery: c }));
-                        handleScrollToDashboard();
-                      }}
-                      className="px-2 py-1 rounded bg-slate-800 hover:bg-red-600 hover:text-white text-slate-300 text-[11px] transition-colors cursor-pointer"
-                    >
-                      {c}
-                    </button>
-                  ))}
-                </div>
+        </div>
+      </main>
+
+      {/* 4. CLEAN INSTITUTIONAL FOOTER */}
+      <footer className="w-full bg-slate-900 text-slate-400 py-12 border-t border-slate-800">
+        <div className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 pb-8 border-b border-slate-800 text-xs">
+            
+            <div className="space-y-3">
+              <span className="text-base font-black text-white tracking-tight">
+                HOUSE INTELLIGENCE
+              </span>
+              <p className="text-slate-400 leading-relaxed">
+                Institutional property underwriting and real-time housing database indexing across Zillow, Redfin, Realtor, Apartments.com, and Trulia.
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <h4 className="text-xs font-bold uppercase text-red-500 tracking-wider">Curated Metros</h4>
+              <div className="flex flex-wrap gap-1.5">
+                {['Chicago', 'Denver', 'Austin', 'Seattle', 'Miami', 'New York'].map((c) => (
+                  <button
+                    key={c}
+                    onClick={() => {
+                      setActiveMetroPill(c);
+                      setFilters((prev) => ({ ...prev, searchQuery: c }));
+                      handleScrollToTop();
+                    }}
+                    className="px-2 py-1 rounded bg-slate-800 hover:bg-red-600 hover:text-white text-slate-300 text-[11px] transition-colors cursor-pointer"
+                  >
+                    {c}
+                  </button>
+                ))}
               </div>
+            </div>
 
-              <div className="space-y-2">
-                <h4 className="text-xs font-bold uppercase text-red-500 tracking-wider">Telemetry Standards</h4>
-                <ul className="space-y-1 text-slate-400">
-                  <li>• Pass/Flow 5.0 Underwriting Grade</li>
-                  <li>• SQLite 3.x WAL Storage Engine</li>
-                  <li>• GreatSchools™ Verified Proximity</li>
-                  <li>• Institutional ROI & Cap Rate Calculator</li>
-                </ul>
-              </div>
+            <div className="space-y-2">
+              <h4 className="text-xs font-bold uppercase text-red-500 tracking-wider">Telemetry Standards</h4>
+              <ul className="space-y-1 text-slate-400">
+                <li>• Pass/Flow 5.0 Underwriting Grade</li>
+                <li>• SQLite 3.x WAL Storage Engine</li>
+                <li>• GreatSchools™ Verified Proximity</li>
+                <li>• Institutional ROI & Cap Rate Calculator</li>
+                <li>• Open Knowledge Format (OKF) Extraction</li>
+              </ul>
+            </div>
 
-              <div className="space-y-2">
-                <h4 className="text-xs font-bold uppercase text-red-500 tracking-wider">Local Repository</h4>
-                <p className="text-slate-400">
-                  {allListings.length} verified listings indexed in <code className="text-slate-300 font-mono">data/houses.db</code>
-                </p>
+            <div className="space-y-2">
+              <h4 className="text-xs font-bold uppercase text-red-500 tracking-wider">Local Repository</h4>
+              <p className="text-slate-400">
+                {allListings.length} verified listings indexed in <code className="text-slate-300 font-mono">data/houses.db</code>
+              </p>
+              <div className="flex items-center gap-2 pt-1">
                 <button
                   onClick={() => setShowDbModal(true)}
                   className="px-3 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white font-bold text-xs uppercase tracking-wider transition-all shadow-sm cursor-pointer"
                 >
                   Open SQL Studio
                 </button>
-              </div>
-            </div>
-
-            <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-slate-500">
-              <p>© 2026 House Intelligence. Equal Housing Opportunity. All rights reserved.</p>
-              <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                <span>Local SQLite WAL Engine Connected (817 Residences)</span>
+                <button
+                  onClick={() => setShowOkfModal(true)}
+                  className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs uppercase tracking-wider transition-all shadow-sm cursor-pointer border border-slate-700"
+                >
+                  OKF Studio
+                </button>
               </div>
             </div>
           </div>
-        </footer>
 
-      </div>
+          <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-slate-500">
+            <p>© 2026 House Intelligence. Equal Housing Opportunity. All rights reserved.</p>
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-emerald-500" />
+              <span>Local SQLite WAL Engine Connected ({allListings.length} Residences)</span>
+            </div>
+          </div>
+        </div>
+      </footer>
 
       {/* Property Detail Modal */}
       {modalListing && (
@@ -666,6 +831,18 @@ export default function Home() {
           setSelectedListing(p);
           setShowDbModal(false);
           handleOpenProperty(p);
+        }}
+      />
+
+      {/* Open Knowledge Format (OKF) Extraction Studio Modal */}
+      <OkfExtractionModal
+        isOpen={showOkfModal}
+        onClose={() => setShowOkfModal(false)}
+        selectedListing={okfModalListing || selectedListing}
+        allListings={filteredListings}
+        onSelectProperty={(p) => {
+          setOkfModalListing(p);
+          setSelectedListing(p);
         }}
       />
 

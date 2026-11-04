@@ -332,6 +332,59 @@ nextApp.prepare().then(() => {
     });
   });
 
+  // API ROUTE: /api/okf/extract (Google Open Knowledge Format Extraction Endpoint)
+  const okfHelper = require('./src/lib/okf/okf-helper');
+  server.get('/api/okf/extract', (req, res) => {
+    const { id } = req.query;
+    if (!id) {
+      return res.status(400).json({ success: false, error: 'Property id parameter is required' });
+    }
+
+    const item = sqliteCache.find(p => p.id === id);
+    if (!item) {
+      return res.status(404).json({ success: false, error: 'Property not found in local database' });
+    }
+
+    const okfDoc = okfHelper.extractPropertyToOkf(item);
+    if (req.query.format === 'markdown') {
+      res.setHeader('Content-Type', 'text/markdown; charset=utf-8');
+      res.setHeader('Content-Disposition', `attachment; filename="${id}.okf.md"`);
+      return res.send(okfDoc.markdown);
+    }
+
+    return res.status(200).json({
+      success: true,
+      id,
+      format: 'open-knowledge-format-v1.0',
+      okf: okfDoc,
+    });
+  });
+
+  // API ROUTE: /api/okf/export (Multi-Property OKF Knowledge Bundle Download)
+  server.get('/api/okf/export', (req, res) => {
+    const limit = Math.min(200, parseInt(req.query.limit || '50', 10));
+    const portal = req.query.portal;
+    let list = sqliteCache;
+    if (portal && portal !== 'ALL') {
+      list = list.filter(p => p.sourcePortal === portal);
+    }
+    const targetSlice = list.slice(0, limit);
+    const docs = targetSlice.map(p => okfHelper.extractPropertyToOkf(p).markdown);
+    const bundleText = [
+      '# Open Knowledge Format (OKF) Intelligence Bundle',
+      `# Export Timestamp: ${new Date().toISOString()}`,
+      `# Total Encapsulated Properties: ${targetSlice.length}`,
+      '# Architecture: Markdown Knowledge Graphs with Strict YAML Frontmatter',
+      '====================================================================',
+      '',
+      ...docs,
+    ].join('\n\n');
+
+    res.setHeader('Content-Type', 'text/markdown; charset=utf-8');
+    res.setHeader('Content-Disposition', 'attachment; filename="houses_open_knowledge_format_bundle.okf.md"');
+    res.send(bundleText);
+  });
+
   // In-memory dynamic pool of n8n ingested listings
   const n8nDynamicListings = [];
   const n8nIngestTelemetry = {

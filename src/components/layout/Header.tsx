@@ -25,7 +25,9 @@ import {
   RotateCcw,
   Key,
   Database,
-  Download
+  Download,
+  FileCode,
+  LayoutGrid
 } from 'lucide-react';
 import { FilterState, ListingStatus, PropertyType } from '../../types/property';
 import { SupportedLanguageCode } from '../../types/intelligence';
@@ -54,6 +56,7 @@ interface HeaderProps {
   onTriggerLiveCrawl?: (query?: string, exaApiKey?: string, filterOverrides?: Partial<FilterState>) => void;
   isCrawling?: boolean;
   onOpenDatabase?: () => void;
+  onOpenOkfStudio?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -75,6 +78,7 @@ export const Header: React.FC<HeaderProps> = ({
   onTriggerLiveCrawl,
   isCrawling = false,
   onOpenDatabase,
+  onOpenOkfStudio,
 }) => {
   // Dropdown Popover States
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
@@ -220,6 +224,29 @@ export const Header: React.FC<HeaderProps> = ({
             >
               <Download className="w-3.5 h-3.5 text-slate-500" />
               <span>CSV</span>
+            </a>
+
+            {onOpenOkfStudio && (
+              <button
+                type="button"
+                onClick={onOpenOkfStudio}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-red-300 bg-red-50 hover:bg-red-100 text-red-700 text-xs font-bold transition-all shadow-2xs cursor-pointer"
+                title="Open Knowledge Format (OKF) Extraction Studio"
+              >
+                <FileCode className="w-3.5 h-3.5 text-red-600" />
+                <span className="hidden sm:inline">OKF Studio</span>
+                <span className="sm:hidden">OKF</span>
+              </button>
+            )}
+
+            <a
+              href="/api/okf/export?limit=100"
+              download="houses_okf_bundle.md"
+              className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition-all shadow-2xs cursor-pointer"
+              title="Download multi-property Open Knowledge Format bundle (.okf.md)"
+            >
+              <Download className="w-3.5 h-3.5 text-red-600" />
+              <span>OKF Bundle</span>
             </a>
 
             <button
@@ -692,6 +719,43 @@ export const Header: React.FC<HeaderProps> = ({
                   Clear Boundary
                 </button>
               )}
+
+              {/* View Switcher: Split / Grid / Map */}
+              <div className="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 ml-1">
+                <button
+                  type="button"
+                  onClick={() => onViewChange('split')}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                    activeView === 'split' ? 'bg-white text-red-600 shadow-sm' : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                  title="Split View (Map Left, Houses Right)"
+                >
+                  <Layers className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">Split</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onViewChange('list')}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                    activeView === 'list' ? 'bg-white text-red-600 shadow-sm' : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                  title="High-Density 4-Column Grid View"
+                >
+                  <LayoutGrid className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">Grid</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onViewChange('map')}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                    activeView === 'map' ? 'bg-white text-red-600 shadow-sm' : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                  title="Full Interactive Map View"
+                >
+                  <Compass className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">Map</span>
+                </button>
+              </div>
             </div>
 
           </div>

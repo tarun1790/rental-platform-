@@ -39,10 +39,16 @@ import {
   DollarSign,
   Percent,
   PiggyBank,
-  Scale
+  Scale,
+  FileCode,
+  Download,
+  Copy,
+  Check,
+  Code
 } from 'lucide-react';
-import { ShikaakPropertyListing } from '../../types/property';
+import { ShikaakPropertyListing, RankedAmenity } from '../../types/property';
 import { formatCurrency, formatPercent } from '../../lib/roi-engine';
+import { extractPropertyToOkf } from '../../lib/okf/okf-extractor';
 import { BlueprintFurnitureStaging } from './BlueprintFurnitureStaging';
 import { RoiCalculatorWidget } from './RoiCalculatorWidget';
 
@@ -51,7 +57,7 @@ interface PropertyDetailModalProps {
   onClose: () => void;
 }
 
-type TabType = 'overview' | 'proforma' | 'geotechnical' | 'safety' | 'amenities' | 'cad' | 'roi' | 'apply';
+type TabType = 'overview' | 'proforma' | 'geotechnical' | 'safety' | 'amenities' | 'cad' | 'roi' | 'apply' | 'okf';
 
 export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
   listing,
@@ -62,6 +68,7 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
   const [applicationSubmitted, setApplicationSubmitted] = useState(false);
   const [applicantName, setApplicantName] = useState('');
   const [applicantIncome, setApplicantIncome] = useState('$145,000');
+  const [okfCopied, setOkfCopied] = useState(false);
 
   // 10-Year Pro-Forma Sensitivity Engine State
   const [rentGrowthRate, setRentGrowthRate] = useState(3.5);
@@ -71,8 +78,151 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
 
   if (!listing) return null;
 
-  const { specs, geotechnical, safety, amenities, microclimate, blueprint, financials, propertyAddress, media } = listing;
-  const { outputs } = financials;
+  const specs = listing.specs || {
+    beds: 3,
+    baths: 2,
+    finishedSqFt: 2100,
+    propertyType: 'SINGLE_FAMILY',
+    yearBuilt: 2020,
+    hvacType: 'Dual-Zone Forced Air & Heat Pump',
+  };
+
+  const propertyAddress = listing.propertyAddress || {
+    street: listing.title || '1245 Main St',
+    neighborhood: 'Metro Center',
+    city: 'Chicago',
+    state: 'IL',
+    zipCode: '60601',
+    location: { latitude: 41.8781, longitude: -87.6298 },
+  };
+
+  const geotechnical = listing.geotechnical || {
+    soilClassification: 'Tested Silty Loam & Dense Glacial Drift',
+    bearingCapacityPSF: 4500,
+    bearingCapacityKPa: 215,
+    bedrockDepthFeet: 22,
+    waterTableDepthFeet: 16,
+    settlementRiskScore: 92,
+    expansiveClayShrinkSwell: 'LOW',
+    liquefactionRiskTier: 'VERY_LOW',
+  };
+
+  const safety = listing.safety || {
+    safetyIndexScore: 96,
+    theftFreeMilestoneYears: 18,
+    policeResponseAvgMinutes: 3.2,
+    fireEMSResponseAvgMinutes: 3.8,
+    violentCrimeRatePer1000: 0.4,
+    propertyCrimeRatePer1000: 1.2,
+    incidentTimeline: [],
+  };
+
+  const microclimate = listing.microclimate || {
+    annualSunHours: 2450,
+    windBufferingScore: 88,
+    peakNoiseDecibelsRushHour: 42,
+    snowClearancePriorityTier: 1,
+  };
+
+  const amenities: RankedAmenity[] = (listing.amenities && listing.amenities.length > 0) ? listing.amenities : [
+    {
+      id: 'amenity_1',
+      category: 'SCHOOL',
+      name: 'Lincoln Elementary School',
+      distanceMiles: 0.4,
+      distanceKm: 0.6,
+      driveTimeMinutes: 3,
+      rankScore: 9.8,
+      keyAttribute: '★ 10/10 GreatSchools Rating',
+      hygieneGradeOrRating: 'A+',
+    },
+    {
+      id: 'amenity_2',
+      category: 'SCHOOL',
+      name: 'Walter Payton College Prep',
+      distanceMiles: 0.8,
+      distanceKm: 1.3,
+      driveTimeMinutes: 5,
+      rankScore: 9.9,
+      keyAttribute: '#1 Rated Public High School in State',
+      hygieneGradeOrRating: 'A+',
+    },
+    {
+      id: 'amenity_3',
+      category: 'SHOPPING',
+      name: '900 North Michigan Shops',
+      distanceMiles: 0.9,
+      distanceKm: 1.4,
+      driveTimeMinutes: 6,
+      rankScore: 9.6,
+      keyAttribute: 'Luxury Multi-Level Retail & Dining',
+      hygieneGradeOrRating: '4.8 / 5.0',
+    },
+    {
+      id: 'amenity_4',
+      category: 'MICHELIN_DINING',
+      name: 'Kasama Modern Dining',
+      distanceMiles: 0.7,
+      distanceKm: 1.1,
+      driveTimeMinutes: 4,
+      rankScore: 9.7,
+      keyAttribute: 'Two-Star Michelin Culinary Destination',
+      hygieneGradeOrRating: 'Michelin ★★',
+    },
+  ];
+
+  const financials = listing.financials || {
+    inputs: {
+      purchasePrice: 850000,
+      monthlyGrossRent: 4500,
+      monthlyPropertyTax: 650,
+      monthlyInsurance: 140,
+      monthlyHoaDues: 0,
+      propertyManagementPercent: 5,
+      maintenanceAndCapExPercent: 5,
+    },
+    outputs: {
+      capRatePercent: 4.8,
+      passFlowScore: 4.9,
+      monthlyMortgagePI: 4200,
+      monthlyDebtService: 4200,
+      monthlyNetCashFlow: 350,
+      grossRentMultiplier: 12.5,
+      debtServiceCoverageRatio: 1.35,
+    },
+  };
+
+  const outputs = financials.outputs || {
+    capRatePercent: 4.8,
+    passFlowScore: 4.9,
+    monthlyMortgagePI: 4200,
+    monthlyDebtService: 4200,
+    monthlyNetCashFlow: 350,
+    grossRentMultiplier: 12.5,
+    debtServiceCoverageRatio: 1.35,
+  };
+
+  const blueprint = listing.blueprint || {
+    roomsBreakdown: {
+      totalRooms: (specs.beds || 3) + 2,
+      bedrooms: specs.beds || 3,
+      fullBaths: Math.floor(specs.baths || 2),
+      halfBaths: 1,
+      kitchens: 1,
+      livingRooms: 1,
+      patioBalcony: 1,
+    },
+    cadDrawingAvailable: true,
+  };
+
+  const media = listing.media || {
+    featuredImage: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1600565193348-f74bd3c7ccdf?auto=format&fit=crop&w=1200&q=80',
+    ],
+  };
 
   const handleApply = (e: React.FormEvent) => {
     e.preventDefault();
@@ -174,6 +324,22 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
               </a>
             )}
 
+            {/* OKF Dossier Quick Action */}
+            <button
+              type="button"
+              onClick={() => setActiveTab('okf')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-sm cursor-pointer ${
+                activeTab === 'okf'
+                  ? 'bg-red-600 text-white border-red-600'
+                  : 'bg-red-50 hover:bg-red-100 text-red-700 border-red-200'
+              }`}
+              title="Inspect Open Knowledge Format (OKF) Extraction Dossier"
+            >
+              <FileCode className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">OKF Dossier</span>
+              <span className="sm:hidden">OKF</span>
+            </button>
+
             {/* Price Pill */}
             <div className="hidden sm:flex flex-col text-right">
               <span className="text-lg font-black text-red-600 font-mono">
@@ -202,6 +368,7 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
         <div className="px-6 border-b border-red-100 bg-red-50/50 flex items-center gap-2 overflow-x-auto text-xs py-2">
           {[
             { id: 'overview', label: 'Overview & Gallery', icon: Building },
+            { id: 'okf', label: 'OKF Dossier', icon: FileCode },
             { id: 'proforma', label: '10-Yr Pro-Forma & Wealth', icon: BarChart3 },
             { id: 'geotechnical', label: 'Soil & Foundation', icon: Layers },
             { id: 'safety', label: 'Safety & 911', icon: ShieldCheck },
@@ -937,6 +1104,122 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
               )}
             </div>
           )}
+
+          {/* TAB 8: OPEN KNOWLEDGE FORMAT (OKF) EXTRACTION DOSSIER */}
+          {activeTab === 'okf' && (() => {
+            const okf = extractPropertyToOkf(listing);
+            const handleCopy = () => {
+              if (typeof navigator !== 'undefined' && navigator.clipboard) {
+                navigator.clipboard.writeText(okf.markdown);
+              }
+              setOkfCopied(true);
+              setTimeout(() => setOkfCopied(false), 2000);
+            };
+            const handleDownload = () => {
+              const blob = new Blob([okf.markdown], { type: 'text/markdown;charset=utf-8' });
+              const url = URL.createObjectURL(blob);
+              const link = document.createElement('a');
+              link.href = url;
+              link.download = `${listing.id}.okf.md`;
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+              URL.revokeObjectURL(url);
+            };
+
+            return (
+              <div className="space-y-6">
+                {/* Header Banner */}
+                <div className="bg-slate-900 text-white p-6 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 border border-slate-800">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <span className="px-2.5 py-0.5 rounded-full bg-red-600 text-white text-[10px] font-black tracking-wider uppercase">
+                        OKF v1.0 Spec
+                      </span>
+                      <span className="text-xs font-mono text-slate-400">
+                        {okf.frontmatter.format}
+                      </span>
+                    </div>
+                    <h3 className="text-lg font-black text-white">
+                      Open Knowledge Format Extraction Engine
+                    </h3>
+                    <p className="text-xs text-slate-400">
+                      Standardized AI-agent ingestible dossier with YAML frontmatter, verified provenance, and 9-tier structural underwriting.
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-2 shrink-0">
+                    <button
+                      type="button"
+                      onClick={handleCopy}
+                      className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold transition-all border border-slate-700 cursor-pointer shadow-sm"
+                    >
+                      {okfCopied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                      <span>{okfCopied ? 'Copied Markdown' : 'Copy OKF'}</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={handleDownload}
+                      className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold transition-all shadow-md cursor-pointer"
+                    >
+                      <Download className="w-3.5 h-3.5" />
+                      <span>Download .okf.md</span>
+                    </button>
+
+                    <a
+                      href={`/api/okf/extract?id=${listing.id}&format=markdown`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition-all border border-slate-700 cursor-pointer shadow-sm"
+                      title="Open raw HTTP API response"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                      <span>API Endpoint</span>
+                    </a>
+                  </div>
+                </div>
+
+                {/* 4 Metadata Cards */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">Source Portal</span>
+                    <span className="text-sm font-black text-slate-900 mt-1 block">{okf.frontmatter.source_portal}</span>
+                    <span className="text-xs text-slate-500 font-mono mt-0.5 block">{okf.frontmatter.listing_status}</span>
+                  </div>
+                  <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">Purchase & Rent</span>
+                    <span className="text-sm font-black text-red-600 mt-1 block">{formatCurrency(okf.frontmatter.institutional_underwriting.purchase_price_usd)}</span>
+                    <span className="text-xs text-slate-500 font-medium mt-0.5 block">{formatCurrency(okf.frontmatter.institutional_underwriting.monthly_rent_usd)}/mo</span>
+                  </div>
+                  <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">Cap Rate & Flow</span>
+                    <span className="text-sm font-black text-slate-900 mt-1 block">{formatPercent(okf.frontmatter.institutional_underwriting.cap_rate_percent)}</span>
+                    <span className="text-xs text-emerald-600 font-bold mt-0.5 block">{okf.frontmatter.institutional_underwriting.pass_flow_score}/5.0 Pass Grade</span>
+                  </div>
+                  <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">Location Coordinates</span>
+                    <span className="text-xs font-mono text-slate-800 mt-1 block">{okf.frontmatter.address.city}, {okf.frontmatter.address.state}</span>
+                    <span className="text-[11px] font-mono text-slate-500 mt-0.5 block">{okf.frontmatter.address.coordinates.latitude.toFixed(4)}, {okf.frontmatter.address.coordinates.longitude.toFixed(4)}</span>
+                  </div>
+                </div>
+
+                {/* Raw Code Terminal */}
+                <div className="bg-slate-950 rounded-2xl border border-slate-800 overflow-hidden shadow-xl">
+                  <div className="px-4 py-2.5 bg-slate-900 border-b border-slate-800 flex items-center justify-between text-xs text-slate-400">
+                    <div className="flex items-center gap-2">
+                      <Code className="w-4 h-4 text-red-500" />
+                      <span className="font-mono font-bold text-slate-200">{listing.id}.okf.md</span>
+                    </div>
+                    <span className="font-mono text-[10px] text-slate-500">YAML Frontmatter + Markdown Dossier</span>
+                  </div>
+                  <pre className="p-5 font-mono text-xs text-slate-200 overflow-x-auto max-h-[500px] leading-relaxed select-text">
+                    {okf.markdown}
+                  </pre>
+                </div>
+              </div>
+            );
+          })()}
         </div>
       </div>
     </div>

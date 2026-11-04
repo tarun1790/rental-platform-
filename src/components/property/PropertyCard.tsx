@@ -21,7 +21,8 @@ import {
   ShoppingBag,
   Star,
   Calculator,
-  ExternalLink
+  ExternalLink,
+  FileText
 } from 'lucide-react';
 import { ShikaakPropertyListing, BuyerPriorityWeights } from '../../types/property';
 import { resolveUsMetro } from '../../lib/geo/us-metro-registry';
@@ -35,6 +36,7 @@ interface PropertyCardProps {
   onSelect?: (listing: ShikaakPropertyListing) => void;
   onOpenDetail?: (listing: ShikaakPropertyListing) => void;
   onOpenRoiCalculator?: (listing: ShikaakPropertyListing) => void;
+  onOpenOkf?: (listing: ShikaakPropertyListing) => void;
 }
 
 export const PropertyCard: React.FC<PropertyCardProps> = ({
@@ -44,6 +46,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
   onSelect,
   onOpenDetail,
   onOpenRoiCalculator,
+  onOpenOkf,
 }) => {
   const { specs, geotechnical, financials, propertyAddress, media, propertyTaxes, roomsBreakdown, forestResources, timezone, airport, heatWaves, policeCorridor, climateTelemetry, nearbyPointsOfInterest } = listing;
   const inputs = financials?.inputs || { purchasePrice: 750000, monthlyGrossRent: 3500 };
@@ -268,18 +271,33 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
           </div>
         </div>
 
-        {/* Action Row: Custom ROI Calculator, Live Portal Link & Inspect CTA */}
+        {/* Action Row: Custom ROI Calculator, OKF Extractor, Live Portal Link & Inspect CTA */}
         <div className="pt-2 flex flex-wrap items-center justify-between border-t border-slate-100 gap-1.5">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onOpenRoiCalculator?.(listing);
-            }}
-            className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-red-50 text-slate-700 hover:text-red-600 text-[11px] font-bold transition-all border border-slate-200 cursor-pointer shrink-0"
-          >
-            <Calculator className="w-3.5 h-3.5 text-red-500" />
-            <span>ROI</span>
-          </button>
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onOpenRoiCalculator?.(listing);
+              }}
+              className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-red-50 text-slate-700 hover:text-red-600 text-[11px] font-bold transition-all border border-slate-200 cursor-pointer shrink-0"
+              title="Open Custom ROI Calculator"
+            >
+              <Calculator className="w-3.5 h-3.5 text-red-500" />
+              <span>ROI</span>
+            </button>
+
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onOpenOkf?.(listing);
+              }}
+              className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 text-[11px] font-bold transition-all border border-red-200 cursor-pointer shrink-0"
+              title="Extract Open Knowledge Format (OKF) dossier"
+            >
+              <FileText className="w-3.5 h-3.5 text-red-600" />
+              <span>OKF</span>
+            </button>
+          </div>
 
           <div className="flex items-center gap-1.5 shrink-0 ml-auto">
             {listing.externalUrl && (
