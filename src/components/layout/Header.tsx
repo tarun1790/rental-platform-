@@ -23,7 +23,9 @@ import {
   RotateCw,
   Scan,
   RotateCcw,
-  Key
+  Key,
+  Database,
+  Download
 } from 'lucide-react';
 import { FilterState, ListingStatus, PropertyType } from '../../types/property';
 import { SupportedLanguageCode } from '../../types/intelligence';
@@ -51,6 +53,7 @@ interface HeaderProps {
   onLanguageChange?: (lang: SupportedLanguageCode) => void;
   onTriggerLiveCrawl?: (query?: string, exaApiKey?: string, filterOverrides?: Partial<FilterState>) => void;
   isCrawling?: boolean;
+  onOpenDatabase?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -71,6 +74,7 @@ export const Header: React.FC<HeaderProps> = ({
   onLanguageChange,
   onTriggerLiveCrawl,
   isCrawling = false,
+  onOpenDatabase,
 }) => {
   // Dropdown Popover States
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
@@ -194,7 +198,30 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
 
           {/* Right Live Status Telemetry Indicator */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5">
+            {onOpenDatabase && (
+              <button
+                type="button"
+                onClick={onOpenDatabase}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-red-200 bg-red-50 hover:bg-red-100 text-red-700 text-xs font-bold transition-all shadow-2xs cursor-pointer"
+                title="Open Local SQLite Database & SQL Query Studio"
+              >
+                <Database className="w-3.5 h-3.5 text-red-600" />
+                <span className="hidden sm:inline">Local SQLite ({totalCount || 817})</span>
+                <span className="sm:hidden">DB ({totalCount || 817})</span>
+              </button>
+            )}
+
+            <a
+              href="/api/database/export?format=csv"
+              download="properties.csv"
+              className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition-all shadow-2xs cursor-pointer"
+              title="Download entire verified dataset as CSV"
+            >
+              <Download className="w-3.5 h-3.5 text-slate-500" />
+              <span>CSV</span>
+            </a>
+
             <button
               type="button"
               onClick={() => setShowExaModal(true)}

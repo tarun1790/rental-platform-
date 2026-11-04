@@ -146,26 +146,26 @@ export const DatabaseExplorerModal: React.FC<DatabaseExplorerModalProps> = ({
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-2xl animate-in fade-in select-none">
-      <div className="relative w-full max-w-5xl max-h-[92vh] bg-[#090912] border-2 border-cyan-500/50 rounded-3xl shadow-2xl flex flex-col overflow-hidden text-white">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in select-none">
+      <div className="relative w-full max-w-5xl max-h-[92vh] bg-white border border-slate-200 rounded-3xl shadow-2xl flex flex-col overflow-hidden text-slate-900">
         
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-white/5">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-slate-50">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-cyan-500/20 border border-cyan-400/50 flex items-center justify-center text-cyan-400 shadow-lg shadow-cyan-500/20">
+            <div className="w-10 h-10 rounded-2xl bg-red-50 border border-red-200 flex items-center justify-center text-red-600 shadow-sm">
               <Database className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-base sm:text-lg font-black tracking-wider uppercase font-mono text-white">
+                <h3 className="text-base sm:text-lg font-black tracking-wider uppercase font-sans text-slate-900">
                   LOCAL SQLITE DATABASE REGISTRY
                 </h3>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-950 text-cyan-400 border border-cyan-500/40">
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-red-50 text-red-700 border border-red-200 font-bold">
                   WAL ACTIVE
                 </span>
               </div>
-              <p className="text-xs text-slate-400 font-mono">
-                Storage: <span className="text-cyan-400 font-bold">data/houses.db</span> • 817+ Multi-Portal Ingested Records
+              <p className="text-xs text-slate-500 font-mono">
+                Storage: <span className="text-red-600 font-bold">data/houses.db</span> • {listings.length} Multi-Portal Ingested Records
               </p>
             </div>
           </div>
@@ -175,20 +175,20 @@ export const DatabaseExplorerModal: React.FC<DatabaseExplorerModalProps> = ({
             <a
               href="/api/database/export?format=csv"
               download="houses_database.csv"
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/15 text-slate-300 hover:text-white text-xs font-mono font-bold transition-all cursor-pointer shadow-sm"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs font-mono font-bold transition-all cursor-pointer shadow-xs"
               title="Download full SQLite database as CSV"
             >
-              <Download className="w-3.5 h-3.5 text-cyan-400" />
+              <Download className="w-3.5 h-3.5 text-red-600" />
               <span className="hidden sm:inline">CSV</span>
             </a>
 
             <a
               href="/api/database/export?format=json"
               download="houses_database.json"
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/15 text-slate-300 hover:text-white text-xs font-mono font-bold transition-all cursor-pointer shadow-sm"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs font-mono font-bold transition-all cursor-pointer shadow-xs"
               title="Download full SQLite database as JSON"
             >
-              <Download className="w-3.5 h-3.5 text-purple-400" />
+              <Download className="w-3.5 h-3.5 text-purple-600" />
               <span className="hidden sm:inline">JSON</span>
             </a>
 
@@ -196,16 +196,16 @@ export const DatabaseExplorerModal: React.FC<DatabaseExplorerModalProps> = ({
               <button
                 onClick={onTriggerSync}
                 disabled={isSyncing}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/40 text-cyan-300 text-xs font-mono font-bold transition-all cursor-pointer disabled:opacity-50"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-50 hover:bg-red-100 border border-red-200 text-red-700 text-xs font-mono font-bold transition-all cursor-pointer disabled:opacity-50"
               >
                 <RotateCw className={`w-3.5 h-3.5 ${isSyncing ? 'animate-spin' : ''}`} />
-                <span className="hidden sm:inline">{isSyncing ? 'SYNCING...' : 'SYNC CRAWLER'}</span>
+                <span className="hidden sm:inline">{isSyncing ? 'SYNCING...' : 'SYNC'}</span>
               </button>
             )}
 
             <button
               onClick={onClose}
-              className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+              className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
@@ -213,50 +213,50 @@ export const DatabaseExplorerModal: React.FC<DatabaseExplorerModalProps> = ({
         </div>
 
         {/* Top Summary Metrics */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 sm:p-5 border-b border-white/10 bg-black/50">
-          <div className="p-3 rounded-2xl bg-white/5 border border-white/10">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 sm:p-5 border-b border-slate-200 bg-slate-50/50">
+          <div className="p-3.5 rounded-2xl bg-white border border-slate-200 shadow-2xs">
             <span className="text-[10px] font-mono font-bold text-slate-400 uppercase block">Total Homes</span>
-            <div className="text-xl sm:text-2xl font-black text-cyan-400 font-mono mt-0.5">
+            <div className="text-xl sm:text-2xl font-black text-red-600 font-mono mt-0.5">
               {dbStats?.totalProperties || listings.length}
             </div>
-            <span className="text-[10px] text-emerald-400 font-mono flex items-center gap-1 mt-1">
+            <span className="text-[10px] text-emerald-600 font-mono font-bold flex items-center gap-1 mt-1">
               <CheckCircle2 className="w-3 h-3" /> Synchronized
             </span>
           </div>
 
-          <div className="p-3 rounded-2xl bg-white/5 border border-white/10">
+          <div className="p-3.5 rounded-2xl bg-white border border-slate-200 shadow-2xs">
             <span className="text-[10px] font-mono font-bold text-slate-400 uppercase block">Portals Crawled</span>
-            <div className="text-xl sm:text-2xl font-black text-purple-400 font-mono mt-0.5">
+            <div className="text-xl sm:text-2xl font-black text-slate-900 font-mono mt-0.5">
               {Object.keys(dbStats?.portalBreakdown || {}).length || 7} Portals
             </div>
-            <span className="text-[10px] text-slate-400 font-mono block mt-1 truncate">
+            <span className="text-[10px] text-slate-500 font-mono block mt-1 truncate">
               Zillow, Redfin, Realtor...
             </span>
           </div>
 
-          <div className="p-3 rounded-2xl bg-white/5 border border-white/10">
+          <div className="p-3.5 rounded-2xl bg-white border border-slate-200 shadow-2xs">
             <span className="text-[10px] font-mono font-bold text-slate-400 uppercase block">Metros Indexed</span>
-            <div className="text-xl sm:text-2xl font-black text-amber-400 font-mono mt-0.5">
+            <div className="text-xl sm:text-2xl font-black text-slate-900 font-mono mt-0.5">
               {Object.keys(dbStats?.cityBreakdown || {}).length || 15} Cities
             </div>
-            <span className="text-[10px] text-slate-400 font-mono block mt-1 truncate">
+            <span className="text-[10px] text-slate-500 font-mono block mt-1 truncate">
               Denver, Chicago, Austin...
             </span>
           </div>
 
-          <div className="p-3 rounded-2xl bg-white/5 border border-white/10">
+          <div className="p-3.5 rounded-2xl bg-white border border-slate-200 shadow-2xs">
             <span className="text-[10px] font-mono font-bold text-slate-400 uppercase block">Database Size</span>
-            <div className="text-xl sm:text-2xl font-black text-emerald-400 font-mono mt-0.5">
+            <div className="text-xl sm:text-2xl font-black text-emerald-600 font-mono mt-0.5">
               {dbStats?.dbSizeBytes ? `${(dbStats.dbSizeBytes / 1024 / 1024).toFixed(2)} MB` : '5.64 MB'}
             </div>
-            <span className="text-[10px] text-slate-400 font-mono block mt-1">
+            <span className="text-[10px] text-slate-500 font-mono block mt-1">
               SQLite 3.x WAL Engine
             </span>
           </div>
         </div>
 
         {/* Tab Switcher: Records View vs SQL Studio */}
-        <div className="flex items-center justify-between px-6 py-2.5 border-b border-white/10 bg-white/5">
+        <div className="flex items-center justify-between px-6 py-2.5 border-b border-slate-200 bg-slate-100">
           <div className="flex items-center gap-2">
             <button
               onClick={() => {
@@ -265,8 +265,8 @@ export const DatabaseExplorerModal: React.FC<DatabaseExplorerModalProps> = ({
               }}
               className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-mono font-bold uppercase transition-all cursor-pointer ${
                 activeTab === 'RECORDS'
-                  ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 font-black shadow-md'
-                  : 'text-slate-400 hover:text-white'
+                  ? 'bg-red-600 text-white font-black shadow-sm shadow-red-200'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               <Layers className="w-3.5 h-3.5" />
@@ -281,8 +281,8 @@ export const DatabaseExplorerModal: React.FC<DatabaseExplorerModalProps> = ({
               }}
               className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-mono font-bold uppercase transition-all cursor-pointer ${
                 activeTab === 'SQL_STUDIO'
-                  ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-slate-950 font-black shadow-md'
-                  : 'text-slate-400 hover:text-white'
+                  ? 'bg-red-600 text-white font-black shadow-sm shadow-red-200'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               <Terminal className="w-3.5 h-3.5" />
@@ -293,17 +293,17 @@ export const DatabaseExplorerModal: React.FC<DatabaseExplorerModalProps> = ({
 
         {/* Tab 1: Repository Records */}
         {activeTab === 'RECORDS' && (
-          <div className="flex-1 flex flex-col min-h-0">
+          <div className="flex-1 flex flex-col min-h-0 bg-white">
             {/* Search & Portal Filter Bar */}
-            <div className="p-3 sm:p-4 px-6 border-b border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3 bg-black/40">
+            <div className="p-3 sm:p-4 px-6 border-b border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-50">
               <div className="relative w-full sm:w-80">
                 <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
-                  placeholder="Search 817 records (address, city, portal)..."
+                  placeholder="Search records (address, city, portal)..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-9 pr-3 py-1.5 rounded-xl bg-black/60 border border-white/15 text-xs text-white placeholder-slate-400 focus:outline-none focus:border-cyan-400 font-mono"
+                  className="w-full pl-9 pr-3 py-1.5 rounded-xl bg-white border border-slate-200 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-red-500 font-mono shadow-2xs"
                 />
               </div>
 
@@ -319,8 +319,8 @@ export const DatabaseExplorerModal: React.FC<DatabaseExplorerModalProps> = ({
                       }}
                       className={`px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold whitespace-nowrap transition-all cursor-pointer ${
                         selectedPortalFilter === p
-                          ? 'bg-cyan-500 text-slate-950 font-black'
-                          : 'bg-white/5 text-slate-300 hover:bg-white/10'
+                          ? 'bg-red-600 text-white font-black shadow-xs'
+                          : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
                       }`}
                     >
                       {p.replace(/_/g, ' ')} ({count})
@@ -342,27 +342,27 @@ export const DatabaseExplorerModal: React.FC<DatabaseExplorerModalProps> = ({
                   <div
                     key={p.id}
                     onClick={() => onSelectProperty?.(p)}
-                    className="flex items-center justify-between p-3.5 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-cyan-500/40 transition-all cursor-pointer group"
+                    className="flex items-center justify-between p-3.5 rounded-2xl bg-white hover:bg-slate-50 border border-slate-200 hover:border-red-300 transition-all cursor-pointer group shadow-2xs"
                   >
                     <div className="flex items-center gap-3.5 min-w-0">
-                      <span className="text-xs font-mono font-bold text-slate-500 w-7 shrink-0">
+                      <span className="text-xs font-mono font-bold text-slate-400 w-7 shrink-0">
                         #{(idx + 1).toString().padStart(3, '0')}
                       </span>
                       <img
                         src={p.media?.featuredImage}
                         alt={p.title}
-                        className="w-12 h-12 rounded-xl object-cover shrink-0 border border-white/15"
+                        className="w-12 h-12 rounded-xl object-cover shrink-0 border border-slate-200"
                       />
                       <div className="min-w-0">
                         <div className="flex items-center gap-2">
-                          <span className="text-sm font-black text-white group-hover:text-cyan-400 transition-colors truncate">
+                          <span className="text-sm font-bold text-slate-900 group-hover:text-red-600 transition-colors truncate">
                             {p.propertyAddress?.street || p.title}
                           </span>
-                          <span className="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-white/10 text-cyan-300 uppercase shrink-0">
+                          <span className="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-red-50 text-red-600 border border-red-200 uppercase shrink-0">
                             {p.sourcePortal}
                           </span>
                         </div>
-                        <p className="text-xs text-slate-400 font-mono truncate mt-0.5">
+                        <p className="text-xs text-slate-500 font-mono truncate mt-0.5">
                           {p.propertyAddress?.neighborhood ? `${p.propertyAddress.neighborhood}, ` : ''}
                           {p.propertyAddress?.city}, {p.propertyAddress?.state} • {p.specs?.beds} Beds • {p.specs?.baths} Baths
                         </p>
@@ -371,7 +371,7 @@ export const DatabaseExplorerModal: React.FC<DatabaseExplorerModalProps> = ({
 
                     <div className="flex items-center gap-4 shrink-0 pl-3">
                       <div className="text-right">
-                        <span className="text-sm font-black font-mono text-cyan-400">
+                        <span className="text-sm font-black font-mono text-red-600">
                           {rentOrPrice}
                         </span>
                         <span className="text-[10px] text-slate-400 font-mono block">
@@ -385,7 +385,7 @@ export const DatabaseExplorerModal: React.FC<DatabaseExplorerModalProps> = ({
                           target="_blank"
                           rel="noopener noreferrer"
                           onClick={(e) => e.stopPropagation()}
-                          className="p-2 rounded-xl bg-white/10 hover:bg-cyan-500 hover:text-slate-950 text-white transition-all cursor-pointer"
+                          className="p-2 rounded-xl bg-slate-100 hover:bg-red-600 hover:text-white text-slate-600 transition-all cursor-pointer"
                           title="Open official listing"
                         >
                           <ExternalLink className="w-3.5 h-3.5" />
@@ -401,7 +401,7 @@ export const DatabaseExplorerModal: React.FC<DatabaseExplorerModalProps> = ({
 
         {/* Tab 2: SQL Query Studio */}
         {activeTab === 'SQL_STUDIO' && (
-          <div className="flex-1 flex flex-col p-6 space-y-4 overflow-y-auto max-h-[520px]">
+          <div className="flex-1 flex flex-col p-6 space-y-4 overflow-y-auto max-h-[520px] bg-white">
             {/* Presets Strip */}
             <div className="space-y-1.5">
               <span className="text-[10px] font-mono uppercase font-bold text-slate-400">
@@ -415,7 +415,7 @@ export const DatabaseExplorerModal: React.FC<DatabaseExplorerModalProps> = ({
                       setSqlQuery(preset.query);
                       handleExecuteSql(preset.query);
                     }}
-                    className="px-3 py-1 rounded-xl bg-white/5 hover:bg-amber-500/20 text-slate-300 hover:text-amber-300 border border-white/10 hover:border-amber-500/40 text-xs font-mono font-bold transition-all cursor-pointer"
+                    className="px-3 py-1 rounded-xl bg-slate-100 hover:bg-red-50 text-slate-700 hover:text-red-600 border border-slate-200 hover:border-red-300 text-xs font-mono font-bold transition-all cursor-pointer"
                   >
                     ⚡ {preset.name}
                   </button>
@@ -426,13 +426,13 @@ export const DatabaseExplorerModal: React.FC<DatabaseExplorerModalProps> = ({
             {/* SQL Input Area */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-mono text-cyan-400 font-bold flex items-center gap-1.5">
+                <span className="text-xs font-mono text-red-600 font-bold flex items-center gap-1.5">
                   <Terminal className="w-3.5 h-3.5" />
                   <span>SQLite 3.x Direct Query Console</span>
                 </span>
                 {sqlResults && (
-                  <span className="text-[11px] font-mono text-slate-400 flex items-center gap-1">
-                    <Clock className="w-3 h-3 text-emerald-400" />
+                  <span className="text-[11px] font-mono text-slate-500 flex items-center gap-1">
+                    <Clock className="w-3 h-3 text-emerald-600" />
                     <span>Execution: {sqlResults.executionTimeMs}ms • {sqlResults.rowCount} rows</span>
                   </span>
                 )}
@@ -443,13 +443,13 @@ export const DatabaseExplorerModal: React.FC<DatabaseExplorerModalProps> = ({
                   value={sqlQuery}
                   onChange={(e) => setSqlQuery(e.target.value)}
                   rows={3}
-                  className="w-full p-3 font-mono text-xs rounded-2xl bg-black/80 border border-white/20 text-emerald-300 focus:outline-none focus:border-amber-400 resize-none shadow-inner"
+                  className="w-full p-3 font-mono text-xs rounded-2xl bg-slate-900 border border-slate-800 text-emerald-400 focus:outline-none focus:border-red-500 resize-none shadow-inner"
                   placeholder="SELECT * FROM properties WHERE..."
                 />
                 <button
                   onClick={() => handleExecuteSql()}
                   disabled={isExecutingSql}
-                  className="absolute right-3 bottom-4 px-4 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-slate-950 font-mono font-black text-xs uppercase tracking-wider flex items-center gap-1.5 shadow-lg shadow-amber-500/25 transition-all cursor-pointer disabled:opacity-50"
+                  className="absolute right-3 bottom-4 px-4 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-mono font-black text-xs uppercase tracking-wider flex items-center gap-1.5 shadow-md shadow-red-200 transition-all cursor-pointer disabled:opacity-50"
                 >
                   <Play className="w-3.5 h-3.5 fill-current" />
                   <span>{isExecutingSql ? 'RUNNING...' : 'EXECUTE SQL'}</span>
@@ -459,29 +459,29 @@ export const DatabaseExplorerModal: React.FC<DatabaseExplorerModalProps> = ({
 
             {/* Error Display */}
             {sqlError && (
-              <div className="p-3 rounded-xl bg-red-950/80 border border-red-500/50 text-red-300 text-xs font-mono">
+              <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-mono">
                 ⚠ {sqlError}
               </div>
             )}
 
             {/* Results Grid Table */}
             {sqlResults && (
-              <div className="flex-1 overflow-x-auto rounded-2xl border border-white/10 bg-black/60 shadow-inner">
+              <div className="flex-1 overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-xs">
                 <table className="w-full text-left text-xs font-mono">
-                  <thead className="bg-white/10 text-cyan-300 uppercase sticky top-0">
+                  <thead className="bg-slate-100 text-slate-700 uppercase sticky top-0 border-b border-slate-200">
                     <tr>
                       {sqlResults.columns.map((col) => (
-                        <th key={col} className="px-3 py-2 font-bold border-b border-white/10">
+                        <th key={col} className="px-3 py-2 font-bold">
                           {col}
                         </th>
                       ))}
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-white/5">
+                  <tbody className="divide-y divide-slate-100">
                     {sqlResults.rows.map((row, i) => (
-                      <tr key={i} className="hover:bg-white/5 transition-colors">
+                      <tr key={i} className="hover:bg-red-50/40 transition-colors">
                         {sqlResults.columns.map((col) => (
-                          <td key={col} className="px-3 py-2 text-slate-300 truncate max-w-[200px]">
+                          <td key={col} className="px-3 py-2 text-slate-700 truncate max-w-[200px]">
                             {typeof row[col] === 'number'
                               ? col.includes('price') || col.includes('rent')
                                 ? formatCurrency(row[col])

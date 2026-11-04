@@ -27,46 +27,52 @@ async function capture() {
     console.log('Navigating to http://localhost:3005 ...');
     await page.goto('http://localhost:3005', { waitUntil: 'networkidle2', timeout: 35000 });
 
-    await new Promise(r => setTimeout(r, 3000));
+    await new Promise(r => setTimeout(r, 2000));
 
-    console.log('Capturing main spacious grid view...');
+    // 1. Capture Hero Section (First Page)
+    console.log('Capturing Hero Section...');
     await page.screenshot({
-      path: path.join(ARTIFACT_DIR, 'snap_spacious_clean_grid.png'),
+      path: path.join(ARTIFACT_DIR, 'snap_hero_page.png'),
       fullPage: false
     });
 
-    // Switch to Split Map view by clicking button with text 'Split Map'
-    console.log('Looking for Split Map button...');
-    const buttons = await page.$$('button');
-    for (const btn of buttons) {
-      const text = await page.evaluate(el => el.textContent, btn);
-      if (text && text.includes('Split Map')) {
-        console.log('Found Split Map button, clicking...');
-        await btn.click();
-        await new Promise(r => setTimeout(r, 2500));
-        await page.screenshot({
-          path: path.join(ARTIFACT_DIR, 'snap_spacious_split_map.png'),
-          fullPage: false
-        });
-        break;
-      }
-    }
+    // 2. Scroll to Dashboard Section
+    console.log('Scrolling down to Dashboard...');
+    await page.evaluate(() => {
+      const el = document.getElementById('dashboard-section');
+      if (el) el.scrollIntoView({ behavior: 'instant' });
+    });
+    await new Promise(r => setTimeout(r, 2500));
 
-    // Switch to Local DB
-    console.log('Looking for Local DB button...');
-    const buttons2 = await page.$$('button');
-    for (const btn of buttons2) {
-      const text = await page.evaluate(el => el.textContent, btn);
-      if (text && (text.includes('Local DB') || text.includes('Database Explorer'))) {
-        console.log('Found Local DB button, clicking...');
-        await btn.click();
-        await new Promise(r => setTimeout(r, 2000));
-        await page.screenshot({
-          path: path.join(ARTIFACT_DIR, 'snap_spacious_db_modal.png'),
-          fullPage: false
-        });
-        break;
-      }
+    console.log('Capturing White & Red Executive Dashboard (Map Up, Houses Down)...');
+    await page.screenshot({
+      path: path.join(ARTIFACT_DIR, 'snap_white_red_dashboard.png'),
+      fullPage: false
+    });
+
+    // 3. Scroll a bit further down to show the 4-column property cards grid
+    console.log('Scrolling down to Property Cards Grid...');
+    await page.evaluate(() => {
+      window.scrollBy(0, 600);
+    });
+    await new Promise(r => setTimeout(r, 1500));
+
+    console.log('Capturing 4-Column Property Grid...');
+    await page.screenshot({
+      path: path.join(ARTIFACT_DIR, 'snap_property_grid.png'),
+      fullPage: false
+    });
+
+    // 4. Open Local SQLite Database Modal
+    console.log('Opening Local SQLite Database Explorer Modal...');
+    const dbBtn = await page.$('button[title*="SQLite"]');
+    if (dbBtn) {
+      await dbBtn.click();
+      await new Promise(r => setTimeout(r, 1500));
+      await page.screenshot({
+        path: path.join(ARTIFACT_DIR, 'snap_white_red_db_modal.png'),
+        fullPage: false
+      });
     }
 
     console.log('All screenshots captured successfully!');
