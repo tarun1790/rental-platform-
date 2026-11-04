@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Search, 
   Sparkles, 
@@ -15,10 +15,13 @@ import {
   ArrowRight,
   ShieldCheck,
   Building,
-  Key
+  Key,
+  Volume2,
+  VolumeX
 } from 'lucide-react';
 import { FilterState } from '../../types/property';
 import { TiledHomeIcon } from '../common/TiledHomeIcon';
+import { spatialAudio } from '../../lib/audio/spatial-audio';
 
 interface ActiveTheoryHUDProps {
   activeView: 'spatial' | 'shrine' | 'map' | 'database';
@@ -48,6 +51,11 @@ export const ActiveTheoryHUD: React.FC<ActiveTheoryHUDProps> = ({
   hasExaKey,
 }) => {
   const [isListening, setIsListening] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+
+  useEffect(() => {
+    setIsMuted(spatialAudio.getIsMuted());
+  }, []);
 
   const handleToggleVoiceSearch = () => {
     if (isListening) {
@@ -212,6 +220,23 @@ export const ActiveTheoryHUD: React.FC<ActiveTheoryHUDProps> = ({
             >
               <Database className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">LOCAL DB</span>
+            </button>
+
+            {/* Spatial Audio Mute Toggle Button */}
+            <button
+              onClick={() => {
+                const nextMuted = spatialAudio.toggleMute();
+                setIsMuted(nextMuted);
+                if (!nextMuted) spatialAudio.playClickPing();
+              }}
+              className={`p-2 rounded-full border transition-all cursor-pointer ml-1 ${
+                isMuted
+                  ? 'bg-white/5 border-white/10 text-slate-500 hover:text-slate-300'
+                  : 'bg-cyan-950/70 border-cyan-500/50 text-cyan-400 shadow-md shadow-cyan-500/20'
+              }`}
+              title={isMuted ? 'Unmute Spatial Audio (SFX)' : 'Mute Spatial Audio (SFX)'}
+            >
+              {isMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
             </button>
           </div>
 

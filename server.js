@@ -254,6 +254,84 @@ nextApp.prepare().then(() => {
     });
   });
 
+  // API ROUTE: /api/database/sql (Live Safe SQL Query Studio)
+  server.post('/api/database/sql', (req, res) => {
+    const { query } = req.body;
+    if (!query || typeof query !== 'string') {
+      return res.status(400).json({ success: false, error: 'Query parameter is required' });
+    }
+
+    const trimmed = query.trim();
+    if (!/^SELECT\b/i.test(trimmed)) {
+      return res.status(403).json({ success: false, error: 'Strict Security: Only SELECT queries are permitted.' });
+    }
+
+    const db = initSqliteConnection();
+    if (!db) {
+      return res.status(500).json({ success: false, error: 'Database connection offline' });
+    }
+
+    const start = Date.now();
+    db.all(trimmed, [], (err, rows) => {
+      const executionTimeMs = Date.now() - start;
+      if (err) {
+        return res.status(400).json({ success: false, error: err.message });
+      }
+      const rowList = rows || [];
+      const columns = rowList.length > 0 ? Object.keys(rowList[0]) : [];
+      res.status(200).json({
+        success: true,
+        columns,
+        rows: rowList.slice(0, 500),
+        rowCount: rowList.length,
+        executionTimeMs,
+      });
+    });
+  });
+
+  // API ROUTE: /api/database/export (Download JSON / CSV)
+  server.get('/api/database/export', (req, res) => {
+    const format = req.query.format === 'csv' ? 'csv' : 'json';
+    const db = initSqliteConnection();
+    if (!db) {
+      return res.status(500).json({ success: false, error: 'Database connection offline' });
+    }
+
+    db.all('SELECT * FROM properties ORDER BY pass_flow_score DESC', [], (err, rows) => {
+      if (err) return res.status(500).json({ success: false, error: err.message });
+      const rowList = rows || [];
+
+      if (format === 'json') {
+        res.setHeader('Content-Type', 'application/json');
+        res.setHeader('Content-Disposition', 'attachment; filename="houses_database_export.json"');
+        const parsed = rowList.map(r => {
+          if (r.raw_json) {
+            try { return JSON.parse(r.raw_json); } catch (e) {}
+          }
+          return r;
+        });
+        return res.send(JSON.stringify(parsed, null, 2));
+      }
+
+      // CSV format
+      const headers = [
+        'id', 'title', 'source_portal', 'listing_status', 'street', 'city', 'state', 'zip_code',
+        'beds', 'baths', 'sqft', 'monthly_rent', 'purchase_price', 'cap_rate', 'pass_flow_score', 'external_url'
+      ];
+      const csvLines = [headers.join(',')];
+      for (const r of rowList) {
+        const line = headers.map(h => {
+          const val = r[h] !== undefined && r[h] !== null ? String(r[h]) : '';
+          return `"${val.replace(/"/g, '""')}"`;
+        }).join(',');
+        csvLines.push(line);
+      }
+      res.setHeader('Content-Type', 'text/csv');
+      res.setHeader('Content-Disposition', 'attachment; filename="houses_database_export.csv"');
+      res.send(csvLines.join('\n'));
+    });
+  });
+
   // In-memory dynamic pool of n8n ingested listings
   const n8nDynamicListings = [];
   const n8nIngestTelemetry = {

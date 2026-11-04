@@ -15,6 +15,7 @@ import {
   Maximize2
 } from 'lucide-react';
 import { formatCurrency } from '../../lib/roi-engine';
+import { spatialAudio } from '../../lib/audio/spatial-audio';
 
 interface SpatialCardCarouselProps {
   listings: ShikaakPropertyListing[];
@@ -38,10 +39,13 @@ export const SpatialCardCarousel: React.FC<SpatialCardCarouselProps> = ({
     (index: number) => {
       if (total === 0) return;
       const newIndex = Math.max(0, Math.min(total - 1, index));
+      if (newIndex !== activeIndex) {
+        spatialAudio.playCardSwipe(newIndex > activeIndex ? 'right' : 'left');
+      }
       setActiveIndex(newIndex);
       onSelectListing(listings[newIndex]);
     },
-    [total, listings, onSelectListing]
+    [total, listings, onSelectListing, activeIndex]
   );
 
   // Keyboard navigation
@@ -145,6 +149,9 @@ export const SpatialCardCarousel: React.FC<SpatialCardCarouselProps> = ({
               key={listing.id}
               onClick={() => {
                 if (!isCenter) navigateTo(index);
+              }}
+              onMouseEnter={() => {
+                if (!isCenter) spatialAudio.playCyberHover();
               }}
               className="absolute w-[340px] sm:w-[420px] lg:w-[460px] h-[490px] sm:h-[510px] rounded-[32px] transition-all duration-300 ease-out flex flex-col justify-between overflow-hidden group backdrop-blur-2xl"
               style={{

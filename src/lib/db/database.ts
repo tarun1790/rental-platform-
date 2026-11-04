@@ -78,6 +78,18 @@ function initSchema(db: sqlite3.Database): void {
     CREATE INDEX IF NOT EXISTS idx_properties_rent ON properties(monthly_rent);
     CREATE INDEX IF NOT EXISTS idx_properties_price ON properties(purchase_price);
     CREATE INDEX IF NOT EXISTS idx_properties_lat_lng ON properties(latitude, longitude);
+
+    CREATE VIRTUAL TABLE IF NOT EXISTS properties_fts USING fts5(
+      id UNINDEXED,
+      title,
+      street,
+      city,
+      state,
+      neighborhood,
+      source_portal,
+      content='properties',
+      content_rowid='rowid'
+    );
   `;
 
   db.exec(schema, (err) => {
@@ -449,6 +461,71 @@ export function getDatabaseStats(): Promise<{
           });
         });
       });
+    });
+  });
+}
+
+/**
+ * Executes a strict read-only SQL query with timing & column metadata
+ */
+export function executeSafeQuery(sql: string): Promise<{
+  columns: string[];
+  rows: any[];
+  rowCount: number;
+  executionTimeMs: number;
+}> {
+  return new Promise((resolve, reject) => {
+    const trimmed = sql.trim();
+    if (!/^SELECT\b/i.test(trimmed)) {
+      return reject(new Error('Strict Security: Only SELECT queries are permitted in SQL Studio.'));
+    }
+
+    const start = Date.now();
+    const db = getDb();
+
+    db.all(trimmed, [], (err, rows: any[]) => {
+      const executionTimeMs = Date.now() - start;
+      if (err) return reject(err);
+
+      const rowList = rows || [];
+      const columns = rowList.length > 0 ? Object.keys(rowList[0]) : [];
+      resolve({
+        columns,
+        rows: rowList,
+        rowCount: rowList.length,
+        executionTimeMs,
+      });
+    });
+  });
+}
+
+/**
+ * Exports full SQLite database dataset to JSON or CSV format
+ */
+export function exportDataset(format: 'json' | 'csv' = 'json'): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const db = getDb();
+    db.all('SELECT * FROM properties ORDER BY pass_flow_score DESC', [], (err, rows: any[]) => {
+      if (err) return reject(err);
+      if (format === 'json') {
+        const parsed = (rows || []).map(rowToListing);
+        return resolve(JSON.stringify(parsed, null, 2));
+      }
+
+      // CSV Generation
+      const headers = [
+        'id', 'title', 'source_portal', 'listing_status', 'street', 'city', 'state', 'zip_code',
+        'beds', 'baths', 'sqft', 'monthly_rent', 'purchase_price', 'cap_rate', 'pass_flow_score', 'external_url'
+      ];
+      const csvLines = [headers.join(',')];
+      for (const r of rows || []) {
+        const line = headers.map(h => {
+          const val = r[h] !== undefined && r[h] !== null ? String(r[h]) : '';
+          return `"${val.replace(/"/g, '""')}"`;
+        }).join(',');
+        csvLines.push(line);
+      }
+      resolve(csvLines.join('\n'));
     });
   });
 }
