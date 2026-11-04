@@ -29,48 +29,54 @@ async function capture() {
 
     await new Promise(r => setTimeout(r, 2000));
 
-    // 1. Capture Hero Section (First Page)
-    console.log('Capturing Hero Section...');
-    await page.screenshot({
-      path: path.join(ARTIFACT_DIR, 'snap_hero_page.png'),
-      fullPage: false
-    });
-
-    // 2. Scroll to Dashboard Section
+    // Scroll to Dashboard Section
     console.log('Scrolling down to Dashboard...');
     await page.evaluate(() => {
       const el = document.getElementById('dashboard-section');
       if (el) el.scrollIntoView({ behavior: 'instant' });
     });
-    await new Promise(r => setTimeout(r, 2500));
+    await new Promise(r => setTimeout(r, 2000));
 
-    console.log('Capturing White & Red Executive Dashboard (Map Up, Houses Down)...');
+    // Click Zillow portal tab
+    console.log('Clicking Zillow Portal tab...');
+    const buttons = await page.$$('button');
+    for (const b of buttons) {
+      const text = await page.evaluate(el => el.textContent, b);
+      if (text && text.includes('Zillow')) {
+        await b.click();
+        console.log('Clicked Zillow tab:', text);
+        break;
+      }
+    }
+    await new Promise(r => setTimeout(r, 2000));
+
+    console.log('Capturing Zillow Filtered Dashboard...');
     await page.screenshot({
-      path: path.join(ARTIFACT_DIR, 'snap_white_red_dashboard.png'),
+      path: path.join(ARTIFACT_DIR, 'snap_zillow_filtered_dashboard.png'),
       fullPage: false
     });
 
-    // 3. Scroll a bit further down to show the 4-column property cards grid
-    console.log('Scrolling down to Property Cards Grid...');
+    // Scroll down to show Zillow property cards
+    console.log('Scrolling to Zillow Property Cards...');
     await page.evaluate(() => {
       window.scrollBy(0, 600);
     });
     await new Promise(r => setTimeout(r, 1500));
 
-    console.log('Capturing 4-Column Property Grid...');
+    console.log('Capturing Zillow Property Cards Grid...');
     await page.screenshot({
-      path: path.join(ARTIFACT_DIR, 'snap_property_grid.png'),
+      path: path.join(ARTIFACT_DIR, 'snap_zillow_property_grid.png'),
       fullPage: false
     });
 
-    // 4. Open Local SQLite Database Modal
-    console.log('Opening Local SQLite Database Explorer Modal...');
+    // Open Local SQLite Database Modal
+    console.log('Opening Local SQLite Database Modal...');
     const dbBtn = await page.$('button[title*="SQLite"]');
     if (dbBtn) {
       await dbBtn.click();
       await new Promise(r => setTimeout(r, 1500));
       await page.screenshot({
-        path: path.join(ARTIFACT_DIR, 'snap_white_red_db_modal.png'),
+        path: path.join(ARTIFACT_DIR, 'snap_zillow_db_modal_1317.png'),
         fullPage: false
       });
     }

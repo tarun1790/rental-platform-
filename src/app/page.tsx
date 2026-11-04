@@ -105,7 +105,7 @@ export default function Home() {
 
   // Load from local SQLite API on initial render
   useEffect(() => {
-    fetch('/api/database/properties?limit=1000')
+    fetch('/api/database/properties?limit=2500&reload=1')
       .then((res) => res.json())
       .then((data) => {
         if (data.success && data.properties && data.properties.length > 0) {

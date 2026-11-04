@@ -228,13 +228,13 @@ nextApp.prepare().then(() => {
 
   // API ROUTE: /api/database/properties
   server.get('/api/database/properties', async (req, res) => {
-    const limit = Math.min(1000, parseInt(req.query.limit || '100', 10));
+    const limit = Math.min(5000, parseInt(req.query.limit || '200', 10));
     const offset = Math.max(0, parseInt(req.query.offset || '0', 10));
     const city = (req.query.city || '').toLowerCase();
     const portal = req.query.portal;
 
     let results = sqliteCache;
-    if (Date.now() - lastDbLoadTime > 60000 || results.length === 0) {
+    if (Date.now() - lastDbLoadTime > 15000 || results.length === 0 || req.query.reload === '1') {
       results = await loadPropertiesFromSqlite();
     }
 
