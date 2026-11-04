@@ -116,9 +116,9 @@ export default function Home() {
   });
 
   // Active Theory Spatial UI View & Database Explorer State
-  const [spatialViewMode, setSpatialViewMode] = useState<'spatial' | 'map' | 'database'>('spatial');
+  const [spatialViewMode, setSpatialViewMode] = useState<'spatial' | 'shrine' | 'map' | 'database'>('spatial');
   const [isDbModalOpen, setIsDbModalOpen] = useState(false);
-  const [totalDbCount, setTotalDbCount] = useState(713);
+  const [totalDbCount, setTotalDbCount] = useState(817);
   const [hasExaKey, setHasExaKey] = useState(true);
 
   // Load full SQLite database inventory on mount
@@ -132,7 +132,7 @@ export default function Home() {
       })
       .catch(() => {});
 
-    fetch('/api/database/properties?limit=250')
+    fetch('/api/database/properties?limit=850')
       .then((res) => res.json())
       .then((data) => {
         if (data.properties && data.properties.length > 0) {
@@ -376,36 +376,47 @@ export default function Home() {
           const isBroadScanQuery = /take all|all homes|all properties|from zillow|from redfin|from realtor|using scraper|crawling|crawler|scanned houses|other website|other websites|all websites|portals|scan now/i.test(query);
 
           if (!isBroadScanQuery) {
-            const matchStreet = listing.propertyAddress.street.toLowerCase().includes(query);
-            const matchCity = listing.propertyAddress.city.toLowerCase().includes(query);
-            const matchState = listing.propertyAddress.state.toLowerCase().includes(query);
-            const matchNeighborhood = listing.propertyAddress.neighborhood.toLowerCase().includes(query);
-            const matchTitle = listing.title.toLowerCase().includes(query);
-            const matchPortal = (listing.sourcePortal || '').toLowerCase().includes(query);
+            const street = (listing.propertyAddress?.street || '').toLowerCase();
+            const city = (listing.propertyAddress?.city || '').toLowerCase();
+            const state = (listing.propertyAddress?.state || '').toLowerCase();
+            const neighborhood = (listing.propertyAddress?.neighborhood || '').toLowerCase();
+            const title = (listing.title || '').toLowerCase();
+            const portal = (listing.sourcePortal || '').toLowerCase();
 
-              const stopWords = new Set([
-                'house', 'home', 'homes', 'under', 'below', 'for', 'sale', 'rent', 'rental', 'rentals',
-                'near', 'with', 'and', 'the', 'from', 'other', 'website', 'websites', 'using', 'scraper',
-                'crawling', 'take', 'all', 'scanned', 'scan', 'now', 'bed', 'beds', 'bedroom', 'bedrooms',
-                'bath', 'baths', 'bathroom', 'bathrooms', 'bhk', 'rk', 'apartment', 'apartments', 'condo',
-                'condos', 'flat', 'flats', 'property', 'properties', 'in'
-              ]);
+            if (query.includes('zillow') && portal === 'zillow') {
+              // Matches zillow
+            } else if (query.includes('redfin') && portal === 'redfin') {
+              // Matches redfin
+            } else if (query.includes('apartments') && portal.includes('apartments')) {
+              // Matches apartments
+            } else {
+              const directMatch = street.includes(query) || city.includes(query) || state.includes(query) || neighborhood.includes(query) || title.includes(query) || portal.includes(query);
+              if (!directMatch) {
+                const stopWords = new Set([
+                  'house', 'home', 'homes', 'under', 'below', 'for', 'sale', 'rent', 'rental', 'rentals',
+                  'near', 'with', 'and', 'the', 'from', 'other', 'website', 'websites', 'using', 'scraper',
+                  'crawling', 'take', 'all', 'scanned', 'scan', 'now', 'bed', 'beds', 'bedroom', 'bedrooms',
+                  'bath', 'baths', 'bathroom', 'bathrooms', 'bhk', 'rk', 'apartment', 'apartments', 'condo',
+                  'condos', 'flat', 'flats', 'property', 'properties', 'in'
+                ]);
 
-              const tokens = query.split(/\s+/).filter(t => 
-                t.length >= 2 && !stopWords.has(t) && !/^\d+$/.test(t) && !/^\d+(?:bhk|rk|bed|br)$/i.test(t)
-              );
-
-              if (tokens.length > 0) {
-                const tokenMatch = tokens.some(t =>
-                  listing.propertyAddress.city.toLowerCase().includes(t) ||
-                  listing.propertyAddress.neighborhood.toLowerCase().includes(t) ||
-                  listing.propertyAddress.street.toLowerCase().includes(t) ||
-                  listing.propertyAddress.state.toLowerCase().includes(t) ||
-                  (listing.propertyTaxes?.countyName || '').toLowerCase().includes(t) ||
-                  (listing.sourcePortal || '').toLowerCase().includes(t)
+                const tokens = query.split(/\s+/).filter(t => 
+                  t.length >= 2 && !stopWords.has(t) && !/^\d+$/.test(t) && !/^\d+(?:bhk|rk|bed|br)$/i.test(t)
                 );
-                if (!tokenMatch) return false;
+
+                if (tokens.length > 0) {
+                  const tokenMatch = tokens.some(t =>
+                    city.includes(t) ||
+                    neighborhood.includes(t) ||
+                    street.includes(t) ||
+                    state.includes(t) ||
+                    portal.includes(t) ||
+                    (listing.propertyTaxes?.countyName || '').toLowerCase().includes(t)
+                  );
+                  if (!tokenMatch) return false;
+                }
               }
+            }
           }
         }
 
@@ -415,34 +426,36 @@ export default function Home() {
         }
 
         // 3. Price Min & Max (Distinguish monthly rent vs purchase price)
+        const rent = listing.financials?.inputs?.monthlyGrossRent || 0;
+        const price = listing.financials?.inputs?.purchasePrice || 0;
+
         if (listing.listingStatus === 'FOR_RENT') {
-          const rent = listing.financials.inputs.monthlyGrossRent;
           if (filters.priceMax < 10000) {
             if (rent < filters.priceMin || rent > filters.priceMax) return false;
           } else if (filters.priceMin > 0) {
             if (rent < filters.priceMin) return false;
           }
         } else {
-          if (listing.financials.inputs.purchasePrice < filters.priceMin) {
+          if (price < filters.priceMin) {
             return false;
           }
-          if (filters.priceMax < 5000000 && listing.financials.inputs.purchasePrice > filters.priceMax) {
+          if (filters.priceMax < 5000000 && price > filters.priceMax) {
             return false;
           }
         }
 
         // 4. Beds Min
-        if (filters.bedsMin > 0 && listing.specs.beds < filters.bedsMin) {
+        if (filters.bedsMin > 0 && (listing.specs?.beds || 0) < filters.bedsMin) {
           return false;
         }
 
         // 5. Baths Min
-        if (filters.bathsMin > 0 && listing.specs.baths < filters.bathsMin) {
+        if (filters.bathsMin > 0 && (listing.specs?.baths || 0) < filters.bathsMin) {
           return false;
         }
 
         // 6. Property Type
-        if (filters.propertyType !== 'ALL' && listing.specs.propertyType !== filters.propertyType) {
+        if (filters.propertyType !== 'ALL' && (listing.specs?.propertyType || 'CONDO') !== filters.propertyType) {
           return false;
         }
 
@@ -465,7 +478,7 @@ export default function Home() {
         }
 
         // 10. Maximum Property Taxes
-        if (filters.maxPropertyTaxesUSD < 50000 && listing.propertyTaxes.annualAmountUSD > filters.maxPropertyTaxesUSD) {
+        if (filters.maxPropertyTaxesUSD < 50000 && (listing.propertyTaxes?.annualAmountUSD || 0) > filters.maxPropertyTaxesUSD) {
           return false;
         }
 
@@ -478,16 +491,24 @@ export default function Home() {
           return scoreB - scoreA;
         }
         if (sortBy === 'PRICE_ASC') {
-          return a.financials.inputs.purchasePrice - b.financials.inputs.purchasePrice;
+          const priceA = a.financials?.inputs?.purchasePrice || 0;
+          const priceB = b.financials?.inputs?.purchasePrice || 0;
+          return priceA - priceB;
         }
         if (sortBy === 'PRICE_DESC') {
-          return b.financials.inputs.purchasePrice - a.financials.inputs.purchasePrice;
+          const priceA = a.financials?.inputs?.purchasePrice || 0;
+          const priceB = b.financials?.inputs?.purchasePrice || 0;
+          return priceB - priceA;
         }
         if (sortBy === 'SQFT_DESC') {
-          return b.specs.finishedSqFt - a.specs.finishedSqFt;
+          const sqftA = a.specs?.finishedSqFt || 0;
+          const sqftB = b.specs?.finishedSqFt || 0;
+          return sqftB - sqftA;
         }
         if (sortBy === 'CAPRATE_DESC') {
-          return b.financials.outputs.capRatePercent - a.financials.outputs.capRatePercent;
+          const capA = a.financials?.outputs?.capRatePercent || 0;
+          const capB = b.financials?.outputs?.capRatePercent || 0;
+          return capB - capA;
         }
         return 0;
       });
@@ -588,6 +609,36 @@ export default function Home() {
               onSelectListing={setSelectedListing}
               onOpenDetail={handleOpenProperty}
             />
+          </div>
+        ) : spatialViewMode === 'shrine' ? (
+          /* ACTIVE THEORY IMMERSIVE 3D CYBERNETIC SHRINE VIEW */
+          <div className="w-full max-w-xl mx-auto flex flex-col items-center text-center space-y-4 animate-in fade-in duration-700 p-8 rounded-3xl bg-black/50 border border-amber-500/30 backdrop-blur-2xl shadow-2xl select-none">
+            <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-amber-500 to-orange-400 p-1 flex items-center justify-center shadow-lg shadow-amber-500/40 animate-pulse">
+              <Sparkles className="w-8 h-8 text-slate-950" />
+            </div>
+            <span className="text-xs font-mono font-bold tracking-widest text-amber-400 uppercase">
+              ACTIVE THEORY 3D SHRINE // 817 HOUSES IN ORBIT
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight uppercase">
+              Immersive Spatial Chamber
+            </h2>
+            <p className="text-xs font-mono text-slate-300 max-w-md leading-relaxed">
+              Explore the suspended golden gyro rig, living organic particle torus, and liquid caustic reflections with real-time mouse inertia.
+            </p>
+            <div className="flex items-center gap-3 pt-2">
+              <button
+                onClick={() => setSpatialViewMode('spatial')}
+                className="px-6 py-2.5 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 font-black text-xs font-mono tracking-wider uppercase shadow-lg shadow-cyan-500/25 hover:brightness-110 transition-all cursor-pointer"
+              >
+                BROWSE RESIDENCES (817)
+              </button>
+              <button
+                onClick={() => setIsDbModalOpen(true)}
+                className="px-5 py-2.5 rounded-full bg-white/5 hover:bg-white/10 text-white font-bold text-xs font-mono tracking-wider uppercase border border-white/20 transition-all cursor-pointer"
+              >
+                OPEN LOCAL DB
+              </button>
+            </div>
           </div>
         ) : (
           /* MAP MATRIX VIEW */

@@ -21,8 +21,8 @@ import { FilterState } from '../../types/property';
 import { TiledHomeIcon } from '../common/TiledHomeIcon';
 
 interface ActiveTheoryHUDProps {
-  activeView: 'spatial' | 'map' | 'database';
-  onViewChange: (view: 'spatial' | 'map' | 'database') => void;
+  activeView: 'spatial' | 'shrine' | 'map' | 'database';
+  onViewChange: (view: 'spatial' | 'shrine' | 'map' | 'database') => void;
   totalDbCount: number;
   filteredCount: number;
   filters: FilterState;
@@ -90,7 +90,9 @@ export const ActiveTheoryHUD: React.FC<ActiveTheoryHUDProps> = ({
   };
 
   const QUICK_INTENTS = [
-    { label: 'ALL RENTALS', query: 'rentals for rent', status: 'FOR_RENT' },
+    { label: 'ZILLOW VERIFIED (275)', query: 'zillow homes', status: 'ALL' },
+    { label: 'ALL RESIDENCES (817)', query: '', status: 'ALL' },
+    { label: 'FOR RENT', query: 'rentals for rent', status: 'FOR_RENT' },
     { label: 'FOR SALE', query: 'homes for sale', status: 'FOR_SALE' },
     { label: 'DENVER 3BHK', query: '3bhk in denver', status: 'FOR_RENT' },
     { label: 'CHICAGO CONDOS', query: 'chicago condo', status: 'FOR_RENT' },
@@ -174,6 +176,18 @@ export const ActiveTheoryHUD: React.FC<ActiveTheoryHUDProps> = ({
             >
               <Layers className="w-3.5 h-3.5" />
               <span>3D SPATIAL</span>
+            </button>
+
+            <button
+              onClick={() => onViewChange('shrine')}
+              className={`flex items-center gap-1.5 px-3.5 sm:px-4 py-1.5 rounded-full text-xs font-black tracking-wider uppercase transition-all cursor-pointer ${
+                activeView === 'shrine'
+                  ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-slate-950 shadow-md shadow-amber-500/25'
+                  : 'text-slate-300 hover:text-white'
+              }`}
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>3D SHRINE</span>
             </button>
 
             <button

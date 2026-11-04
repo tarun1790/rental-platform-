@@ -31,11 +31,9 @@ export const SpatialCardCarousel: React.FC<SpatialCardCarouselProps> = ({
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [dragOffset, setDragOffset] = useState(0);
-  const containerRef = useRef<HTMLDivElement>(null);
 
   const total = listings.length;
 
-  // Clamp index within bounds
   const navigateTo = useCallback(
     (index: number) => {
       if (total === 0) return;
@@ -46,7 +44,7 @@ export const SpatialCardCarousel: React.FC<SpatialCardCarouselProps> = ({
     [total, listings, onSelectListing]
   );
 
-  // Keyboard navigation (Arrow keys)
+  // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'ArrowLeft') {
@@ -75,9 +73,9 @@ export const SpatialCardCarousel: React.FC<SpatialCardCarouselProps> = ({
   const handlePointerUp = () => {
     if (!isDragging) return;
     setIsDragging(false);
-    if (dragOffset > 70) {
+    if (dragOffset > 60) {
       navigateTo(activeIndex - 1);
-    } else if (dragOffset < -70) {
+    } else if (dragOffset < -60) {
       navigateTo(activeIndex + 1);
     }
     setDragOffset(0);
@@ -87,65 +85,55 @@ export const SpatialCardCarousel: React.FC<SpatialCardCarouselProps> = ({
     return (
       <div className="flex flex-col items-center justify-center min-h-[500px] text-slate-400">
         <Sparkles className="w-10 h-10 text-cyan-400 animate-pulse mb-3" />
-        <p className="text-sm font-mono tracking-wider">NO RESIDENCES IN SPATIAL BUFFER</p>
+        <p className="text-sm font-mono tracking-wider uppercase">NO RESIDENCES IN SPATIAL BUFFER</p>
       </div>
     );
   }
 
-  // Render cards in a window of 9 around the active card
-  const visibleRange = 4;
+  // Render cards in a window of 7 around the active card
+  const visibleRange = 3;
   const startIndex = Math.max(0, activeIndex - visibleRange);
   const endIndex = Math.min(total - 1, activeIndex + visibleRange);
 
   const visibleListings = [];
   for (let i = startIndex; i <= endIndex; i++) {
-    visibleListings.push({ index: i, listing: listings[i] });
+    visibleListings.push({ listing: listings[i], index: i });
   }
 
-  const currentListing = listings[activeIndex] || listings[0];
-
   return (
-    <div className="relative w-full h-[640px] sm:h-[680px] lg:h-[720px] flex flex-col items-center justify-center overflow-hidden select-none">
-      
-      {/* 3D Perspective Scene Container */}
+    <div className="relative w-full flex flex-col items-center select-none py-4">
+      {/* 3D Arc Viewport Stage */}
       <div
-        ref={containerRef}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
-        onPointerCancel={handlePointerUp}
-        className="relative w-full h-[520px] flex items-center justify-center cursor-grab active:cursor-grabbing"
+        onPointerLeave={handlePointerUp}
+        className="relative w-full h-[540px] sm:h-[580px] flex items-center justify-center perspective-[1500px] cursor-grab active:cursor-grabbing overflow-visible"
         style={{
-          perspective: '1300px',
-          perspectiveOrigin: '50% 48%',
+          perspective: '1500px',
         }}
       >
-        {visibleListings.map(({ index, listing }) => {
-          const offset = index - activeIndex + dragOffset / 280;
-          const absOffset = Math.abs(offset);
+        {visibleListings.map(({ listing, index }) => {
+          const offset = index - activeIndex;
+          const isCenter = offset === 0;
 
-          // Spatial 3D transform mathematics (Cover Flow)
-          const rotateY = offset * -26;
-          const translateX = offset * 290;
-          const translateZ = -absOffset * 150;
-          const scale = Math.max(0.72, 1 - absOffset * 0.12);
-          const opacity = Math.max(0.18, 1 - absOffset * 0.28);
-          const zIndex = 30 - Math.round(absOffset * 5);
-          const isCenter = index === activeIndex;
+          // 3D Arc Geometry Matching Active Theory Frame 01
+          let translateX = offset * 340 + dragOffset * 0.75;
+          let translateZ = -Math.abs(offset) * 160;
+          let rotateY = -offset * 32;
+          let scale = isCenter ? 1.04 : 0.84 - Math.abs(offset) * 0.08;
+          let opacity = isCenter ? 1 : Math.max(0.2, 0.75 - Math.abs(offset) * 0.25);
+          let zIndex = 50 - Math.abs(offset) * 10;
 
-          const portal = (listing.sourcePortal || 'MLS_FEED').toUpperCase();
+          const portal = listing.sourcePortal || 'ZILLOW';
           const portalColor =
             portal === 'ZILLOW'
               ? 'bg-blue-600/90 text-white border-blue-400/50'
               : portal === 'REDFIN'
               ? 'bg-red-600/90 text-white border-red-400/50'
-              : portal === 'HOTPADS'
-              ? 'bg-amber-600/90 text-white border-amber-400/50'
               : portal === 'APARTMENTS_COM'
               ? 'bg-emerald-600/90 text-white border-emerald-400/50'
-              : portal === 'REALTOR'
-              ? 'bg-sky-700/90 text-white border-sky-400/50'
-              : 'bg-purple-600/90 text-white border-purple-400/50';
+              : 'bg-cyan-600/90 text-white border-cyan-400/50';
 
           const rentOrPrice =
             listing.listingStatus === 'FOR_RENT'
@@ -158,73 +146,80 @@ export const SpatialCardCarousel: React.FC<SpatialCardCarouselProps> = ({
               onClick={() => {
                 if (!isCenter) navigateTo(index);
               }}
-              className="absolute w-[300px] sm:w-[350px] lg:w-[380px] h-[480px] rounded-3xl transition-all duration-300 ease-out flex flex-col justify-between overflow-hidden shadow-2xl group"
+              className="absolute w-[340px] sm:w-[420px] lg:w-[460px] h-[490px] sm:h-[510px] rounded-[32px] transition-all duration-300 ease-out flex flex-col justify-between overflow-hidden group backdrop-blur-2xl"
               style={{
                 transform: `translateX(${translateX}px) translateZ(${translateZ}px) rotateY(${rotateY}deg) scale(${scale})`,
                 opacity,
                 zIndex,
-                background: 'rgba(12, 12, 22, 0.75)',
-                backdropFilter: 'blur(16px)',
-                WebkitBackdropFilter: 'blur(16px)',
+                background: 'linear-gradient(145deg, rgba(16, 16, 28, 0.88) 0%, rgba(8, 8, 16, 0.94) 100%)',
                 border: isCenter
-                  ? '2px solid rgba(0, 240, 255, 0.65)'
+                  ? '2px solid rgba(0, 240, 255, 0.75)'
                   : '1px solid rgba(255, 255, 255, 0.12)',
                 boxShadow: isCenter
-                  ? '0 25px 60px -15px rgba(0, 240, 255, 0.35), 0 0 30px rgba(0, 240, 255, 0.2)'
-                  : '0 20px 40px -10px rgba(0, 0, 0, 0.7)',
+                  ? '0 30px 80px -15px rgba(0, 240, 255, 0.35), 0 0 40px rgba(0, 240, 255, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+                  : '0 20px 50px -10px rgba(0, 0, 0, 0.85)',
               }}
             >
-              {/* Card Header & Media */}
-              <div className="relative w-full h-[240px] overflow-hidden bg-slate-900 shrink-0">
+              {/* Card Upper: High-Gloss Real Estate Photography */}
+              <div className="relative w-full h-[260px] sm:h-[280px] overflow-hidden bg-slate-950 shrink-0">
                 <img
                   src={
                     listing.media?.featuredImage ||
-                    'https://photos.zillowstatic.com/fp/848f6a9144d553a02d967df41e3ccb9d-p_e.jpg'
+                    'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80'
                   }
                   alt={listing.title}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 brightness-95 group-hover:brightness-105"
                   loading="lazy"
+                  onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).src =
+                      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80';
+                  }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0c0c16] via-transparent to-black/40" />
+                
+                {/* Cinematic Vignette */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#080810] via-black/20 to-black/50" />
 
-                {/* Top Badge: Portal Source */}
-                <div className="absolute top-3 left-3 z-10 flex items-center gap-2">
+                {/* Top Badge Strip */}
+                <div className="absolute top-3.5 left-4 z-10 flex items-center gap-2">
                   <span
-                    className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border shadow-md ${portalColor}`}
+                    className={`px-3.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border shadow-lg ${portalColor}`}
                   >
                     {portal.replace(/_/g, ' ')}
                   </span>
                   {listing.isLiveCrawled && (
-                    <span className="flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-mono font-bold bg-cyan-950/80 text-cyan-400 border border-cyan-500/40 backdrop-blur-md">
+                    <span className="flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-mono font-bold bg-cyan-950/90 text-cyan-400 border border-cyan-500/50 backdrop-blur-md">
                       <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
-                      LIVE
+                      VERIFIED LIVE
                     </span>
                   )}
                 </div>
 
-                {/* Top Right: Status Badge */}
-                <div className="absolute top-3 right-3 z-10">
-                  <span className="px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wider bg-black/60 text-slate-200 border border-white/20 backdrop-blur-md">
-                    {listing.listingStatus === 'FOR_RENT' ? 'RENTAL' : 'FOR SALE'}
+                {/* Top Right: Status Pill */}
+                <div className="absolute top-3.5 right-4 z-10">
+                  <span className="px-3 py-1 rounded-full text-[10px] font-mono font-bold tracking-wider bg-black/75 text-slate-200 border border-white/20 backdrop-blur-md uppercase">
+                    {listing.listingStatus === 'FOR_RENT' ? 'FOR RENT' : 'FOR SALE'}
                   </span>
                 </div>
 
-                {/* Price Display */}
-                <div className="absolute bottom-3 left-4 z-10">
-                  <div className="text-2xl sm:text-3xl font-black text-white tracking-tight drop-shadow-md">
+                {/* Floating Big Price in Segmented Display Style */}
+                <div className="absolute bottom-3 left-4 z-10 space-y-0.5">
+                  <span className="text-[10px] font-mono tracking-widest text-cyan-400/90 uppercase font-bold block">
+                    {listing.listingStatus === 'FOR_RENT' ? 'Gross Lease Rate' : 'Acquisition Cost'}
+                  </span>
+                  <div className="text-2xl sm:text-3xl font-black text-white tracking-tight drop-shadow-lg font-mono">
                     {rentOrPrice}
                   </div>
                 </div>
               </div>
 
-              {/* Card Body Details */}
-              <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between space-y-3">
+              {/* Card Body: Active Theory Cyber Typography Details */}
+              <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between space-y-3 bg-[#080810]/60">
                 {/* Title & Address */}
                 <div>
-                  <h3 className="text-base font-black text-white tracking-tight line-clamp-1 group-hover:text-cyan-400 transition-colors">
+                  <h3 className="text-base sm:text-lg font-black text-white tracking-tight uppercase line-clamp-1 group-hover:text-cyan-400 transition-colors">
                     {listing.propertyAddress?.street || listing.title}
                   </h3>
-                  <div className="flex items-center gap-1.5 text-xs text-slate-400 mt-1 line-clamp-1">
+                  <div className="flex items-center gap-1.5 text-xs text-slate-400 mt-1 line-clamp-1 font-mono">
                     <MapPin className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
                     <span>
                       {listing.propertyAddress?.neighborhood
@@ -236,19 +231,19 @@ export const SpatialCardCarousel: React.FC<SpatialCardCarouselProps> = ({
                   </div>
                 </div>
 
-                {/* Specs Row */}
-                <div className="grid grid-cols-3 gap-2 py-2 border-y border-white/10 text-slate-300 text-xs font-medium">
+                {/* Specs Strip */}
+                <div className="grid grid-cols-3 gap-2 py-2.5 border-y border-white/10 text-slate-200 text-xs font-mono">
                   <div className="flex items-center gap-1.5">
                     <Bed className="w-4 h-4 text-cyan-400 shrink-0" />
-                    <span>{listing.specs?.beds || 3} Beds</span>
+                    <span className="font-semibold">{listing.specs?.beds || 3} Beds</span>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <Bath className="w-4 h-4 text-cyan-400 shrink-0" />
-                    <span>{listing.specs?.baths || 2} Baths</span>
+                    <span className="font-semibold">{listing.specs?.baths || 2} Baths</span>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <Square className="w-4 h-4 text-cyan-400 shrink-0" />
-                    <span>
+                    <span className="font-semibold">
                       {(
                         listing.specs?.finishedSqFt ||
                         listing.specs?.squareFeet ||
@@ -259,87 +254,86 @@ export const SpatialCardCarousel: React.FC<SpatialCardCarouselProps> = ({
                   </div>
                 </div>
 
-                {/* Underwriting & Cap Rate Badge */}
-                <div className="flex items-center justify-between text-xs">
+                {/* Institutional Telemetry Row */}
+                <div className="flex items-center justify-between text-xs font-mono">
                   <div className="flex items-center gap-1.5 text-emerald-400 font-bold">
                     <ShieldCheck className="w-4 h-4" />
                     <span>
-                      Score: {listing.financials?.outputs?.passFlowScore?.toFixed(1) || '4.9'} / 5.0
+                      Pass/Flow: {listing.financials?.outputs?.passFlowScore?.toFixed(1) || '4.9'} / 5.0
                     </span>
                   </div>
-                  <span className="font-mono text-slate-400 text-[11px]">
+                  <span className="text-cyan-400 font-bold">
                     Cap Rate: {listing.financials?.outputs?.capRatePercent || '5.2'}%
                   </span>
                 </div>
 
                 {/* Action Buttons Row */}
-                <div className="flex items-center gap-2 pt-1">
+                <div className="flex items-center gap-2.5 pt-1">
                   {listing.externalUrl && (
                     <a
                       href={listing.externalUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={(e) => e.stopPropagation()}
-                      className="flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold transition-all border border-white/15"
-                      title="Open verified listing on source portal"
+                      className="flex-1 py-2.5 px-3 rounded-xl bg-white/5 hover:bg-white/10 text-slate-200 hover:text-white border border-white/15 text-xs font-mono font-bold tracking-wider uppercase transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
                     >
                       <span>VIEW PORTAL</span>
-                      <ExternalLink className="w-3.5 h-3.5" />
+                      <ExternalLink className="w-3.5 h-3.5 text-cyan-400" />
                     </a>
                   )}
 
                   <button
-                    type="button"
                     onClick={(e) => {
                       e.stopPropagation();
                       onOpenDetail(listing);
                     }}
-                    className="flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-black tracking-wider transition-all shadow-md shadow-cyan-500/20"
+                    className="flex-1 py-2.5 px-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black text-xs font-mono tracking-wider uppercase transition-all flex items-center justify-center gap-1.5 shadow-lg shadow-cyan-500/30 cursor-pointer"
                   >
                     <span>ANALYZE</span>
                     <Maximize2 className="w-3.5 h-3.5" />
                   </button>
                 </div>
               </div>
+
+              {/* Water Reflection Plane Beneath Card */}
+              <div
+                className="absolute -bottom-24 left-0 right-0 h-24 opacity-25 pointer-events-none transform scale-y-[-1] blur-[2px]"
+                style={{
+                  background: 'linear-gradient(to top, rgba(0,240,255,0.15), transparent 70%)',
+                }}
+              />
             </div>
           );
         })}
       </div>
 
-      {/* Fluid Water Reflection Horizon (Active Theory Style) */}
-      <div className="w-full h-24 relative overflow-hidden pointer-events-none mt-2">
-        <div
-          className="absolute inset-x-0 top-0 h-full opacity-35 blur-md"
-          style={{
-            background:
-              'linear-gradient(to bottom, rgba(0, 240, 255, 0.25) 0%, rgba(121, 40, 202, 0.15) 40%, transparent 100%)',
-          }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#050508] via-[#050508]/80 to-transparent" />
-      </div>
-
-      {/* Bottom Carousel Controls & Indicator */}
-      <div className="absolute bottom-3 z-30 flex items-center gap-4 px-6 py-2 rounded-full bg-black/60 border border-white/10 backdrop-blur-xl">
+      {/* Navigation Controls & Index Indicator */}
+      <div className="flex items-center gap-6 mt-4 z-20">
         <button
           onClick={() => navigateTo(activeIndex - 1)}
           disabled={activeIndex === 0}
-          className="p-1.5 rounded-full text-slate-400 hover:text-white hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
-          title="Previous Residence (←)"
+          className="p-3 rounded-2xl bg-white/5 hover:bg-white/15 disabled:opacity-30 disabled:cursor-not-allowed text-white border border-white/15 transition-all shadow-lg hover:border-cyan-500/50 cursor-pointer"
+          title="Previous Residence (Left Arrow)"
         >
           <ChevronLeft className="w-5 h-5" />
         </button>
 
-        <div className="flex items-center gap-2 font-mono text-xs text-slate-300">
-          <span className="font-bold text-cyan-400">{activeIndex + 1}</span>
-          <span className="text-slate-600">/</span>
-          <span>{total} Residences</span>
+        <div className="flex items-center gap-2 font-mono text-xs tracking-widest text-slate-400">
+          <span className="text-cyan-400 font-bold text-sm">
+            {(activeIndex + 1).toString().padStart(3, '0')}
+          </span>
+          <span>/</span>
+          <span>{total.toString().padStart(3, '0')}</span>
+          <span className="ml-2 text-[10px] text-slate-600 hidden sm:inline">
+            [ USE ← → KEYS OR DRAG TO ROTATE ]
+          </span>
         </div>
 
         <button
           onClick={() => navigateTo(activeIndex + 1)}
           disabled={activeIndex === total - 1}
-          className="p-1.5 rounded-full text-slate-400 hover:text-white hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
-          title="Next Residence (→)"
+          className="p-3 rounded-2xl bg-white/5 hover:bg-white/15 disabled:opacity-30 disabled:cursor-not-allowed text-white border border-white/15 transition-all shadow-lg hover:border-cyan-500/50 cursor-pointer"
+          title="Next Residence (Right Arrow)"
         >
           <ChevronRight className="w-5 h-5" />
         </button>

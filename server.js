@@ -228,7 +228,7 @@ nextApp.prepare().then(() => {
 
   // API ROUTE: /api/database/properties
   server.get('/api/database/properties', async (req, res) => {
-    const limit = Math.min(200, parseInt(req.query.limit || '100', 10));
+    const limit = Math.min(1000, parseInt(req.query.limit || '100', 10));
     const offset = Math.max(0, parseInt(req.query.offset || '0', 10));
     const city = (req.query.city || '').toLowerCase();
     const portal = req.query.portal;
