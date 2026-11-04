@@ -1,130 +1,96 @@
 'use client';
 
-import React, { useState, useMemo, useRef, useEffect } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { HeroSection } from '../components/home/HeroSection';
-import { Header } from '../components/layout/Header';
-import { PropertyCard } from '../components/property/PropertyCard';
 import { PropertyDetailModal } from '../components/property/PropertyDetailModal';
 import { HouseRoiCalculatorModal } from '../components/property/HouseRoiCalculatorModal';
+import { ModernPropertyGridCard } from '../components/property/ModernPropertyGridCard';
 import { ScribbleMap } from '../components/map/ScribbleMap';
-import { resolveUsMetro } from '../lib/geo/us-metro-registry';
-import { CHICAGO_LISTINGS } from '../data/chicago-listings';
-import { ShikaakPropertyListing, FilterState, GeoCoordinate, BuyerPriorityWeights } from '../types/property';
-import { PriorityWeightSliders } from '../components/property/PriorityWeightSliders';
-import { scorePropertyDimensions, DEFAULT_PRIORITY_WEIGHTS } from '../lib/scoring/property-scoring-engine';
-import { SupportedLanguageCode } from '../types/intelligence';
-import { isPointInsidePolygon } from '../lib/geo-utils';
-import { formatCurrency, formatPercent } from '../lib/roi-engine';
-import { crawlUsPropertyPortals } from '../lib/crawler/multi-portal-crawler';
-import { parseNlpQuery } from '../lib/nlp-search-parser';
-import LIVE_CRAWLED_DATA from '../data/live-crawled-portals.json';
-import { ActiveTheoryParticleCanvas } from '../components/spatial/ActiveTheoryParticleCanvas';
-import { SpatialCardCarousel } from '../components/spatial/SpatialCardCarousel';
-import { ActiveTheoryHUD } from '../components/spatial/ActiveTheoryHUD';
 import { DatabaseExplorerModal } from '../components/spatial/DatabaseExplorerModal';
+import { TiledHomeIcon } from '../components/common/TiledHomeIcon';
+import { ShikaakPropertyListing, FilterState, GeoCoordinate } from '../types/property';
+import { formatCurrency } from '../lib/roi-engine';
 import { getExaApiKey } from '../lib/crawler/exa-client';
+import LIVE_CRAWLED_DATA from '../data/live-crawled-portals.json';
+import { CHICAGO_LISTINGS } from '../data/chicago-listings';
+import { 
+  Search, 
+  MapPin, 
+  Building, 
+  ShieldCheck, 
+  DollarSign, 
+  ExternalLink, 
+  Download, 
+  LayoutGrid, 
+  Map as MapIcon, 
+  Database, 
+  ArrowUpDown, 
+  RotateCw, 
+  X, 
+  SlidersHorizontal,
+  ChevronRight,
+  TrendingUp,
+  Bed,
+  Check
+} from 'lucide-react';
 
 const INITIAL_REAL_LISTINGS: ShikaakPropertyListing[] = (() => {
   const crawled = LIVE_CRAWLED_DATA as unknown as ShikaakPropertyListing[];
-  const existingIds = new Set(crawled.map(p => p.id));
+  const existingIds = new Set(crawled.map((p) => p.id));
   return [
     ...crawled,
-    ...CHICAGO_LISTINGS.filter(p => !existingIds.has(p.id)),
+    ...CHICAGO_LISTINGS.filter((p) => !existingIds.has(p.id)),
   ];
 })();
-import { 
-  Sparkles, 
-  ArrowUpDown, 
-  Layers, 
-  ShieldCheck, 
-  Compass, 
-  Building, 
-  Info, 
-  Globe,
-  MapPin,
-  ChevronDown,
-  SlidersHorizontal,
-  Map as MapIcon,
-  List,
-  ChevronRight,
-  Plane,
-  TreePine,
-  Flame,
-  Bed,
-  Bath,
-  Square,
-  ArrowDown,
-  Calculator,
-  GraduationCap,
-  ShoppingBag,
-  Star,
-  RotateCw,
-  CheckCircle2,
-  Activity,
-  ExternalLink,
-  TrendingUp,
-  DollarSign,
-  X
-} from 'lucide-react';
+
+const US_METRO_OPTIONS = [
+  { name: 'All Metros', city: '' },
+  { name: 'Chicago, IL', city: 'Chicago' },
+  { name: 'San Francisco, CA', city: 'San Francisco' },
+  { name: 'Seattle, WA', city: 'Seattle' },
+  { name: 'Austin, TX', city: 'Austin' },
+  { name: 'Miami, FL', city: 'Miami' },
+  { name: 'Los Angeles, CA', city: 'Los Angeles' },
+  { name: 'Dallas, TX', city: 'Dallas' },
+  { name: 'Atlanta, GA', city: 'Atlanta' },
+  { name: 'New York, NY', city: 'New York' },
+  { name: 'Denver, CO', city: 'Denver' },
+  { name: 'Boston, MA', city: 'Boston' },
+  { name: 'Phoenix, AZ', city: 'Phoenix' },
+];
 
 export default function Home() {
   const router = useRouter();
 
-  // Global Listings State (Real Crawled MLS Properties + Static Benchmark Properties)
+  // 1. Core State
   const [allListings, setAllListings] = useState<ShikaakPropertyListing[]>(INITIAL_REAL_LISTINGS);
   const [selectedListing, setSelectedListing] = useState<ShikaakPropertyListing | null>(INITIAL_REAL_LISTINGS[0]);
   const [modalListing, setModalListing] = useState<ShikaakPropertyListing | null>(null);
-
-  // Live Real-Time Multi-Portal Crawler State
-  const [isLiveCrawling, setIsLiveCrawling] = useState(false);
-  const [showCrawlerHUD, setShowCrawlerHUD] = useState<boolean>(false);
-  const [liveCrawlQuery, setLiveCrawlQuery] = useState<string | null>(null);
-  const [liveCrawlCount, setLiveCrawlCount] = useState<number>(0);
-  const [crawlSourceInfo, setCrawlSourceInfo] = useState<{ isExa: boolean; portals: string[] } | null>(null);
-
-  // Custom ROI Calculator Modal State for any house
   const [roiModalListing, setRoiModalListing] = useState<ShikaakPropertyListing | null>(null);
+  const [isDbModalOpen, setIsDbModalOpen] = useState(false);
+  const [totalDbCount, setTotalDbCount] = useState(817);
 
-  // Multilingual State
-  const [currentLanguage, setCurrentLanguage] = useState<SupportedLanguageCode>('en');
+  // 2. View Mode (Grid View, Split Map View, Local SQLite Database)
+  const [viewMode, setViewMode] = useState<'grid' | 'split_map' | 'database'>('grid');
 
-  // Freehand Scribble / Lasso State
+  // 3. Search & Filters
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedPortal, setSelectedPortal] = useState<string>('ALL');
+  const [selectedStatus, setSelectedStatus] = useState<'ALL' | 'FOR_RENT' | 'FOR_SALE'>('ALL');
+  const [selectedMetro, setSelectedMetro] = useState<string>('');
+  const [selectedBedFilter, setSelectedBedFilter] = useState<number>(0);
+  const [selectedPriceFilter, setSelectedPriceFilter] = useState<string>('ALL');
+  const [sortBy, setSortBy] = useState<'SCORE_DESC' | 'PRICE_ASC' | 'PRICE_DESC' | 'SQFT_DESC' | 'CAPRATE_DESC'>('SCORE_DESC');
+
+  // 4. Freehand Map Lasso
   const [isScribbleActive, setIsScribbleActive] = useState(false);
   const [scribblePolygon, setScribblePolygon] = useState<GeoCoordinate[] | null>(null);
 
-  // Sorting
-  const [sortBy, setSortBy] = useState<'SCORE_DESC' | 'PRICE_ASC' | 'PRICE_DESC' | 'SQFT_DESC' | 'CAPRATE_DESC'>('SCORE_DESC');
+  // 5. Pagination
+  const [visibleCount, setVisibleCount] = useState(24);
 
-  // Buyer Priority Weights (9-Dimension Decision Fit Engine)
-  const [buyerWeights, setBuyerWeights] = useState<BuyerPriorityWeights>(DEFAULT_PRIORITY_WEIGHTS);
-
-  // Filter State (9-Item Filter Criteria)
-  const [filters, setFilters] = useState<FilterState>({
-    searchQuery: '',
-    listingStatus: 'ALL',
-    priceMin: 0,
-    priceMax: 5000000,
-    bedsMin: 0,
-    bathsMin: 0,
-    propertyType: 'ALL',
-    minPassFlowScore: 1.0,
-    zeroTheftOnly: false,
-    minSoilBearingPSF: 0,
-    maxPropertyTaxesUSD: 50000,
-    maxDistanceToSchoolKm: 10,
-  });
-
-  // Active Theory Spatial UI View & Database Explorer State
-  const [spatialViewMode, setSpatialViewMode] = useState<'spatial' | 'shrine' | 'map' | 'database'>('spatial');
-  const [isDbModalOpen, setIsDbModalOpen] = useState(false);
-  const [totalDbCount, setTotalDbCount] = useState(817);
-  const [hasExaKey, setHasExaKey] = useState(true);
-
-  // Load full SQLite database inventory on mount
+  // Load all 817 properties from SQLite database on mount
   useEffect(() => {
-    setHasExaKey(!!getExaApiKey());
-
     fetch('/api/database/stats')
       .then((res) => res.json())
       .then((data) => {
@@ -132,7 +98,7 @@ export default function Home() {
       })
       .catch(() => {});
 
-    fetch('/api/database/properties?limit=850')
+    fetch('/api/database/properties?limit=1000')
       .then((res) => res.json())
       .then((data) => {
         if (data.properties && data.properties.length > 0) {
@@ -146,363 +112,95 @@ export default function Home() {
       .catch(() => {});
   }, []);
 
-  // Multi-Portal Source Filter & Active Metro State
-  const [selectedPortal, setSelectedPortal] = useState<'ALL' | 'ZILLOW' | 'REDFIN' | 'REALTOR' | 'APARTMENTS_COM' | 'TRULIA'>('ALL');
-  const [activeMetroPill, setActiveMetroPill] = useState<string>('Chicago');
-
-  const US_METRO_PILLS = [
-    { name: 'Chicago', state: 'IL', emoji: '🏙️' },
-    { name: 'Denver', state: 'CO', emoji: '🏔️' },
-    { name: 'Austin', state: 'TX', emoji: '🎸' },
-    { name: 'Seattle', state: 'WA', emoji: '🌲' },
-    { name: 'Miami', state: 'FL', emoji: '🌴' },
-    { name: 'New York', state: 'NY', emoji: '🗽' },
-    { name: 'Los Angeles', state: 'CA', emoji: '☀️' },
-    { name: 'San Francisco', state: 'CA', emoji: '🌁' },
-    { name: 'Boston', state: 'MA', emoji: '🏛️' },
-    { name: 'Dallas', state: 'TX', emoji: '⭐' },
-    { name: 'Atlanta', state: 'GA', emoji: '🍑' },
-  ];
-
-  const portalCounts = useMemo(() => {
-    const counts: Record<string, number> = { ALL: allListings.length, ZILLOW: 0, REDFIN: 0, REALTOR: 0, APARTMENTS_COM: 0, TRULIA: 0 };
-    allListings.forEach((l) => {
-      const sp = l.sourcePortal as string;
-      if (sp && counts[sp] !== undefined) {
-        counts[sp]++;
-      }
-    });
-    return counts;
-  }, [allListings]);
-
-  const dashboardRef = useRef<HTMLDivElement>(null);
-
-  const handleScrollToDashboard = () => {
-    const el = document.getElementById('dashboard-section');
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  };
-
-  const handleScrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const handleOpenProperty = (listing: ShikaakPropertyListing) => {
-    if (typeof window !== 'undefined' && window.location.pathname.startsWith('/rental-platform-')) {
-      window.location.href = `/rental-platform-/property/${listing.id}/`;
-    } else {
-      router.push(`/property/${listing.id}/`);
-    }
-  };
-
-  const handleSelectPropertyFromMap = (listing: ShikaakPropertyListing) => {
-    setSelectedListing(listing);
-  };
-
-  // Live Real-Time Multi-Portal Crawler Trigger
-  const handleTriggerLiveCrawl = async (customQuery?: string, explicitExaKey?: string, filterOverrides?: Partial<FilterState>) => {
-    const activeFilters = { ...filters, ...filterOverrides };
-    
-    // 1. Determine location query or base query
-    const baseText = (customQuery !== undefined ? customQuery : activeFilters.searchQuery || '').trim();
-    
-    // Check if baseText resolves to a metro or use active metro pill
-    const resolvedMetro = resolveUsMetro(baseText || activeMetroPill || 'Chicago');
-    const metroCity = resolvedMetro.city;
-
-    // Detect if user query mentions a broad multi-portal scan
-    const lowerBase = baseText.toLowerCase();
-    const isMultiOrBroad = /other\s*websites?|all\s*websites?|all\s*homes?|all\s*properties|scraper|crawling|crawler|portals?|across|take all/i.test(lowerBase) ||
-      ((lowerBase.includes('zillow') ? 1 : 0) + (lowerBase.includes('redfin') ? 1 : 0) + (lowerBase.includes('realtor') ? 1 : 0) + (lowerBase.includes('trulia') ? 1 : 0) + (lowerBase.includes('apartment') ? 1 : 0) > 1);
-
-    if (isMultiOrBroad) {
-      filterOverrides = {
-        ...filterOverrides,
-        priceMin: 0,
-        priceMax: 5000000,
-        bedsMin: 0,
-        bathsMin: 0,
-        propertyType: 'ALL',
-        listingStatus: 'ALL',
-      };
-      activeFilters.priceMin = 0;
-      activeFilters.priceMax = 5000000;
-      activeFilters.bedsMin = 0;
-      activeFilters.bathsMin = 0;
-      activeFilters.propertyType = 'ALL';
-      activeFilters.listingStatus = 'ALL';
-    }
-
-    // 2. Build full NLP query incorporating active filters
-    const queryParts: string[] = [];
-    if (baseText) {
-      queryParts.push(baseText);
-    } else {
-      queryParts.push(`${metroCity} homes`);
-    }
-
-    const currentQueryLower = queryParts.join(' ').toLowerCase();
-
-    if (!isMultiOrBroad) {
-      // Listing status (Buy vs Rent)
-      if (activeFilters.listingStatus === 'FOR_RENT' && !/rent|rental|lease|apartment/i.test(currentQueryLower)) {
-        queryParts.push('for rent');
-      } else if (activeFilters.listingStatus === 'FOR_SALE' && !/sale|buy/i.test(currentQueryLower)) {
-        queryParts.push('for sale');
-      }
-
-      // Beds
-      if (activeFilters.bedsMin > 0 && !/\b\d+\s*beds?\b/i.test(currentQueryLower)) {
-        queryParts.push(`${activeFilters.bedsMin}+ bed`);
-      }
-
-      // Baths
-      if (activeFilters.bathsMin > 0 && !/\b\d+\s*baths?\b/i.test(currentQueryLower)) {
-        queryParts.push(`${activeFilters.bathsMin}+ bath`);
-      }
-
-      // Price Max
-      if (activeFilters.listingStatus === 'FOR_RENT') {
-        if (activeFilters.priceMax < 10000 && !/under|below|\$|max/i.test(currentQueryLower)) {
-          queryParts.push(`under $${activeFilters.priceMax.toLocaleString()}/mo`);
-        }
-      } else {
-        if (activeFilters.priceMax < 5000000 && !/under|below|\$|max/i.test(currentQueryLower)) {
-          queryParts.push(`under $${activeFilters.priceMax.toLocaleString()}`);
-        }
-      }
-
-      // Property Type
-      if (activeFilters.propertyType !== 'ALL' && !currentQueryLower.includes(activeFilters.propertyType.toLowerCase().replace(/_/g, ' '))) {
-        queryParts.push(activeFilters.propertyType.toLowerCase().replace(/_/g, ' '));
-      }
-    }
-
-    if (!isMultiOrBroad) {
-      if (/\b(only zillow|from zillow|zillow homes?|zillow rentals?)\b/i.test(lowerBase) && !/other/i.test(lowerBase)) {
-        setSelectedPortal('ZILLOW');
-      } else if (/\b(only redfin|from redfin|redfin homes?|redfin rentals?)\b/i.test(lowerBase) && !/other/i.test(lowerBase)) {
-        setSelectedPortal('REDFIN');
-      } else if (/\b(only realtor|from realtor|realtor\.com|realtor homes?)\b/i.test(lowerBase) && !/other/i.test(lowerBase)) {
-        setSelectedPortal('REALTOR');
-      } else if (/\b(only apartments|from apartments|apartments\.com)\b/i.test(lowerBase) && !/other/i.test(lowerBase)) {
-        setSelectedPortal('APARTMENTS_COM');
-      } else if (/\b(only trulia|from trulia|trulia homes?)\b/i.test(lowerBase) && !/other/i.test(lowerBase)) {
-        setSelectedPortal('TRULIA');
-      }
-    } else {
-      setSelectedPortal('ALL');
-    }
-
-    const finalCrawlQuery = queryParts.join(' ');
-    const storedExaKey = explicitExaKey || (typeof window !== 'undefined' ? window.localStorage.getItem('EXA_API_KEY') : null) || undefined;
-
-    setIsLiveCrawling(true);
-    setShowCrawlerHUD(true);
-    try {
-      const parsed = parseNlpQuery(finalCrawlQuery);
-      const effectiveListingStatus = (activeFilters.listingStatus && activeFilters.listingStatus !== 'ALL') ? activeFilters.listingStatus : (parsed.listingStatus || 'FOR_RENT');
-      const effectiveBeds = (activeFilters.bedsMin !== undefined && Number(activeFilters.bedsMin) > 0) ? Number(activeFilters.bedsMin) : (parsed.beds || 3);
-      const effectiveType = (activeFilters.propertyType && activeFilters.propertyType !== 'ALL') ? activeFilters.propertyType : parsed.propertyType;
-
-      const result = await crawlUsPropertyPortals(parsed, {
-        exaApiKey: storedExaKey || undefined,
-        listingStatus: effectiveListingStatus,
-        priceMin: activeFilters.priceMin,
-        priceMax: activeFilters.priceMax,
-        bedsMin: effectiveBeds,
-        bathsMin: activeFilters.bathsMin,
-        propertyType: effectiveType,
-        limit: 550,
-      });
-
-      if (result.properties && result.properties.length > 0) {
-        setAllListings((prev) => {
-          const existingIds = new Set(result.properties.map((p) => p.id));
-          const filteredOld = prev.filter((p) => !existingIds.has(p.id));
-          return [...result.properties, ...filteredOld];
-        });
-        setSelectedListing(result.properties[0]);
-        setActiveMetroPill(metroCity);
-        setLiveCrawlQuery(finalCrawlQuery);
-        setLiveCrawlCount(result.properties.length);
-        const hasExa = result.portalsScanned.includes('EXA_AI_NEURAL') || result.properties.some(p => p.sourcePortal && ['ZILLOW', 'REDFIN', 'REALTOR', 'APARTMENTS_COM', 'TRULIA'].includes(p.sourcePortal));
-        setCrawlSourceInfo({
-          isExa: Boolean(hasExa),
-          portals: result.portalsScanned.map(String)
-        });
-
-        // Synchronize filters cleanly without corrupting the search query input
-        const displaySearch = customQuery !== undefined ? customQuery : (baseText || metroCity);
-        setFilters((prev) => ({
-          ...prev,
-          ...filterOverrides,
-          searchQuery: displaySearch,
-          priceMax: parsed.priceRange?.maxPrice !== undefined ? parsed.priceRange.maxPrice : (filterOverrides?.priceMax !== undefined ? filterOverrides.priceMax : prev.priceMax),
-          priceMin: parsed.priceRange?.minPrice !== undefined ? parsed.priceRange.minPrice : (filterOverrides?.priceMin !== undefined ? filterOverrides.priceMin : prev.priceMin),
-          bedsMin: parsed.beds !== undefined ? parsed.beds : (filterOverrides?.bedsMin !== undefined ? filterOverrides.bedsMin : prev.bedsMin),
-          listingStatus: parsed.listingStatus || (filterOverrides?.listingStatus || prev.listingStatus),
-          propertyType: parsed.propertyType || (filterOverrides?.propertyType || prev.propertyType),
-        }));
-
-        // Scroll to houses smoothly
-        setTimeout(() => {
-          const el = document.getElementById('houses-section') || document.getElementById('dashboard-section');
-          if (el) el.scrollIntoView({ behavior: 'smooth' });
-        }, 100);
-      }
-    } catch (err) {
-      console.error('Real-time crawl failed:', err);
-    } finally {
-      setIsLiveCrawling(false);
-    }
-  };
-
-  // Filter and Sort Listings
+  // Filter listings across all criteria
   const filteredListings = useMemo(() => {
     return allListings
       .filter((listing) => {
-        // 0. Multi-Portal Source Filter (Zillow, Redfin, Realtor, Apartments.com, Trulia)
+        // Portal Filter
         if (selectedPortal !== 'ALL' && listing.sourcePortal !== selectedPortal) {
           return false;
         }
 
-        // 1. Text Search Filter (Street, City, State, Neighborhood, or Portal)
-        if (filters.searchQuery) {
-          const query = filters.searchQuery.toLowerCase().trim();
-          
-          // Broad scan commands that should show all crawled inventory (or filtered portal inventory)
-          const isBroadScanQuery = /take all|all homes|all properties|from zillow|from redfin|from realtor|using scraper|crawling|crawler|scanned houses|other website|other websites|all websites|portals|scan now/i.test(query);
-
-          if (!isBroadScanQuery) {
-            const street = (listing.propertyAddress?.street || '').toLowerCase();
-            const city = (listing.propertyAddress?.city || '').toLowerCase();
-            const state = (listing.propertyAddress?.state || '').toLowerCase();
-            const neighborhood = (listing.propertyAddress?.neighborhood || '').toLowerCase();
-            const title = (listing.title || '').toLowerCase();
-            const portal = (listing.sourcePortal || '').toLowerCase();
-
-            if (query.includes('zillow') && portal === 'zillow') {
-              // Matches zillow
-            } else if (query.includes('redfin') && portal === 'redfin') {
-              // Matches redfin
-            } else if (query.includes('apartments') && portal.includes('apartments')) {
-              // Matches apartments
-            } else {
-              const directMatch = street.includes(query) || city.includes(query) || state.includes(query) || neighborhood.includes(query) || title.includes(query) || portal.includes(query);
-              if (!directMatch) {
-                const stopWords = new Set([
-                  'house', 'home', 'homes', 'under', 'below', 'for', 'sale', 'rent', 'rental', 'rentals',
-                  'near', 'with', 'and', 'the', 'from', 'other', 'website', 'websites', 'using', 'scraper',
-                  'crawling', 'take', 'all', 'scanned', 'scan', 'now', 'bed', 'beds', 'bedroom', 'bedrooms',
-                  'bath', 'baths', 'bathroom', 'bathrooms', 'bhk', 'rk', 'apartment', 'apartments', 'condo',
-                  'condos', 'flat', 'flats', 'property', 'properties', 'in'
-                ]);
-
-                const tokens = query.split(/\s+/).filter(t => 
-                  t.length >= 2 && !stopWords.has(t) && !/^\d+$/.test(t) && !/^\d+(?:bhk|rk|bed|br)$/i.test(t)
-                );
-
-                if (tokens.length > 0) {
-                  const tokenMatch = tokens.some(t =>
-                    city.includes(t) ||
-                    neighborhood.includes(t) ||
-                    street.includes(t) ||
-                    state.includes(t) ||
-                    portal.includes(t) ||
-                    (listing.propertyTaxes?.countyName || '').toLowerCase().includes(t)
-                  );
-                  if (!tokenMatch) return false;
-                }
-              }
-            }
-          }
-        }
-
-        // 2. Listing Status (Buy / Rent)
-        if (filters.listingStatus !== 'ALL' && listing.listingStatus !== filters.listingStatus) {
+        // Status Filter (Rent vs Sale)
+        if (selectedStatus !== 'ALL' && listing.listingStatus !== selectedStatus) {
           return false;
         }
 
-        // 3. Price Min & Max (Distinguish monthly rent vs purchase price)
+        // Metro Filter
+        if (selectedMetro) {
+          const city = (listing.propertyAddress?.city || '').toLowerCase();
+          if (!city.includes(selectedMetro.toLowerCase())) return false;
+        }
+
+        // Bedroom Filter
+        if (selectedBedFilter > 0 && (listing.specs?.beds || 0) < selectedBedFilter) {
+          return false;
+        }
+
+        // Price Filter
         const rent = listing.financials?.inputs?.monthlyGrossRent || 0;
         const price = listing.financials?.inputs?.purchasePrice || 0;
 
-        if (listing.listingStatus === 'FOR_RENT') {
-          if (filters.priceMax < 10000) {
-            if (rent < filters.priceMin || rent > filters.priceMax) return false;
-          } else if (filters.priceMin > 0) {
-            if (rent < filters.priceMin) return false;
-          }
-        } else {
-          if (price < filters.priceMin) {
-            return false;
-          }
-          if (filters.priceMax < 5000000 && price > filters.priceMax) {
-            return false;
-          }
+        if (selectedPriceFilter === 'RENT_UNDER_2500' && (listing.listingStatus !== 'FOR_RENT' || rent > 2500)) {
+          return false;
         }
-
-        // 4. Beds Min
-        if (filters.bedsMin > 0 && (listing.specs?.beds || 0) < filters.bedsMin) {
+        if (selectedPriceFilter === 'RENT_UNDER_3500' && (listing.listingStatus !== 'FOR_RENT' || rent > 3500)) {
+          return false;
+        }
+        if (selectedPriceFilter === 'BUY_UNDER_750K' && (listing.listingStatus !== 'FOR_SALE' || price > 750000)) {
+          return false;
+        }
+        if (selectedPriceFilter === 'BUY_UNDER_1500K' && (listing.listingStatus !== 'FOR_SALE' || price > 1500000)) {
+          return false;
+        }
+        if (selectedPriceFilter === 'BUY_OVER_1500K' && (listing.listingStatus !== 'FOR_SALE' || price <= 1500000)) {
           return false;
         }
 
-        // 5. Baths Min
-        if (filters.bathsMin > 0 && (listing.specs?.baths || 0) < filters.bathsMin) {
-          return false;
-        }
+        // Text Search Filter
+        if (searchQuery.trim()) {
+          const q = searchQuery.toLowerCase().trim();
+          const street = (listing.propertyAddress?.street || '').toLowerCase();
+          const city = (listing.propertyAddress?.city || '').toLowerCase();
+          const state = (listing.propertyAddress?.state || '').toLowerCase();
+          const neighborhood = (listing.propertyAddress?.neighborhood || '').toLowerCase();
+          const title = (listing.title || '').toLowerCase();
+          const portal = (listing.sourcePortal || '').toLowerCase();
+          const zip = (listing.propertyAddress?.zipCode || '').toLowerCase();
 
-        // 6. Property Type
-        if (filters.propertyType !== 'ALL' && (listing.specs?.propertyType || 'CONDO') !== filters.propertyType) {
-          return false;
-        }
+          const matches =
+            street.includes(q) ||
+            city.includes(q) ||
+            state.includes(q) ||
+            neighborhood.includes(q) ||
+            title.includes(q) ||
+            portal.includes(q) ||
+            zip.includes(q);
 
-        // 7. Pass / Flow Score Minimum
-        if (listing.financials.outputs.passFlowScore < filters.minPassFlowScore) {
-          return false;
-        }
-
-        // 8. Hand-Drawn Scribble Polygon Spatial Filter
-        if (scribblePolygon && scribblePolygon.length >= 3) {
-          const loc = listing.propertyAddress?.location || (listing.propertyAddress as any)?.coordinates;
-          if (!loc) return false;
-          const isInside = isPointInsidePolygon(loc, scribblePolygon);
-          if (!isInside) return false;
-        }
-
-        // 9. Cap Rate Minimum Filter
-        if (filters.minCapRatePercent && filters.minCapRatePercent > 0 && listing.financials.outputs.capRatePercent < filters.minCapRatePercent) {
-          return false;
-        }
-
-        // 10. Maximum Property Taxes
-        if (filters.maxPropertyTaxesUSD < 50000 && (listing.propertyTaxes?.annualAmountUSD || 0) > filters.maxPropertyTaxesUSD) {
-          return false;
+          if (!matches) return false;
         }
 
         return true;
       })
       .sort((a, b) => {
         if (sortBy === 'SCORE_DESC') {
-          const scoreA = scorePropertyDimensions(a, buyerWeights).compositeScore;
-          const scoreB = scorePropertyDimensions(b, buyerWeights).compositeScore;
+          const scoreA = a.financials?.outputs?.passFlowScore || 0;
+          const scoreB = b.financials?.outputs?.passFlowScore || 0;
           return scoreB - scoreA;
         }
         if (sortBy === 'PRICE_ASC') {
-          const priceA = a.financials?.inputs?.purchasePrice || 0;
-          const priceB = b.financials?.inputs?.purchasePrice || 0;
+          const priceA = a.listingStatus === 'FOR_RENT' ? a.financials?.inputs?.monthlyGrossRent || 0 : a.financials?.inputs?.purchasePrice || 0;
+          const priceB = b.listingStatus === 'FOR_RENT' ? b.financials?.inputs?.monthlyGrossRent || 0 : b.financials?.inputs?.purchasePrice || 0;
           return priceA - priceB;
         }
         if (sortBy === 'PRICE_DESC') {
-          const priceA = a.financials?.inputs?.purchasePrice || 0;
-          const priceB = b.financials?.inputs?.purchasePrice || 0;
+          const priceA = a.listingStatus === 'FOR_RENT' ? a.financials?.inputs?.monthlyGrossRent || 0 : a.financials?.inputs?.purchasePrice || 0;
+          const priceB = b.listingStatus === 'FOR_RENT' ? b.financials?.inputs?.monthlyGrossRent || 0 : b.financials?.inputs?.purchasePrice || 0;
           return priceB - priceA;
         }
         if (sortBy === 'SQFT_DESC') {
-          const sqftA = a.specs?.finishedSqFt || 0;
-          const sqftB = b.specs?.finishedSqFt || 0;
+          const sqftA = a.specs?.finishedSqFt || a.specs?.squareFeet || 0;
+          const sqftB = b.specs?.finishedSqFt || b.specs?.squareFeet || 0;
           return sqftB - sqftA;
         }
         if (sortBy === 'CAPRATE_DESC') {
@@ -512,165 +210,434 @@ export default function Home() {
         }
         return 0;
       });
-  }, [allListings, filters, selectedPortal, scribblePolygon, sortBy, buyerWeights]);
+  }, [allListings, selectedPortal, selectedStatus, selectedMetro, selectedBedFilter, selectedPriceFilter, searchQuery, sortBy]);
 
-  // Progressive Pagination for Clean, Classy Browsing (Avoids Endless 585-House Scroll)
-  const [visibleCount, setVisibleCount] = useState(16);
-
-  useEffect(() => {
-    setVisibleCount(16);
-  }, [filters, selectedPortal, scribblePolygon]);
-
-  const displayedListings = useMemo(() => {
-    return filteredListings.slice(0, visibleCount);
-  }, [filteredListings, visibleCount]);
-
-  // Real-Time Aggregate Telemetry for Scanned Multi-Portal Properties
-  const scannedMetrics = useMemo(() => {
-    if (filteredListings.length === 0) {
-      return { avgPrice: 0, avgRent: 0, avgCapRate: 0, avgFit: 95, topSchoolScore: 10 };
-    }
+  // Aggregate stats of filtered set
+  const stats = useMemo(() => {
+    const total = filteredListings.length;
+    if (total === 0) return { avgPrice: 0, avgRent: 0, avgCapRate: 0 };
     const sumPrice = filteredListings.reduce((acc, p) => acc + (p.financials?.inputs?.purchasePrice || 0), 0);
     const sumRent = filteredListings.reduce((acc, p) => acc + (p.financials?.inputs?.monthlyGrossRent || 0), 0);
     const sumCap = filteredListings.reduce((acc, p) => acc + (p.financials?.outputs?.capRatePercent || 0), 0);
-    const count = filteredListings.length;
     return {
-      avgPrice: Math.round(sumPrice / count),
-      avgRent: Math.round(sumRent / count),
-      avgCapRate: +(sumCap / count).toFixed(2),
-      avgFit: 95,
-      topSchoolScore: 10,
+      avgPrice: Math.round(sumPrice / total),
+      avgRent: Math.round(sumRent / total),
+      avgCapRate: +(sumCap / total).toFixed(2),
     };
   }, [filteredListings]);
 
-  // Handlers for Scribble Lasso
-  const handleToggleScribble = () => {
-    setIsScribbleActive(!isScribbleActive);
+  const displayedListings = filteredListings.slice(0, visibleCount);
+
+  const handleOpenProperty = (listing: ShikaakPropertyListing) => {
+    if (typeof window !== 'undefined' && window.location.pathname.startsWith('/rental-platform-')) {
+      window.location.href = `/rental-platform-/property/${listing.id}/`;
+    } else {
+      router.push(`/property/${listing.id}/`);
+    }
   };
 
-  const handleScribbleComplete = (polygon: GeoCoordinate[]) => {
-    setScribblePolygon(polygon);
-    setIsScribbleActive(false);
-  };
-
-  const handleClearScribble = () => {
-    setScribblePolygon(null);
-    setIsScribbleActive(false);
-  };
+  const PORTAL_TABS = [
+    { id: 'ALL', label: 'All Portals' },
+    { id: 'ZILLOW', label: 'Zillow (275)' },
+    { id: 'REDFIN', label: 'Redfin (136)' },
+    { id: 'REALTOR', label: 'Realtor (133)' },
+    { id: 'APARTMENTS_COM', label: 'Apartments.com (119)' },
+    { id: 'TRULIA', label: 'Trulia (116)' },
+  ];
 
   return (
-    <div className="relative min-h-screen w-full bg-[#050508] text-white overflow-x-hidden selection:bg-cyan-500 selection:text-slate-950 font-sans">
+    <div className="min-h-screen w-full bg-[#080b11] text-slate-100 font-sans selection:bg-cyan-500 selection:text-slate-950">
       
-      {/* 1. Active Theory Three.js Cosmic Particle Nebula & Holographic Gyro Ring */}
-      <ActiveTheoryParticleCanvas interactive={true} />
-
-      {/* 2. Master HUD Navigation (Top Bar, Left "What are you looking for?" Menu, Bottom Search Console) */}
-      <ActiveTheoryHUD
-        activeView={spatialViewMode}
-        onViewChange={(mode) => {
-          if (mode === 'database') {
-            setIsDbModalOpen(true);
-          } else {
-            setSpatialViewMode(mode);
-          }
-        }}
-        totalDbCount={totalDbCount}
-        filteredCount={filteredListings.length}
-        filters={filters}
-        onFilterChange={setFilters}
-        onTriggerLiveCrawl={handleTriggerLiveCrawl}
-        isCrawling={isLiveCrawling}
-        onOpenDbModal={() => setIsDbModalOpen(true)}
-        onOpenExaModal={() => {}}
-        hasExaKey={hasExaKey}
-      />
-
-      {/* 3. Main Centerpiece Workspace (Spatial 3D Cover Flow vs Map Matrix) */}
-      <main className="relative z-10 w-full min-h-[calc(100vh-160px)] flex flex-col items-center justify-center pt-4 pb-28">
-        
-        {spatialViewMode === 'spatial' ? (
-          /* FLAGSHIP ACTIVE THEORY 3D FLOATING CAROUSEL */
-          <div className="w-full max-w-7xl mx-auto flex flex-col items-center animate-in fade-in duration-500">
-            
-            {/* Center Stage Floating Header */}
-            <div className="text-center space-y-1 mb-2 select-none">
-              <span className="text-[11px] font-mono tracking-widest text-cyan-400 font-bold uppercase flex items-center justify-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 animate-pulse" />
-                <span>SPATIAL REAL ESTATE BROWSER // COVER FLOW</span>
-              </span>
-              <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight uppercase">
-                {filters.searchQuery || activeMetroPill} Residences ({filteredListings.length} Ingested)
-              </h2>
+      {/* 1. Sleek Modern Top Navigation Bar */}
+      <header className="sticky top-0 z-40 w-full bg-[#0c1019]/95 backdrop-blur-md border-b border-slate-800/80 px-4 sm:px-8 py-3.5 select-none">
+        <div className="max-w-[1780px] mx-auto flex items-center justify-between gap-4">
+          
+          {/* Brand */}
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-cyan-500/15 border border-cyan-500/40 flex items-center justify-center p-1.5 text-cyan-400 shadow-sm">
+              <TiledHomeIcon size={22} />
             </div>
-
-            {/* 3D Perspective Cover Flow Carousel */}
-            <SpatialCardCarousel
-              listings={filteredListings}
-              onSelectListing={setSelectedListing}
-              onOpenDetail={handleOpenProperty}
-            />
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-base font-black tracking-tight text-white uppercase">
+                  HOUSE INTELLIGENCE
+                </span>
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-950 text-cyan-400 border border-cyan-500/40 font-bold">
+                  SQLITE 817
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-400 font-mono hidden sm:block">
+                Multi-Portal Rental & Housing Intelligence Engine
+              </p>
+            </div>
           </div>
-        ) : spatialViewMode === 'shrine' ? (
-          /* ACTIVE THEORY IMMERSIVE 3D CYBERNETIC SHRINE VIEW */
-          <div className="w-full max-w-xl mx-auto flex flex-col items-center text-center space-y-4 animate-in fade-in duration-700 p-8 rounded-3xl bg-black/50 border border-amber-500/30 backdrop-blur-2xl shadow-2xl select-none">
-            <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-amber-500 to-orange-400 p-1 flex items-center justify-center shadow-lg shadow-amber-500/40 animate-pulse">
-              <Sparkles className="w-8 h-8 text-slate-950" />
+
+          {/* Center Telemetry Strip */}
+          <div className="hidden lg:flex items-center gap-4 text-xs font-mono">
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-300">
+              <Building className="w-3.5 h-3.5 text-cyan-400" />
+              <span>{filteredListings.length} Residences Matching</span>
             </div>
-            <span className="text-xs font-mono font-bold tracking-widest text-amber-400 uppercase">
-              ACTIVE THEORY 3D SHRINE // 817 HOUSES IN ORBIT
-            </span>
-            <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight uppercase">
-              Immersive Spatial Chamber
-            </h2>
-            <p className="text-xs font-mono text-slate-300 max-w-md leading-relaxed">
-              Explore the suspended golden gyro rig, living organic particle torus, and liquid caustic reflections with real-time mouse inertia.
-            </p>
-            <div className="flex items-center gap-3 pt-2">
+            {selectedStatus !== 'FOR_SALE' && stats.avgRent > 0 && (
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-300">
+                <DollarSign className="w-3.5 h-3.5 text-emerald-400" />
+                <span>Avg Rent: {formatCurrency(stats.avgRent)}/mo</span>
+              </div>
+            )}
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-300">
+              <TrendingUp className="w-3.5 h-3.5 text-amber-400" />
+              <span>Cap Rate: {stats.avgCapRate}%</span>
+            </div>
+          </div>
+
+          {/* Right Controls: View Switcher & Database / Export */}
+          <div className="flex items-center gap-2.5">
+            {/* View Mode Switcher */}
+            <div className="flex items-center p-1 rounded-xl bg-slate-900 border border-slate-800">
               <button
-                onClick={() => setSpatialViewMode('spatial')}
-                className="px-6 py-2.5 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 font-black text-xs font-mono tracking-wider uppercase shadow-lg shadow-cyan-500/25 hover:brightness-110 transition-all cursor-pointer"
+                onClick={() => setViewMode('grid')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  viewMode === 'grid'
+                    ? 'bg-cyan-600 text-white shadow-sm'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+                title="Spacious Responsive Card Grid"
               >
-                BROWSE RESIDENCES (817)
+                <LayoutGrid className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Grid</span>
               </button>
+
+              <button
+                onClick={() => setViewMode('split_map')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  viewMode === 'split_map'
+                    ? 'bg-cyan-600 text-white shadow-sm'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+                title="Split Interactive Map & List"
+              >
+                <MapIcon className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Split Map</span>
+              </button>
+
               <button
                 onClick={() => setIsDbModalOpen(true)}
-                className="px-5 py-2.5 rounded-full bg-white/5 hover:bg-white/10 text-white font-bold text-xs font-mono tracking-wider uppercase border border-white/20 transition-all cursor-pointer"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition-all cursor-pointer"
+                title="Open SQLite Database Explorer & SQL Studio"
               >
-                OPEN LOCAL DB
+                <Database className="w-3.5 h-3.5 text-cyan-400" />
+                <span className="hidden sm:inline">Local DB (817)</span>
               </button>
             </div>
+
+            {/* Direct 1-Click CSV Export */}
+            <a
+              href="/api/database/export?format=csv"
+              download="houses_database.csv"
+              className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white text-xs font-mono font-bold transition-all cursor-pointer"
+              title="Download all 817 records as CSV"
+            >
+              <Download className="w-3.5 h-3.5 text-cyan-400" />
+              <span>CSV</span>
+            </a>
+          </div>
+
+        </div>
+      </header>
+
+      {/* 2. Full-Width Filter & Search Control Center */}
+      <section className="w-full bg-[#0a0d15] border-b border-slate-800/80 px-4 sm:px-8 py-4">
+        <div className="max-w-[1780px] mx-auto space-y-3.5">
+          
+          {/* Main Search Row */}
+          <div className="flex flex-col lg:flex-row items-center gap-3">
+            {/* Search Input */}
+            <div className="relative flex-1 w-full">
+              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search 817 residences by address, neighborhood, city, portal (Zillow, Redfin, etc.)..."
+                className="w-full pl-10 pr-9 py-2.5 rounded-xl bg-[#0f1420] border border-slate-800 text-sm text-white placeholder-slate-400 focus:outline-none focus:border-cyan-500 font-mono transition-colors"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-white cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+
+            {/* Status Selector Pills (Rent vs Sale) */}
+            <div className="flex items-center p-1 rounded-xl bg-[#0f1420] border border-slate-800 shrink-0 w-full lg:w-auto">
+              <button
+                onClick={() => setSelectedStatus('ALL')}
+                className={`flex-1 lg:flex-none px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  selectedStatus === 'ALL'
+                    ? 'bg-slate-800 text-white'
+                    : 'text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                All (817)
+              </button>
+              <button
+                onClick={() => setSelectedStatus('FOR_RENT')}
+                className={`flex-1 lg:flex-none px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  selectedStatus === 'FOR_RENT'
+                    ? 'bg-cyan-600 text-white'
+                    : 'text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                For Rent (417)
+              </button>
+              <button
+                onClick={() => setSelectedStatus('FOR_SALE')}
+                className={`flex-1 lg:flex-none px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  selectedStatus === 'FOR_SALE'
+                    ? 'bg-cyan-600 text-white'
+                    : 'text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                For Sale (400)
+              </button>
+            </div>
+
+            {/* Beds Filter */}
+            <div className="flex items-center p-1 rounded-xl bg-[#0f1420] border border-slate-800 shrink-0">
+              <span className="text-[11px] font-mono font-bold text-slate-400 px-2 uppercase">Beds:</span>
+              {[0, 2, 3, 4].map((b) => (
+                <button
+                  key={b}
+                  onClick={() => setSelectedBedFilter(b)}
+                  className={`px-2.5 py-1 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer ${
+                    selectedBedFilter === b
+                      ? 'bg-cyan-600 text-white'
+                      : 'text-slate-400 hover:text-slate-200'
+                  }`}
+                >
+                  {b === 0 ? 'Any' : `${b}+`}
+                </button>
+              ))}
+            </div>
+
+            {/* Sorting Dropdown */}
+            <div className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#0f1420] border border-slate-800 shrink-0">
+              <ArrowUpDown className="w-3.5 h-3.5 text-slate-400" />
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as any)}
+                className="bg-transparent text-xs font-mono text-slate-200 focus:outline-none cursor-pointer"
+              >
+                <option value="SCORE_DESC" className="bg-slate-900">Highest Pass/Flow Score</option>
+                <option value="PRICE_ASC" className="bg-slate-900">Price: Low to High</option>
+                <option value="PRICE_DESC" className="bg-slate-900">Price: High to Low</option>
+                <option value="CAPRATE_DESC" className="bg-slate-900">Cap Rate: High to Low</option>
+                <option value="SQFT_DESC" className="bg-slate-900">Largest Interior SqFt</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Second Row: Portals Strip & US Metros Strip */}
+          <div className="flex flex-col md:flex-row items-center justify-between gap-3 pt-1 border-t border-slate-800/60">
+            {/* Portal Tabs */}
+            <div className="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto scrollbar-none">
+              <span className="text-[10px] font-mono font-bold uppercase text-slate-400 mr-1 shrink-0">
+                PORTAL:
+              </span>
+              {PORTAL_TABS.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setSelectedPortal(tab.id)}
+                  className={`px-3 py-1 rounded-lg text-xs font-mono font-bold whitespace-nowrap transition-all cursor-pointer ${
+                    selectedPortal === tab.id
+                      ? 'bg-cyan-600 text-white shadow-sm'
+                      : 'bg-[#0f1420] text-slate-400 hover:text-white border border-slate-800'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Metros Quick Pills */}
+            <div className="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto scrollbar-none">
+              <span className="text-[10px] font-mono font-bold uppercase text-slate-400 mr-1 shrink-0">
+                METRO:
+              </span>
+              {US_METRO_OPTIONS.map((m) => (
+                <button
+                  key={m.name}
+                  onClick={() => setSelectedMetro(m.city)}
+                  className={`px-2.5 py-1 rounded-lg text-xs font-mono whitespace-nowrap transition-all cursor-pointer ${
+                    selectedMetro === m.city
+                      ? 'bg-amber-500 text-slate-950 font-bold'
+                      : 'bg-[#0f1420] text-slate-400 hover:text-white border border-slate-800'
+                  }`}
+                >
+                  {m.name.split(',')[0]}
+                </button>
+              ))}
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      {/* 3. Main Content Workspace: High-Efficiency Grid vs Split Map */}
+      <main className="w-full max-w-[1780px] mx-auto px-4 sm:px-8 py-8 min-h-[calc(100vh-220px)]">
+        
+        {viewMode === 'grid' ? (
+          /* HIGH-EFFICIENCY 4-COLUMN RESPONSIVE PROPERTY GRID (USES FULL SPACE) */
+          <div className="space-y-6">
+            
+            {/* Grid Header Info */}
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight uppercase">
+                  {selectedMetro || 'All US Metros'} Residences
+                  <span className="text-sm font-normal text-slate-400 font-mono ml-2.5">
+                    ({filteredListings.length} Ingested in Local SQLite)
+                  </span>
+                </h2>
+                <p className="text-xs text-slate-400 font-mono mt-0.5">
+                  Verified live data from Zillow, Redfin, Realtor.com, Apartments.com & Trulia
+                </p>
+              </div>
+
+              {filteredListings.length > 0 && (
+                <span className="text-xs font-mono text-slate-400 hidden sm:inline">
+                  Showing 1 - {Math.min(visibleCount, filteredListings.length)} of {filteredListings.length}
+                </span>
+              )}
+            </div>
+
+            {/* 4-Column Modern Property Grid */}
+            {filteredListings.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {displayedListings.map((listing) => (
+                  <ModernPropertyGridCard
+                    key={listing.id}
+                    listing={listing}
+                    onSelect={setSelectedListing}
+                    onOpenDetail={handleOpenProperty}
+                    onOpenRoiCalculator={setRoiModalListing}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="py-24 text-center space-y-3 bg-[#0e131f] rounded-2xl border border-slate-800 p-8">
+                <Building className="w-10 h-10 text-slate-500 mx-auto" />
+                <h3 className="text-base font-bold text-white">No residences match your current criteria</h3>
+                <p className="text-xs text-slate-400 font-mono max-w-md mx-auto">
+                  Try clearing the search query or switching portals to explore all 817 ingested properties.
+                </p>
+                <button
+                  onClick={() => {
+                    setSearchQuery('');
+                    setSelectedPortal('ALL');
+                    setSelectedStatus('ALL');
+                    setSelectedMetro('');
+                    setSelectedBedFilter(0);
+                    setSelectedPriceFilter('ALL');
+                  }}
+                  className="px-4 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs uppercase tracking-wider transition-all cursor-pointer"
+                >
+                  Reset All Filters
+                </button>
+              </div>
+            )}
+
+            {/* Pagination Button: Load More */}
+            {filteredListings.length > visibleCount && (
+              <div className="flex justify-center pt-6">
+                <button
+                  onClick={() => setVisibleCount((prev) => prev + 24)}
+                  className="px-8 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 hover:border-cyan-500/50 text-white font-mono font-bold text-xs uppercase tracking-wider transition-all shadow-md cursor-pointer flex items-center gap-2"
+                >
+                  <span>Load More Residences ({filteredListings.length - visibleCount} Remaining)</span>
+                  <ChevronRight className="w-4 h-4 text-cyan-400" />
+                </button>
+              </div>
+            )}
+
           </div>
         ) : (
-          /* MAP MATRIX VIEW */
-          <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 flex flex-col items-center animate-in fade-in duration-500 space-y-4">
-            <div className="w-full h-[540px] sm:h-[600px] relative rounded-3xl border-2 border-cyan-500/40 shadow-2xl overflow-hidden bg-slate-950/80 backdrop-blur-xl">
+          /* SPLIT MAP VIEW: MAP ON LEFT, RESIDENCES ON RIGHT */
+          <div className="w-full flex flex-col lg:flex-row gap-6 h-[780px]">
+            {/* Map Container */}
+            <div className="w-full lg:w-7/12 h-[380px] lg:h-full rounded-2xl border border-slate-800 overflow-hidden shadow-xl bg-slate-950">
               <ScribbleMap
                 listings={filteredListings}
                 selectedListing={selectedListing}
-                onSelectListing={handleSelectPropertyFromMap}
+                onSelectListing={setSelectedListing}
                 isScribbleActive={isScribbleActive}
-                onScribbleComplete={handleScribbleComplete}
+                onScribbleComplete={(polygon) => {
+                  setScribblePolygon(polygon);
+                  setIsScribbleActive(false);
+                }}
                 scribblePolygon={scribblePolygon}
-                onClearScribble={handleClearScribble}
+                onClearScribble={() => {
+                  setScribblePolygon(null);
+                  setIsScribbleActive(false);
+                }}
                 onOpenFullDetail={handleOpenProperty}
               />
+            </div>
 
-              {/* Scanning Overlay */}
-              {isLiveCrawling && (
-                <div className="absolute top-4 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2.5 px-5 py-2 bg-black/90 text-cyan-300 rounded-full shadow-2xl border border-cyan-500/40 backdrop-blur-md">
-                  <RotateCw className="w-4 h-4 text-cyan-400 animate-spin" />
-                  <span className="text-xs font-mono font-bold tracking-wide">
-                    Live Scanning Portals for "{filters.searchQuery || 'Criteria'}"...
-                  </span>
-                </div>
-              )}
+            {/* Scrollable Cards Column */}
+            <div className="w-full lg:w-5/12 h-full overflow-y-auto pr-1 space-y-4">
+              <div className="flex items-center justify-between pb-2 border-b border-slate-800">
+                <span className="text-xs font-mono font-bold uppercase text-slate-300">
+                  {filteredListings.length} Mapped Residences
+                </span>
+                <span className="text-[11px] font-mono text-cyan-400">
+                  Click any pin or card to inspect
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4">
+                {filteredListings.slice(0, 40).map((listing) => (
+                  <ModernPropertyGridCard
+                    key={listing.id}
+                    listing={listing}
+                    onSelect={setSelectedListing}
+                    onOpenDetail={handleOpenProperty}
+                    onOpenRoiCalculator={setRoiModalListing}
+                  />
+                ))}
+              </div>
             </div>
           </div>
         )}
 
       </main>
 
-      {/* 4. Local SQLite Database Explorer Modal */}
+      {/* 4. Clean Professional Footer */}
+      <footer className="w-full bg-[#0a0d15] text-slate-400 border-t border-slate-800 py-6 px-6 text-center text-xs select-none">
+        <div className="max-w-[1780px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 font-mono">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-cyan-400" />
+            <span className="text-white font-bold tracking-wider uppercase">
+              HOUSE INTELLIGENCE PLATFORM
+            </span>
+            <span className="text-slate-600">|</span>
+            <span>817 Multi-Portal Verified Residences Stored in SQLite</span>
+          </div>
+
+          <div className="flex items-center gap-4 text-slate-500 text-[11px]">
+            <span>SQLite WAL Engine</span>
+            <span>•</span>
+            <span>Zillow (275) • Redfin (136) • Realtor (133) • Apartments.com (119)</span>
+            <span>•</span>
+            <span>© 2026</span>
+          </div>
+        </div>
+      </footer>
+
+      {/* Database Explorer & SQL Studio Modal */}
       <DatabaseExplorerModal
         isOpen={isDbModalOpen}
         onClose={() => setIsDbModalOpen(false)}
@@ -678,32 +645,8 @@ export default function Home() {
         onSelectProperty={(listing) => {
           setSelectedListing(listing);
           setIsDbModalOpen(false);
-          setSpatialViewMode('spatial');
         }}
-        onTriggerSync={() => handleTriggerLiveCrawl(filters.searchQuery)}
-        isSyncing={isLiveCrawling}
       />
-
-      {/* Active Theory Minimalist Dark Status Bar & Footer */}
-      <footer className="relative z-10 w-full bg-[#050508]/90 text-slate-400 border-t border-cyan-900/30 py-6 px-6 text-center text-xs backdrop-blur-md select-none">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
-            <span className="font-mono text-cyan-400 tracking-widest uppercase font-bold text-xs">
-              HOUSE INTELLIGENCE // ACTIVE THEORY SPATIAL
-            </span>
-            <span className="text-slate-700">|</span>
-            <span className="text-slate-400">{allListings.length} Ingested Multi-Portal Homes</span>
-          </div>
-          <div className="flex items-center gap-4 font-mono text-[11px] text-slate-500">
-            <span>Embedded SQLite WAL Engine</span>
-            <span>•</span>
-            <span>Zillow • Redfin • Realtor • Apartments.com</span>
-            <span>•</span>
-            <span>© 2026</span>
-          </div>
-        </div>
-      </footer>
 
       {/* Interactive Custom ROI Calculator Modal for Any House */}
       {roiModalListing && (
@@ -714,7 +657,7 @@ export default function Home() {
         />
       )}
 
-      {/* Comprehensive Property Detail Deep-Dive Modal (Fallback / Quick Preview) */}
+      {/* Comprehensive Property Detail Deep-Dive Modal */}
       {modalListing && (
         <PropertyDetailModal
           listing={modalListing}
