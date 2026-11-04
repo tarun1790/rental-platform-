@@ -27,7 +27,8 @@ import {
   Database,
   Download,
   FileCode,
-  LayoutGrid
+  LayoutGrid,
+  CheckCircle2
 } from 'lucide-react';
 import { FilterState, ListingStatus, PropertyType } from '../../types/property';
 import { SupportedLanguageCode } from '../../types/intelligence';
@@ -57,6 +58,7 @@ interface HeaderProps {
   isCrawling?: boolean;
   onOpenDatabase?: () => void;
   onOpenOkfStudio?: () => void;
+  onOpenStrikeRate?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -79,6 +81,7 @@ export const Header: React.FC<HeaderProps> = ({
   isCrawling = false,
   onOpenDatabase,
   onOpenOkfStudio,
+  onOpenStrikeRate,
 }) => {
   // Dropdown Popover States
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
@@ -203,6 +206,19 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* Right Live Status Telemetry Indicator */}
           <div className="flex items-center gap-2.5">
+            {onOpenStrikeRate && (
+              <button
+                type="button"
+                onClick={onOpenStrikeRate}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-emerald-300 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-bold transition-all shadow-2xs cursor-pointer"
+                title="100% Strike Rate & Data Quality Certificate"
+              >
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                <span className="hidden sm:inline">🎯 100% Strike Rate</span>
+                <span className="sm:hidden">100%</span>
+              </button>
+            )}
+
             {onOpenDatabase && (
               <button
                 type="button"

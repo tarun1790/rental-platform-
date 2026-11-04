@@ -8,6 +8,7 @@ import { PropertyDetailModal } from '../components/property/PropertyDetailModal'
 import { HouseRoiCalculatorModal } from '../components/property/HouseRoiCalculatorModal';
 import { DatabaseExplorerModal } from '../components/spatial/DatabaseExplorerModal';
 import { OkfExtractionModal } from '../components/okf/OkfExtractionModal';
+import { StrikeRateAuditModal } from '../components/database/StrikeRateAuditModal';
 import { ScribbleMap } from '../components/map/ScribbleMap';
 import { resolveUsMetro } from '../lib/geo/us-metro-registry';
 import { CHICAGO_LISTINGS } from '../data/chicago-listings';
@@ -73,6 +74,7 @@ export default function Home() {
   const [roiModalListing, setRoiModalListing] = useState<ShikaakPropertyListing | null>(null);
   const [showDbModal, setShowDbModal] = useState(false);
   const [showOkfModal, setShowOkfModal] = useState(false);
+  const [showStrikeRateModal, setShowStrikeRateModal] = useState(false);
   const [okfModalListing, setOkfModalListing] = useState<ShikaakPropertyListing | null>(null);
   const [activeView, setActiveView] = useState<'split' | 'list' | 'map'>('split');
 
@@ -111,7 +113,7 @@ export default function Home() {
 
   // Load from local SQLite API on initial render
   useEffect(() => {
-    fetch('/api/database/properties?limit=2500&reload=1')
+    fetch('/api/database/properties?limit=5000&reload=1')
       .then((res) => res.json())
       .then((data) => {
         if (data.success && data.properties && data.properties.length > 0) {
@@ -324,6 +326,7 @@ export default function Home() {
         isCrawling={isLiveCrawling}
         onOpenDatabase={() => setShowDbModal(true)}
         onOpenOkfStudio={() => setShowOkfModal(true)}
+        onOpenStrikeRate={() => setShowStrikeRateModal(true)}
       />
 
       {/* 2. US METROS QUICK SELECTOR STRIP */}
@@ -844,6 +847,12 @@ export default function Home() {
           setOkfModalListing(p);
           setSelectedListing(p);
         }}
+      />
+
+      {/* 100% Strike Rate Data Quality & Provenance Studio Modal */}
+      <StrikeRateAuditModal
+        isOpen={showStrikeRateModal}
+        onClose={() => setShowStrikeRateModal(false)}
       />
 
     </div>
