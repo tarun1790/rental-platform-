@@ -26,7 +26,8 @@ export interface PropertySpecs {
   baths: number;
   halfBaths?: number;
   finishedSqFt: number;
-  finishedSqMeters: number;
+  finishedSqMeters?: number;
+  squareFeet?: number;
   lotSqFt?: number;
   lotSizeSqFt?: number;
   yearBuilt: number;

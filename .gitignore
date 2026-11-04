@@ -28,3 +28,5 @@ Thumbs.db
 # Scratch and temp test runners
 /scratch/
 *.tsbuildinfo
+*.db-shm
+*.db-wal

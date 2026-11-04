@@ -134,6 +134,126 @@ nextApp.prepare().then(() => {
     });
   });
 
+  // =========================================================================
+  // LOCAL SQLITE DATABASE INTEGRATION (data/houses.db)
+  // =========================================================================
+  const sqlite3 = require('sqlite3').verbose();
+  const DB_PATH = path.join(__dirname, 'data', 'houses.db');
+  let sqliteDb = null;
+  let sqliteCache = [];
+  let lastDbLoadTime = 0;
+
+  function initSqliteConnection() {
+    if (sqliteDb) return sqliteDb;
+    if (fs.existsSync(DB_PATH)) {
+      try {
+        sqliteDb = new sqlite3.Database(DB_PATH);
+        sqliteDb.run('PRAGMA journal_mode = WAL;');
+        console.log('[DATABASE] Connected to SQLite local repository at:', DB_PATH);
+      } catch (err) {
+        console.warn('[DATABASE] SQLite connection warning:', err.message);
+      }
+    }
+    return sqliteDb;
+  }
+  initSqliteConnection();
+
+  function loadPropertiesFromSqlite() {
+    return new Promise((resolve) => {
+      const db = initSqliteConnection();
+      if (!db) return resolve([]);
+      db.all('SELECT raw_json FROM properties ORDER BY pass_flow_score DESC', (err, rows) => {
+        if (err || !rows) return resolve([]);
+        const parsed = [];
+        for (const r of rows) {
+          if (r.raw_json) {
+            try {
+              parsed.push(JSON.parse(r.raw_json));
+            } catch (e) {}
+          }
+        }
+        sqliteCache = parsed;
+        lastDbLoadTime = Date.now();
+        resolve(parsed);
+      });
+    });
+  }
+
+  // Pre-load from SQLite on startup
+  loadPropertiesFromSqlite().then((list) => {
+    console.log(`[DATABASE] Loaded ${list.length} houses from local SQLite database.`);
+  });
+
+  // API ROUTE: /api/database/stats
+  server.get('/api/database/stats', (req, res) => {
+    const db = initSqliteConnection();
+    if (!db) {
+      return res.status(200).json({
+        totalProperties: sqliteCache.length || 0,
+        dbSizeBytes: 0,
+        dbPath: DB_PATH,
+        status: 'fallback',
+      });
+    }
+
+    let dbSizeBytes = 0;
+    try {
+      if (fs.existsSync(DB_PATH)) dbSizeBytes = fs.statSync(DB_PATH).size;
+    } catch (e) {}
+
+    db.get('SELECT COUNT(*) as total FROM properties', (err, countRow) => {
+      const total = countRow ? countRow.total : sqliteCache.length;
+      db.all('SELECT source_portal, COUNT(*) as cnt FROM properties GROUP BY source_portal', (err2, portalRows) => {
+        const portalBreakdown = {};
+        (portalRows || []).forEach(r => portalBreakdown[r.source_portal] = r.cnt);
+
+        db.all('SELECT city, COUNT(*) as cnt FROM properties GROUP BY city ORDER BY cnt DESC LIMIT 15', (err3, cityRows) => {
+          const cityBreakdown = {};
+          (cityRows || []).forEach(r => cityBreakdown[r.city] = r.cnt);
+
+          res.status(200).json({
+            status: 'operational',
+            totalProperties: total,
+            dbSizeBytes,
+            dbSizeMb: (dbSizeBytes / 1024 / 1024).toFixed(2),
+            dbPath: DB_PATH,
+            portalBreakdown,
+            cityBreakdown,
+            lastLoadedAt: new Date(lastDbLoadTime).toISOString(),
+          });
+        });
+      });
+    });
+  });
+
+  // API ROUTE: /api/database/properties
+  server.get('/api/database/properties', async (req, res) => {
+    const limit = Math.min(200, parseInt(req.query.limit || '100', 10));
+    const offset = Math.max(0, parseInt(req.query.offset || '0', 10));
+    const city = (req.query.city || '').toLowerCase();
+    const portal = req.query.portal;
+
+    let results = sqliteCache;
+    if (Date.now() - lastDbLoadTime > 60000 || results.length === 0) {
+      results = await loadPropertiesFromSqlite();
+    }
+
+    if (city) {
+      results = results.filter(p => (p.propertyAddress?.city || '').toLowerCase().includes(city));
+    }
+    if (portal && portal !== 'ALL') {
+      results = results.filter(p => p.sourcePortal === portal);
+    }
+
+    res.status(200).json({
+      success: true,
+      total: results.length,
+      limit,
+      offset,
+      properties: results.slice(offset, offset + limit),
+    });
+  });
+
   // In-memory dynamic pool of n8n ingested listings
   const n8nDynamicListings = [];
   const n8nIngestTelemetry = {
@@ -143,9 +263,20 @@ nextApp.prepare().then(() => {
     lastIngestStatus: 'IDLE',
   };
 
-  // Unified property dataset loader (550+ authentic multi-portal listings + dynamic n8n listings)
+  // Unified property dataset loader (Local SQLite 713+ properties + dynamic n8n listings)
   function getAllPropertiesDataset() {
     let dataset = [...n8nDynamicListings];
+
+    // Priority 1: Local SQLite properties
+    if (sqliteCache && sqliteCache.length > 0) {
+      const existingIds = new Set(dataset.map(p => p.id));
+      for (const p of sqliteCache) {
+        if (!existingIds.has(p.id)) dataset.push(p);
+      }
+      return dataset;
+    }
+
+    // Fallback: Static JSON files
     try {
       const liveData = require('./src/data/live-crawled-portals.json');
       if (Array.isArray(liveData)) {
@@ -2053,13 +2184,28 @@ nextApp.prepare().then(() => {
     return handle(req, res);
   });
 
-  const serverInstance = server.listen(port, (err) => {
-    if (err) throw err;
-    console.log(`> Node.js Production Server ready on http://${hostname}:${port}`);
-    console.log(`> Environment: ${process.env.NODE_ENV || 'development'}`);
-    console.log(`> Health Check: http://${hostname}:${port}/api/health`);
-    console.log(`> API Properties: http://${hostname}:${port}/api/properties`);
-  });
+  const startListen = (currentPort) => {
+    const s = server.listen(currentPort, () => {
+      console.log(`> Node.js Production Server ready on http://${hostname}:${currentPort}`);
+      console.log(`> Local: http://localhost:${currentPort}`);
+      console.log(`> Health Check: http://${hostname}:${currentPort}/api/health`);
+      console.log(`> API Properties: http://${hostname}:${currentPort}/api/properties`);
+      console.log(`> Database Stats: http://${hostname}:${currentPort}/api/database/stats`);
+    });
+
+    s.on('error', (err) => {
+      if (err.code === 'EADDRINUSE') {
+        console.warn(`> Port ${currentPort} is currently in use, trying port ${currentPort + 1}...`);
+        startListen(currentPort + 1);
+      } else {
+        console.error('Server error:', err);
+      }
+    });
+
+    return s;
+  };
+
+  const serverInstance = startListen(port);
 
   // Graceful shutdown
   const gracefulShutdown = (signal) => {
