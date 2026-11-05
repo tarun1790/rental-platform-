@@ -180,9 +180,9 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-[#090c16]/95 backdrop-blur-2xl border-b border-white/10 text-white shadow-2xl select-none">
+    <header className="sticky top-0 z-40 bg-[#09090b]/95 backdrop-blur-2xl border-b border-white/10 text-white shadow-2xl select-none">
       
-      {/* 1. TOP BRAND & TELEMETRY STATUS NAVBAR */}
+      {/* 1. TOP BRAND & CURATED RESIDENCES NAVBAR */}
       <div className="w-full px-4 sm:px-8 lg:px-12 border-b border-white/10">
         <div className="flex items-center justify-between h-14 sm:h-16 gap-4">
           
@@ -191,147 +191,63 @@ export const Header: React.FC<HeaderProps> = ({
             onClick={onScrollToTop}
             className="flex items-center gap-3 cursor-pointer shrink-0 group"
           >
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-black/60 border border-cyan-500/40 group-hover:border-cyan-400 flex items-center justify-center transition-all p-1 shadow-md shadow-cyan-500/10">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-[#141210] border border-[#e2b170]/40 group-hover:border-[#e2b170] flex items-center justify-center transition-all p-1 shadow-md shadow-[#e2b170]/10">
               <TiledHomeIcon size={28} />
             </div>
             <div className="flex flex-col">
               <div className="flex items-center gap-2">
-                <span className="text-base sm:text-lg font-black tracking-tight text-white font-sans leading-none">
+                <span className="text-base sm:text-lg font-black tracking-wider text-white font-sans leading-none">
                   HOUSE INTELLIGENCE
                 </span>
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-cyan-950 text-cyan-400 border border-cyan-500/40 font-mono font-bold tracking-wider">
-                  SPATIAL OS
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#e2b170]/15 text-[#e2b170] border border-[#e2b170]/40 font-mono font-bold tracking-widest uppercase">
+                  ESTATE
                 </span>
               </div>
-              <span className="text-[10px] font-bold text-slate-400 tracking-wider uppercase mt-0.5 hidden sm:block font-mono">
-                Cinematic MLS & Institutional Underwriting Console
+              <span className="text-[10px] font-medium text-zinc-400 tracking-widest uppercase mt-0.5 hidden sm:block font-mono">
+                Curated Luxury Residences & Estates
               </span>
             </div>
           </div>
 
-          {/* Right Live Status Telemetry Indicator */}
+          {/* Right Status & Curated Inventory Indicator */}
           <div className="flex items-center gap-2.5">
-            {onOpenStrikeRate && (
-              <button
-                type="button"
-                onClick={onOpenStrikeRate}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-emerald-500/40 bg-emerald-950/60 hover:bg-emerald-900/60 text-emerald-300 text-xs font-bold transition-all shadow-md shadow-emerald-500/10 cursor-pointer"
-                title="100% Strike Rate & Data Quality Certificate"
-              >
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                <span className="hidden sm:inline">🎯 100% Strike Rate</span>
-                <span className="sm:hidden">100%</span>
-              </button>
-            )}
-
-            {onOpenDatabase && (
-              <button
-                type="button"
-                onClick={onOpenDatabase}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-cyan-500/40 bg-cyan-950/60 hover:bg-cyan-900/60 text-cyan-300 text-xs font-bold transition-all shadow-md shadow-cyan-500/10 cursor-pointer"
-                title="Open Local SQLite Database & SQL Query Studio"
-              >
-                <Database className="w-3.5 h-3.5 text-cyan-400" />
-                <span className="hidden sm:inline">Local SQLite ({totalCount || 4815})</span>
-                <span className="sm:hidden">DB ({totalCount || 4815})</span>
-              </button>
-            )}
-
-            <a
-              href="/api/database/export?format=csv"
-              download="properties.csv"
-              className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 text-slate-300 text-xs font-bold transition-all shadow-2xs cursor-pointer"
-              title="Download entire verified dataset as CSV"
-            >
-              <Download className="w-3.5 h-3.5 text-cyan-400" />
-              <span>CSV</span>
-            </a>
-
-            {onOpenOkfStudio && (
-              <button
-                type="button"
-                onClick={onOpenOkfStudio}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-purple-500/40 bg-purple-950/60 hover:bg-purple-900/60 text-purple-300 text-xs font-bold transition-all shadow-md shadow-purple-500/10 cursor-pointer"
-                title="Open Knowledge Format (OKF) Extraction Studio"
-              >
-                <FileCode className="w-3.5 h-3.5 text-purple-400" />
-                <span className="hidden sm:inline">OKF Studio</span>
-                <span className="sm:hidden">OKF</span>
-              </button>
-            )}
-
-            <a
-              href="/api/okf/export?limit=100"
-              download="houses_okf_bundle.md"
-              className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 text-slate-300 text-xs font-bold transition-all shadow-2xs cursor-pointer"
-              title="Download multi-property Open Knowledge Format bundle (.okf.md)"
-            >
-              <Download className="w-3.5 h-3.5 text-cyan-400" />
-              <span>OKF Bundle</span>
-            </a>
-
-            <button
-              type="button"
-              onClick={() => setShowExaModal(true)}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-bold transition-all shadow-2xs cursor-pointer ${
-                hasExaKey
-                  ? 'border-emerald-500/40 bg-emerald-950/60 hover:bg-emerald-900/60 text-emerald-300'
-                  : 'border-white/10 bg-white/5 hover:bg-white/10 text-slate-300'
-              }`}
-              title={hasExaKey ? 'Exa.ai connected for real-time neural search across portals' : 'Enter Exa.ai API key to enable live web search'}
-            >
-              {hasExaKey ? (
-                <>
-                  <Sparkles className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
-                  <span className="hidden sm:inline">⚡ Exa.ai Connected</span>
-                  <span className="sm:hidden">Exa Active</span>
-                </>
-              ) : (
-                <>
-                  <Key className="w-3.5 h-3.5 text-slate-400" />
-                  <span className="hidden sm:inline">Connect Exa API Key</span>
-                  <span className="sm:hidden">Exa Key</span>
-                </>
-              )}
-            </button>
-
-            <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-mono text-slate-300">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="font-bold text-white">{listingCount}</span>
-              <span className="text-slate-400">Residences</span>
+            <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#18181b] border border-white/10 text-xs font-mono text-zinc-300 shadow-inner">
+              <span className="w-2 h-2 rounded-full bg-[#e2b170] animate-pulse" />
+              <span className="font-bold text-white">{listingCount || totalCount || 4815}</span>
+              <span className="text-zinc-400">Curated Residences</span>
             </div>
 
             {hasActiveFilters && (
               <button
                 onClick={handleResetFilters}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-cyan-300 hover:text-white bg-cyan-950/60 hover:bg-cyan-900/60 rounded-xl border border-cyan-500/40 transition-all cursor-pointer font-mono"
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-[#e2b170] hover:text-white bg-[#e2b170]/10 hover:bg-[#e2b170]/20 rounded-xl border border-[#e2b170]/30 transition-all cursor-pointer font-mono"
                 title="Reset all active search and filter constraints"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
-                <span>Reset</span>
+                <span>Reset Filters</span>
               </button>
             )}
           </div>
         </div>
       </div>
 
-      {/* 2. DEDICATED SPACIOUS SEARCH COMMAND CENTER (UNCONGESTED & FREELY BREATHING) */}
-      <div className="w-full px-4 sm:px-8 lg:px-12 py-3 bg-[#07090e]/90 border-b border-white/10">
+      {/* 2. DEDICATED SPACIOUS SEARCH COMMAND CENTER */}
+      <div className="w-full px-4 sm:px-8 lg:px-12 py-3 bg-[#09090b]/90 border-b border-white/10">
         <div className="max-w-5xl mx-auto space-y-3">
           
           {/* A. GRAND WIDE SEARCH INPUT BOX */}
-          <div className="relative flex items-center w-full bg-[#0d111c] rounded-2xl border-2 border-white/15 hover:border-cyan-400 focus-within:border-cyan-400 focus-within:ring-4 focus-within:ring-cyan-500/20 shadow-xl transition-all duration-200 h-14 sm:h-16 px-3.5 sm:px-4 gap-2.5 sm:gap-3">
+          <div className="relative flex items-center w-full bg-[#141418] rounded-2xl border border-white/15 hover:border-[#e2b170] focus-within:border-[#e2b170] focus-within:ring-4 focus-within:ring-[#e2b170]/20 shadow-xl transition-all duration-200 h-14 sm:h-16 px-3.5 sm:px-4 gap-2.5 sm:gap-3">
             
             {/* Search Icon & Voice Mic */}
             <div className="flex items-center gap-1.5 shrink-0">
-              <Search className="w-5 h-5 text-cyan-400 shrink-0" />
+              <Search className="w-5 h-5 text-[#e2b170] shrink-0" />
               <button
                 type="button"
                 onClick={handleToggleVoiceSearch}
                 className={`p-2 rounded-xl transition-all cursor-pointer ${
                   isListening 
-                    ? 'bg-red-600 text-white animate-pulse shadow-md' 
-                    : 'text-slate-400 hover:text-cyan-400 hover:bg-white/5'
+                    ? 'bg-amber-600 text-white animate-pulse shadow-md' 
+                    : 'text-zinc-400 hover:text-[#e2b170] hover:bg-white/5'
                 }`}
                 title={isListening ? 'Listening via microphone... speak criteria now' : 'Voice Search with Speech Recognition'}
               >
@@ -344,8 +260,8 @@ export const Header: React.FC<HeaderProps> = ({
               type="text"
               placeholder={
                 isListening 
-                  ? '🎙️ Listening... speak criteria now (e.g. Austin 3 bed under 800k)' 
-                  : 'Search any city, neighborhood, budget, or criteria (e.g. Austin 3 bed under 800k, Denver condo, Miami rentals)...'
+                  ? '🎙️ Listening... speak criteria now (e.g. Austin luxury villa, Aspen chalet)' 
+                  : 'Search by city, neighborhood, or criteria (e.g. Austin villa, Beverly Hills, Aspen chalet, Miami waterfront)...'
               }
               value={filters.searchQuery}
               onChange={(e) => {
@@ -386,7 +302,7 @@ export const Header: React.FC<HeaderProps> = ({
                   onTriggerLiveCrawl?.(filters.searchQuery, undefined, filters);
                 }
               }}
-              className="flex-1 min-w-0 bg-transparent text-white placeholder-slate-400 text-sm sm:text-base font-medium focus:outline-none"
+              className="flex-1 min-w-0 bg-transparent text-white placeholder-zinc-400 text-sm sm:text-base font-medium focus:outline-none"
             />
 
             {/* Clear Button */}
@@ -399,15 +315,14 @@ export const Header: React.FC<HeaderProps> = ({
                   onFilterChange(reset);
                   onTriggerLiveCrawl?.('', undefined, reset);
                 }}
-                className="text-slate-400 hover:text-cyan-400 p-1.5 rounded-lg hover:bg-white/10 cursor-pointer transition-colors shrink-0"
+                className="text-zinc-400 hover:text-[#e2b170] p-1.5 rounded-lg hover:bg-white/10 cursor-pointer transition-colors shrink-0"
                 title="Clear search text"
               >
                 <X className="w-4 h-4" />
               </button>
             )}
 
-
-            {/* Prominent Scan Verified MLS Action Button */}
+            {/* Clean Luxury Search Action Button */}
             <button
               type="button"
               onClick={() => {
@@ -415,15 +330,15 @@ export const Header: React.FC<HeaderProps> = ({
                 onTriggerLiveCrawl?.(filters.searchQuery, undefined, filters);
               }}
               disabled={isCrawling}
-              title="Execute verified MLS scan for this criteria"
-              className="flex items-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 bg-cyan-500 hover:bg-cyan-400 disabled:opacity-40 text-slate-950 rounded-xl text-xs sm:text-sm font-black uppercase tracking-wider transition-all shadow-md shadow-cyan-500/25 cursor-pointer shrink-0"
+              title="Search curated residences"
+              className="flex items-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 bg-[#e2b170] hover:bg-[#d4a055] disabled:opacity-40 text-black rounded-xl text-xs sm:text-sm font-black uppercase tracking-wider transition-all shadow-md shadow-[#e2b170]/20 cursor-pointer shrink-0"
             >
               {isCrawling ? (
                 <RotateCw className="w-4 h-4 animate-spin" />
               ) : (
-                <Scan className="w-4 h-4" />
+                <Search className="w-4 h-4" />
               )}
-              <span>{isCrawling ? 'Scanning...' : 'Scan MLS'}</span>
+              <span>{isCrawling ? 'Searching...' : 'Search'}</span>
             </button>
           </div>
 
@@ -438,8 +353,8 @@ export const Header: React.FC<HeaderProps> = ({
                   onClick={() => toggleDropdown('status')}
                   className={`flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold rounded-xl border transition-all cursor-pointer shadow-2xs ${
                     openDropdown === 'status' || filters.listingStatus !== 'ALL'
-                      ? 'bg-cyan-500 text-slate-950 border-cyan-500 font-black shadow-md shadow-cyan-500/25'
-                      : 'bg-white/5 text-slate-300 border-white/10 hover:border-cyan-400 hover:bg-white/10 hover:text-white'
+                      ? 'bg-[#e2b170] text-black border-[#e2b170] font-black shadow-md shadow-[#e2b170]/25'
+                      : 'bg-[#18181b] text-zinc-300 border-white/10 hover:border-[#e2b170] hover:text-white'
                   }`}
                 >
                   <span>{filters.listingStatus === 'FOR_SALE' ? 'For Sale' : filters.listingStatus === 'FOR_RENT' ? 'For Rent' : 'All Listings'}</span>
@@ -447,7 +362,7 @@ export const Header: React.FC<HeaderProps> = ({
                 </button>
 
                 {openDropdown === 'status' && (
-                  <div className="absolute left-0 mt-2 w-44 bg-[#0d111c] border border-white/15 rounded-2xl shadow-2xl p-2 z-50 animate-in fade-in space-y-1">
+                  <div className="absolute left-0 mt-2 w-44 bg-[#141418] border border-white/15 rounded-2xl shadow-2xl p-2 z-50 animate-in fade-in space-y-1">
                     {(['FOR_SALE', 'FOR_RENT', 'ALL'] as ListingStatus[]).map((st) => (
                       <button
                         key={st}
@@ -463,11 +378,11 @@ export const Header: React.FC<HeaderProps> = ({
                           onTriggerLiveCrawl?.(undefined, undefined, next);
                         }}
                         className={`w-full text-left px-3 py-2 text-xs rounded-xl font-bold flex items-center justify-between cursor-pointer transition-colors ${
-                          filters.listingStatus === st ? 'bg-cyan-950/80 text-cyan-300 border border-cyan-500/30' : 'text-slate-300 hover:bg-white/5'
+                          filters.listingStatus === st ? 'bg-[#e2b170]/15 text-[#e2b170] border border-[#e2b170]/30' : 'text-zinc-300 hover:bg-white/5'
                         }`}
                       >
                         <span>{st === 'FOR_SALE' ? 'For Sale' : st === 'FOR_RENT' ? 'For Rent' : 'All Listings'}</span>
-                        {filters.listingStatus === st && <Check className="w-3.5 h-3.5 text-cyan-400" />}
+                        {filters.listingStatus === st && <Check className="w-3.5 h-3.5 text-[#e2b170]" />}
                       </button>
                     ))}
                   </div>
@@ -480,8 +395,8 @@ export const Header: React.FC<HeaderProps> = ({
                   onClick={() => toggleDropdown('price')}
                   className={`flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold rounded-xl border transition-all cursor-pointer shadow-2xs ${
                     openDropdown === 'price' || filters.priceMin > 0 || (filters.listingStatus === 'FOR_RENT' ? filters.priceMax < 10000 : filters.priceMax < 5000000)
-                      ? 'bg-cyan-500 text-slate-950 border-cyan-500 font-black shadow-md shadow-cyan-500/25'
-                      : 'bg-white/5 text-slate-300 border-white/10 hover:border-cyan-400 hover:bg-white/10 hover:text-white'
+                      ? 'bg-[#e2b170] text-black border-[#e2b170] font-black shadow-md shadow-[#e2b170]/25'
+                      : 'bg-[#18181b] text-zinc-300 border-white/10 hover:border-[#e2b170] hover:text-white'
                   }`}
                 >
                   <DollarSign className="w-3.5 h-3.5" />
@@ -498,9 +413,9 @@ export const Header: React.FC<HeaderProps> = ({
                 </button>
 
                 {openDropdown === 'price' && (
-                  <div className="absolute left-0 mt-2 w-72 bg-[#0d111c] border border-white/15 rounded-2xl shadow-2xl p-4 z-50 animate-in fade-in space-y-3">
+                  <div className="absolute left-0 mt-2 w-72 bg-[#141418] border border-white/15 rounded-2xl shadow-2xl p-4 z-50 animate-in fade-in space-y-3">
                     <div className="flex justify-between items-center text-xs font-bold text-white border-b border-white/10 pb-2">
-                      <span className="text-cyan-400 font-bold">
+                      <span className="text-[#e2b170] font-bold">
                         {filters.listingStatus === 'FOR_RENT' ? 'Monthly Rent ($/mo)' : 'Purchase Price ($)'}
                       </span>
                       <button
@@ -513,14 +428,14 @@ export const Header: React.FC<HeaderProps> = ({
                           onFilterChange(next);
                           onTriggerLiveCrawl?.(undefined, undefined, next);
                         }}
-                        className="text-[11px] text-cyan-400 font-bold hover:underline cursor-pointer"
+                        className="text-[11px] text-[#e2b170] font-bold hover:underline cursor-pointer"
                       >
                         Reset
                       </button>
                     </div>
                     <div className="grid grid-cols-2 gap-2">
                       <div>
-                        <label className="text-[10px] text-slate-400 font-bold uppercase block mb-1">Minimum</label>
+                        <label className="text-[10px] text-zinc-400 font-bold uppercase block mb-1">Minimum</label>
                         <select
                           value={filters.priceMin}
                           onChange={(e) => {
@@ -528,7 +443,7 @@ export const Header: React.FC<HeaderProps> = ({
                             onFilterChange(next);
                             onTriggerLiveCrawl?.(undefined, undefined, next);
                           }}
-                          className="w-full text-xs p-2 bg-[#080b14] border border-white/10 rounded-xl font-medium text-white focus:ring-2 focus:ring-cyan-500"
+                          className="w-full text-xs p-2 bg-[#1c1c21] border border-white/10 rounded-xl font-medium text-white focus:ring-2 focus:ring-[#e2b170]"
                         >
                           {filters.listingStatus === 'FOR_RENT' ? (
                             <>
@@ -555,7 +470,7 @@ export const Header: React.FC<HeaderProps> = ({
                         </select>
                       </div>
                       <div>
-                        <label className="text-[10px] text-slate-400 font-bold uppercase block mb-1">Maximum</label>
+                        <label className="text-[10px] text-zinc-400 font-bold uppercase block mb-1">Maximum</label>
                         <select
                           value={filters.priceMax}
                           onChange={(e) => {
@@ -563,7 +478,7 @@ export const Header: React.FC<HeaderProps> = ({
                             onFilterChange(next);
                             onTriggerLiveCrawl?.(undefined, undefined, next);
                           }}
-                          className="w-full text-xs p-2 bg-[#080b14] border border-white/10 rounded-xl font-medium text-white focus:ring-2 focus:ring-cyan-500"
+                          className="w-full text-xs p-2 bg-[#1c1c21] border border-white/10 rounded-xl font-medium text-white focus:ring-2 focus:ring-[#e2b170]"
                         >
                           {filters.listingStatus === 'FOR_RENT' ? (
                             <>
@@ -602,8 +517,8 @@ export const Header: React.FC<HeaderProps> = ({
                   onClick={() => toggleDropdown('beds')}
                   className={`flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold rounded-xl border transition-all cursor-pointer shadow-2xs ${
                     openDropdown === 'beds' || filters.bedsMin > 0 || filters.bathsMin > 0
-                      ? 'bg-cyan-500 text-slate-950 border-cyan-500 font-black shadow-md shadow-cyan-500/25'
-                      : 'bg-white/5 text-slate-300 border-white/10 hover:border-cyan-400 hover:bg-white/10 hover:text-white'
+                      ? 'bg-[#e2b170] text-black border-[#e2b170] font-black shadow-md shadow-[#e2b170]/25'
+                      : 'bg-[#18181b] text-zinc-300 border-white/10 hover:border-[#e2b170] hover:text-white'
                   }`}
                 >
                   <Bed className="w-3.5 h-3.5" />
@@ -614,10 +529,10 @@ export const Header: React.FC<HeaderProps> = ({
                 </button>
 
                 {openDropdown === 'beds' && (
-                  <div className="absolute left-0 mt-2 w-64 bg-[#0d111c] border border-white/15 rounded-2xl shadow-2xl p-4 z-50 animate-in fade-in space-y-3">
+                  <div className="absolute left-0 mt-2 w-64 bg-[#141418] border border-white/15 rounded-2xl shadow-2xl p-4 z-50 animate-in fade-in space-y-3">
                     <div>
-                      <span className="text-[10px] uppercase font-bold text-slate-400 block mb-1.5">Bedrooms</span>
-                      <div className="flex bg-[#080b14] p-1 rounded-xl gap-1 border border-white/10">
+                      <span className="text-[10px] uppercase font-bold text-zinc-400 block mb-1.5">Bedrooms</span>
+                      <div className="flex bg-[#1c1c21] p-1 rounded-xl gap-1 border border-white/10">
                         {[0, 1, 2, 3, 4].map((b) => (
                           <button
                             key={b}
@@ -627,7 +542,7 @@ export const Header: React.FC<HeaderProps> = ({
                               onTriggerLiveCrawl?.(undefined, undefined, next);
                             }}
                             className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all cursor-pointer ${
-                              filters.bedsMin === b ? 'bg-cyan-500 text-slate-950 shadow-sm' : 'text-slate-300 hover:text-white'
+                              filters.bedsMin === b ? 'bg-[#e2b170] text-black shadow-sm font-black' : 'text-zinc-300 hover:text-white'
                             }`}
                           >
                             {b === 0 ? 'Any' : `${b}+`}
@@ -637,8 +552,8 @@ export const Header: React.FC<HeaderProps> = ({
                     </div>
 
                     <div>
-                      <span className="text-[10px] uppercase font-bold text-slate-400 block mb-1.5">Bathrooms</span>
-                      <div className="flex bg-[#080b14] p-1 rounded-xl gap-1 border border-white/10">
+                      <span className="text-[10px] uppercase font-bold text-zinc-400 block mb-1.5">Bathrooms</span>
+                      <div className="flex bg-[#1c1c21] p-1 rounded-xl gap-1 border border-white/10">
                         {[0, 1, 2, 3].map((ba) => (
                           <button
                             key={ba}
@@ -648,7 +563,7 @@ export const Header: React.FC<HeaderProps> = ({
                               onTriggerLiveCrawl?.(undefined, undefined, next);
                             }}
                             className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all cursor-pointer ${
-                              filters.bathsMin === ba ? 'bg-cyan-500 text-slate-950 shadow-sm' : 'text-slate-300 hover:text-white'
+                              filters.bathsMin === ba ? 'bg-[#e2b170] text-black shadow-sm font-black' : 'text-zinc-300 hover:text-white'
                             }`}
                           >
                             {ba === 0 ? 'Any' : `${ba}+`}
@@ -666,8 +581,8 @@ export const Header: React.FC<HeaderProps> = ({
                   onClick={() => toggleDropdown('type')}
                   className={`flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold rounded-xl border transition-all cursor-pointer shadow-2xs ${
                     openDropdown === 'type' || filters.propertyType !== 'ALL'
-                      ? 'bg-cyan-500 text-slate-950 border-cyan-500 font-black shadow-md shadow-cyan-500/25'
-                      : 'bg-white/5 text-slate-300 border-white/10 hover:border-cyan-400 hover:bg-white/10 hover:text-white'
+                      ? 'bg-[#e2b170] text-black border-[#e2b170] font-black shadow-md shadow-[#e2b170]/25'
+                      : 'bg-[#18181b] text-zinc-300 border-white/10 hover:border-[#e2b170] hover:text-white'
                   }`}
                 >
                   <span>{filters.propertyType === 'ALL' ? 'Home Type' : filters.propertyType.replace(/_/g, ' ')}</span>
@@ -675,7 +590,7 @@ export const Header: React.FC<HeaderProps> = ({
                 </button>
 
                 {openDropdown === 'type' && (
-                  <div className="absolute left-0 mt-2 w-52 bg-[#0d111c] border border-white/15 rounded-2xl shadow-2xl p-2 z-50 animate-in fade-in space-y-1">
+                  <div className="absolute left-0 mt-2 w-52 bg-[#141418] border border-white/15 rounded-2xl shadow-2xl p-2 z-50 animate-in fade-in space-y-1">
                     {(['ALL', 'SINGLE_FAMILY', 'CONDO', 'TOWNHOUSE', 'LOFT'] as PropertyType[]).map((t) => (
                       <button
                         key={t}
@@ -686,11 +601,11 @@ export const Header: React.FC<HeaderProps> = ({
                           onTriggerLiveCrawl?.(undefined, undefined, next);
                         }}
                         className={`w-full text-left px-3 py-2 text-xs rounded-xl font-bold flex items-center justify-between cursor-pointer transition-colors ${
-                          filters.propertyType === t ? 'bg-cyan-950/80 text-cyan-300 border border-cyan-500/30' : 'text-slate-300 hover:bg-white/5'
+                          filters.propertyType === t ? 'bg-[#e2b170]/15 text-[#e2b170] border border-[#e2b170]/30' : 'text-zinc-300 hover:bg-white/5'
                         }`}
                       >
                         <span>{t === 'ALL' ? 'All Home Types' : t.replace(/_/g, ' ')}</span>
-                        {filters.propertyType === t && <Check className="w-3.5 h-3.5 text-cyan-400" />}
+                        {filters.propertyType === t && <Check className="w-3.5 h-3.5 text-[#e2b170]" />}
                       </button>
                     ))}
                   </div>
@@ -702,14 +617,14 @@ export const Header: React.FC<HeaderProps> = ({
                 onClick={() => setShowMoreModal(!showMoreModal)}
                 className={`flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold font-mono rounded-xl border transition-all cursor-pointer shadow-2xs ${
                   showMoreModal || filters.minPassFlowScore > 1.0 || (filters.minCapRatePercent !== undefined && filters.minCapRatePercent > 0)
-                    ? 'bg-cyan-950/80 text-cyan-300 border-cyan-500/40'
-                    : 'bg-white/5 text-slate-300 border-white/10 hover:border-cyan-400 hover:bg-white/10 hover:text-white'
+                    ? 'bg-[#e2b170]/15 text-[#e2b170] border-[#e2b170]/40'
+                    : 'bg-[#18181b] text-zinc-300 border-white/10 hover:border-[#e2b170] hover:text-white'
                 }`}
               >
-                <SlidersHorizontal className="w-3.5 h-3.5 text-cyan-400" />
+                <SlidersHorizontal className="w-3.5 h-3.5 text-[#e2b170]" />
                 <span>More Filters</span>
                 {(filters.minPassFlowScore > 1.0 || (filters.minCapRatePercent !== undefined && filters.minCapRatePercent > 0)) && (
-                  <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+                  <span className="w-2 h-2 rounded-full bg-[#e2b170] animate-pulse" />
                 )}
               </button>
             </div>
@@ -720,14 +635,14 @@ export const Header: React.FC<HeaderProps> = ({
                 onClick={onToggleScribble}
                 className={`flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold uppercase tracking-wider rounded-xl transition-all cursor-pointer shadow-2xs ${
                   isScribbleActive
-                    ? 'bg-cyan-500 text-slate-950 font-black shadow-md shadow-cyan-500/25'
+                    ? 'bg-[#e2b170] text-black font-black shadow-md shadow-[#e2b170]/25'
                     : hasScribbleBoundary
-                    ? 'bg-cyan-950/80 text-cyan-300 border border-cyan-500/40'
-                    : 'bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 hover:border-cyan-400'
+                    ? 'bg-[#e2b170]/15 text-[#e2b170] border border-[#e2b170]/40'
+                    : 'bg-[#18181b] hover:bg-white/10 text-zinc-300 border border-white/10 hover:border-[#e2b170]'
                 }`}
-                title="Draw freehand boundary on map to scan houses"
+                title="Draw freehand boundary on map to filter residences"
               >
-                <Compass className="w-3.5 h-3.5 text-cyan-400" />
+                <Compass className="w-3.5 h-3.5 text-[#e2b170]" />
                 <span>{isScribbleActive ? 'Drawing...' : hasScribbleBoundary ? 'Boundary Active' : '✏️ Draw Boundary'}</span>
               </button>
 
@@ -741,24 +656,24 @@ export const Header: React.FC<HeaderProps> = ({
                 </button>
               )}
 
-              {/* View Switcher: 3D Spatial / Split / Grid / Map */}
-              <div className="flex items-center bg-white/5 p-1 rounded-xl border border-white/10 ml-1">
+              {/* View Switcher: 3D Gallery / Split / Grid / Map */}
+              <div className="flex items-center bg-[#141418] p-1 rounded-xl border border-white/10 ml-1">
                 <button
                   type="button"
                   onClick={() => onViewChange('spatial')}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-black transition-all cursor-pointer ${
-                    activeView === 'spatial' ? 'bg-cyan-500 text-slate-950 shadow-md shadow-cyan-500/25' : 'text-slate-300 hover:text-white'
+                    activeView === 'spatial' ? 'bg-[#e2b170] text-black shadow-md shadow-[#e2b170]/25 font-black' : 'text-zinc-400 hover:text-white'
                   }`}
-                  title="3D Spatial Coverflow (Active Theory View)"
+                  title="3D Gallery Coverflow"
                 >
                   <Sparkles className="w-3.5 h-3.5" />
-                  <span className="hidden sm:inline">3D Spatial</span>
+                  <span className="hidden sm:inline">3D Gallery</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => onViewChange('split')}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                    activeView === 'split' ? 'bg-cyan-500 text-slate-950 shadow-md shadow-cyan-500/25' : 'text-slate-300 hover:text-white'
+                    activeView === 'split' ? 'bg-[#e2b170] text-black shadow-md shadow-[#e2b170]/25 font-black' : 'text-zinc-400 hover:text-white'
                   }`}
                   title="Split View (Map Left, Houses Right)"
                 >
@@ -769,7 +684,7 @@ export const Header: React.FC<HeaderProps> = ({
                   type="button"
                   onClick={() => onViewChange('grid')}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                    activeView === 'grid' || activeView === 'list' ? 'bg-cyan-500 text-slate-950 shadow-md shadow-cyan-500/25' : 'text-slate-300 hover:text-white'
+                    activeView === 'grid' || activeView === 'list' ? 'bg-[#e2b170] text-black shadow-md shadow-[#e2b170]/25 font-black' : 'text-zinc-400 hover:text-white'
                   }`}
                   title="High-Density 4-Column Grid View"
                 >
@@ -780,7 +695,7 @@ export const Header: React.FC<HeaderProps> = ({
                   type="button"
                   onClick={() => onViewChange('map')}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                    activeView === 'map' ? 'bg-cyan-500 text-slate-950 shadow-md shadow-cyan-500/25' : 'text-slate-300 hover:text-white'
+                    activeView === 'map' ? 'bg-[#e2b170] text-black shadow-md shadow-[#e2b170]/25 font-black' : 'text-zinc-400 hover:text-white'
                   }`}
                   title="Full Interactive Map View"
                 >
@@ -792,60 +707,18 @@ export const Header: React.FC<HeaderProps> = ({
 
           </div>
 
-          {/* C. MORE FILTERS EXPANDED PANEL */}
+          {/* C. MORE FILTERS EXPANDED PANEL (LUXURY OBSIDIAN PALETTE) */}
           {showMoreModal && (
-            <div className="pt-4 border-t border-slate-200 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 bg-white p-5 rounded-2xl shadow-md animate-in fade-in border border-slate-200">
-              {/* Min Pass Flow Score */}
+            <div className="pt-4 border-t border-white/10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 bg-[#141418] p-5 rounded-2xl shadow-2xl animate-in fade-in border border-white/15 text-white font-mono">
+              {/* Max Property Taxes */}
               <div>
-                <label className="block text-xs font-bold text-slate-800 mb-1.5">
-                  Min Pass/Flow Grade (Score 1.0 - 5.0)
-                </label>
-                <input
-                  type="range"
-                  min="1.0"
-                  max="5.0"
-                  step="0.1"
-                  value={filters.minPassFlowScore}
-                  onChange={(e) => onFilterChange({ ...filters, minPassFlowScore: Number(e.target.value) })}
-                  className="w-full accent-red-600 cursor-pointer"
-                />
-                <div className="flex justify-between text-[10px] text-slate-500 font-mono mt-1">
-                  <span>1.0</span>
-                  <span className="font-bold text-red-600">{filters.minPassFlowScore.toFixed(1)} / 5.0 Score</span>
-                  <span>5.0</span>
-                </div>
-              </div>
-
-              {/* Min Cap Rate Return */}
-              <div>
-                <label className="block text-xs font-bold text-slate-800 mb-1.5">
-                  Minimum Cap Rate (% Return)
-                </label>
-                <input
-                  type="range"
-                  min="0"
-                  max="10"
-                  step="0.5"
-                  value={filters.minCapRatePercent || 0}
-                  onChange={(e) => onFilterChange({ ...filters, minCapRatePercent: Number(e.target.value) })}
-                  className="w-full accent-red-600 cursor-pointer"
-                />
-                <div className="flex justify-between text-[10px] text-slate-500 font-mono mt-1">
-                  <span>0%</span>
-                  <span className="font-bold text-red-600">{((filters.minCapRatePercent || 0)).toFixed(1)}% Cap Rate</span>
-                  <span>10%</span>
-                </div>
-              </div>
-
-              {/* Max Annual Property Taxes */}
-              <div>
-                <label className="block text-xs font-bold text-slate-800 mb-1.5">
+                <label className="block text-xs font-bold text-zinc-300 mb-1.5">
                   Max Annual Taxes ($/yr)
                 </label>
                 <select
                   value={filters.maxPropertyTaxesUSD}
                   onChange={(e) => onFilterChange({ ...filters, maxPropertyTaxesUSD: Number(e.target.value) })}
-                  className="w-full text-xs p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium"
+                  className="w-full text-xs p-2.5 bg-[#1c1c21] border border-white/10 rounded-xl font-medium text-white focus:ring-2 focus:ring-[#e2b170]"
                 >
                   <option value="50000">Any Taxes</option>
                   <option value="12000">Under $12,000/yr</option>
@@ -856,13 +729,13 @@ export const Header: React.FC<HeaderProps> = ({
 
               {/* Max Distance to Top School */}
               <div>
-                <label className="block text-xs font-bold text-slate-800 mb-1.5">
+                <label className="block text-xs font-bold text-zinc-300 mb-1.5">
                   Max Distance to School (km)
                 </label>
                 <select
                   value={filters.maxDistanceToSchoolKm}
                   onChange={(e) => onFilterChange({ ...filters, maxDistanceToSchoolKm: Number(e.target.value) })}
-                  className="w-full text-xs p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium"
+                  className="w-full text-xs p-2.5 bg-[#1c1c21] border border-white/10 rounded-xl font-medium text-white focus:ring-2 focus:ring-[#e2b170]"
                 >
                   <option value="10">Any Distance</option>
                   <option value="0.5">Within 0.5 km (Walkable)</option>
@@ -871,20 +744,56 @@ export const Header: React.FC<HeaderProps> = ({
                 </select>
               </div>
 
-              {/* Scan Action inside More Filters */}
-              <div className="sm:col-span-2 lg:col-span-4 pt-3 border-t border-slate-100 flex items-center justify-between">
+              {/* Min Bedrooms */}
+              <div>
+                <label className="block text-xs font-bold text-zinc-300 mb-1.5">
+                  Minimum Bedrooms
+                </label>
+                <select
+                  value={filters.bedsMin}
+                  onChange={(e) => onFilterChange({ ...filters, bedsMin: Number(e.target.value) })}
+                  className="w-full text-xs p-2.5 bg-[#1c1c21] border border-white/10 rounded-xl font-medium text-white focus:ring-2 focus:ring-[#e2b170]"
+                >
+                  <option value="0">Any Bedrooms</option>
+                  <option value="2">2+ Bedrooms</option>
+                  <option value="3">3+ Bedrooms</option>
+                  <option value="4">4+ Bedrooms</option>
+                  <option value="5">5+ Bedrooms</option>
+                </select>
+              </div>
+
+              {/* Property Architecture */}
+              <div>
+                <label className="block text-xs font-bold text-zinc-300 mb-1.5">
+                  Residence Type
+                </label>
+                <select
+                  value={filters.propertyType}
+                  onChange={(e) => onFilterChange({ ...filters, propertyType: e.target.value as any })}
+                  className="w-full text-xs p-2.5 bg-[#1c1c21] border border-white/10 rounded-xl font-medium text-white focus:ring-2 focus:ring-[#e2b170]"
+                >
+                  <option value="ALL">All Residence Types</option>
+                  <option value="SINGLE_FAMILY">Villas & Estates</option>
+                  <option value="CONDO">Penthouses & Condos</option>
+                  <option value="TOWNHOUSE">Townhouses</option>
+                </select>
+              </div>
+
+              {/* Apply & Reset inside More Filters */}
+              <div className="sm:col-span-2 lg:col-span-4 pt-3 border-t border-white/10 flex items-center justify-between">
                 <button
                   type="button"
                   onClick={() => {
                     onFilterChange({
                       ...filters,
-                      minPassFlowScore: 1.0,
-                      minCapRatePercent: 0,
+                      bedsMin: 0,
+                      bathsMin: 0,
+                      propertyType: 'ALL',
                       maxPropertyTaxesUSD: 50000,
                       maxDistanceToSchoolKm: 10,
                     });
                   }}
-                  className="text-xs font-bold text-slate-500 hover:text-slate-800 cursor-pointer"
+                  className="text-xs font-bold text-zinc-400 hover:text-white cursor-pointer"
                 >
                   Reset Advanced Filters
                 </button>
@@ -894,10 +803,10 @@ export const Header: React.FC<HeaderProps> = ({
                     setShowMoreModal(false);
                     onTriggerLiveCrawl?.(undefined, undefined, filters);
                   }}
-                  className="px-5 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer shadow-sm"
+                  className="px-6 py-2.5 bg-[#e2b170] hover:bg-[#d4a055] text-black rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer shadow-md shadow-[#e2b170]/20"
                 >
-                  <Scan className="w-4 h-4" />
-                  <span>Apply & Scan</span>
+                  <Search className="w-4 h-4" />
+                  <span>Apply Criteria</span>
                 </button>
               </div>
             </div>
