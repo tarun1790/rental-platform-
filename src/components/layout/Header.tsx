@@ -18,12 +18,15 @@ import {
   RotateCcw,
   LayoutGrid,
   MapPin,
-  Calendar
+  Calendar,
+  Volume2,
+  VolumeX
 } from 'lucide-react';
 import { FilterState, ListingStatus, PropertyType } from '../../types/property';
 import { SupportedLanguageCode } from '../../types/intelligence';
 import { TiledHomeIcon } from '../common/TiledHomeIcon';
 import { parseNlpQuery } from '../../lib/nlp-search-parser';
+import { spatialAudio } from '../../lib/audio/spatial-audio';
 
 interface HeaderProps {
   filters: FilterState;
@@ -81,8 +84,19 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [isListening, setIsListening] = useState(false);
+  const [isAudioMuted, setIsAudioMuted] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const recognitionRef = useRef<any>(null);
+
+  useEffect(() => {
+    setIsAudioMuted(spatialAudio.getIsMuted());
+  }, []);
+
+  const handleToggleAudio = () => {
+    const nextMuted = spatialAudio.toggleMute();
+    setIsAudioMuted(nextMuted);
+    if (!nextMuted) spatialAudio.playCyberHover();
+  };
 
   // Keyboard shortcut: Cmd+K / Ctrl+K or / to open Search
   useEffect(() => {
@@ -266,6 +280,20 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* Right Controls: Search Modal Trigger & Curated Counter */}
           <div className="flex items-center gap-2.5">
+            {/* Ambient Spatial Audio Toggle (Active Theory Sound Design) */}
+            <button
+              type="button"
+              onClick={handleToggleAudio}
+              className={`p-2 rounded-xl border transition-all cursor-pointer ${
+                isAudioMuted
+                  ? 'bg-[#141418] border-white/10 text-zinc-500 hover:text-zinc-300'
+                  : 'bg-[#e2b170]/15 border-[#e2b170]/40 text-[#e2b170] shadow-md shadow-[#e2b170]/15'
+              }`}
+              title={isAudioMuted ? 'Enable Ambient Spatial Audio' : 'Mute Ambient Spatial Audio'}
+            >
+              {isAudioMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
+            </button>
+
             <button
               type="button"
               onClick={() => setIsSearchModalOpen(true)}

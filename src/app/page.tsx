@@ -11,6 +11,8 @@ import { OkfExtractionModal } from '../components/okf/OkfExtractionModal';
 import { StrikeRateAuditModal } from '../components/database/StrikeRateAuditModal';
 import { ScribbleMap } from '../components/map/ScribbleMap';
 import { SpatialCardCarousel } from '../components/spatial/SpatialCardCarousel';
+import { ActiveTheoryParticleCanvas } from '../components/spatial/ActiveTheoryParticleCanvas';
+import { CinematicReticle } from '../components/common/CinematicReticle';
 import { resolveUsMetro } from '../lib/geo/us-metro-registry';
 import { CHICAGO_LISTINGS } from '../data/chicago-listings';
 import { ShikaakPropertyListing, FilterState, GeoCoordinate, BuyerPriorityWeights } from '../types/property';
@@ -307,11 +309,13 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen w-full bg-[#09090b] text-zinc-100 select-none relative overflow-x-hidden">
       
-      {/* Pure Noise-Free Luxury Atmosphere (Zero Glitters / Velvety Dark Ambiance) */}
+      {/* 3D WebGL Three.js Active Theory Background Canvas & Dynamic Gyro Rig */}
       <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1200px] h-[550px] bg-gradient-to-b from-[#e2b170]/10 via-amber-950/5 to-transparent blur-3xl rounded-full" />
-        <div className="absolute bottom-0 right-0 w-[700px] h-[500px] bg-[#e2b170]/5 blur-3xl rounded-full" />
+        <ActiveTheoryParticleCanvas interactive={true} />
       </div>
+
+      {/* Cinematic Custom Mouse Reticle (From Arin Vale & Active Theory) */}
+      <CinematicReticle />
 
       {/* 1. TOP HEADER & NAVIGATION COMMAND CENTER */}
       <Header
@@ -407,29 +411,29 @@ export default function Home() {
               {/* Spatial Layout with Left Active Theory HUD & Center 3D Deck */}
               <div className="flex flex-col lg:flex-row items-start gap-6">
                 
-                {/* Left Active Theory HUD (From User Reference Video) */}
+                {/* Left Active Theory HUD (From User Reference Video: activetheory.net) */}
                 <aside className="w-full lg:w-72 shrink-0 space-y-3">
-                  <div className="p-5 rounded-3xl bg-[#121216]/90 border border-white/10 shadow-2xl backdrop-blur-2xl space-y-4">
+                  <div className="p-5 rounded-3xl bg-[#121216]/80 border border-white/10 shadow-2xl backdrop-blur-2xl space-y-4">
                     <div className="flex items-center gap-2">
                       <span className="w-2 h-2 rounded-full bg-[#e2b170] animate-pulse" />
-                      <h4 className="text-[11px] font-mono font-black tracking-widest text-zinc-400 uppercase">
-                        COLLECTIONS
+                      <h4 className="text-[10px] font-mono font-black tracking-widest text-zinc-400 uppercase">
+                        WHAT ARE YOU LOOKING FOR?
                       </h4>
                     </div>
 
                     <div className="space-y-1 font-mono text-xs">
                       {[
-                        { id: 'ALL', label: `ALL RESIDENCES (${allListings.length})`, status: 'ALL' },
-                        { id: 'SALE', label: 'FOR ACQUISITION (BUY)', status: 'FOR_SALE' },
-                        { id: 'RENT', label: 'FOR LEASE (RENT)', status: 'FOR_RENT' },
-                        { id: 'SINGLE_FAMILY', label: 'VILLAS & ESTATES', propType: 'SINGLE_FAMILY' },
-                        { id: 'CONDO', label: 'PENTHOUSES & LOFTS', propType: 'CONDO' },
+                        { id: 'ALL', label: `ALL RESIDENCES (${allListings.length})`, filter: '' },
+                        { id: 'CANTILEVERED', label: 'CANTILEVERED MODERNISM', filter: 'Cantilevered' },
+                        { id: 'MID_CENTURY', label: 'MID-CENTURY ORGANIC', filter: 'Mid-Century' },
+                        { id: 'DESERT', label: 'DESERT BRUTALISM', filter: 'Desert' },
+                        { id: 'BIOPHILIC', label: 'BIOPHILIC WATERFRONT', filter: 'Biophilic' },
+                        { id: 'PENTHOUSE', label: 'SKY PENTHOUSES', filter: 'Penthouse' },
                       ].map((item: any) => (
                         <button
                           key={item.label}
                           onClick={() => {
-                            if (item.status) setFilters(prev => ({ ...prev, listingStatus: item.status }));
-                            if (item.propType) setFilters(prev => ({ ...prev, propertyType: item.propType }));
+                            setFilters(prev => ({ ...prev, searchQuery: item.filter }));
                           }}
                           className="w-full text-left flex items-center justify-between px-3 py-2.5 rounded-xl text-zinc-300 hover:text-[#e2b170] hover:bg-white/5 transition-all group cursor-pointer border border-transparent hover:border-white/10"
                         >
@@ -441,11 +445,14 @@ export default function Home() {
 
                     <button
                       type="button"
-                      onClick={() => handleTriggerLiveCrawl(filters.searchQuery)}
+                      onClick={() => {
+                        setFilters(prev => ({ ...prev, searchQuery: '' }));
+                        handleTriggerLiveCrawl('');
+                      }}
                       className="w-full py-2.5 px-3 rounded-2xl bg-[#e2b170] hover:bg-[#d4a055] text-black text-xs font-mono font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-[#e2b170]/20"
                     >
                       <Sparkles className="w-3.5 h-3.5" />
-                      <span>BROWSE ALL METROS</span>
+                      <span>DISCOVER ALL METROS</span>
                     </button>
                   </div>
                 </aside>
