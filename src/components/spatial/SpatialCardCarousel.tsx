@@ -211,10 +211,10 @@ export const SpatialCardCarousel: React.FC<SpatialCardCarouselProps> = ({
                 zIndex,
                 background: 'linear-gradient(155deg, rgba(24, 24, 30, 0.92) 0%, rgba(12, 12, 16, 0.96) 100%)',
                 border: isCenter
-                  ? '2px solid rgba(226, 177, 112, 0.9)'
+                  ? '1px solid rgba(226, 177, 112, 0.7)'
                   : '1px solid rgba(255, 255, 255, 0.08)',
                 boxShadow: isCenter
-                  ? '0 30px 90px -10px rgba(226, 177, 112, 0.35), 0 0 45px rgba(226, 177, 112, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.25)'
+                  ? '0 30px 80px -15px rgba(0, 0, 0, 0.9), 0 0 40px rgba(226, 177, 112, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
                   : '0 20px 50px -10px rgba(0, 0, 0, 0.85)',
               }}
             >

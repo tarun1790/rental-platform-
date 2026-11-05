@@ -25,17 +25,22 @@ import {
   CheckCircle2,
   Camera,
   Layers,
-  ArrowRight
+  ArrowRight,
+  FileCode,
+  Download,
+  Copy,
+  Check
 } from 'lucide-react';
 import { ShikaakPropertyListing, RankedAmenity } from '../../types/property';
 import { formatCurrency, formatPercent } from '../../lib/roi-engine';
+import { extractPropertyToOkf, OkfDocument } from '../../lib/okf/okf-extractor';
 
 interface PropertyDetailModalProps {
   listing: ShikaakPropertyListing | null;
   onClose: () => void;
 }
 
-type TabType = 'overview' | 'specs' | 'amenities' | 'financials' | 'inquire';
+type TabType = 'overview' | 'specs' | 'amenities' | 'financials' | 'okf' | 'inquire';
 
 export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
   listing,
@@ -48,6 +53,32 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
   const [guestEmail, setGuestEmail] = useState('');
   const [tourDate, setTourDate] = useState('2026-11-15');
   const [tourTime, setTourTime] = useState('14:00');
+  const [isOkfCopied, setIsOkfCopied] = useState(false);
+
+  const okfDoc = React.useMemo(() => {
+    return listing ? extractPropertyToOkf(listing) : null;
+  }, [listing]);
+
+  const handleCopyOkf = () => {
+    if (okfDoc) {
+      navigator.clipboard.writeText(okfDoc.markdown);
+      setIsOkfCopied(true);
+      setTimeout(() => setIsOkfCopied(false), 2000);
+    }
+  };
+
+  const handleDownloadOkf = () => {
+    if (!okfDoc || !listing) return;
+    const blob = new Blob([okfDoc.markdown], { type: 'text/markdown;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${listing.id}.okf.md`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
 
   if (!listing) return null;
 
@@ -201,6 +232,21 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
               </a>
             )}
 
+            {/* OKF Knowledge Graph Direct Action */}
+            <button
+              type="button"
+              onClick={() => setActiveTab('okf')}
+              className={`px-3 py-1.5 rounded-xl border text-xs font-mono font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                activeTab === 'okf'
+                  ? 'bg-[#e2b170] text-black border-[#e2b170] shadow-md shadow-[#e2b170]/20'
+                  : 'bg-white/5 hover:bg-white/10 text-[#e2b170] border-[#e2b170]/30'
+              }`}
+              title="Inspect Open Knowledge Format (OKF) Dossier from Database"
+            >
+              <FileCode className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">OKF Dossier</span>
+            </button>
+
             <button
               onClick={onClose}
               className="w-9 h-9 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center text-zinc-300 hover:text-white transition-all cursor-pointer"
@@ -218,6 +264,7 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
             { id: 'specs', label: 'Architectural Specs', icon: Layers },
             { id: 'amenities', label: 'Neighborhood & Schools', icon: Award },
             { id: 'financials', label: 'Investment & Lease Analysis', icon: BarChart3 },
+            { id: 'okf', label: 'OKF Knowledge Graph', icon: FileCode },
             { id: 'inquire', label: 'Schedule Private Viewing', icon: Calendar },
           ].map((tab) => {
             const Icon = tab.icon;
@@ -446,6 +493,68 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
                     <span className="font-bold text-white">{(financials.outputs?.grossRentMultiplier || 12.5).toFixed(1)}x</span>
                   </div>
                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* TAB: OPEN KNOWLEDGE FORMAT (OKF) DATABASE EXTRACTION */}
+          {activeTab === 'okf' && okfDoc && (
+            <div className="space-y-5 font-mono">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 bg-[#141418] rounded-2xl border border-white/10">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-[#e2b170]/15 border border-[#e2b170]/30 flex items-center justify-center text-[#e2b170]">
+                    <FileCode className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h3 className="text-xs font-black uppercase text-white tracking-wider">
+                      Open Knowledge Format (OKF) Entity Dossier
+                    </h3>
+                    <p className="text-[11px] text-zinc-400">
+                      Standardized YAML Frontmatter + Markdown Graph extracted directly from database
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 self-end sm:self-auto">
+                  <button
+                    type="button"
+                    onClick={handleCopyOkf}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-zinc-200 border border-white/10 text-xs font-bold transition-all cursor-pointer"
+                  >
+                    {isOkfCopied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-[#e2b170]" />}
+                    <span>{isOkfCopied ? 'Copied' : 'Copy OKF'}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleDownloadOkf}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#e2b170] hover:bg-[#d4a055] text-black text-xs font-black uppercase tracking-wider transition-all shadow-md shadow-[#e2b170]/20 cursor-pointer"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    <span>Download .okf.md</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* YAML Frontmatter Preview */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-[11px] text-zinc-400">
+                  <span className="uppercase tracking-widest text-[#e2b170] font-bold">YAML Frontmatter Schema</span>
+                  <span>ID: {okfDoc.frontmatter.id}</span>
+                </div>
+                <pre className="p-4 rounded-2xl bg-black/80 border border-white/10 text-zinc-300 text-xs overflow-x-auto max-h-64 scrollbar-none font-mono">
+                  {okfDoc.rawYaml}
+                </pre>
+              </div>
+
+              {/* Markdown Body Preview */}
+              <div className="space-y-2">
+                <span className="text-[11px] uppercase tracking-widest text-[#e2b170] font-bold block">
+                  Knowledge Graph Body (Markdown)
+                </span>
+                <pre className="p-4 rounded-2xl bg-black/60 border border-white/10 text-zinc-300 text-xs overflow-x-auto max-h-64 scrollbar-none font-mono whitespace-pre-wrap">
+                  {okfDoc.markdown}
+                </pre>
               </div>
             </div>
           )}

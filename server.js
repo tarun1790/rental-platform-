@@ -384,6 +384,45 @@ nextApp.prepare().then(() => {
     res.send(bundleText);
   });
 
+  // API ROUTE: /api/vector-search (Dense 128-D Vector Embeddings & Cosine Similarity)
+  const vectorHelper = require('./src/lib/vector/vector-helper');
+  let vectorIndex = null;
+
+  server.get('/api/vector-search', (req, res) => {
+    if (!vectorIndex && sqliteCache.length > 0) {
+      vectorIndex = new vectorHelper.VectorIndex(sqliteCache);
+    }
+    const query = req.query.q || '';
+    const limit = Math.min(100, parseInt(req.query.limit || '24', 10));
+    const status = req.query.status || 'ALL';
+
+    const results = vectorIndex ? vectorIndex.search(query, { limit, status }) : [];
+
+    res.status(200).json({
+      success: true,
+      query,
+      count: results.length,
+      totalIndexed: sqliteCache.length,
+      results,
+    });
+  });
+
+  server.post('/api/vector-search', (req, res) => {
+    if (!vectorIndex && sqliteCache.length > 0) {
+      vectorIndex = new vectorHelper.VectorIndex(sqliteCache);
+    }
+    const { query = '', limit = 24, filters = {} } = req.body || {};
+    const results = vectorIndex ? vectorIndex.search(query, { limit: Number(limit) || 24, filters }) : [];
+
+    res.status(200).json({
+      success: true,
+      query,
+      count: results.length,
+      totalIndexed: sqliteCache.length,
+      results,
+    });
+  });
+
   // API ROUTE: /api/database/strike-rate (Complete Field Integrity & Strike Rate Audit)
   server.get('/api/database/strike-rate', (req, res) => {
     const db = initSqliteConnection();

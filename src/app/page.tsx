@@ -408,64 +408,40 @@ export default function Home() {
                 </p>
               </div>
 
-              {/* Spatial Layout with Left Active Theory HUD & Center 3D Deck */}
-              <div className="flex flex-col lg:flex-row items-start gap-6">
-                
-                {/* Left Active Theory HUD (From User Reference Video: activetheory.net) */}
-                <aside className="w-full lg:w-72 shrink-0 space-y-3">
-                  <div className="p-5 rounded-3xl bg-[#121216]/80 border border-white/10 shadow-2xl backdrop-blur-2xl space-y-4">
-                    <div className="flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-[#e2b170] animate-pulse" />
-                      <h4 className="text-[10px] font-mono font-black tracking-widest text-zinc-400 uppercase">
-                        WHAT ARE YOU LOOKING FOR?
-                      </h4>
-                    </div>
-
-                    <div className="space-y-1 font-mono text-xs">
-                      {[
-                        { id: 'ALL', label: `ALL RESIDENCES (${allListings.length})`, filter: '' },
-                        { id: 'CANTILEVERED', label: 'CANTILEVERED MODERNISM', filter: 'Cantilevered' },
-                        { id: 'MID_CENTURY', label: 'MID-CENTURY ORGANIC', filter: 'Mid-Century' },
-                        { id: 'DESERT', label: 'DESERT BRUTALISM', filter: 'Desert' },
-                        { id: 'BIOPHILIC', label: 'BIOPHILIC WATERFRONT', filter: 'Biophilic' },
-                        { id: 'PENTHOUSE', label: 'SKY PENTHOUSES', filter: 'Penthouse' },
-                      ].map((item: any) => (
-                        <button
-                          key={item.label}
-                          onClick={() => {
-                            setFilters(prev => ({ ...prev, searchQuery: item.filter }));
-                          }}
-                          className="w-full text-left flex items-center justify-between px-3 py-2.5 rounded-xl text-zinc-300 hover:text-[#e2b170] hover:bg-white/5 transition-all group cursor-pointer border border-transparent hover:border-white/10"
-                        >
-                          <span>→ {item.label}</span>
-                          <ChevronRight className="w-3.5 h-3.5 text-[#e2b170] opacity-0 group-hover:opacity-100 transition-all" />
-                        </button>
-                      ))}
-                    </div>
-
+              {/* Horizontal Architectural Collections Bar (Symmetric, Centered, High Conversion) */}
+              <div className="flex items-center justify-center gap-2 overflow-x-auto scrollbar-none py-1 px-4">
+                {[
+                  { id: 'ALL', label: `ALL RESIDENCES (${allListings.length})`, filter: '' },
+                  { id: 'CANTILEVERED', label: 'CANTILEVERED MODERNISM', filter: 'Cantilevered' },
+                  { id: 'MID_CENTURY', label: 'MID-CENTURY ORGANIC', filter: 'Mid-Century' },
+                  { id: 'DESERT', label: 'DESERT BRUTALISM', filter: 'Desert' },
+                  { id: 'BIOPHILIC', label: 'BIOPHILIC WATERFRONT', filter: 'Biophilic' },
+                  { id: 'PENTHOUSE', label: 'SKY PENTHOUSES', filter: 'Penthouse' },
+                ].map((item) => {
+                  const isActive = (filters.searchQuery === item.filter) || (!filters.searchQuery && item.id === 'ALL');
+                  return (
                     <button
-                      type="button"
-                      onClick={() => {
-                        setFilters(prev => ({ ...prev, searchQuery: '' }));
-                        handleTriggerLiveCrawl('');
-                      }}
-                      className="w-full py-2.5 px-3 rounded-2xl bg-[#e2b170] hover:bg-[#d4a055] text-black text-xs font-mono font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-[#e2b170]/20"
+                      key={item.label}
+                      onClick={() => setFilters(prev => ({ ...prev, searchQuery: item.filter }))}
+                      className={`px-4 py-2 rounded-2xl text-xs font-mono font-bold whitespace-nowrap transition-all cursor-pointer border ${
+                        isActive
+                          ? 'bg-[#e2b170] text-black border-[#e2b170] font-black shadow-lg shadow-[#e2b170]/25'
+                          : 'bg-[#121216]/80 text-zinc-300 hover:text-white hover:bg-white/10 border-white/10'
+                      }`}
                     >
-                      <Sparkles className="w-3.5 h-3.5" />
-                      <span>DISCOVER ALL METROS</span>
+                      <span>{item.label}</span>
                     </button>
-                  </div>
-                </aside>
+                  );
+                })}
+              </div>
 
-                {/* Center 3D Coverflow Stage */}
-                <div className="flex-1 w-full overflow-visible">
-                  <SpatialCardCarousel
-                    listings={filteredListings}
-                    onSelectListing={(l) => setSelectedListing(l)}
-                    onOpenDetail={(l) => handleOpenProperty(l)}
-                  />
-                </div>
-
+              {/* Perfectly Centered 3D Exhibition Stage */}
+              <div className="w-full flex justify-center overflow-visible">
+                <SpatialCardCarousel
+                  listings={filteredListings}
+                  onSelectListing={(l) => setSelectedListing(l)}
+                  onOpenDetail={(l) => handleOpenProperty(l)}
+                />
               </div>
 
               {/* 4-CARD CURATED ESTATE METRICS STRIP (MotionSites: Telemetry below Hero Stage) */}
