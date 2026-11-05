@@ -1,0 +1,149 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "finalize",
+  "status": "pass",
+  "type": "architecture",
+  "quality": "showcase",
+  "specification": {
+    "path": "C:\\projects\\rental\\.archify\\architecture-hybrid-retrieval-pipeline-20261105-152200\\candidate.json",
+    "sha256": "4d06c6d858c95a9bd3649d09e5b25538e4acf74f3368ea2c6bfb8cdc4f88cb32",
+    "bytes": 8298
+  },
+  "artifact": {
+    "path": "C:\\projects\\rental\\.archify\\architecture-hybrid-retrieval-pipeline-20261105-152200\\hybrid-retrieval-pipeline.html",
+    "sha256": "9d5b5c9da5dc15f157c50ba03f24be23ff20967f75b2d50b76d532da45e2ebf8",
+    "bytes": 788513
+  },
+  "gates": {
+    "validate": "pass",
+    "deliver": "pass",
+    "check": "pass",
+    "browser-check": "pass"
+  },
+  "diagnostics": [],
+  "diagnosticSummary": {
+    "total": 0,
+    "shown": 0,
+    "truncated": false
+  },
+  "evidence": {
+    "receipt": "C:\\projects\\rental\\.archify\\architecture-hybrid-retrieval-pipeline-20261105-152200\\hybrid-retrieval-pipeline.finalize.json",
+    "summaryReceipt": "C:\\projects\\rental\\.archify\\architecture-hybrid-retrieval-pipeline-20261105-152200\\hybrid-retrieval-pipeline.finalize-summary.json",
+    "browserCheckReceipt": "C:\\projects\\rental\\.archify\\architecture-hybrid-retrieval-pipeline-20261105-152200\\hybrid-retrieval-pipeline.browser-check.json"
+  },
+  "update": {
+    "status": "unavailable",
+    "installedVersion": null,
+    "availableVersion": null,
+    "releaseNotes": null,
+    "checkedAt": null,
+    "source": null,
+    "noticeRequired": false,
+    "noticeText": null,
+    "reason": "invalid-local-release"
+  },
+  "visualReview": "not-requested",
+  "durationMs": 2702,
+  "visualReviewRecommendation": {
+    "action": "inspect-route-readability",
+    "signals": {
+      "resolvedCrossovers": 3,
+      "routesOverSuggestedBends": 1
+    },
+    "reason": "Automated gates passed, but crossings or detours still need perceptual review before claiming visual quality.",
+    "affectedRoutes": {
+      "crossings": [
+        {
+          "left": {
+            "id": "c-sqlite-cachecheck",
+            "from": "sqlite",
+            "to": "cachecheck",
+            "label": "candidates",
+            "collectionIndex": 3,
+            "artifactIndex": 4
+          },
+          "right": {
+            "id": "c-cachecheck-crawler",
+            "from": "cachecheck",
+            "to": "crawler",
+            "label": "Cache Miss",
+            "collectionIndex": 5,
+            "artifactIndex": 6
+          },
+          "point": [
+            648,
+            370
+          ],
+          "sharedNode": "cachecheck"
+        },
+        {
+          "left": {
+            "id": "c-cachecheck-crawler",
+            "from": "cachecheck",
+            "to": "crawler",
+            "label": "Cache Miss",
+            "collectionIndex": 5,
+            "artifactIndex": 6
+          },
+          "right": {
+            "id": "c-normalizer-snapshot",
+            "from": "normalizer",
+            "to": "snapshot",
+            "label": "cold backup",
+            "collectionIndex": 8,
+            "artifactIndex": 9
+          },
+          "point": [
+            395,
+            477
+          ]
+        },
+        {
+          "left": {
+            "id": "c-cachecheck-crawler",
+            "from": "cachecheck",
+            "to": "crawler",
+            "label": "Cache Miss",
+            "collectionIndex": 5,
+            "artifactIndex": 6
+          },
+          "right": {
+            "id": "c-normalizer-sqlite",
+            "from": "normalizer",
+            "to": "sqlite",
+            "label": "dedup upsert",
+            "collectionIndex": 9,
+            "artifactIndex": 10
+          },
+          "point": [
+            648,
+            440.06666666666666
+          ]
+        }
+      ],
+      "detours": [
+        {
+          "relationship": {
+            "id": "c-normalizer-snapshot",
+            "from": "normalizer",
+            "to": "snapshot",
+            "label": "cold backup",
+            "collectionIndex": 8,
+            "artifactIndex": 9
+          },
+          "bends": 3,
+          "stretch": 1
+        }
+      ],
+      "truncated": false
+    },
+    "hints": [
+      "sqlite → cachecheck and cachecheck → crawler cross next to cachecheck: move node sqlite or crawler so the two reach cachecheck from different sides (for example one level with it, one directly above or below it).",
+      "cachecheck → crawler crosses normalizer → snapshot: move the node of whichever is a branch, return, or second entrance to the other side of the main path, so that relationship runs through an empty corridor.",
+      "cachecheck → crawler crosses normalizer → sqlite: move the node of whichever is a branch, return, or second entrance to the other side of the main path, so that relationship runs through an empty corridor.",
+      "normalizer → snapshot needs 3 bends: move node normalizer or snapshot so they share a row or column with matching centers, or sit diagonally with a clear corner."
+    ],
+    "repair": "Trace these relationships at the desktop viewport. For Architecture, use references/architecture-layout-repair.md: reflow a blocked main path or tangled connected scene, and repair an isolated defect locally only when the surrounding composition is accepted. Preserve all semantic content and user-fixed geometry. Rerun finalize once after the edit."
+  }
+}

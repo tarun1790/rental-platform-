@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "75df950a-4cc9-43ef-a1d2-39c71ab89584",
+  "status": "current",
+  "command": "deliver",
+  "type": "architecture",
+  "input": "C:\\projects\\rental\\.archify\\architecture-hybrid-retrieval-pipeline-20261105-152200\\candidate.json",
+  "output": "C:\\projects\\rental\\.archify\\architecture-hybrid-retrieval-pipeline-20261105-152200\\hybrid-retrieval-pipeline.html",
+  "specification": {
+    "sha256": "4d06c6d858c95a9bd3649d09e5b25538e4acf74f3368ea2c6bfb8cdc4f88cb32",
+    "bytes": 8298
+  },
+  "artifact": {
+    "sha256": "9d5b5c9da5dc15f157c50ba03f24be23ff20967f75b2d50b76d532da45e2ebf8",
+    "bytes": 788513
+  }
+}

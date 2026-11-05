@@ -12,6 +12,26 @@ export interface VectorSearchResult {
   matchedFeatures: string[];
 }
 
+export interface HybridSearchRequest {
+  metro?: string;
+  maxPrice?: number;
+  minPrice?: number;
+  minBeds?: number;
+  minBaths?: number;
+  naturalLanguageQuery: string;
+  alpha?: number; // 0.0 to 1.0, default 0.8
+  limit?: number; // default 24
+}
+
+export interface ScoredResidence {
+  id: string;
+  listing: ShikaakPropertyListing;
+  similarity: number;
+  capRateNorm: number;
+  finalScore: number;
+  matchedFeatures: string[];
+}
+
 export class LuxuryVectorDatabase {
   private static instance: LuxuryVectorDatabase;
   private indexedProperties: Map<string, { listing: ShikaakPropertyListing; vector: Float32Array; textCorpus: string }> = new Map();
@@ -221,5 +241,96 @@ export class LuxuryVectorDatabase {
 
   public getCount(): number {
     return this.indexedProperties.size;
+  }
+
+  public getVectorById(id: string): Float32Array | undefined {
+    return this.indexedProperties.get(id)?.vector;
+  }
+
+  public getListingById(id: string): ShikaakPropertyListing | undefined {
+    return this.indexedProperties.get(id)?.listing;
+  }
+
+  public embedQuery(query: string): Float32Array {
+    return this.embedText(query);
+  }
+
+  /**
+   * Two-Stage Hybrid Property Search:
+   * Stage 1: Fast metadata / relational pre-filtering
+   * Stage 2: 128-D Cosine similarity reranking + ROI fusion on candidate IDs only
+   */
+  public executeHybridPropertySearch(req: HybridSearchRequest): ScoredResidence[] {
+    const {
+      metro,
+      maxPrice = Infinity,
+      minPrice = 0,
+      minBeds = 0,
+      naturalLanguageQuery = '',
+      alpha = 0.8,
+      limit = 24,
+    } = req;
+
+    const queryVector = this.embedText(naturalLanguageQuery);
+    const queryTerms = naturalLanguageQuery.toLowerCase().split(/\s+/).filter(Boolean);
+
+    // Stage 1: Relational pre-filter candidates
+    const candidateItems: { listing: ShikaakPropertyListing; vector: Float32Array; textCorpus: string }[] = [];
+
+    this.indexedProperties.forEach((item) => {
+      const { listing } = item;
+      if (metro) {
+        const cityMatch = (listing.propertyAddress?.city || '').toLowerCase().includes(metro.toLowerCase());
+        const stateMatch = (listing.propertyAddress?.state || '').toLowerCase() === metro.toLowerCase();
+        if (!cityMatch && !stateMatch) return;
+      }
+
+      const price = listing.listingStatus === 'FOR_RENT'
+        ? (listing.financials?.inputs?.monthlyGrossRent || 0)
+        : (listing.financials?.inputs?.purchasePrice || 0);
+
+      if (price < minPrice || price > maxPrice) return;
+      if ((listing.specs?.beds || 0) < minBeds) return;
+
+      candidateItems.push(item);
+    });
+
+    // If candidates count is sparse (< 5), fallback to all items to prevent zero-result bleed
+    const finalCandidates = candidateItems.length >= 5 ? candidateItems : Array.from(this.indexedProperties.values());
+
+    // Stage 2: 128-D Cosine Similarity on candidate IDs only + ROI Fusion
+    const scoredResults: ScoredResidence[] = finalCandidates.map((item) => {
+      const { listing, vector, textCorpus } = item;
+      let cosineSim = this.cosineSimilarity(queryVector, vector);
+
+      const matchedFeatures: string[] = [];
+      for (const term of queryTerms) {
+        if (textCorpus.includes(term)) {
+          cosineSim += 0.04;
+          matchedFeatures.push(term);
+        }
+      }
+      cosineSim = Math.min(0.99, Number(cosineSim.toFixed(4)));
+
+      // Normalized Cap Rate ROI (e.g. 5.5% -> 5.5 / 10.0 = 0.55 clamped to [0, 1])
+      const purchasePrice = listing.financials?.inputs?.purchasePrice || 1;
+      const noi = listing.financials?.outputs?.netOperatingIncomeAnnual || 0;
+      const calculatedCapRate = noi > 0 && purchasePrice > 0 ? (noi / purchasePrice) * 100 : 0;
+      const rawCapRate = calculatedCapRate > 0 ? calculatedCapRate : ((listing as any).capRate || (listing as any).cap_rate || 5.2);
+      const capRateNorm = Math.min(1.0, Math.max(0.0, rawCapRate / 10.0));
+
+      const hybridScore = Number((alpha * cosineSim + (1 - alpha) * capRateNorm).toFixed(4));
+
+      return {
+        id: listing.id,
+        listing,
+        similarity: cosineSim,
+        capRateNorm: Number(capRateNorm.toFixed(3)),
+        finalScore: hybridScore,
+        matchedFeatures,
+      };
+    });
+
+    return scoredResults.sort((a, b) => b.finalScore - a.finalScore).slice(0, limit);
   }
 }

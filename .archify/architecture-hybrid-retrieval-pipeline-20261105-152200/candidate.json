@@ -1,0 +1,117 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Two-Stage Hybrid Retrieval & Live-Hydration Architecture",
+    "output": ".archify/architecture-hybrid-retrieval-pipeline-20261105-152200/hybrid-retrieval-pipeline.html",
+    "quality_profile": "showcase",
+    "animation": "trace",
+    "views": [
+      {
+        "id": "two-stage-search",
+        "label": "Two-Stage Search",
+        "focus": ["searchui", "apiroute", "prefilter", "sqlite", "cachecheck", "reranker", "carousel"],
+        "note": "Fast SQL relational pre-filtering followed by 128-D vector reranking"
+      },
+      {
+        "id": "cache-miss-hydration",
+        "label": "Live Hydration Loop",
+        "focus": ["cachecheck", "crawler", "normalizer", "sqlite", "embedder", "vecindex"],
+        "note": "Under-threshold metros trigger automated multi-portal crawling"
+      },
+      {
+        "id": "okf-compilation",
+        "label": "OKF Compilation",
+        "focus": ["carousel", "dossiermodal", "okfcompiler", "sqlite", "roiengine"],
+        "note": "Lazy compilation of Open Knowledge Format YAML and Markdown graph"
+      }
+    ]
+  },
+  "components": [
+    { "id": "searchui", "type": "frontend", "label": "Command Bar", "sublabel": "Location & Query Filter", "pos": [60, 60], "size": [150, 60] },
+    { "id": "particles", "type": "frontend", "label": "Stardust Canvas", "sublabel": "1,800 WebGL Particles", "pos": [580, 60], "size": [150, 60] },
+    { "id": "carousel", "type": "frontend", "label": "3D Exhibition Deck", "sublabel": "Three.js Parallax & Sheen", "pos": [840, 60], "size": [150, 60] },
+    { "id": "dossiermodal", "type": "frontend", "label": "Architectural Dossier", "sublabel": "Underwriting & OKF Tab", "pos": [1100, 60], "size": [150, 60] },
+
+    { "id": "apiroute", "type": "backend", "label": "Hybrid Query Router", "sublabel": "Next.js App Router API", "pos": [60, 200], "size": [150, 60] },
+    { "id": "prefilter", "type": "backend", "label": "Stage 1: SQL Filter", "sublabel": "Metro, Price & Beds", "pos": [320, 200], "size": [150, 60] },
+    { "id": "cachecheck", "type": "security", "label": "Candidate Evaluator", "sublabel": "Threshold >= 5 Check", "pos": [580, 200], "size": [150, 60] },
+    { "id": "reranker", "type": "backend", "label": "Stage 2: Reranker", "sublabel": "128-D Cosine Sim + ROI", "pos": [840, 200], "size": [150, 60] },
+    { "id": "okfcompiler", "type": "backend", "label": "OKF Extraction Engine", "sublabel": "YAML + Markdown Graph", "pos": [1100, 200], "size": [150, 60] },
+
+    { "id": "snapshot", "type": "database", "label": "JSON Snapshot Cache", "sublabel": "Cold Portal Backup", "pos": [60, 340], "size": [150, 60] },
+    { "id": "sqlite", "type": "database", "label": "SQLite Store", "sublabel": "Indexed houses.db", "pos": [320, 340], "size": [150, 60] },
+    { "id": "vecindex", "type": "database", "label": "128-D Vector Index", "sublabel": "In-Memory Float32", "pos": [840, 340], "size": [150, 60] },
+    { "id": "roiengine", "type": "backend", "label": "Underwriting Engine", "sublabel": "Cap Rate, DSCR & GRM", "pos": [1100, 340], "size": [150, 60] },
+
+    { "id": "portals", "type": "external", "label": "External Portals", "sublabel": "Zillow, Redfin, Realtor", "pos": [60, 480], "size": [150, 60] },
+    { "id": "crawler", "type": "backend", "label": "Multi-Portal Scraper", "sublabel": "Rate Limiter & Parser", "pos": [320, 480], "size": [150, 60] },
+    { "id": "normalizer", "type": "backend", "label": "Schema Normalizer", "sublabel": "Canonical Hash & Dedupe", "pos": [580, 480], "size": [150, 60] },
+    { "id": "embedder", "type": "backend", "label": "128-D Feature Encoder", "sublabel": "Amenity & Style Vectorizer", "pos": [840, 480], "size": [150, 60] }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "Spatial WebGL Presentation Layer", "wraps": ["searchui", "particles", "carousel", "dossiermodal"] },
+    { "kind": "region", "label": "Next.js & Express Hybrid Query Layer", "wraps": ["apiroute", "prefilter", "cachecheck", "reranker", "okfcompiler"] },
+    { "kind": "region", "label": "Hybrid Persistence & Vector Storage Layer", "wraps": ["snapshot", "sqlite", "vecindex", "roiengine"] },
+    { "kind": "region", "label": "Multi-Portal Ingestion & Normalization Layer", "wraps": ["portals", "crawler", "normalizer", "embedder"] }
+  ],
+  "connections": [
+    { "id": "c-search-api", "from": "searchui", "to": "apiroute", "label": "POST search", "variant": "emphasis", "fromSide": "bottom", "toSide": "top" },
+    { "id": "c-api-prefilter", "from": "apiroute", "to": "prefilter", "label": "filters", "fromSide": "right", "toSide": "left" },
+    { "id": "c-prefilter-sqlite", "from": "prefilter", "to": "sqlite", "label": "SQL <5ms", "fromSide": "bottom", "toSide": "top" },
+    { "id": "c-sqlite-cachecheck", "from": "sqlite", "to": "cachecheck", "label": "candidates", "fromSide": "right", "toSide": "bottom" },
+    { "id": "c-cachecheck-reranker", "from": "cachecheck", "to": "reranker", "label": "Cache Hit", "variant": "emphasis", "fromSide": "right", "toSide": "left" },
+    { "id": "c-cachecheck-crawler", "from": "cachecheck", "to": "crawler", "label": "Cache Miss", "variant": "dashed", "fromSide": "bottom", "toSide": "top" },
+    { "id": "c-portals-crawler", "from": "portals", "to": "crawler", "label": "scrape", "fromSide": "right", "toSide": "left" },
+    { "id": "c-crawler-normalizer", "from": "crawler", "to": "normalizer", "label": "raw JSON", "fromSide": "right", "toSide": "left" },
+    { "id": "c-normalizer-snapshot", "from": "normalizer", "to": "snapshot", "label": "cold backup", "variant": "dashed", "fromSide": "left", "toSide": "bottom" },
+    { "id": "c-normalizer-sqlite", "from": "normalizer", "to": "sqlite", "label": "dedup upsert", "fromSide": "top", "toSide": "bottom" },
+    { "id": "c-normalizer-embedder", "from": "normalizer", "to": "embedder", "label": "text corpus", "fromSide": "right", "toSide": "left" },
+    { "id": "c-embedder-vecindex", "from": "embedder", "to": "vecindex", "label": "128-D vector", "fromSide": "top", "toSide": "bottom" },
+    { "id": "c-vecindex-reranker", "from": "vecindex", "to": "reranker", "label": "Float32 vectors", "fromSide": "top", "toSide": "bottom" },
+    { "id": "c-roiengine-reranker", "from": "roiengine", "to": "reranker", "label": "norm ROI", "fromSide": "left", "toSide": "right" },
+    { "id": "c-reranker-carousel", "from": "reranker", "to": "carousel", "label": "scored 3D cards", "variant": "emphasis", "fromSide": "top", "toSide": "bottom" },
+    { "id": "c-particles-carousel", "from": "particles", "to": "carousel", "label": "60 FPS stardust", "fromSide": "right", "toSide": "left" },
+    { "id": "c-carousel-dossier", "from": "carousel", "to": "dossiermodal", "label": "inspect estate", "fromSide": "right", "toSide": "left" },
+    { "id": "c-dossier-okf", "from": "dossiermodal", "to": "okfcompiler", "label": "GET OKF", "variant": "emphasis", "fromSide": "bottom", "toSide": "top" },
+    { "id": "c-roi-okf", "from": "roiengine", "to": "okfcompiler", "label": "underwriting", "fromSide": "top", "toSide": "bottom" }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Two-Stage Retrieval",
+      "items": [
+        "Stage 1: Indexed SQLite metadata pre-filter (<5ms)",
+        "Stage 2: 128-D Cosine similarity reranking (<8ms)",
+        "Zero cross-city bleed between premier metro markets"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Cache-Miss Live Hydration",
+      "items": [
+        "Candidate count check (<5 listings flags cache miss)",
+        "On-demand portal crawler dispatches for target metro",
+        "Canonical SHA-256 deduplication and vector encoding"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "OKF & Underwriting",
+      "items": [
+        "Lazy compilation of YAML frontmatter and Markdown graph",
+        "Cap rate, DSCR, GRM, and pro-forma cash flow calculations",
+        "One-click .okf.md dossier export and download"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "WebGL Presentation",
+      "items": [
+        "Next.js 14 App Router with React Server Components",
+        "Three.js WebGL stardust particle veil with mouse inertia",
+        "3D spatial coverflow with specular sheen and floor reflection"
+      ]
+    }
+  ]
+}

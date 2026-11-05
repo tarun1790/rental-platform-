@@ -125,6 +125,63 @@ class VectorIndex {
     scored.sort((a, b) => b.similarityScore - a.similarityScore);
     return scored.slice(0, limit);
   }
+
+  embedQuery(query) {
+    return embedText(query);
+  }
+
+  getVectorById(id) {
+    const item = this.items.find(it => it.listing.id === id);
+    return item ? item.vector : null;
+  }
+
+  getListingById(id) {
+    const item = this.items.find(it => it.listing.id === id);
+    return item ? item.listing : null;
+  }
+
+  /**
+   * Two-Stage Hybrid Property Search
+   * Combines SQLite candidate pre-filter with 128-D cosine similarity and normalized ROI fusion
+   */
+  executeHybridSearch(candidateRows, naturalLanguageQuery, alpha = 0.8, limit = 24) {
+    const queryVector = embedText(naturalLanguageQuery);
+    const queryTerms = (naturalLanguageQuery || '').toLowerCase().split(/\s+/).filter(Boolean);
+
+    const candidateIds = new Set((candidateRows || []).map(r => r.id));
+    const targetPool = this.items.filter(it => candidateIds.has(it.listing.id));
+    const itemsToScore = targetPool.length > 0 ? targetPool : this.items;
+
+    const scored = itemsToScore.map(item => {
+      const { listing, vector, corpus } = item;
+      let cosineSim = cosineSimilarity(queryVector, vector);
+
+      const matched = [];
+      for (const t of queryTerms) {
+        if (corpus.includes(t)) {
+          cosineSim += 0.04;
+          matched.push(t);
+        }
+      }
+      cosineSim = Math.min(0.99, Number(cosineSim.toFixed(4)));
+
+      const rawCapRate = listing.financials?.outputs?.capRate || 5.0;
+      const capRateNorm = Math.min(1.0, Math.max(0.0, rawCapRate / 10.0));
+      const hybridScore = Number((alpha * cosineSim + (1 - alpha) * capRateNorm).toFixed(4));
+
+      return {
+        id: listing.id,
+        listing,
+        similarity: cosineSim,
+        capRateNorm: Number(capRateNorm.toFixed(3)),
+        finalScore: hybridScore,
+        matchedFeatures: matched,
+      };
+    });
+
+    scored.sort((a, b) => b.finalScore - a.finalScore);
+    return scored.slice(0, limit);
+  }
 }
 
 module.exports = {

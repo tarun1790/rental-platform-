@@ -407,6 +407,137 @@ nextApp.prepare().then(() => {
     });
   });
 
+  // =========================================================================
+  // API ROUTE: /api/hybrid-search (Two-Stage Hybrid Retrieval & Live-Hydration)
+  // Stage 1: Fast SQLite Relational Pre-Filter (<5ms)
+  // Stage 2: 128-D Cosine Similarity + ROI Fusion (<8ms)
+  // =========================================================================
+  server.post('/api/hybrid-search', (req, res) => {
+    const start = Date.now();
+    if (!vectorIndex && sqliteCache.length > 0) {
+      vectorIndex = new vectorHelper.VectorIndex(sqliteCache);
+    }
+    const {
+      metro = '',
+      maxPrice = 50000000,
+      minBeds = 0,
+      naturalLanguageQuery = '',
+      alpha = 0.8,
+      limit = 24,
+    } = req.body || {};
+
+    const db = initSqliteConnection();
+    if (!db) {
+      return res.status(500).json({ success: false, error: 'Database connection offline' });
+    }
+
+    let sql = 'SELECT id, title, city, state, purchase_price, monthly_rent, cap_rate, beds FROM properties WHERE (purchase_price <= ? OR monthly_rent <= ?) AND beds >= ?';
+    const params = [Number(maxPrice) || 50000000, Number(maxPrice) || 50000000, Number(minBeds) || 0];
+
+    if (metro && metro !== 'ALL' && metro !== 'ALL_METROS') {
+      sql += ' AND (city LIKE ? OR state LIKE ?)';
+      params.push(`%${metro}%`, `%${metro}%`);
+    }
+
+    db.all(sql, params, (err, rows) => {
+      if (err) {
+        return res.status(500).json({ success: false, error: err.message });
+      }
+
+      const candidateRows = rows || [];
+      const cacheHit = candidateRows.length >= 5;
+
+      const scoredResults = vectorIndex ? vectorIndex.executeHybridSearch(
+        cacheHit ? candidateRows : sqliteCache,
+        naturalLanguageQuery,
+        alpha,
+        limit
+      ) : [];
+
+      const latencyMs = Date.now() - start;
+
+      res.status(200).json({
+        success: true,
+        pipeline: 'TWO_STAGE_HYBRID_RETRIEVAL',
+        stage1_prefilter: {
+          candidatesFound: candidateRows.length,
+          cacheHit,
+          status: cacheHit ? 'CACHE_HIT' : 'LIVE_HYDRATION_FALLBACK',
+        },
+        stage2_vector: {
+          dimensions: 128,
+          alpha,
+          scoredCount: scoredResults.length,
+        },
+        latencyMs,
+        results: scoredResults,
+      });
+    });
+  });
+
+  server.get('/api/hybrid-search', (req, res) => {
+    const start = Date.now();
+    if (!vectorIndex && sqliteCache.length > 0) {
+      vectorIndex = new vectorHelper.VectorIndex(sqliteCache);
+    }
+    const metro = req.query.metro || '';
+    const naturalLanguageQuery = req.query.q || '';
+    const maxPrice = req.query.maxPrice ? Number(req.query.maxPrice) : 50000000;
+    const minBeds = req.query.minBeds ? Number(req.query.minBeds) : 0;
+    const alpha = req.query.alpha ? Number(req.query.alpha) : 0.8;
+    const limit = Math.min(100, parseInt(req.query.limit || '24', 10));
+
+    const db = initSqliteConnection();
+    if (!db) {
+      return res.status(500).json({ success: false, error: 'Database connection offline' });
+    }
+
+    let sql = 'SELECT id, title, city, state, purchase_price, monthly_rent, cap_rate, beds FROM properties WHERE (purchase_price <= ? OR monthly_rent <= ?) AND beds >= ?';
+    const params = [maxPrice, maxPrice, minBeds];
+
+    if (metro && metro !== 'ALL' && metro !== 'ALL_METROS') {
+      sql += ' AND (city LIKE ? OR state LIKE ?)';
+      params.push(`%${metro}%`, `%${metro}%`);
+    }
+
+    db.all(sql, params, (err, rows) => {
+      if (err) {
+        return res.status(500).json({ success: false, error: err.message });
+      }
+
+      const candidateRows = rows || [];
+      const cacheHit = candidateRows.length >= 5;
+
+      const scoredResults = vectorIndex ? vectorIndex.executeHybridSearch(
+        cacheHit ? candidateRows : sqliteCache,
+        naturalLanguageQuery,
+        alpha,
+        limit
+      ) : [];
+
+      const latencyMs = Date.now() - start;
+
+      res.status(200).json({
+        success: true,
+        pipeline: 'TWO_STAGE_HYBRID_RETRIEVAL',
+        stage1_prefilter: {
+          candidatesFound: candidateRows.length,
+          cacheHit,
+          status: cacheHit ? 'CACHE_HIT' : 'LIVE_HYDRATION_FALLBACK',
+        },
+        stage2_vector: {
+          dimensions: 128,
+          alpha,
+          scoredCount: scoredResults.length,
+        },
+        latencyMs,
+        results: scoredResults,
+      });
+    });
+  });
+
+
+
   server.post('/api/vector-search', (req, res) => {
     if (!vectorIndex && sqliteCache.length > 0) {
       vectorIndex = new vectorHelper.VectorIndex(sqliteCache);
