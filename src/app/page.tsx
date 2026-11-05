@@ -377,93 +377,21 @@ export default function Home() {
 
       {/* 3. MAIN WORKSPACE */}
       <main className="w-full py-5 sm:py-6 flex-1 relative z-10">
-        <div className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-
-          {/* 4-CARD CURATED ESTATE METRICS STRIP */}
-          <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            
-            {/* Metric 1 */}
-            <div className="bg-[#121216] rounded-2xl border border-white/10 p-4 sm:p-5 shadow-xl flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-[#e2b170]/15 border border-[#e2b170]/30 flex items-center justify-center text-[#e2b170] shrink-0">
-                <Building className="w-6 h-6" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 block font-mono">
-                  Curated Residences
-                </span>
-                <div className="text-xl sm:text-2xl font-black text-white truncate font-mono">
-                  {filteredListings.length} Available
-                </div>
-                <span className="text-[11px] text-[#e2b170] font-medium flex items-center gap-1 mt-0.5 font-mono">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#e2b170] animate-pulse" />
-                  Verified Architectural Collection
-                </span>
-              </div>
-            </div>
-
-            {/* Metric 2 */}
-            <div className="bg-[#121216] rounded-2xl border border-white/10 p-4 sm:p-5 shadow-xl flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-[#e2b170]/15 border border-[#e2b170]/30 flex items-center justify-center text-[#e2b170] shrink-0">
-                <DollarSign className="w-6 h-6" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 block font-mono">
-                  {filters.listingStatus === 'FOR_RENT' ? 'Average Lease' : 'Average Estate Value'}
-                </span>
-                <div className="text-xl sm:text-2xl font-black text-[#e2b170] truncate font-mono">
-                  {filters.listingStatus === 'FOR_RENT'
-                    ? `${formatCurrency(metrics.avgRent)}/mo`
-                    : formatCurrency(metrics.avgPrice)}
-                </div>
-                <span className="text-[11px] text-zinc-400 font-medium truncate block mt-0.5 font-mono">
-                  Premier Market Baseline
-                </span>
-              </div>
-            </div>
-
-            {/* Metric 3 */}
-            <div className="bg-[#121216] rounded-2xl border border-white/10 p-4 sm:p-5 shadow-xl flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-[#e2b170]/15 border border-[#e2b170]/30 flex items-center justify-center text-[#e2b170] shrink-0">
-                <Compass className="w-6 h-6" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 block font-mono">
-                  Premier Metros
-                </span>
-                <div className="text-xl sm:text-2xl font-black text-white truncate font-mono">
-                  12 US Metros
-                </div>
-                <span className="text-[11px] text-[#e2b170] font-medium truncate block mt-0.5 font-mono">
-                  National Luxury Coverage
-                </span>
-              </div>
-            </div>
-
-            {/* Metric 4 */}
-            <div className="bg-[#121216] rounded-2xl border border-white/10 p-4 sm:p-5 shadow-xl flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-[#e2b170]/15 border border-[#e2b170]/30 flex items-center justify-center text-[#e2b170] shrink-0">
-                <Sparkles className="w-6 h-6" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 block font-mono">
-                  Education & Culture
-                </span>
-                <div className="text-xl sm:text-2xl font-black text-[#e2b170] truncate font-mono">
-                  ★ 10/10 GreatSchools
-                </div>
-                <span className="text-[11px] text-zinc-400 font-medium truncate block mt-0.5 font-mono">
-                  Top Proximity Districts
-                </span>
-              </div>
-            </div>
-          </section>
+        <div className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
 
           {/* VIEW MODE 1: ACTIVE THEORY 3D SPATIAL COVERFLOW */}
           {activeView === 'spatial' && (
-            <div className="space-y-6">
+            <div className="space-y-8 relative">
               
+              {/* Giant Ghost Typographic Watermark (MotionSites Pattern H) */}
+              <div className="absolute top-1/4 inset-x-0 flex items-center justify-center pointer-events-none -z-10 select-none overflow-hidden opacity-100">
+                <span className="text-[17vw] font-black uppercase tracking-tighter text-white/[0.025] font-sans select-none whitespace-nowrap">
+                  ARCHITECTURAL
+                </span>
+              </div>
+
               {/* Cinematic Editorial Banner (Inspired by Arin Vale & Active Theory) */}
-              <div className="text-center py-6 sm:py-8 space-y-3">
+              <div className="text-center pt-2 pb-2 space-y-3">
                 <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#e2b170]/15 border border-[#e2b170]/40 text-[#e2b170] text-xs font-mono font-bold tracking-widest uppercase">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#e2b170] animate-pulse" />
                   CURATED ARCHITECTURAL COLLECTION
@@ -481,7 +409,7 @@ export default function Home() {
                 
                 {/* Left Active Theory HUD (From User Reference Video) */}
                 <aside className="w-full lg:w-72 shrink-0 space-y-3">
-                  <div className="p-5 rounded-3xl bg-[#121216] border border-white/10 shadow-2xl backdrop-blur-2xl space-y-4">
+                  <div className="p-5 rounded-3xl bg-[#121216]/90 border border-white/10 shadow-2xl backdrop-blur-2xl space-y-4">
                     <div className="flex items-center gap-2">
                       <span className="w-2 h-2 rounded-full bg-[#e2b170] animate-pulse" />
                       <h4 className="text-[11px] font-mono font-black tracking-widest text-zinc-400 uppercase">
@@ -533,7 +461,163 @@ export default function Home() {
 
               </div>
 
+              {/* 4-CARD CURATED ESTATE METRICS STRIP (MotionSites: Telemetry below Hero Stage) */}
+              <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-6">
+                
+                {/* Metric 1 */}
+                <div className="bg-[#121216] rounded-2xl border border-white/10 p-4 sm:p-5 shadow-xl flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-[#e2b170]/15 border border-[#e2b170]/30 flex items-center justify-center text-[#e2b170] shrink-0">
+                    <Building className="w-6 h-6" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 block font-mono">
+                      Curated Residences
+                    </span>
+                    <div className="text-xl sm:text-2xl font-black text-white truncate font-mono">
+                      {filteredListings.length} Available
+                    </div>
+                    <span className="text-[11px] text-[#e2b170] font-medium flex items-center gap-1 mt-0.5 font-mono">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#e2b170] animate-pulse" />
+                      Verified Architectural Collection
+                    </span>
+                  </div>
+                </div>
+
+                {/* Metric 2 */}
+                <div className="bg-[#121216] rounded-2xl border border-white/10 p-4 sm:p-5 shadow-xl flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-[#e2b170]/15 border border-[#e2b170]/30 flex items-center justify-center text-[#e2b170] shrink-0">
+                    <DollarSign className="w-6 h-6" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 block font-mono">
+                      {filters.listingStatus === 'FOR_RENT' ? 'Average Lease' : 'Average Estate Value'}
+                    </span>
+                    <div className="text-xl sm:text-2xl font-black text-[#e2b170] truncate font-mono">
+                      {filters.listingStatus === 'FOR_RENT'
+                        ? `${formatCurrency(metrics.avgRent)}/mo`
+                        : formatCurrency(metrics.avgPrice)}
+                    </div>
+                    <span className="text-[11px] text-zinc-400 font-medium truncate block mt-0.5 font-mono">
+                      Premier Market Baseline
+                    </span>
+                  </div>
+                </div>
+
+                {/* Metric 3 */}
+                <div className="bg-[#121216] rounded-2xl border border-white/10 p-4 sm:p-5 shadow-xl flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-[#e2b170]/15 border border-[#e2b170]/30 flex items-center justify-center text-[#e2b170] shrink-0">
+                    <Compass className="w-6 h-6" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 block font-mono">
+                      Premier Metros
+                    </span>
+                    <div className="text-xl sm:text-2xl font-black text-white truncate font-mono">
+                      12 US Metros
+                    </div>
+                    <span className="text-[11px] text-[#e2b170] font-medium truncate block mt-0.5 font-mono">
+                      National Luxury Coverage
+                    </span>
+                  </div>
+                </div>
+
+                {/* Metric 4 */}
+                <div className="bg-[#121216] rounded-2xl border border-white/10 p-4 sm:p-5 shadow-xl flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-[#e2b170]/15 border border-[#e2b170]/30 flex items-center justify-center text-[#e2b170] shrink-0">
+                    <Sparkles className="w-6 h-6" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 block font-mono">
+                      Education & Culture
+                    </span>
+                    <div className="text-xl sm:text-2xl font-black text-[#e2b170] truncate font-mono">
+                      ★ 10/10 GreatSchools
+                    </div>
+                    <span className="text-[11px] text-zinc-400 font-medium truncate block mt-0.5 font-mono">
+                      Top Proximity Districts
+                    </span>
+                  </div>
+                </div>
+              </section>
+
             </div>
+          )}
+
+          {/* TELEMETRY STRIP FOR NON-SPATIAL VIEWS (Split, Grid, Map) */}
+          {activeView !== 'spatial' && (
+            <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              
+              <div className="bg-[#121216] rounded-2xl border border-white/10 p-4 sm:p-5 shadow-xl flex items-center gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-[#e2b170]/15 border border-[#e2b170]/30 flex items-center justify-center text-[#e2b170] shrink-0">
+                  <Building className="w-6 h-6" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 block font-mono">
+                    Curated Residences
+                  </span>
+                  <div className="text-xl sm:text-2xl font-black text-white truncate font-mono">
+                    {filteredListings.length} Available
+                  </div>
+                  <span className="text-[11px] text-[#e2b170] font-medium flex items-center gap-1 mt-0.5 font-mono">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#e2b170] animate-pulse" />
+                    Verified Architectural Collection
+                  </span>
+                </div>
+              </div>
+
+              <div className="bg-[#121216] rounded-2xl border border-white/10 p-4 sm:p-5 shadow-xl flex items-center gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-[#e2b170]/15 border border-[#e2b170]/30 flex items-center justify-center text-[#e2b170] shrink-0">
+                  <DollarSign className="w-6 h-6" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 block font-mono">
+                    {filters.listingStatus === 'FOR_RENT' ? 'Average Lease' : 'Average Estate Value'}
+                  </span>
+                  <div className="text-xl sm:text-2xl font-black text-[#e2b170] truncate font-mono">
+                    {filters.listingStatus === 'FOR_RENT'
+                      ? `${formatCurrency(metrics.avgRent)}/mo`
+                      : formatCurrency(metrics.avgPrice)}
+                  </div>
+                  <span className="text-[11px] text-zinc-400 font-medium truncate block mt-0.5 font-mono">
+                    Premier Market Baseline
+                  </span>
+                </div>
+              </div>
+
+              <div className="bg-[#121216] rounded-2xl border border-white/10 p-4 sm:p-5 shadow-xl flex items-center gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-[#e2b170]/15 border border-[#e2b170]/30 flex items-center justify-center text-[#e2b170] shrink-0">
+                  <Compass className="w-6 h-6" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 block font-mono">
+                    Premier Metros
+                  </span>
+                  <div className="text-xl sm:text-2xl font-black text-white truncate font-mono">
+                    12 US Metros
+                  </div>
+                  <span className="text-[11px] text-[#e2b170] font-medium truncate block mt-0.5 font-mono">
+                    National Luxury Coverage
+                  </span>
+                </div>
+              </div>
+
+              <div className="bg-[#121216] rounded-2xl border border-white/10 p-4 sm:p-5 shadow-xl flex items-center gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-[#e2b170]/15 border border-[#e2b170]/30 flex items-center justify-center text-[#e2b170] shrink-0">
+                  <Sparkles className="w-6 h-6" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 block font-mono">
+                    Education & Culture
+                  </span>
+                  <div className="text-xl sm:text-2xl font-black text-[#e2b170] truncate font-mono">
+                    ★ 10/10 GreatSchools
+                  </div>
+                  <span className="text-[11px] text-zinc-400 font-medium truncate block mt-0.5 font-mono">
+                    Top Proximity Districts
+                  </span>
+                </div>
+              </div>
+            </section>
           )}
 
           {/* VIEW MODE 2: SPLIT SCREEN (MAP LEFT, HOUSES RIGHT - USES FULL SPACE OF THE SCREEN) */}
@@ -761,7 +845,7 @@ export default function Home() {
                         <h4 className="font-black text-white text-sm truncate">{selectedListing.title}</h4>
                         <p className="text-xs text-slate-400 truncate">{selectedListing.propertyAddress.street}, {selectedListing.propertyAddress.city}</p>
                         <div className="flex items-center gap-2 mt-1">
-                          <span className="text-xs font-black text-cyan-400 font-mono">
+                          <span className="text-xs font-black text-[#e2b170] font-mono">
                             {selectedListing.listingStatus === 'FOR_RENT'
                               ? `${formatCurrency(selectedListing.financials.inputs.monthlyGrossRent)}/mo`
                               : formatCurrency(selectedListing.financials.inputs.purchasePrice)}

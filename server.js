@@ -38,6 +38,13 @@ const dev = process.env.NODE_ENV !== 'production';
 const hostname = process.env.HOSTNAME || '0.0.0.0';
 const port = parseInt(process.env.PORT || '3005', 10);
 
+process.on('uncaughtException', (err) => {
+  console.error('[UNCAUGHT EXCEPTION]', err);
+});
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('[UNHANDLED REJECTION]', reason);
+});
+
 const nextApp = next({ dev, hostname, port });
 const handle = nextApp.getRequestHandler();
 
@@ -62,14 +69,6 @@ nextApp.prepare().then(() => {
     }
     nextMiddleware();
   });
-
-  // Serve static assets directly from out directory only in production export mode
-  if (!dev && fs.existsSync(path.join(__dirname, 'out'))) {
-    server.use('/_next', express.static(path.join(__dirname, 'out/_next'), { maxAge: '30d' }));
-    server.use('/rental-platform-/_next', express.static(path.join(__dirname, 'out/_next'), { maxAge: '30d' }));
-    server.use('/rental-platform-', express.static(path.join(__dirname, 'out')));
-    server.use(express.static(path.join(__dirname, 'out')));
-  }
 
   server.use(express.json({ limit: '10mb' }));
   server.use(express.urlencoded({ extended: true, limit: '10mb' }));
