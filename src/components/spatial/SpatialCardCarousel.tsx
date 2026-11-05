@@ -21,12 +21,16 @@ interface SpatialCardCarouselProps {
   listings: ShikaakPropertyListing[];
   onSelectListing: (listing: ShikaakPropertyListing) => void;
   onOpenDetail: (listing: ShikaakPropertyListing) => void;
+  onOpenRoiCalculator?: (listing: ShikaakPropertyListing) => void;
+  onOpenOkf?: (listing: ShikaakPropertyListing) => void;
 }
 
 export const SpatialCardCarousel: React.FC<SpatialCardCarouselProps> = ({
   listings,
   onSelectListing,
   onOpenDetail,
+  onOpenRoiCalculator,
+  onOpenOkf,
 }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
@@ -275,16 +279,44 @@ export const SpatialCardCarousel: React.FC<SpatialCardCarouselProps> = ({
                 </div>
 
                 {/* Action Buttons Row */}
-                <div className="flex items-center gap-2.5 pt-1">
+                <div className="flex flex-wrap items-center gap-2 pt-1 font-mono">
+                  {onOpenRoiCalculator && (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onOpenRoiCalculator(listing);
+                      }}
+                      className="px-2.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-cyan-300 border border-white/10 text-[11px] font-bold uppercase transition-all cursor-pointer"
+                      title="Open ROI Calculator"
+                    >
+                      ROI
+                    </button>
+                  )}
+
+                  {onOpenOkf && (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onOpenOkf(listing);
+                      }}
+                      className="px-2.5 py-2 rounded-xl bg-cyan-950/60 hover:bg-cyan-900/60 text-cyan-300 border border-cyan-500/40 text-[11px] font-bold uppercase transition-all cursor-pointer"
+                      title="Open OKF Dossier"
+                    >
+                      OKF
+                    </button>
+                  )}
+
                   {listing.externalUrl && (
                     <a
                       href={listing.externalUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={(e) => e.stopPropagation()}
-                      className="flex-1 py-2.5 px-3 rounded-xl bg-white/5 hover:bg-white/10 text-slate-200 hover:text-white border border-white/15 text-xs font-mono font-bold tracking-wider uppercase transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
+                      className="flex-1 py-2 px-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-200 hover:text-white border border-white/15 text-[11px] font-bold tracking-wider uppercase transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
                     >
-                      <span>VIEW PORTAL</span>
+                      <span>PORTAL</span>
                       <ExternalLink className="w-3.5 h-3.5 text-cyan-400" />
                     </a>
                   )}
@@ -294,9 +326,9 @@ export const SpatialCardCarousel: React.FC<SpatialCardCarouselProps> = ({
                       e.stopPropagation();
                       onOpenDetail(listing);
                     }}
-                    className="flex-1 py-2.5 px-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black text-xs font-mono tracking-wider uppercase transition-all flex items-center justify-center gap-1.5 shadow-lg shadow-cyan-500/30 cursor-pointer"
+                    className="flex-1 py-2 px-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black text-xs font-mono tracking-wider uppercase transition-all flex items-center justify-center gap-1.5 shadow-lg shadow-cyan-500/30 cursor-pointer"
                   >
-                    <span>ANALYZE</span>
+                    <span>INSPECT</span>
                     <Maximize2 className="w-3.5 h-3.5" />
                   </button>
                 </div>
@@ -315,35 +347,61 @@ export const SpatialCardCarousel: React.FC<SpatialCardCarouselProps> = ({
       </div>
 
       {/* Navigation Controls & Index Indicator */}
-      <div className="flex items-center gap-6 mt-4 z-20">
-        <button
-          onClick={() => navigateTo(activeIndex - 1)}
-          disabled={activeIndex === 0}
-          className="p-3 rounded-2xl bg-white/5 hover:bg-white/15 disabled:opacity-30 disabled:cursor-not-allowed text-white border border-white/15 transition-all shadow-lg hover:border-cyan-500/50 cursor-pointer"
-          title="Previous Residence (Left Arrow)"
-        >
-          <ChevronLeft className="w-5 h-5" />
-        </button>
+      <div className="flex flex-col items-center gap-3 mt-4 z-20 w-full max-w-4xl px-4">
+        <div className="flex items-center gap-6">
+          <button
+            onClick={() => navigateTo(activeIndex - 1)}
+            disabled={activeIndex === 0}
+            className="p-3 rounded-2xl bg-white/5 hover:bg-white/15 disabled:opacity-30 disabled:cursor-not-allowed text-white border border-white/15 transition-all shadow-lg hover:border-cyan-500/50 cursor-pointer"
+            title="Previous Residence (Left Arrow)"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
 
-        <div className="flex items-center gap-2 font-mono text-xs tracking-widest text-slate-400">
-          <span className="text-cyan-400 font-bold text-sm">
-            {(activeIndex + 1).toString().padStart(3, '0')}
-          </span>
-          <span>/</span>
-          <span>{total.toString().padStart(3, '0')}</span>
-          <span className="ml-2 text-[10px] text-slate-600 hidden sm:inline">
-            [ USE ← → KEYS OR DRAG TO ROTATE ]
-          </span>
+          <div className="flex items-center gap-2 font-mono text-xs tracking-widest text-slate-400">
+            <span className="text-cyan-400 font-bold text-sm">
+              {(activeIndex + 1).toString().padStart(4, '0')}
+            </span>
+            <span>/</span>
+            <span>{total.toString().padStart(4, '0')}</span>
+            <span className="ml-2 text-[10px] text-slate-500 hidden sm:inline">
+              [ ← → ARROWS OR DRAG CAROUSEL ]
+            </span>
+          </div>
+
+          <button
+            onClick={() => navigateTo(activeIndex + 1)}
+            disabled={activeIndex === total - 1}
+            className="p-3 rounded-2xl bg-white/5 hover:bg-white/15 disabled:opacity-30 disabled:cursor-not-allowed text-white border border-white/15 transition-all shadow-lg hover:border-cyan-500/50 cursor-pointer"
+            title="Next Residence (Right Arrow)"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
         </div>
 
-        <button
-          onClick={() => navigateTo(activeIndex + 1)}
-          disabled={activeIndex === total - 1}
-          className="p-3 rounded-2xl bg-white/5 hover:bg-white/15 disabled:opacity-30 disabled:cursor-not-allowed text-white border border-white/15 transition-all shadow-lg hover:border-cyan-500/50 cursor-pointer"
-          title="Next Residence (Right Arrow)"
-        >
-          <ChevronRight className="w-5 h-5" />
-        </button>
+        {/* Thumbnail Quick-Scrubber Track */}
+        <div className="flex items-center gap-1.5 overflow-x-auto max-w-full py-2 px-3 rounded-2xl bg-black/50 border border-white/10 backdrop-blur-md scrollbar-none">
+          {listings.slice(Math.max(0, activeIndex - 6), Math.min(total, activeIndex + 7)).map((item, idx) => {
+            const actualIdx = Math.max(0, activeIndex - 6) + idx;
+            const isCur = actualIdx === activeIndex;
+            return (
+              <button
+                key={item.id}
+                onClick={() => navigateTo(actualIdx)}
+                className={`relative w-12 h-9 rounded-lg overflow-hidden shrink-0 transition-all border cursor-pointer ${
+                  isCur ? 'border-cyan-400 ring-2 ring-cyan-400/50 scale-105' : 'border-white/10 opacity-50 hover:opacity-100'
+                }`}
+                title={item.title}
+              >
+                <img
+                  src={item.media?.featuredImage || item.media?.gallery?.[0] || 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=120&q=80'}
+                  alt={item.title}
+                  className="w-full h-full object-cover"
+                />
+              </button>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
